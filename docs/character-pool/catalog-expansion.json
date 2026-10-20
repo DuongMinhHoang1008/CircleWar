@@ -1,0 +1,321 @@
+{
+  "characters": [
+    {
+      "id": "char_20",
+      "name": "Hoàng Tử Ngậm Hoa",
+      "role": "Hỗ trợ / kiểm soát vùng",
+      "base": "swordsman",
+      "look": "Tóc xoăn, kính vuông, nháy mắt và ngậm một bông hồng đỏ",
+      "stats": [
+        210,
+        15,
+        4,
+        470
+      ],
+      "quote": "Hoa này tặng bạn, gai này tặng đội bên kia.",
+      "weapon": "Kiếm hoa hồng: thân cành có gai quét cận chiến, không thay hitbox thân.",
+      "passive": [
+        "Nháy Mắt Lấy Đà",
+        "Mỗi đòn thường thứ tư trúng địch cấp 12 khiên cho bản thân trong 2 giây."
+      ],
+      "skill": [
+        "Hoa Gửi Đúng Người",
+        "Mỗi 7 giây chọn đồng minh thấp phần trăm HP nhất trong 240, gồm bản thân: cấp 20 khiên trong 3 giây và xóa chậm hiện có."
+      ],
+      "super": [
+        "Vườn Hồng Không Drama",
+        "Trong 4 giây tạo vườn hồng bán kính 150 đi theo bản thân. Mỗi giây gây 30% ATK lên địch và hồi 4 HP cho đồng minh trong vùng; địch trong vùng bị chậm 20%."
+      ],
+      "weakness": "Máu và giáp thấp, cần đứng gần đội để hỗ trợ; bị dồn sát thương hoặc ép tách đội sẽ khó phát huy.",
+      "upgrade": "Hoa Gửi Đúng Người: khiên 20 → 26.",
+      "vfx": "Cánh hoa hồng xoay, vòng gai hồng đỏ và nháy sao khi cấp khiên.",
+      "roleClass": "Hỗ trợ",
+      "race": "Người Phố Hội",
+      "tier": "T2",
+      "weaponName": "Kiếm Hồng Tặng Bạn",
+      "weaponCategory": "Kiếm",
+      "weaponTier": "T2"
+    }
+  ],
+  "overrides": [
+    {
+      "id": "char_07",
+      "look": "Chú chó hồng nhút nhát lấy cảm hứng từ Courage — Chú chó nhút nhát; tai đen dài, thân hồng có đốm đen, mặt đang hét",
+      "quote": "Sợ thì sợ, chứ bạn là phải cứu!",
+      "weapon": "Găng chân chó hồng Run Rẩy, hai đầu quét dùng chung hồi đánh trên mỗi mục tiêu; không phải râu côn trùng.",
+      "passive": [
+        "Sợ Nhưng Vẫn Cứu Bạn",
+        "Sau khi mất tổng cộng 40 HP thực, nhận +15% tốc độ trong 1 giây; hồi 4 giây, chỉ tích sát thương khi hết hồi."
+      ],
+      "race": "Thú Nhân",
+      "weaponName": "Găng Chân Run Rẩy",
+      "weaponCategory": "Tay không",
+      "vfx": "Tai chó rung, đốm đen, sóng hét màu hồng và tiếng kêu giật mình ngắn. Lấy cảm hứng từ Courage, không phải bọ.",
+      "name": "Courage Nhút Nhát"
+    }
+  ],
+  "bonds": [
+    {
+      "id": "P13",
+      "members": [
+        "char_20",
+        "char_13"
+      ],
+      "name": "Hoa Hồng Và Vitamin",
+      "description": "Hoa Gửi Đúng Người cấp khiên cho Mâm Quả → đòn thường kế tiếp của Mâm Quả thêm 25% ATK trong 3 giây.",
+      "size": 2
+    },
+    {
+      "id": "T09",
+      "members": [
+        "char_20",
+        "char_04",
+        "char_08"
+      ],
+      "name": "Vũ Hội Ngậm Hoa",
+      "description": "Hoàng Tử Ngậm Hoa tung Super → cả ba nhận 15 khiên trong 3 giây.",
+      "size": 3
+    }
+  ],
+  "groups": [
+    {
+      "id": "G01",
+      "name": "Mấy đứa 2k4",
+      "members": [
+        "char_01",
+        "char_05",
+        "char_06",
+        "char_07",
+        "char_11",
+        "char_12",
+        "char_14",
+        "char_17",
+        "char_18",
+        "char_19"
+      ],
+      "two": "Thành viên hội đang sống +4% tốc độ.",
+      "three": "+6% tốc độ. Ở giây 10 và 20, mỗi thành viên đang sống nhận 4 năng lượng.",
+      "limit": "Năng lượng tối đa 2 mốc/round; không cần đứng gần."
+    },
+    {
+      "id": "G02",
+      "name": "The RiseOn Couple",
+      "members": [
+        "char_01",
+        "char_19"
+      ],
+      "two": "Hổ dùng Gầm Nhỏ Thôi hoặc Cô Khui Tết dùng Lì Xì Lấy Hên: người còn lại nhận 10 khiên trong 2 giây.",
+      "three": "Hội có đúng 2 người, không có mốc 3.",
+      "limit": "3 lần/round, hồi chung 8 giây, cả hai sống và cách nhau ≤240."
+    },
+    {
+      "id": "G03",
+      "name": "Hoàng tử 34",
+      "members": [
+        "char_02",
+        "char_10"
+      ],
+      "two": "Ôm Một Miếng hoặc Cán Qua Drama chạm địch: cả hai nhận 8 khiên và +8% tốc độ trong 2 giây.",
+      "three": "Hội có đúng 2 người, không có mốc 3.",
+      "limit": "3 lần/round, hồi chung 8 giây, cả hai sống và cách nhau ≤240."
+    },
+    {
+      "id": "G04",
+      "name": "The ABI",
+      "members": [
+        "char_03",
+        "char_10",
+        "char_15"
+      ],
+      "two": "Thành viên hội đang sống +1 giáp.",
+      "three": "+2 giáp. Ở giây 20, mỗi thành viên đang sống nhận 10 khiên trong 5 giây.",
+      "limit": "Khiên một lần/round; không cần đứng gần."
+    },
+    {
+      "id": "G05",
+      "name": "Tít và Mít",
+      "members": [
+        "char_04",
+        "char_06",
+        "char_17"
+      ],
+      "two": "Thành viên hội đang sống +4% tốc độ. Một thành viên tung Super: người còn lại nhận 4 năng lượng.",
+      "three": "+6% tốc độ; Super cấp 8 năng lượng cho hai người còn lại.",
+      "limit": "Nạp năng lượng tối đa 2 lần/round, hồi chung 12 giây, các thành viên sống cách nhau ≤280."
+    },
+    {
+      "id": "G06",
+      "name": "Người miền núi chất",
+      "members": [
+        "char_06",
+        "char_07",
+        "char_09",
+        "char_17",
+        "char_18"
+      ],
+      "two": "Thành viên hội đang sống +10 điểm sức mạnh Super. Super đầu tiên của hội cấp mỗi thành viên 8 khiên trong 3 giây.",
+      "three": "+15 điểm sức mạnh Super; khiên tăng thành 12/người.",
+      "limit": "Khiên một lần/round, các thành viên sống cách nhau ≤280; chỉ số không cần đứng gần."
+    },
+    {
+      "id": "G07",
+      "name": "Tiểu vương quốc 36",
+      "members": [
+        "char_20",
+        "char_08",
+        "char_11",
+        "char_13"
+      ],
+      "two": "Thành viên hội đang sống +3 điểm phần trăm chí mạng. Khi một người sống còn ≤40% HP sau hit, hồi 6 HP cho mỗi thành viên hội trong tầm.",
+      "three": "+5 điểm phần trăm chí mạng; mỗi lượt hồi tăng thành 8 HP/người.",
+      "limit": "2 lần/round, hồi chung 12 giây, cách người kích hoạt ≤280. Không cứu hit chết người."
+    },
+    {
+      "id": "G08",
+      "name": "Imposter",
+      "members": [
+        "char_05",
+        "char_07",
+        "char_10",
+        "char_18"
+      ],
+      "two": "Diễn Sâu: khi một thành viên tung Super, cả hội nhận +8% ATK trong 3 giây.",
+      "three": "Diễn Sâu tăng thành +12% ATK trong 3 giây.",
+      "limit": "2 lần/round, hồi chung 12 giây; các thành viên sống cách nhau ≤280."
+    },
+    {
+      "id": "G09",
+      "name": "Ạt tít",
+      "members": [
+        "char_16",
+        "char_19"
+      ],
+      "two": "Nét Vẽ Lì Xì: một người tung Super, người còn lại nhận 16 khiên trong 3 giây và 4 năng lượng.",
+      "three": "Hội có đúng 2 người, không có mốc 3.",
+      "limit": "2 lần/round, hồi chung 12 giây; cả hai sống và cách nhau ≤280."
+    },
+    {
+      "id": "G10",
+      "name": "Cốt đơ",
+      "members": [
+        "char_01",
+        "char_02",
+        "char_03",
+        "char_04",
+        "char_05",
+        "char_06",
+        "char_07",
+        "char_08",
+        "char_10",
+        "char_11",
+        "char_12",
+        "char_13",
+        "char_15",
+        "char_17",
+        "char_18",
+        "char_20"
+      ],
+      "two": "Code Chạy Rồi: ở giây 10 và 20, mỗi thành viên đang sống nhận 3 năng lượng.",
+      "three": "Năng lượng ở mỗi mốc tăng thành 5/người.",
+      "limit": "2 mốc/round; không cần đứng gần. Không gồm Sếp, Hộp Quà và hai thành viên Ạt tít."
+    },
+    {
+      "id": "G11",
+      "name": "Full Combo",
+      "members": [
+        "char_01",
+        "char_02",
+        "char_03",
+        "char_04",
+        "char_05",
+        "char_06",
+        "char_07",
+        "char_08",
+        "char_10",
+        "char_11",
+        "char_12",
+        "char_13",
+        "char_14",
+        "char_15",
+        "char_16",
+        "char_17",
+        "char_18",
+        "char_19",
+        "char_20"
+      ],
+      "required": [
+        "char_14"
+      ],
+      "two": "Ghép Đôi Vá Nóng: Hộp Quà tung Super, đồng đội Ạt tít nhận 18 khiên và +8% tốc độ trong 3 giây; đồng đội Cốt đơ nhận 6 năng lượng và +10% tốc độ đánh trong 3 giây. Nếu có hai người cùng hội thì mỗi người nhận hiệu ứng ghép đôi tương ứng.",
+      "three": "Full Combo chỉ bật khi cả ba còn sống: Hộp Quà + 1 người Ạt tít + 1 người Cốt đơ. Hộp Quà tung Super cấp cả hai đồng đội 24 khiên, 6 năng lượng và +15% tốc độ đánh trong 3 giây, thay hiệu ứng ghép đôi.",
+      "limit": "Bắt buộc Hộp Quà còn sống cùng ít nhất một người Ạt tít hoặc Cốt đơ. 2 lần/round, hồi chung 12 giây; các thành viên sống cách nhau ≤280. Hộp Quà không tự nhận. Thiếu một nhánh thì dùng Ghép Đôi, Sếp không thuộc hội.",
+      "threeRequiresGroups": [
+        "G09",
+        "G10"
+      ]
+    },
+    {
+      "id": "G12",
+      "name": "Tất cả quỳ xuống",
+      "members": [
+        "char_01",
+        "char_02",
+        "char_04",
+        "char_05",
+        "char_06",
+        "char_07",
+        "char_08",
+        "char_09",
+        "char_10",
+        "char_11",
+        "char_12",
+        "char_13",
+        "char_14",
+        "char_16",
+        "char_17",
+        "char_18",
+        "char_19",
+        "char_20"
+      ],
+      "required": [
+        "char_09"
+      ],
+      "two": "Sếp Đã Chỉ Đạo: Sếp đánh trúng bằng Mời Vào Họp hoặc tung Super, đồng đội được +8% ATK và +10% tốc độ đánh trong 3 giây.",
+      "three": "Hai đồng đội được +12% ATK và +15% tốc độ đánh trong 3 giây.",
+      "limit": "Bắt buộc Sếp Chốt Đơn còn sống cùng ít nhất một nhân vật khác. 2 lần/round, hồi chung 12 giây; các thành viên sống cách nhau ≤280. Sếp không tự nhận hiệu ứng. Anh Tím Mọng và Hiệp Sĩ Gâu Gâu không thuộc hội, không được hưởng và không tăng mốc."
+    },
+    {
+      "id": "G13",
+      "name": "Anh có ý tưởng",
+      "members": [
+        "char_01",
+        "char_02",
+        "char_03",
+        "char_04",
+        "char_05",
+        "char_06",
+        "char_07",
+        "char_08",
+        "char_09",
+        "char_10",
+        "char_11",
+        "char_12",
+        "char_13",
+        "char_14",
+        "char_15",
+        "char_16",
+        "char_17",
+        "char_18",
+        "char_19",
+        "char_20"
+      ],
+      "requiredAny": [
+        "char_03",
+        "char_15"
+      ],
+      "two": "Tôi Có Ý Này!: Anh Tím Mọng hoặc Hiệp Sĩ Gâu Gâu tung Super, đồng đội còn lại nhận 4 năng lượng và +8% ATK trong 3 giây. Ý tưởng vừa lóe, cả đội bớt đứng ngơ!",
+      "three": "Chốt Ý Tưởng: người tung ý tưởng cấp hai đồng đội 6 năng lượng và +12% ATK trong 3 giây.",
+      "limit": "Cần ít nhất một Anh Tím Mọng hoặc Hiệp Sĩ Gâu Gâu còn sống cùng một nhân vật khác nhau bất kỳ. Chỉ hai người này khởi xướng; 2 lần/round, hồi chung 12 giây, mọi thành viên sống cách nhau ≤280. Hai người cùng góp mặt vẫn dùng chung lượt/hồi. Người tung không tự nhận."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+ <defs><linearGradient id="shaft" x1="105" y1="51" x2="166" y2="235" gradientUnits="userSpaceOnUse"><stop stop-color="#f7ffff"/><stop offset=".25" stop-color="#89eaff"/><stop offset=".62" stop-color="#667fe2"/><stop offset="1" stop-color="#272d72"/></linearGradient><linearGradient id="crystal" x1="94" y1="22" x2="165" y2="112" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".28" stop-color="#b6ffff"/><stop offset=".68" stop-color="#70b9ff"/><stop offset="1" stop-color="#8364ed"/></linearGradient><radialGradient id="halo"><stop stop-color="#e6ffff" stop-opacity=".85"/><stop offset="1" stop-color="#6b78ff" stop-opacity="0"/></radialGradient></defs>
+ <circle cx="128" cy="72" r="78" fill="url(#halo)" opacity=".7"/>
+ <path d="M119 84 137 87 158 236 116 236z" fill="url(#shaft)" stroke="#354574" stroke-width="7" stroke-linejoin="round"/>
+ <path d="m113 104 30 4m-26 31 34 4m-29 31 36 4m-31 31 38 4" stroke="#e7fdff" stroke-width="5" stroke-linecap="round" opacity=".9"/>
+ <path d="M126 95c-17-24-34-32-51-25 5-20 22-31 43-24-3-20 10-34 22-41 12 7 25 21 22 41 21-7 38 4 43 24-17-7-34 1-51 25z" transform="translate(0 34)" fill="url(#crystal)" stroke="#efffff" stroke-width="6" stroke-linejoin="round"/>
+ <path d="m140 46 10 27-13 22-14-23 8-27z" fill="#fff" stroke="#66d9ff" stroke-width="4"/>
+ <path d="M92 57c14 6 26 18 36 36m36-36c-14 6-26 18-36 36" stroke="#fff" stroke-width="4" opacity=".9"/>
+ <path d="M84 95c-22-5-33 4-39 20 18-5 31 1 39 16-2-14 0-25 8-33m80-3c22-5 33 4 39 20-18-5-31 1-39 16 2-14 0-25-8-33" fill="#83eaff" stroke="#eaffff" stroke-width="5" stroke-linejoin="round"/>
+ <path d="m61 45 6 12 13 2-10 8 3 13-12-7-11 7 2-13-9-8 13-2zM193 42l5 10 11 2-8 7 2 11-10-6-10 6 2-11-8-7 11-2z" fill="#fff5ae" stroke="#fff" stroke-width="2"/>
+ <path d="M109 232h54l-7 12h-40z" fill="#7be6ff" stroke="#f4ffff" stroke-width="4" stroke-linejoin="round"/>
+</svg>

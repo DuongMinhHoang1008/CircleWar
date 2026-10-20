@@ -1,0 +1,12 @@
+{
+  "characters": 20,
+  "items": 20,
+  "keyboardEscape": true,
+  "teamSelection": true,
+  "trioSelection": true,
+  "affinityEquip": true,
+  "liveInspect": true,
+  "simulationSetup": true,
+  "mobileOverflow": false,
+  "pageErrors": []
+}

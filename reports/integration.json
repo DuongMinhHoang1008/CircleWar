@@ -1,0 +1,22 @@
+{
+  "code": "CSD88HYM",
+  "players": 20,
+  "actions": 46,
+  "websocketEvents": 57,
+  "replayFrames": 459,
+  "checks": [
+    "room creation",
+    "20 joins",
+    "authentication rejection",
+    "host authorization",
+    "atomic duplicate purchase",
+    "spectator restrictions",
+    "server simulation",
+    "recorded replay chunks and checksums",
+    "WebSocket reconnect"
+  ],
+  "replayChunks": 13,
+  "replayCompressedBytes": 135767,
+  "replayStoredBase64Bytes": 181026,
+  "ticks": 1373
+}

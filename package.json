@@ -1,0 +1,47 @@
+{
+  "name": "circle-chaos",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "format": "prettier --write apps packages tests *.json *.ts *.md .github",
+    "dev": "concurrently -k -n web,worker \"npm:dev:web\" \"npm:dev:worker\"",
+    "dev:web": "vite --config apps/web/vite.config.ts --host 127.0.0.1",
+    "dev:worker": "wrangler dev --config apps/worker/wrangler.jsonc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "benchmark": "tsx tests/performance/benchmark.ts",
+    "test:integration": "tsx tests/integration/local.ts",
+    "test:browser": "tsx tests/integration/browser.ts",
+    "test:recovery": "tsx tests/integration/recovery.ts",
+    "build": "npm run typecheck && vite build --config apps/web/vite.config.ts && wrangler deploy --dry-run --config apps/worker/wrangler.jsonc",
+    "deploy:worker": "wrangler deploy --config apps/worker/wrangler.jsonc"
+  },
+  "dependencies": {
+    "pixi.js": "^8.10.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261006.1",
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.5.0",
+    "concurrently": "^9.1.0",
+    "esbuild": "^0.28.2",
+    "miniflare": "5.20261012.1-beta",
+    "playwright": "^1.52.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.19.0",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^5.0.5",
+    "wrangler": "^4.20.0"
+  }
+}

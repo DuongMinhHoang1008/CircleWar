@@ -1,0 +1,1259 @@
+import { useEffect, useRef, useState } from "react";
+import {
+  Application,
+  Graphics,
+  Text,
+  Assets,
+  Sprite,
+  Texture,
+  Rectangle,
+} from "pixi.js";
+import {
+  calculateBattleResult,
+  calculateStateHash,
+  createBattle,
+  ENGINE_VERSION,
+  safeBounds,
+  roundTempo,
+  stepBattle,
+  type ReplayFrame,
+  type BattleConfig,
+  type BattleState,
+} from "../../../../packages/battle-engine/src/index";
+import { CHARACTERS } from "../../../../packages/shared/src/balance";
+import type { ReplayInfo } from "../../../../packages/shared/src/room";
+import { DIRECTIONS } from "../../../../packages/battle-engine/src/math";
+import {
+  character,
+  BONDS,
+  FRIEND_GROUPS,
+  CHARACTER_IDS,
+  type CharacterId,
+} from "../../../../packages/shared/src/catalog";
+import { avatar, Portrait, weaponArtUrl, weaponAtlasUrl, weaponFrame } from "../GameCatalog";
+import type { Fighter } from "../../../../packages/battle-engine/src/types";
+const colors = [0x5de1ff, 0xff668c, 0xf2c66d, 0xb99bff, 0x7cf1d0, 0xff9c75];
+const fxArt = {
+  slash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M14 94Q49 18 112 24 82 43 59 70 39 91 14 94Z" fill="#ffe5a0" fill-opacity=".82"/><path d="M18 96Q57 44 109 25" fill="none" stroke="#fff8d6" stroke-width="7" stroke-linecap="round"/><path d="m32 73 9 2-7 8m33-34 8 2-7 7m19-24 8 2-7 7" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="m19 24 4 9 9 4-9 4-4 9-4-9-9-4 9-4zM103 79l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#fff4c5"/></svg>`,
+  shatter: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="m56 53 9-38 13 35-10 11zM66 69l36-21-20 33-17-3zM57 70l-8 41-13-35 11-12zM48 60 13 43l38 3 7 10zM75 81l23 26-35-16-1-9zM44 49 30 16l24 27-5 8zM54 79l-7 31-8-24z" fill="#ff7989" stroke="#ffe8bc" stroke-width="3" stroke-linejoin="round"/><path d="m29 69-9 9m77-42 10-8m-51 69-2 13" stroke="#fff5d9" stroke-width="4" stroke-linecap="round"/></svg>`,
+  bond: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M64 102 27 68C5 48 33 19 53 39l11 11 11-11c20-20 48 9 26 29z" fill="#ec73ba" stroke="#ffe6f5" stroke-width="5"/><path d="M18 30 31 43m79 42-13 13M64 11v17m0 72v17" stroke="#fff1bb" stroke-width="5" stroke-linecap="round"/></svg>`,
+  group: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><circle cx="64" cy="65" r="15" fill="#ffe39a"/><circle cx="33" cy="46" r="11" fill="#69d9b6"/><circle cx="95" cy="46" r="11" fill="#72c7ff"/><circle cx="33" cy="87" r="11" fill="#ff86a7"/><circle cx="95" cy="87" r="11" fill="#b49aff"/><path d="M41 57 53 63m34-6-12 6M42 79l11-8m33 8-11-8" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`,
+  utility: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="m64 13 12 33 34 2-26 21 9 33-29-19-29 19 9-33-26-21 34-2z" fill="#a2f1e0" stroke="#edfff5" stroke-width="4" stroke-linejoin="round"/><circle cx="64" cy="64" r="8" fill="#fff"/></svg>`,
+  heal: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M64 103V57m0 30C30 90 19 63 24 39c28 0 45 16 40 48zm0-14c2-33 24-51 51-48 5 29-14 49-51 55" fill="#82dfa0" stroke="#eaffd5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M64 72c-17-22-5-42 8-47 12 13 8 32-8 47z" fill="#ffe5a1" stroke="#fff7d5" stroke-width="3"/><path d="m23 24 4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#fff"/></svg>`,
+  shield: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M64 13 101 27v29c0 28-17 45-37 59C44 101 27 84 27 56V27z" fill="#8ecfff" fill-opacity=".58" stroke="#e7f8ff" stroke-width="5" stroke-linejoin="round"/><path d="M64 28 87 37v19c0 18-10 30-23 40-13-10-23-22-23-40V37z" fill="none" stroke="#fff4c7" stroke-width="3"/><path d="m64 39 5 14 15 1-12 9 4 15-12-9-12 9 4-15-12-9 15-1z" fill="#fff3bd"/></svg>`,
+  bolt: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M10 40 47 7 35 29h19L17 58l12-18z" fill="#ffd984" stroke="#fff7d8" stroke-width="4" stroke-linejoin="round"/><path d="m12 15 4 8 8 3-8 3-4 8-3-8-8-3 8-3z" fill="#fff"/></svg>`,
+  zone: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160"><path d="M80 15c8 10 12 14 22 11-3 12-1 17 10 22-12 4-15 9-13 21-10-7-16-7-25 1-1-12-5-17-17-18 9-8 10-14 4-24 12 2 18-1 19-13zm0 97c8 10 12 14 22 11-3 12-1 17 10 22-12 4-15 9-13 21-10-7-16-7-25 1-1-12-5-17-17-18 9-8 10-14 4-24 12 2 18-1 19-13z" fill="#ff789f" fill-opacity=".68" stroke="#ffe2b9" stroke-width="3"/><path d="M80 13c38 0 67 29 67 67s-29 67-67 67-67-29-67-67 29-67 67-67z" fill="none" stroke="#ffbdd0" stroke-width="4" stroke-dasharray="2 9"/><path d="M43 80c12-18 25-23 37-23s25 5 37 23c-12 18-25 23-37 23S55 98 43 80z" fill="none" stroke="#fff1bc" stroke-width="4"/></svg>`,
+  warn: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M64 17c7 13 14 20 29 22-9 11-11 20-7 34-14-4-23-2-34 7-2-15-9-22-22-29 13-7 20-14 22-29z" fill="#ffc960" fill-opacity=".45" stroke="#fff0be" stroke-width="4"/><path d="m64 37 4 23 16 10-20-3-20 9 13-16z" fill="#fff3cc" stroke="#fff" stroke-width="2"/></svg>`,
+  clash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="m20 22 86 84M107 20 21 106" fill="none" stroke="#f5a623" stroke-width="15" stroke-linecap="round"/><path d="m20 22 86 84M107 20 21 106" fill="none" stroke="#fff5c9" stroke-width="7" stroke-linecap="round"/><path d="m64 7 5 21 20-10-10 20 22 4-22 8 15 17-23-4-7 23-8-22-18 16 5-23-22-7 22-8-15-18 23 5z" fill="#fff4bd" stroke="#fff" stroke-width="3"/><path d="m16 51-9-7m114 39 8 7M53 13l-2-10m27 112 2 10" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>`,
+};
+type FxKind = keyof typeof fxArt;
+type CharacterFxKind = "characterSkill" | "characterSuper" | "characterItem";
+type EffectKind = FxKind | CharacterFxKind;
+type CharacterFxSpec = {
+  color: string;
+  light: string;
+  skill: string;
+  super: string;
+};
+
+// Each character gets two separately loaded SVG textures. The hand-authored
+// emblems and palettes make their skill and Super effects readable at a glance.
+const characterFxArt: Partial<Record<CharacterId, CharacterFxSpec>> = {
+  char_01: {
+    color: "#f28b45",
+    light: "#fff0b5",
+    skill: `<path d="M31 67 24 48l18 9 10-17 9 18 20-8-8 20 18 11-22 4-6 20-13-17-20 7 8-20z" fill="currentColor"/><path d="m42 62 8 2m6 2 8-2M47 74l9 4 9-4" fill="none" stroke="#fff9dd" stroke-width="4" stroke-linecap="round"/>`,
+    super: `<path d="M29 72c-4-28 11-43 35-39 23 4 38 26 30 47-5 13-19 23-37 23-14 0-25-10-28-31z" fill="currentColor"/><path d="M39 62 50 57l10 5m7 0 10-5 11 5M51 80l11 5 11-5M21 39l10 13m76-12L94 53M25 91l17-7m58 7-17-7" fill="none" stroke="#fff9dd" stroke-width="5" stroke-linecap="round"/>`,
+  },
+  char_02: {
+    color: "#ff8fbd",
+    light: "#fff1f7",
+    skill: `<path d="M64 100S27 78 27 52c0-18 23-25 37-7 14-18 37-11 37 7 0 26-37 48-37 48z" fill="currentColor"/><path d="M20 81c10-10 18-12 28-9m60 9c-10-10-18-12-28-9" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>`,
+    super: `<path d="M64 99 28 66c-19-18 5-46 25-28l11 10 11-10c20-18 44 10 25 28z" fill="currentColor"/><path d="M12 64h21m82 0H94M25 35l16 13m62-13L87 48M32 103l17-16m47 16L80 87" stroke="#fff" stroke-width="5" stroke-linecap="round"/><circle cx="64" cy="61" r="9" fill="#fff1f7"/>`,
+  },
+  char_03: {
+    color: "#9d59dd",
+    light: "#e9d4ff",
+    skill: `<path d="M64 35c-19 0-34 18-34 37s15 31 34 31 34-12 34-31-15-37-34-37z" fill="currentColor"/><path d="M62 37c4-15 16-19 29-16-5 12-14 18-27 18M48 60h1m15-7h1m15 11h1m-27 21c10 7 20 7 30 0" fill="none" stroke="#f4eaff" stroke-width="5" stroke-linecap="round"/>`,
+    super: `<path d="M64 28c-24 0-43 20-43 44 0 20 19 34 43 34s43-14 43-34c0-24-19-44-43-44z" fill="currentColor"/><path d="M55 29c4-18 22-25 40-17-8 15-23 22-41 19M42 57h2m18-7h2m18 7h2M47 82c11 11 23 11 34 0" fill="none" stroke="#fff1c7" stroke-width="5" stroke-linecap="round"/><circle cx="64" cy="67" r="7" fill="#fff1c7"/>`,
+  },
+  char_04: {
+    color: "#49c8e9",
+    light: "#d8f9ff",
+    skill: `<path d="m24 76 17-5 17-28 12 8-9 19 25-5 17 11-18 17-42-2-22-7z" fill="currentColor"/><path d="m27 92 58 4m-48-14 41 4" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`,
+    super: `<path d="M20 77c10-3 21-4 30-18l18-30 17 10-12 24 33-7 16 17-22 25-55-1-25-8z" fill="currentColor"/><path d="m13 45 22 6M12 61l16 4m81-31-14 17M28 107l25-4" stroke="#fff1bd" stroke-width="5" stroke-linecap="round"/>`,
+  },
+  char_05: {
+    color: "#79caff",
+    light: "#f3fbff",
+    skill: `<circle cx="58" cy="64" r="28" fill="none" stroke="currentColor" stroke-width="10"/><path d="m79 84 24 24M54 52c18-10 30 5 20 17-5 6-14 4-19 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><circle cx="55" cy="91" r="4" fill="#fff"/>`,
+    super: `<circle cx="57" cy="62" r="36" fill="none" stroke="currentColor" stroke-width="11"/><path d="m82 87 29 29M46 51c18-16 42-1 30 15-6 8-18 5-22 16m8-44v-9m35 33h10M29 68H17" fill="none" stroke="#fff1b5" stroke-width="6" stroke-linecap="round"/><circle cx="53" cy="88" r="5" fill="#fff1b5"/>`,
+  },
+  char_06: {
+    color: "#ff70a6",
+    light: "#fff3a6",
+    skill: `<path d="M31 28h67L79 50l19 21H31l20-21z" fill="currentColor"/><path d="M64 50v48m0-2c-18 0-27 8-27 18h54c0-10-9-18-27-18" fill="none" stroke="#fff2a6" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="45" cy="40" r="5" fill="#fff"/><circle cx="83" cy="61" r="5" fill="#fff"/>`,
+    super: `<path d="M20 22h88L81 52l27 31H20l27-31z" fill="currentColor"/><path d="M64 50v47m0 0c-20 0-32 9-32 22h64c0-13-12-22-32-22" fill="none" stroke="#fff0a8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><path d="m18 75 9 4-9 4m92-46 9 4-9 4M36 17l4 8 8 3-8 3-4 8-3-8-8-3 8-3z" fill="#fff"/>`,
+  },
+  char_07: {
+    color: "#ff7898",
+    light: "#fff1e8",
+    skill: `<path d="M28 53 22 26l27 14c10-5 20-5 30 0l27-14-6 28c9 24-4 49-36 49S19 77 28 53z" fill="currentColor"/><path d="m45 62 9 4m20 0 9-4M53 82l11 8 11-8" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="m19 66-10-5m109 5 10-5" stroke="#fff1e8" stroke-width="5"/>`,
+    super: `<path d="M25 49 17 18l34 18c9-4 19-4 28 0l34-18-8 31c14 31-4 61-41 61S11 80 25 49z" fill="currentColor"/><path d="M11 46 0 40m117 6 11-6M13 86 1 91m114-5 12 5M46 60l9 5m18 0 9-5M53 83l11 10 11-10" fill="none" stroke="#fff5c9" stroke-width="6" stroke-linecap="round"/>`,
+  },
+  char_08: {
+    color: "#9875ed",
+    light: "#f1eaff",
+    skill: `<path d="M22 90 39 36l21 19 20-25 27 56-24-14-18 24-15-21z" fill="currentColor"/><path d="M45 66 58 75m11-2 15-13M64 15v17m-37 4 13 12m67-12L95 48" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`,
+    super: `<path d="M16 89 37 25l25 23 25-34 28 77-29-17-21 29-18-25z" fill="currentColor"/><path d="M48 62 62 73m9-4 18-18M64 8v18M24 20l15 16m66-16L90 36" stroke="#fff2bc" stroke-width="6" stroke-linecap="round"/><circle cx="99" cy="97" r="10" fill="#fff2bc"/>`,
+  },
+  char_09: {
+    color: "#f4a447",
+    light: "#fff2bf",
+    skill: `<rect x="29" y="27" width="70" height="76" rx="9" fill="currentColor"/><path d="M45 19v18m38-18v18M42 54h44M43 72h12m9 0h21m-42 16h12m9 0h21" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><path d="m78 68 7 7 14-18" fill="none" stroke="#fff2bf" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`,
+    super: `<rect x="23" y="25" width="82" height="82" rx="12" fill="currentColor"/><path d="M43 16v22m42-22v22M38 53h52M41 73h11m10 0h22m-43 19h11m10 0h22" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/><path d="m71 69 10 10 18-23M18 47l-9-9m105 9 9-9M19 99l-9 9m99-9 9 9" fill="none" stroke="#fff2bf" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`,
+  },
+  char_10: {
+    color: "#ffb84a",
+    light: "#fff2c6",
+    skill: `<circle cx="64" cy="66" r="36" fill="currentColor"/><circle cx="64" cy="66" r="15" fill="#201d23" stroke="#fff2c6" stroke-width="6"/><path d="m35 37 12 11m34 35 12 11M93 37 81 49M35 95l12-12" stroke="#fff" stroke-width="6" stroke-linecap="round"/>`,
+    super: `<circle cx="64" cy="66" r="43" fill="currentColor"/><circle cx="64" cy="66" r="20" fill="#201d23" stroke="#fff2c6" stroke-width="7"/><path d="m64 9 5 15 16-2-10 13 9 14-17-5-8 15-4-17-17-1 14-10-5-16 15 8z" fill="#fff2c6"/><path d="m27 31 13 13m48 44 13 13m-5-70L83 44M27 101l13-13" stroke="#fff" stroke-width="6" stroke-linecap="round"/>`,
+  },
+  char_11: {
+    color: "#5bd6a2",
+    light: "#fff2a6",
+    skill: `<path d="M33 27h65L78 49l20 22H33l19-22z" fill="currentColor"/><path d="M64 48v54m0-1-17 15m17-15 17 15" fill="none" stroke="#fff2a6" stroke-width="7" stroke-linecap="round"/><path d="m64 42 5 10 11 2-8 7 2 11-10-5-10 5 2-11-8-7 11-2z" fill="#fff2a6"/>`,
+    super: `<path d="M22 21h83L80 51l25 31H22l25-31z" fill="currentColor"/><path d="M64 49v57m0 0-21 17m21-17 21 17" fill="none" stroke="#fff2a6" stroke-width="8" stroke-linecap="round"/><path d="m64 38 7 14 16 2-12 11 3 16-14-8-14 8 3-16-12-11 16-2z" fill="#fff2a6"/><path d="m14 68-7 6 7 6m100-12 7 6-7 6" fill="none" stroke="#fff" stroke-width="5"/>`,
+  },
+  char_12: {
+    color: "#ecf1fa",
+    light: "#ffe6a0",
+    skill: `<path d="m30 89 57-61 10 10-57 61-17 7z" fill="currentColor"/><path d="m79 36 14 13M23 88l16 15m-26-8 13-3m-9-14 11 11" fill="none" stroke="#ffe6a0" stroke-width="6" stroke-linecap="round"/><path d="M34 31 20 19m72 86 14 13" stroke="#fff" stroke-width="5"/>`,
+    super: `<path d="m19 91 69-72 14 13-69 72-20 10z" fill="currentColor"/><path d="m77 32 20 18M17 80l22 22m-32-6 17-6m-12-17 22 22M21 29l18 18m55 43 17 17" fill="none" stroke="#ffe6a0" stroke-width="7" stroke-linecap="round"/>`,
+  },
+  char_13: {
+    color: "#e94e6f",
+    light: "#fff0ad",
+    skill: `<path d="M64 39c-16-16-33-7-33 12 0 23 33 48 33 48s33-25 33-48c0-19-17-28-33-12z" fill="currentColor"/><path d="M65 39c-1-18 10-28 28-27-4 15-14 25-28 27m-1 8c-12-15-24-14-31-9m31 23c13-14 25-14 34-8" fill="none" stroke="#fff0ad" stroke-width="5" stroke-linecap="round"/>`,
+    super: `<path d="M64 31c-20-20-43-9-43 16 0 29 43 61 43 61s43-32 43-61c0-25-23-36-43-16z" fill="currentColor"/><path d="M64 32c-1-22 13-35 36-32-5 19-18 31-36 32m0 14C49 28 34 29 23 37m41 23c17-19 34-18 47-10M29 106l14-12m56 12L85 94" fill="none" stroke="#fff0ad" stroke-width="6" stroke-linecap="round"/>`,
+  },
+  char_14: {
+    color: "#f2c85b",
+    light: "#fff7d7",
+    skill: `<path d="M27 46 64 27l37 19v48l-37 20-37-20z" fill="currentColor"/><path d="M27 46 64 66l37-20M64 66v48M46 37l37 20" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/><path d="m64 48 5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z" fill="#fff7d7"/>`,
+    super: `<path d="M20 44 64 20l44 24v55l-44 25-44-25z" fill="currentColor"/><path d="M20 44 64 69l44-25M64 69v55M41 32l46 26" fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round"/><path d="m64 44 7 16 17 2-13 11 4 17-15-9-15 9 4-17-13-11 17-2zM12 21l3 8 8 3-8 3-3 8-3-8-8-3 8-3zM113 22l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#fff7d7"/>`,
+  },
+  char_15: {
+    color: "#72d1a7",
+    light: "#efffd9",
+    skill: `<path d="M64 17 96 29v27c0 23-14 37-32 51-18-14-32-28-32-51V29z" fill="currentColor"/><path d="M49 58c0-11 9-17 15-7 6-10 15-4 15 7 0 10-15 21-15 21S49 68 49 58z" fill="#efffd9"/><path d="m45 40 9 7m29-7-9 7" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`,
+    super: `<path d="M64 9 106 25v34c0 29-19 47-42 64-23-17-42-35-42-64V25z" fill="currentColor"/><path d="M44 60c0-16 13-24 20-10 7-14 20-6 20 10 0 14-20 30-20 30S44 74 44 60z" fill="#efffd9"/><path d="m38 38 14 10m38-10L76 48M64 30v10" stroke="#fff" stroke-width="6" stroke-linecap="round"/>`,
+  },
+  char_16: {
+    color: "#df69cf",
+    light: "#fff3a8",
+    skill: `<path d="m29 91 47-61 17 13-47 61-22 8z" fill="currentColor"/><path d="m75 36 15 12M24 99l18 14m-17-3 23-5m-15-5 18-5" fill="none" stroke="#fff3a8" stroke-width="6" stroke-linecap="round"/><path d="m97 25 3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#fff"/>`,
+    super: `<path d="m19 92 57-74 20 15-57 74-27 10z" fill="currentColor"/><path d="m73 26 19 15M15 102l20 16m-15-1 32-7m-24-4 28-9m33-76 3 10 10 3-10 4-3 10-4-10-10-4 10-3z" fill="none" stroke="#fff3a8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`,
+  },
+  char_17: {
+    color: "#45c5e8",
+    light: "#fff0a8",
+    skill: `<rect x="28" y="36" width="67" height="60" rx="7" fill="currentColor"/><path d="M28 54h67M62 36v60M20 24l13 4-13 5m73-16 13 4-13 5M12 75l12 4-12 5" fill="none" stroke="#fff0a8" stroke-width="6" stroke-linecap="round"/><path d="m49 66 10 9 19-22" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`,
+    super: `<rect x="21" y="34" width="82" height="70" rx="9" fill="currentColor"/><path d="M21 54h82M62 34v70M11 18l19 5-19 6m83-16 19 5-19 6M7 77l19 5-19 6" fill="none" stroke="#fff0a8" stroke-width="7" stroke-linecap="round"/><path d="m46 69 13 12 24-29" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`,
+  },
+  char_18: {
+    color: "#fa7056",
+    light: "#fff0b3",
+    skill: `<path d="M24 62h80l-8 33c-3 12-12 18-32 18s-29-6-32-18z" fill="currentColor"/><path d="M18 59h92m-71-9c-9-13 8-17 0-30m24 30c-9-13 8-17 0-30m24 30c-9-13 8-17 0-30" fill="none" stroke="#fff0b3" stroke-width="6" stroke-linecap="round"/><path d="M42 78h44" stroke="#fff" stroke-width="5" stroke-linecap="round"/>`,
+    super: `<path d="M15 60h98l-10 40c-4 15-16 22-39 22s-35-7-39-22z" fill="currentColor"/><path d="M11 57h106M35 47c-12-16 11-20 0-37m28 37c-12-16 11-20 0-37m28 37c-12-16 11-20 0-37" fill="none" stroke="#fff0b3" stroke-width="7" stroke-linecap="round"/><path d="M39 81h50m-44 15h38" stroke="#fff" stroke-width="6" stroke-linecap="round"/>`,
+  },
+  char_19: {
+    color: "#ed5a69",
+    light: "#ffdb8c",
+    skill: `<path d="M22 58 64 32l42 26-42 26z" fill="currentColor"/><path d="M22 58v38l42 24 42-24V58M64 84v36M64 32c-23 0-23-23-8-23 10 0 12 14 8 23zm0 0c23 0 23-23 8-23-10 0-12 14-8 23z" fill="none" stroke="#ffdb8c" stroke-width="6" stroke-linejoin="round"/><path d="m37 64 27 16 27-16" stroke="#fff" stroke-width="5"/>`,
+    super: `<path d="M13 57 64 25l51 32-51 31z" fill="currentColor"/><path d="M13 57v45l51 28 51-28V57M64 88v42M64 25C36 25 35 0 54 0c12 0 15 16 10 25zm0 0c28 0 29-25 10-25-12 0-15 16-10 25z" fill="none" stroke="#ffdb8c" stroke-width="7" stroke-linejoin="round"/><path d="m28 64 36 21 36-21M23 19l4 10 10 4-10 4-4 10-4-10-10-4 10-4zM105 18l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="#fff"/>`,
+  },
+  char_20: {
+    color: "#f05a94",
+    light: "#fff0bd",
+    skill: `<path d="M64 99c-28-17-38-37-23-50 10-9 20-3 23 8 3-11 13-17 23-8 15 13 5 33-23 50z" fill="currentColor"/><path d="M63 92c-2-24 8-42 27-55m-32 37c-11-8-21-8-31-2m40 15c12-8 23-8 34-2" fill="none" stroke="#fff0bd" stroke-width="5" stroke-linecap="round"/>`,
+    super: `<path d="M64 111c-37-22-50-48-30-66 14-12 27-4 30 10 3-14 16-22 30-10 20 18 7 44-30 66z" fill="currentColor"/><path d="M63 104c-3-32 10-57 37-75m-44 48c-15-11-29-10-42-2m56 29c16-11 31-10 45-2" fill="none" stroke="#fff0bd" stroke-width="6" stroke-linecap="round"/><path d="m17 39 4 9 9 4-9 4-4 9-4-9-9-4 9-4zM108 87l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="#fff"/>`,
+  },
+};
+
+function characterFxSvg(id: CharacterId, kind: "skill" | "super" | "item") {
+  const art = characterFxArt[id] || {
+    color: "#78b9ff",
+    light: "#fff0bd",
+    skill: '<path d="M64 18 76 50l34 14-34 14-12 32-12-32-34-14 34-14z" fill="currentColor"/>',
+    super: '<path d="M64 8 80 43l38 5-28 26 7 39-33-20-33 20 7-39L20 48l38-5z" fill="currentColor"/>',
+  };
+  const superMode = kind === "super",
+    itemMode = kind === "item";
+  const frame = superMode
+    ? `<path d="M64 5 73 20l18-9 1 19 20 1-9 18 15 11-15 12 9 18-20 1-1 19-18-9-9 15-12-15-18 9-1-19-20-1 9-18L7 64l15-11-9-18 20-1 1-19 18 9z" fill="none" stroke="${art.light}" stroke-width="3" stroke-linejoin="round"/><circle cx="64" cy="64" r="48" fill="${art.color}" fill-opacity=".2" stroke="${art.color}" stroke-width="3" stroke-dasharray="5 7"/>`
+    : itemMode
+      ? `<path d="M64 9 77 18l17-4 4 17 15 10-7 17 7 17-15 10-4 17-17-4-13 9-13-9-17 4-4-17-15-10 7-17-7-17 15-10 4-17 17 4z" fill="none" stroke="${art.light}" stroke-width="3" stroke-linejoin="round"/><circle cx="64" cy="64" r="43" fill="${art.color}" fill-opacity=".2" stroke="#ffe8a3" stroke-width="4"/>`
+      : `<circle cx="64" cy="64" r="48" fill="${art.color}" fill-opacity=".16" stroke="${art.light}" stroke-width="3" stroke-dasharray="16 9"/><circle cx="64" cy="64" r="39" fill="none" stroke="${art.color}" stroke-width="2"/>`;
+  const glyph = superMode ? art.super : art.skill;
+  const scale = superMode ? 0.9 : itemMode ? 0.68 : 0.78;
+  const itemBadge = itemMode
+    ? `<path d="m98 16 4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#fff0b3" stroke="#60483c" stroke-width="2"/>`
+    : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><radialGradient id="g"><stop stop-color="${art.color}" stop-opacity=".5"/><stop offset="1" stop-color="${art.color}" stop-opacity="0"/></radialGradient></defs><circle cx="64" cy="64" r="62" fill="url(#g)"/>${frame}<g transform="translate(64 64) scale(${scale}) translate(-64 -64)" color="${art.color}">${glyph}</g>${itemBadge}<path d="m64 8 3 8 8 3-8 3-3 8-3-8-8-3 8-3zM18 64l3 6 6 3-6 3-3 6-3-6-6-3 6-3zM110 64l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="${art.light}"/></svg>`;
+}
+
+const fxUrl = (svg: string) =>
+  `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+function replayStateAt(
+  template: BattleState,
+  frames: ReplayFrame[],
+  target: number,
+  totalTicks: number,
+) {
+  if (!frames.length) return template;
+  let right = frames.findIndex((frame) => frame.tick >= target);
+  if (right < 0) right = frames.length - 1;
+  const a = frames[Math.max(0, right - (frames[right].tick > target ? 1 : 0))],
+    b = frames[right],
+    span = Math.max(1, b.tick - a.tick),
+    t = Math.max(0, Math.min(1, (target - a.tick) / span)),
+    lerp = (x: number, y: number) => x + (y - x) * t,
+    state = structuredClone(template);
+  state.tick = Math.floor(Math.min(totalTicks, target));
+  state.finished = target >= totalTicks && b.tick >= totalTicks;
+  for (let i = 0; i < state.fighters.length; i++) {
+    const fighter = state.fighters[i],
+      from = a.fighters[i],
+      to = b.fighters[i] || from;
+    if (!from) continue;
+    fighter.x = lerp(from[0], to[0]);
+    fighter.y = lerp(from[1], to[1]);
+    fighter.hp = lerp(from[2], to[2]);
+    fighter.shield = lerp(from[3], to[3]);
+    fighter.energy = lerp(from[4], to[4]);
+    const turn = ((to[5] - from[5] + 48) % 32) - 16;
+    fighter.angle = Math.round((from[5] + turn * t + 32) % 32) % 32;
+    fighter.skillReady = from[6];
+    fighter.superUntil = from[7];
+    fighter.slowUntil = from[8];
+    fighter.burnUntil = from[9];
+    fighter.deadAt = from[10];
+    fighter.stats.reach = lerp(from[11], to[11]);
+    fighter.stats.hp = from[12];
+    fighter.memory.swordHits = from[13];
+    fighter.supers = from[14];
+    fighter.facing = (t < 0.5 ? from[15] : to[15]) || 1;
+    fighter.buffs = structuredClone(a.buffs[i] || []);
+  }
+  const nextProjectiles = new Map(b.projectiles.map((p) => [p[0], p]));
+  state.projectiles = a.projectiles.map((p) => {
+    const q = nextProjectiles.get(p[0]) || p;
+    return {
+      id: p[0],
+      owner: p[1],
+      x: lerp(p[2], q[2]),
+      y: lerp(p[3], q[3]),
+      vx: (q[2] - p[2]) / span,
+      vy: (q[3] - p[3]) / span,
+      life: 0,
+      pierce: 0,
+      hit: [],
+    };
+  });
+  state.zones = structuredClone(a.zones);
+  state.pending = structuredClone(a.pending);
+  state.events = structuredClone(a.events);
+  return state;
+}
+export function Arena({
+  config,
+  seed,
+  replay,
+  loadReplayChunk,
+  officialResult,
+  offset = 0,
+  muted,
+  low,
+  onError,
+  onInspect,
+  onFinished,
+  label,
+  highlightTeamId,
+  watchedTeamId,
+}: {
+  config: BattleConfig;
+  seed: number;
+  replay?: ReplayInfo | null;
+  loadReplayChunk: (index: number) => Promise<ReplayFrame[]>;
+  officialResult?: string;
+  offset?: number;
+  muted: boolean;
+  low: boolean;
+  onError: (s: string) => void;
+  onInspect?: (fighter: Fighter, tick: number) => void;
+  onFinished?: (teamId: string) => void;
+  label?: string;
+  highlightTeamId?: string;
+  watchedTeamId?: string;
+}) {
+  const mount = useRef<HTMLDivElement>(null),
+    options = useRef({
+      muted,
+      low,
+      onError,
+      offset,
+      onInspect,
+      onFinished,
+      loadReplayChunk,
+      officialResult,
+      highlightTeamId,
+      watchedTeamId,
+    });
+  options.current = {
+    muted,
+    low,
+    onError,
+    offset,
+    onInspect,
+    onFinished,
+    loadReplayChunk,
+    officialResult,
+    highlightTeamId,
+    watchedTeamId,
+  };
+  const [fighters, setFighters] = useState<Fighter[]>([]);
+  const [hud, setHud] = useState({
+    tick: 0,
+    alive: 0,
+    fps: 0,
+    hash: "",
+    kills: [] as string[],
+    result: "",
+  });
+  useEffect(() => {
+    if (replay && replay.version !== ENGINE_VERSION) {
+      options.current.onError(
+        "Replay thuộc phiên bản cũ. Hãy bắt đầu trận mới để dùng luật trận mới.",
+      );
+      return;
+    }
+    let disposed = false,
+      frame = 0,
+      app: Application | undefined,
+      audio: AudioContext | undefined;
+    const labels: Text[] = [];
+    const callouts: Text[] = [];
+    const faces: (Sprite | undefined)[] = [],
+      masks: (Graphics | undefined)[] = [];
+    const weapons: Sprite[][] = [];
+    const battle = createBattle(config, seed);
+    let state: BattleState = battle;
+    let started = performance.now(),
+      last = started,
+      hudTime = 0,
+      heard = 0,
+      playbackTick = 0;
+    let frames: ReplayFrame[] = [];
+    const loaded = new Set<number>(),
+      loading = new Set<number>(),
+      retryAfter = new Map<number, number>(),
+      checked = new Set<number>();
+    let verified = false;
+    let completionReported = false;
+    async function loadChunk(index: number) {
+      if (
+        !replay ||
+        replay.format !== 1 ||
+        index < 0 ||
+        index >= replay.chunks.length ||
+        loaded.has(index) ||
+        loading.has(index) ||
+        (retryAfter.get(index) || 0) > Date.now()
+      )
+        return;
+      loading.add(index);
+      try {
+        const received = await options.current.loadReplayChunk(index);
+        frames = [...frames, ...received].sort((a, b) => a.tick - b.tick);
+        frames = frames.filter(
+          (f, i) => i === 0 || f.tick !== frames[i - 1].tick,
+        );
+        loaded.add(index);
+        retryAfter.delete(index);
+      } catch (error) {
+        retryAfter.set(index, Date.now() + 1000);
+        throw error;
+      } finally {
+        loading.delete(index);
+      }
+    }
+    async function init() {
+      if (replay?.format === 1) {
+        if (!replay.chunks.length) throw Error("Replay không có frame đã ghi");
+        const initialTarget = Math.max(
+            0,
+            ((Date.now() + options.current.offset - replay.start) * 30) / 1000,
+          ),
+          current = replay.chunks.findIndex(
+            (chunk) => chunk.toTick >= initialTarget,
+          ),
+          selected = current < 0 ? replay.chunks.length - 1 : current;
+        playbackTick = Math.min(replay.totalTicks, initialTarget);
+        if (selected > 0) await loadChunk(selected - 1);
+        await loadChunk(selected);
+        state = replayStateAt(battle, frames, initialTarget, replay.totalTicks);
+      }
+      const instance = new Application();
+      app = instance;
+      await instance.init({
+        width: 1200,
+        height: 720,
+        background: "#151314",
+        antialias: true,
+        autoStart: false,
+        preference: "webgl",
+      });
+      if (disposed) {
+        instance.destroy(true);
+        return;
+      }
+      mount.current!.appendChild(instance.canvas);
+      const fxTextures = {} as Record<FxKind, Texture>;
+      const characterFxTextures = {} as Record<
+        CharacterId,
+        { skill: Texture; super: Texture; item: Texture }
+      >;
+      await Promise.all(
+        (Object.keys(fxArt) as FxKind[]).map(async (kind) => {
+          fxTextures[kind] = await Assets.load<Texture>(fxUrl(fxArt[kind]));
+        }),
+      );
+      await Promise.all(
+        CHARACTER_IDS.map(async (id) => {
+          const [skill, superFx, item] = await Promise.all([
+            Assets.load<Texture>(fxUrl(characterFxSvg(id, "skill"))),
+            Assets.load<Texture>(fxUrl(characterFxSvg(id, "super"))),
+            Assets.load<Texture>(fxUrl(characterFxSvg(id, "item"))),
+          ]);
+          characterFxTextures[id] = { skill, super: superFx, item };
+        }),
+      );
+      if (disposed) return;
+      const textureForEffect = (kind: EffectKind, characterId?: string) => {
+        if (
+          kind === "characterSkill" ||
+          kind === "characterSuper" ||
+          kind === "characterItem"
+        ) {
+          const id = CHARACTER_IDS.includes(characterId as CharacterId)
+            ? (characterId as CharacterId)
+            : undefined;
+          if (id) {
+            const personal = characterFxTextures[id];
+            return kind === "characterSkill"
+              ? personal.skill
+              : kind === "characterSuper"
+                ? personal.super
+                : personal.item;
+          }
+          return fxTextures.utility;
+        }
+        return fxTextures[kind];
+      };
+      const g = new Graphics();
+      instance.stage.addChild(g);
+      const auraNodes = state.fighters.map(() => {
+        const sprite = new Sprite(fxTextures.zone);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      });
+      for (const f of state.fighters) {
+        const label = new Text({
+          text: CHARACTERS[f.classId].short,
+          style: {
+            fontFamily: "Arial",
+            fontSize: 10,
+            fontWeight: "bold",
+            fill: 0x231f20,
+          },
+        });
+        label.anchor.set(0.5);
+        labels.push(label);
+        instance.stage.addChild(label);
+      }
+      await Promise.all(
+        state.fighters.map(async (f, i) => {
+          if (!f.characterId) return;
+          try {
+            const texture = await Assets.load<Texture>(avatar(f.characterId));
+            if (disposed) return;
+            const crops = [
+              [0.23, 0, 0.5],
+              [0.02, 0, 0.94],
+              [0.23, 0.1, 0.55],
+              [0.23, 0, 0.28],
+              [0.34, 0, 0.43],
+              [0.04, 0.05, 0.58],
+              [0.13, 0.14, 0.55],
+              [0.45, 0.04, 0.34],
+              [0.24, 0.05, 0.49],
+              [0.39, 0.05, 0.45],
+              [0.31, 0, 0.48],
+              [0.33, 0.02, 0.44],
+              [0.2, 0, 0.58],
+              [0.35, 0.01, 0.42],
+              [0.23, 0.04, 0.48],
+              [0.45, 0.01, 0.29],
+              [0.25, 0.01, 0.5],
+              [0.27, 0.02, 0.46],
+              [0.35, 0.01, 0.43],
+              [0, 0, 1],
+            ];
+            const w = texture.width,
+              h = texture.height,
+              sourceCrop = crops[Number(f.characterId.slice(-2)) - 1],
+              side = Math.min(w, h),
+              crop = sourceCrop || [(w - side) / (2 * w), (h - side) / (2 * h), side / w];
+            const size = Math.min(
+              w * crop[2],
+              h * (1 - crop[1]),
+              w * (1 - crop[0]),
+            );
+            const face = new Sprite(
+              new Texture({
+                source: texture.source,
+                frame: new Rectangle(
+                  Math.floor(w * crop[0]),
+                  Math.floor(h * crop[1]),
+                  Math.floor(size),
+                  Math.floor(size),
+                ),
+              }),
+            );
+            face.anchor.set(0.5);
+            const mask = new Graphics();
+            faces[i] = face;
+            masks[i] = mask;
+            face.mask = mask;
+            instance.stage.addChild(face, mask);
+            labels[i].visible = false;
+          } catch {
+            /* Short label remains available if an avatar fails to load. */
+          }
+        }),
+      );
+      if (disposed) return;
+      try {
+        const frames = new Map<string, Texture>();
+        for (const f of state.fighters) {
+          if (!f.characterId) continue;
+          const index = Number(f.characterId.slice(-2)) - 1;
+          if (!frames.has(f.characterId)) {
+            if (index >= 20) {
+              frames.set(f.characterId, await Assets.load<Texture>(weaponArtUrl(f.characterId)));
+            } else {
+              const atlas = await Assets.load<Texture>(weaponAtlasUrl());
+              const [x, y, width, height] = weaponFrame(f.characterId);
+              frames.set(f.characterId, new Texture({
+                source: atlas.source,
+                frame: new Rectangle(x, y, width, height),
+              }));
+            }
+          }
+          weapons[f.id] = Array.from(
+            { length: [2, 7, 8].includes(index + 1) ? 2 : 1 },
+            () => {
+              const sprite = new Sprite(frames.get(f.characterId!)!);
+              sprite.anchor.set(0.12, 0.5);
+              instance.stage.addChild(sprite);
+              return sprite;
+            },
+          );
+        }
+      } catch {
+        /* Keep the collision-aligned vector weapon when the atlas is unavailable. */
+      }
+      for (const face of faces) if (face) instance.stage.addChild(face);
+      for (const f of state.fighters)
+        if (f.characterId) {
+          const label = labels[f.id];
+          label.text = `${config.teams.findIndex((t) => t.id === f.team) + 1}.${f.slot + 1}`;
+          label.style.fontSize = 8;
+          label.style.fill = 0xffffff;
+          label.style.stroke = { color: 0x151018, width: 2 };
+          instance.stage.addChild(label);
+        }
+      for (let i = 0; i < 10; i++) {
+        const text = new Text({
+          text: "",
+          style: {
+            fontFamily: "Arial",
+            fontSize: 11,
+            fontWeight: "bold",
+            fill: 0xffe28b,
+            stroke: { color: 0x161019, width: 3 },
+          },
+        });
+        text.anchor.set(0.5);
+        instance.stage.addChild(text);
+        callouts.push(text);
+      }
+      const effectNodes = Array.from({ length: 72 }, () => {
+        const sprite = new Sprite(fxTextures.utility);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      });
+      const effectData: (
+        | {
+            tick: number;
+            life: number;
+            size: number;
+            rotation: number;
+            kind: EffectKind;
+            characterId?: string;
+          }
+        | undefined
+      )[] = Array(effectNodes.length).fill(undefined);
+      let effectCursor = 0,
+        lastFxTick = state.tick;
+      const burst = (
+        kind: EffectKind,
+        x: number,
+        y: number,
+        tick: number,
+        size = 1,
+        rotation = 0,
+        characterId?: string,
+      ) => {
+        const index = effectCursor++ % effectNodes.length;
+        const sprite = effectNodes[index];
+        sprite.texture = textureForEffect(kind, characterId);
+        sprite.position.set(
+          x * (1200 / config.width),
+          y * (720 / config.height),
+        );
+        sprite.visible = true;
+        sprite.alpha = 1;
+        sprite.scale.set(0.42 * size);
+        sprite.rotation = rotation;
+        effectData[index] = {
+          tick,
+          life:
+            kind === "clash"
+              ? 16
+              : kind === "shatter"
+                ? 36
+                : kind === "characterSuper"
+                  ? 48
+                  : 24,
+          size,
+          rotation,
+          kind,
+          characterId,
+        };
+      };
+      const zoneNodes = Array.from({ length: 80 }, () => {
+        const sprite = new Sprite(fxTextures.zone);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      });
+      const warningNodes = Array.from({ length: 80 }, () => {
+        const sprite = new Sprite(fxTextures.warn);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      });
+      const projectileNodes = Array.from({ length: 240 }, () => {
+        const sprite = new Sprite(fxTextures.bolt);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      });
+      // Keep character portraits and their labels above all combat VFX.
+      for (const face of faces) if (face) instance.stage.addChild(face);
+      for (const label of labels) instance.stage.addChild(label);
+      for (const text of callouts) instance.stage.addChild(text);
+      instance.stage.eventMode = "static";
+      instance.stage.hitArea = new Rectangle(0, 0, 1200, 720);
+      instance.stage.on("pointertap", (e) => {
+        const x = (e.global.x * config.width) / 1200,
+          y = (e.global.y * config.height) / 720;
+        const f = state.fighters
+          .filter(
+            (f) =>
+              f.hp > 0 &&
+              (f.x - x) ** 2 + (f.y - y) ** 2 < (f.radius * 1.6) ** 2,
+          )
+          .sort(
+            (a, b) =>
+              (a.x - x) ** 2 +
+                (a.y - y) ** 2 -
+                ((b.x - x) ** 2 + (b.y - y) ** 2) || a.id - b.id,
+          )[0];
+        if (f) options.current.onInspect?.(f, state.tick);
+      });
+      const sx = 1200 / config.width,
+        sy = 720 / config.height;
+      function draw() {
+        if (disposed) return;
+        const now = performance.now(),
+          desired = replay
+            ? Math.min(
+                replay.totalTicks,
+                Math.max(
+                  0,
+                  ((Date.now() + options.current.offset - replay.start) * 30) /
+                    1000,
+                ),
+              )
+            : Math.floor(((now - started) * 30) / 1000),
+          target = replay
+            ? (playbackTick = Math.max(playbackTick, desired))
+            : desired;
+        if (replay?.format === 1) {
+          const currentChunk =
+              replay.chunks.find((chunk) => target <= chunk.toTick)?.index ??
+              replay.chunks.length - 1,
+            currentInfo = replay.chunks[currentChunk];
+          if (
+            target >= currentInfo.toTick - 45 &&
+            (retryAfter.get(currentChunk + 1) || 0) <= Date.now()
+          )
+            void loadChunk(currentChunk + 1).catch((e) => {
+              if (!disposed) options.current.onError(e.message);
+            });
+          state = replayStateAt(battle, frames, target, replay.totalTicks);
+        } else {
+          let budget = 180;
+          while (!state.finished && state.tick < target && budget-- > 0)
+            stepBattle(state);
+          if (replay?.format === 0) {
+            const checkpoint = replay.checkpoints.find(
+              (c) => c.tick === state.tick,
+            );
+            if (checkpoint && !checked.has(checkpoint.tick)) {
+              checked.add(checkpoint.tick);
+              if (calculateStateHash(state) !== checkpoint.hash)
+                options.current.onError("Replay lịch sử lệch checksum.");
+            }
+            if (state.finished && !verified) {
+              verified = true;
+              if (calculateStateHash(state) !== replay.finalHash)
+                options.current.onError(
+                  "Replay lịch sử không khớp kết quả cuối.",
+                );
+            }
+          }
+        }
+        for (const e of state.events) {
+          if (e.tick <= lastFxTick || e.tick > state.tick) continue;
+          const source = state.fighters[e.source],
+            target = state.fighters[e.target];
+          if (!source || !target) continue;
+          if (e.type === "hit") {
+            burst(
+              "slash",
+              target.x,
+              target.y,
+              e.tick,
+              0.42,
+              (source.angle * Math.PI) / 16,
+            );
+            burst("shatter", target.x, target.y, e.tick, 0.06);
+          } else if (e.type === "clash") {
+            const x = e.x ?? (source.x + target.x) / 2,
+              y = e.y ?? (source.y + target.y) / 2;
+            burst("clash", x, y, e.tick, 0.3, (source.angle * Math.PI) / 16);
+          } else if (e.type === "kill") {
+            burst("shatter", target.x, target.y, e.tick, 1.25);
+          } else if (e.type === "super") {
+            burst(
+              "characterSuper",
+              source.x,
+              source.y,
+              e.tick,
+              source.characterId === "char_20" ? 1.05 : 0.9,
+              0,
+              source.characterId,
+            );
+          } else if (e.type === "heal") {
+            burst("heal", target.x, target.y, e.tick, 0.85);
+          } else if (e.type === "shield") {
+            burst("shield", target.x, target.y, e.tick, 0.8);
+          } else if (e.type.startsWith("skill:")) {
+            burst(
+              "characterSkill",
+              source.x,
+              source.y,
+              e.tick,
+              0.72,
+              0,
+              source.characterId,
+            );
+          } else if (e.type.startsWith("bond:")) {
+            burst("bond", source.x, source.y, e.tick, 0.85);
+          } else if (e.type.startsWith("group:")) {
+            burst("group", source.x, source.y, e.tick, 0.85);
+          } else if (e.type.startsWith("item:")) {
+            const itemId = CHARACTER_IDS[Number(e.type.slice(5)) - 1];
+            burst(
+              itemId ? "characterItem" : "utility",
+              target.x,
+              target.y,
+              e.tick,
+              0.62,
+              0,
+              itemId,
+            );
+          }
+        }
+        lastFxTick = Math.max(lastFxTick, state.tick);
+        g.clear();
+        for (let x = 0; x < 1200; x += 60)
+          g.moveTo(x, 0)
+            .lineTo(x, 720)
+            .stroke({ color: 0x393334, width: 1, alpha: 0.45 });
+        for (let y = 0; y < 720; y += 60)
+          g.moveTo(0, y)
+            .lineTo(1200, y)
+            .stroke({ color: 0x393334, width: 1, alpha: 0.45 });
+        const bounds = safeBounds(state);
+        const inset = bounds.left * sx;
+        const insetY = bounds.top * sy;
+        if (inset > 0 || insetY > 0) {
+          g.rect(0, 0, 1200, insetY)
+            .rect(0, 720 - insetY, 1200, insetY)
+            .rect(0, insetY, inset, 720 - 2 * insetY)
+            .rect(1200 - inset, insetY, inset, 720 - 2 * insetY)
+            .fill({ color: 0x0c0b0b, alpha: 0.94 });
+        }
+        // The visible edge matches the same collision bounds used by the engine.
+        g.rect(inset, insetY, 1200 - 2 * inset, 720 - 2 * insetY)
+          .stroke({ color: 0xf6ad13, width: 10, alpha: 0.09 })
+          .rect(inset, insetY, 1200 - 2 * inset, 720 - 2 * insetY)
+          .stroke({ color: 0xf6ad13, width: 5, alpha: 0.25 })
+          .rect(inset, insetY, 1200 - 2 * inset, 720 - 2 * insetY)
+          .stroke({ color: 0xf9de0b, width: 2 });
+        zoneNodes.forEach((sprite, i) => {
+          const z = state.zones[i];
+          if (!z) {
+            sprite.visible = false;
+            return;
+          }
+          sprite.visible = true;
+          const owner = state.fighters[z.owner];
+          sprite.texture = owner?.characterId
+            ? textureForEffect(
+                z.super ? "characterSuper" : "characterSkill",
+                owner.characterId,
+              )
+            : z.line
+              ? fxTextures.slash
+              : fxTextures.zone;
+          if (z.line) {
+            sprite.position.set(
+              (z.x + (z.line.dx * z.line.length * 50) / 1024) * sx,
+              (z.y + (z.line.dy * z.line.length * 50) / 1024) * sy,
+            );
+            sprite.width = Math.max(24, z.line.length * 100 * sx);
+            sprite.height = Math.max(12, z.line.width * 100 * sy);
+            sprite.rotation = Math.atan2(z.line.dy, z.line.dx);
+          } else {
+            sprite.position.set(z.x * sx, z.y * sy);
+            const size = (z.radius || 120) * 200 * sx;
+            sprite.width = size;
+            sprite.height = size;
+            sprite.rotation = state.tick * 0.012;
+          }
+          sprite.alpha = z.trap ? 0.2 : z.super ? 0.24 : 0.14;
+        });
+        warningNodes.forEach((sprite, i) => {
+          const p = state.pending[i];
+          if (!p) {
+            sprite.visible = false;
+            return;
+          }
+          const owner = state.fighters[p.owner];
+          if (!owner || owner.hp <= 0) {
+            sprite.visible = false;
+            return;
+          }
+          const at = p.target !== undefined ? state.fighters[p.target] : p;
+          sprite.visible = true;
+          sprite.texture = textureForEffect(
+            "characterSkill",
+            owner.characterId,
+          );
+          sprite.position.set(at.x * sx, at.y * sy);
+          sprite.width = sprite.height = p.kind === "deadline" ? 68 : 54;
+          sprite.rotation = state.tick * 0.025;
+          sprite.alpha = 0.35 + 0.25 * Math.sin(state.tick * 0.35);
+        });
+        effectNodes.forEach((sprite, i) => {
+          const fx = effectData[i];
+          if (!fx) return;
+          const progress = (state.tick - fx.tick) / fx.life;
+          if (progress >= 1) {
+            sprite.visible = false;
+            effectData[i] = undefined;
+            return;
+          }
+          const swell =
+            fx.kind === "shatter"
+              ? 0.45 + progress * 1.8
+              : fx.kind === "clash"
+                ? 0.34 + progress * 0.55
+                : fx.kind === "slash"
+                  ? 0.3 + progress * 0.5
+                  : 0.42 + progress * 1.35;
+          sprite.visible = progress >= 0;
+          sprite.alpha = Math.max(
+            0,
+            (fx.kind === "slash" || fx.kind === "shatter" ? 0.58 : 1) *
+              (1 - progress),
+          );
+          sprite.scale.set(swell * fx.size);
+          sprite.rotation =
+            fx.rotation + progress * (fx.kind === "shatter" ? 1.6 : 0.55);
+        });
+        const shown = state.events
+          .filter(
+            (e) =>
+              state.tick - e.tick < 35 &&
+              (e.type === "clash" ||
+                e.type === "super" ||
+                e.type.startsWith("skill:") ||
+                e.type.startsWith("bond:") ||
+                e.type.startsWith("item:") ||
+                e.type.startsWith("group:")),
+          )
+          .slice(-10);
+        callouts.forEach((text, i) => {
+          const e = shown[i];
+          text.visible = !!e;
+          if (!e) return;
+          const f = state.fighters[e.source],
+            c = character(f.characterId),
+            age = state.tick - e.tick;
+          if (!f) return;
+          let label =
+            e.type === "clash"
+              ? "⚔ CLASH!"
+              : e.type === "super"
+                ? "★ " + (c?.super[0] || "SUPER")
+                : e.type.startsWith("skill:")
+                  ? c?.skill[0] || "Kỹ năng"
+                  : e.type.startsWith("bond:")
+                    ? "✦ " +
+                      (BONDS.find((b) => b.id === e.type.slice(5))?.name ||
+                        "Liên kết")
+                    : e.type.startsWith("group:")
+                      ? "♥ " +
+                        (e.type === "group:G11" && e.amount === 2
+                          ? "Ghép Đôi Vá Nóng"
+                          : FRIEND_GROUPS.find((g) => g.id === e.type.slice(6))
+                              ?.name || "Hội bạn")
+                      : e.type === "item:01"
+                        ? "TÍCH!"
+                        : e.type === "item:15"
+                          ? "MÁT RỒI!"
+                          : e.type === "item:18"
+                            ? "TỰ TIN!"
+                            : e.type === "item:20"
+                              ? "THẾ CỜ VƯỜN HỒNG"
+                              : "HIỆU ỨNG ĐỒ";
+          text.text = label;
+          text.position.set(
+            Math.max(
+              70,
+              Math.min(1130, (e.type === "clash" ? (e.x ?? f.x) : f.x) * sx),
+            ),
+            Math.max(
+              20,
+              (e.type === "clash" ? (e.y ?? f.y) : f.y) * sy - 28 - age * 0.7,
+            ),
+          );
+          text.alpha = Math.min(1, (35 - age) / 12);
+        });
+        state.fighters.forEach((f, i) => {
+          const x = f.x * sx,
+            y = f.y * sy,
+            r = f.radius * sx,
+            visualRadius = r * (state.fighters.length <= 30 ? 1.38 : 1.25),
+            aura = auraNodes[i],
+            color =
+              colors[
+                config.teams.findIndex((t) => t.id === f.team) % colors.length
+              ];
+          labels[i].visible = f.hp > 0;
+          weapons[i]?.forEach((w) => (w.visible = f.hp > 0));
+          const auraKind: EffectKind | null =
+            f.superUntil > state.tick
+              ? "characterSuper"
+              : f.shield > 0
+                ? "shield"
+                : f.slowUntil > state.tick
+                  ? "characterSkill"
+                  : null;
+          aura.visible = f.hp > 0 && !!auraKind && !options.current.low;
+          if (auraKind && aura.visible) {
+            aura.texture = textureForEffect(auraKind, f.characterId);
+            aura.position.set(x, y);
+            aura.width = aura.height =
+              r * (f.superUntil > state.tick ? 3.6 : 2.8);
+            aura.rotation =
+              state.tick * (f.superUntil > state.tick ? 0.012 : -0.008);
+            aura.alpha =
+              f.superUntil > state.tick ? 0.18 : f.shield > 0 ? 0.16 : 0.11;
+          }
+          if (faces[i]) {
+            faces[i]!.visible = f.hp > 0;
+            masks[i]!.clear();
+            if (f.hp > 0) {
+              faces[i]!.position.set(x, y);
+              faces[i]!.width = faces[i]!.height = visualRadius * 2.2;
+              faces[i]!.scale.x = Math.abs(faces[i]!.scale.x) * (f.facing || 1);
+              masks[i]!.circle(x, y, visualRadius * 0.98).fill(0xffffff);
+            }
+          }
+          if (f.hp <= 0) return;
+          labels[i].position.set(
+            x + (f.characterId ? visualRadius : 0),
+            y + (f.characterId ? visualRadius : 0),
+          );
+          g.circle(x, y, visualRadius + 3).fill({ color, alpha: 0.18 });
+          if (options.current.highlightTeamId === f.team)
+            g.circle(x, y, visualRadius + 7).stroke({ color: 0xffe18a, width: 3, alpha: 0.95 });
+          if (options.current.watchedTeamId === f.team && options.current.watchedTeamId !== options.current.highlightTeamId)
+            g.circle(x, y, visualRadius + 12).stroke({ color: 0x70d9ff, width: 2, alpha: 0.9 });
+          g.circle(x, y, visualRadius)
+            .fill(CHARACTERS[f.classId].color)
+            .stroke({ color, width: 3 });
+          const number = Number(f.characterId?.slice(-2) || 0);
+          const count = f.characterId
+            ? [2, 7, 8].includes(number)
+              ? 2
+              : 1
+            : f.classId === "assassin" || f.classId === "berserker"
+              ? 2
+              : 1;
+          for (let w = 0; w < count; w++) {
+            const d = DIRECTIONS[(f.angle + w * 16) % 32],
+              reach =
+                (f.characterId
+                  ? f.stats.reach *
+                    (f.superUntil > state.tick &&
+                    (number === 2 ||
+                      (number === 12 && (f.memory.swordHits || 0) < 3))
+                      ? 1.25
+                      : 1)
+                  : f.stats.reach +
+                    (f.superUntil > state.tick && f.classId === "swordsman"
+                      ? 1800
+                      : 0)) * sx;
+            const weapon = weapons[i]?.[w];
+            if (weapon) {
+              weapon.position.set(
+                x + (d[0] * r * 0.7) / 1024,
+                y + (d[1] * r * 0.7) / 1024,
+              );
+              weapon.width = reach * 1.24;
+              weapon.height = Math.max(
+                6,
+                (reach * weapon.texture.height * 1.55) / weapon.texture.width,
+              );
+              weapon.rotation = ((f.angle + w * 16) * Math.PI) / 16;
+            }
+            g.moveTo(x + (d[0] * r) / 1024, y + (d[1] * r) / 1024)
+              .lineTo(x + (d[0] * reach) / 1024, y + (d[1] * reach) / 1024)
+              .stroke({
+                color: 0xf4f2f2,
+                width: weapon ? 2 : f.classId === "guardian" ? 10 : 6,
+                alpha: weapon ? 0.18 : 1,
+              });
+          }
+          g.rect(x - 23, y - visualRadius - 13, 46, 5).fill(0x393334);
+          g.rect(
+            x - 23,
+            y - visualRadius - 13,
+            (46 * f.hp) / f.stats.hp,
+            5,
+          ).fill(color);
+          g.rect(x - 23, y - visualRadius - 7, (46 * f.energy) / 100, 2).fill(
+            0x9c94ff,
+          );
+          if (f.characterId) {
+            const cd =
+              [7, 6, 7, 6, 7, 8, 8, 7, 7, 8, 8, 6, 8, 7, 7, 7, 6, 7, 8, 7][
+                Number(f.characterId.slice(-2)) - 1
+              ] * 30;
+            g.rect(
+              x - 23,
+              y + visualRadius + 5,
+              46 * Math.max(0, 1 - (f.skillReady - state.tick) / cd),
+              2,
+            ).fill(0xffcb75);
+          }
+        });
+        projectileNodes.forEach((sprite, i) => {
+          const p = state.projectiles[i];
+          if (!p) {
+            sprite.visible = false;
+            return;
+          }
+          sprite.visible = true;
+          const owner = state.fighters[p.owner];
+          sprite.texture =
+            p.normal === false
+              ? textureForEffect("characterSkill", owner?.characterId)
+              : fxTextures.bolt;
+          sprite.position.set(p.x * sx, p.y * sy);
+          sprite.width = 23;
+          sprite.height = 18;
+          sprite.rotation = Math.atan2(p.vy, p.vx);
+        });
+        const events = state.events.filter((e) => e.type === "kill");
+        if (events.length > heard && !options.current.muted) {
+          try {
+            audio ??= new AudioContext();
+            const osc = audio.createOscillator(),
+              gain = audio.createGain();
+            osc.connect(gain);
+            gain.connect(audio.destination);
+            osc.frequency.value = 240;
+            gain.gain.setValueAtTime(0.035, audio.currentTime);
+            gain.gain.exponentialRampToValueAtTime(
+              0.001,
+              audio.currentTime + 0.08,
+            );
+            osc.start();
+            osc.stop(audio.currentTime + 0.08);
+          } catch {}
+        }
+        heard = events.length;
+        instance.renderer.render(instance.stage);
+        if (now - hudTime > 250) {
+          const winningTeam = state.finished
+            ? options.current.officialResult ||
+              state.fighters.find((f) => f.hp > 0)?.team ||
+              calculateBattleResult(state)[0]?.id ||
+              ""
+            : "";
+          if (state.finished && !completionReported) {
+            completionReported = true;
+            options.current.onFinished?.(winningTeam);
+          }
+          setHud({
+            tick: state.tick,
+            alive: new Set(
+              state.fighters.filter((f) => f.hp > 0).map((f) => f.team),
+            ).size,
+            fps: Math.round(1000 / Math.max(1, now - last)),
+            hash: state.finished
+              ? replay?.finalHash || calculateStateHash(state)
+              : "",
+            kills: events
+              .slice(-4)
+              .map((e) => {
+                const killer = state.fighters[e.source];
+                const victim = state.fighters[e.target];
+                if (!killer || !victim) return "";
+                const killerName =
+                    character(killer.characterId)?.name ||
+                    CHARACTERS[killer.classId].name,
+                  victimName =
+                    character(victim.characterId)?.name ||
+                    CHARACTERS[victim.classId].name,
+                  killerTeam =
+                    config.teams.findIndex((team) => team.id === killer.team) +
+                    1,
+                  victimTeam =
+                    config.teams.findIndex((team) => team.id === victim.team) +
+                    1;
+                return `${killerName} - Đội ${killerTeam} - Hạ gục ${victimName} - Đội ${victimTeam}`;
+              })
+              .filter(Boolean),
+            result: state.finished
+              ? winningTeam
+              : "",
+          });
+          setFighters(structuredClone(state.fighters));
+          hudTime = now;
+        }
+        last = now;
+        frame = requestAnimationFrame(draw);
+      }
+      frame = requestAnimationFrame(draw);
+    }
+    init().catch((e) => {
+      if (!disposed)
+        options.current.onError("Không khởi tạo được đồ họa: " + e.message);
+    });
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(frame);
+      audio?.close();
+      if (app?.renderer) app.destroy(true);
+    };
+  }, [config, seed, replay]);
+  return (
+    <div className="arena-shell">
+      <div className="arena-top">
+        <span>
+          <i className="live-dot" />{" "}
+          {label || (replay ? "REPLAY CHÍNH THỨC" : "PHÒNG TẬP OFFLINE")}
+        </span>
+        <span>
+          {hud.alive} đội còn sống · {(hud.tick / 30).toFixed(1)}s
+        </span>
+      </div>
+      <div className="canvas-mount" ref={mount} />
+      <div className="arena-bottom">
+        <span>
+          {hud.hash
+            ? `Kết thúc · ${hud.hash} · ${hud.result.slice(0, 12)}`
+            : "Bi-a tự động · vũ khí xoay · không điều khiển trực tiếp"}
+        </span>
+        <span>
+          {import.meta.env.DEV
+            ? `${hud.fps} FPS · tick ${hud.tick}`
+            : "30 ticks/s"}
+          {` · Nhịp +${roundTempo(hud.tick).attack - 100}% ATK / +${roundTempo(hud.tick).speed - 100}% tốc độ`}
+        </span>
+      </div>
+      <div className="kill-feed">
+        {hud.kills.map((k, i) => (
+          <small key={i}>{k}</small>
+        ))}
+      </div>
+      <div className="fighter-list" aria-label="Nhân vật trong trận">
+        {fighters.map((f) => (
+          <button
+            className={"fighter-token " + (f.hp <= 0 ? "dead" : "")}
+            key={f.id}
+            onClick={() => onInspect?.(f, hud.tick)}
+          >
+            {f.characterId && <Portrait id={f.characterId} />}
+            <span>
+              Đội {config.teams.findIndex((t) => t.id === f.team) + 1} · Slot{" "}
+              {f.slot + 1}
+              <br />
+              {character(f.characterId)?.name || CHARACTERS[f.classId].name}
+              <br />
+              {f.hp} HP · {f.energy}⚡
+            </span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}

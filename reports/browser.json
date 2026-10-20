@@ -1,0 +1,15 @@
+{
+  "runtime": "155.0.8059.80",
+  "seeds": 100,
+  "crossRuntimeParity": true,
+  "uiChecks": [
+    "Pixi WebGL canvas",
+    "restart offline battle",
+    "create multiplayer room",
+    "session restore after reload",
+    "initial and next-round shop phases",
+    "390px responsive layout",
+    "recorded multiplayer replay playback"
+  ],
+  "pageErrors": []
+}

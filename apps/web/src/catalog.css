@@ -1,0 +1,752 @@
+.portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.catalog-toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+}
+.catalog-toolbar input {
+  flex: 1;
+  min-width: 150px;
+}
+.catalog-toolbar select {
+  max-width: 180px;
+}
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.roster-card,
+.item-card {
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  background: var(--surface, #171717);
+  border: 1px solid #38343a;
+  border-radius: 14px;
+  transition:
+    transform 0.15s,
+    border-color 0.15s;
+}
+.roster-card:hover,
+.item-card:hover {
+  transform: translateY(-3px);
+  border-color: #ffe02b;
+}
+.roster-art {
+  height: 180px;
+  background: radial-gradient(ellipse at bottom, #42425b, #1b1b22 70%);
+  position: relative;
+  padding: 10px 12px 0;
+}
+.roster-art img {
+  filter: drop-shadow(0 6px 8px #0008);
+}
+.tier-badge {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  background: #151515;
+  padding: 3px 8px;
+  border-radius: 5px;
+  color: #f2f4f7;
+  font-size: 11px;
+}
+.rarity-label { font-weight: 800; }
+.rarity-label.tier-t1,.tier-badge.tier-t1 { color: #f2f4f7; }
+.rarity-label.tier-t2,.tier-badge.tier-t2 { color: #61b8ff; }
+.rarity-label.tier-t3,.tier-badge.tier-t3 { color: #d274ff; }
+.rarity-label.tier-t4,.tier-badge.tier-t4 { color: #ffc24f; }
+.rarity-label.tier-god,.tier-badge.tier-god { color: #ff4b55; }
+.roster-caption {
+  padding: 14px;
+}
+.roster-caption h3 {
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+.roster-caption p {
+  font-size: 12px;
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.badges > span {
+  background: #282731;
+  color: #ded6f6;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 10px;
+}
+.item-card {
+  padding: 18px;
+}
+.item-icon {
+  display: block;
+  width: 74px;
+  height: 74px;
+  margin-bottom: 14px;
+}
+.item-sprite {
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  vertical-align: middle;
+  filter: drop-shadow(0 4px 8px #0008);
+}
+.item-sprite.item-photo {
+  padding: 2px;
+  border-radius: 7px;
+  background: #f7f5ef;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px #0008);
+}
+.item-card .item-photo { width: 74px; height: 74px; }
+.inventory-card .item-photo { width: 72px; height: 72px; }
+.equipped-items .item-photo { width: 20px; height: 20px; }
+.reveal-card-art .item-photo { width: 100%; height: 100%; max-width: 100%; max-height: 100%; object-fit: contain; }
+.affinity-card .item-sprite {
+  width: 38px;
+  height: 38px;
+}
+.item-card h3 {
+  font-size: 15px;
+}
+.item-card p {
+  font-size: 12px;
+  color: #c9c4c8;
+}
+.item-meta {
+  font-size: 10px;
+  color: #bbb;
+}
+.rarity-1 {
+  border-top: 3px solid #61b8ff;
+}
+.rarity-2 {
+  border-top: 3px solid #d274ff;
+}
+.rarity-3 {
+  border-top: 3px solid #ffc24f;
+}
+.rarity-0 { border-top: 3px solid #f2f4f7; }
+.team-choices {
+  background: #19191d;
+  border: 1px solid #38343a;
+  border-radius: 12px;
+  padding: 18px;
+  margin: 14px 0;
+}
+.team-choices label {
+  display: block;
+  margin: 12px 0;
+}
+.team-choices select {
+  width: 100%;
+  margin-top: 5px;
+}
+.team-choices p,
+.team-choices details {
+  font-size: 12px;
+}
+.bond-preview {
+  border-top: 1px solid #333;
+  padding: 12px 0;
+}
+.bond-preview button {
+  font-size: 10px;
+  margin: 4px;
+}
+.team-slot {
+  padding: 15px;
+  border: 1px solid #37343a;
+  border-radius: 12px;
+  background: #1b191c;
+  min-width: 0;
+}
+.team-slot.selected {
+  border-color: #ffe02b;
+  box-shadow: 0 0 0 1px #ffe02b;
+}
+.slot-profile {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.slot-profile img {
+  width: 70px;
+  height: 90px;
+  flex-shrink: 0;
+}
+.slot-profile h3 {
+  font-size: 13px;
+}
+.slot-profile small {
+  display: block;
+  font-size: 10px;
+}
+.slot-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+.slot-actions button {
+  font-size: 10px;
+  padding: 7px;
+}
+.equipment-chip {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 6px;
+}
+.equipment-chip button {
+  font-size: 10px;
+  padding: 6px;
+}
+.equipment-chip .active {
+  border-color: #ffe02b;
+}
+.mini-avatars {
+  display: flex;
+  gap: 4px;
+  margin-top: 5px;
+}
+.mini-avatars button {
+  width: 32px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid #444;
+  border-radius: 6px;
+}
+.info-dialog {
+  border: 1px solid #504855;
+  border-radius: 18px;
+  background: #19171d;
+  color: #f5f1f7;
+  padding: 0;
+  width: min(860px, calc(100vw - 28px));
+  max-height: 90dvh;
+  box-shadow: 0 30px 100px #000b;
+  overflow: hidden;
+}
+.info-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.info-dialog::backdrop {
+  background: #08070dbd;
+  backdrop-filter: blur(6px);
+}
+.dialog-head {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #38323d;
+  flex-shrink: 0;
+}
+.dialog-head > span {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #c4bacd;
+}
+.dialog-head button {
+  font-size: 18px;
+}
+.dialog-body {
+  padding: 24px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+.dialog-body h2 {
+  font-size: 30px;
+  line-height: 1.2;
+  margin: 10px 0 14px;
+}
+.dialog-body h3 {
+  font-size: 15px;
+  margin: 22px 0 9px;
+}
+.dialog-body p {
+  line-height: 1.7;
+  font-size: 13px;
+  color: #d4cddc;
+}
+.dialog-body blockquote {
+  font-size: 14px;
+  font-style: italic;
+  color: #f5d58b;
+  margin: 18px 0;
+}
+.profile-hero {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+.profile-hero > .portrait {
+  height: 250px;
+  background: radial-gradient(ellipse, #42425b, #23212b);
+  border-radius: 14px;
+}
+.eyebrow {
+  font-size: 10px;
+  color: #ffe02b;
+  letter-spacing: 1px;
+}
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.profile-stats > div {
+  padding: 10px;
+  background: #25212e;
+  border-radius: 8px;
+}
+.profile-stats small {
+  display: block;
+  font-size: 10px;
+  color: #bfb6c9;
+}
+.profile-stats b {
+  display: block;
+  font-size: 18px;
+  margin-top: 4px;
+}
+.skill-info {
+  display: flex;
+  gap: 14px;
+  background: #22202a;
+  border: 1px solid #37303e;
+  padding: 16px;
+  margin: 10px 0;
+  border-radius: 12px;
+}
+.skill-info h3 {
+  margin: 0 0 7px;
+}
+.skill-info p {
+  margin: 0;
+}
+.skill-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: #3a3145;
+  color: #ffdf39;
+  border-radius: 10px;
+  font-size: 22px;
+}
+.affinity-card {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  padding: 14px;
+  text-align: left;
+  background: #24212c;
+  border: 1px solid #514064;
+  border-radius: 12px;
+}
+.affinity-card > .portrait {
+  width: 65px;
+  height: 85px;
+  flex-shrink: 0;
+}
+.affinity-card > span:first-child {
+  font-size: 30px;
+}
+.affinity-card p {
+  margin-bottom: 0;
+}
+.affinity-card.matched {
+  border-color: #80dfac;
+}
+.bond-info {
+  padding: 14px;
+  border: 1px solid #39333e;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.bond-info small {
+  color: #c5b8d3;
+}
+.bond-members {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+.bond-members button {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  padding: 6px;
+  text-align: left;
+}
+.bond-members img {
+  width: 35px;
+  height: 45px;
+  flex-shrink: 0;
+}
+.info-note {
+  padding: 16px;
+  background: #2b271e;
+  border-left: 3px solid #ffd84c;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid #38323d;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.item-glyph {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 16px;
+}
+.item-glyph .item-sprite {
+  width: 124px;
+  height: 124px;
+}
+.item-profile {
+  text-align: center;
+}
+.item-profile .badges {
+  justify-content: center;
+}
+.item-effect {
+  font-size: 17px !important;
+  color: #f5e8b9 !important;
+}
+.live-stats {
+  color: #97dfb4 !important;
+}
+.fighter-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: #171519;
+}
+.fighter-token {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 9px;
+  padding: 3px 6px;
+  min-width: 0;
+}
+.fighter-token img {
+  width: 25px;
+  height: 30px;
+}
+.fighter-token.dead {
+  opacity: 0.4;
+}
+button:focus-visible,
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid #ffe02b;
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .roster-art {
+    height: 120px;
+    padding: 5px;
+  }
+  .roster-caption {
+    padding: 9px;
+  }
+  .roster-caption h3 {
+    font-size: 11px;
+  }
+  .roster-caption p,
+  .roster-caption small {
+    font-size: 9px;
+  }
+  .badges > span {
+    font-size: 8px;
+    padding: 3px 4px;
+  }
+  .item-card {
+    padding: 10px;
+  }
+  .item-card h3 {
+    font-size: 12px;
+  }
+  .item-card p {
+    font-size: 10px;
+  }
+  .item-card small {
+    font-size: 9px;
+  }
+  .catalog-toolbar select {
+    max-width: 140px;
+  }
+  .item-icon {
+    width: 52px;
+    height: 52px;
+  }
+  .profile-hero {
+    grid-template-columns: 110px 1fr;
+    gap: 14px;
+  }
+  .profile-hero > .portrait {
+    height: 170px;
+  }
+  .dialog-body {
+    padding: 16px;
+  }
+  .dialog-body h2 {
+    font-size: 23px;
+  }
+  .profile-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .bond-members {
+    flex-wrap: wrap;
+  }
+  .bond-members button {
+    min-width: 90px;
+  }
+  .dialog-actions {
+    padding: 12px;
+  }
+  .team-slot {
+    padding: 10px;
+  }
+  .slot-profile {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .slot-profile img {
+    width: 100%;
+    height: 110px;
+  }
+  .slot-profile h3 {
+    font-size: 12px;
+  }
+  .slot-profile small {
+    font-size: 9px;
+  }
+  .loadouts {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  .fighter-list {
+    max-height: 100px;
+    overflow: auto;
+  }
+  .catalog-toolbar { align-items: stretch; }
+  .catalog-toolbar input { min-width: 0; flex: 1 1 100%; }
+  .catalog-toolbar select { flex: 1 1 0; max-width: none; }
+  .catalog-toolbar > button { flex: 1 1 0; min-width: 0; padding: 9px 7px; }
+  .catalog-page .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .catalog-page .item-card p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+  .info-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); border-radius: 14px; }
+  .profile-hero { grid-template-columns: minmax(88px, 30%) minmax(0, 1fr); gap: 12px; }
+  .profile-hero > div:last-child { min-width: 0; }
+  .profile-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dialog-body { padding: 14px; }
+  .dialog-body p { overflow-wrap: anywhere; }
+  .dialog-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .dialog-actions button { flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .roster-card,
+  .item-card {
+    transition: none;
+  }
+}
+.player {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+}
+.player > .mini-avatars {
+  grid-column: 2;
+  grid-row: 2;
+}
+.player > strong {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+}
+.player .mini-avatars button {
+  flex-shrink: 0;
+}
+.catalog-library {
+  width: min(1120px, 100%);
+  max-height: min(900px, calc(100vh - 48px));
+  overflow: auto;
+  margin: 0;
+  padding: 22px;
+  background: var(--surface, #171717);
+  border: 1px solid #51483b;
+  border-radius: 16px;
+  box-shadow: 0 24px 90px #000b;
+}
+.catalog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #080708d9;
+  backdrop-filter: blur(6px);
+}
+.catalog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.catalog-heading h2 {
+  margin: 0 0 5px;
+}
+.catalog-heading button {
+  flex-shrink: 0;
+}
+.slot-actions select {
+  max-width: 100%;
+  font-size: 11px;
+}
+.fighter-list {
+  max-height: 150px;
+  overflow: auto;
+}
+.all-stats {
+  margin: 10px 0;
+  font-size: 12px;
+  color: #c9bfd5;
+}
+.all-stats .profile-stats {
+  margin-top: 10px;
+}
+.weapon-art {
+  display: inline-block;
+  width: 120px;
+  height: 120px;
+  background-size: 500% 400%;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 5px #0007);
+}
+@media (max-width: 720px) {
+  .catalog-backdrop {
+    padding: 8px;
+  }
+  .catalog-library {
+    width: 100%;
+    max-height: calc(100dvh - 16px);
+    padding: 14px;
+  }
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.profile-art {
+  height: 250px;
+  position: relative;
+  background: radial-gradient(ellipse, #42425b, #23212b);
+  border-radius: 14px;
+}
+.profile-art > .portrait {
+  height: 100%;
+}
+.profile-art > .weapon-art {
+  position: absolute;
+  right: -10px;
+  bottom: 0;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+}
+.roster-art > .weapon-art {
+  position: absolute;
+  right: 5px;
+  bottom: 0;
+  width: 75px;
+  height: 75px;
+  pointer-events: none;
+}
+.weapon-detail {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px;
+  background: #25212e;
+  border-radius: 12px;
+}
+.friend-members {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.friend-members button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  max-width: 100%;
+  text-align: left;
+}
+.friend-members img {
+  width: 30px;
+  height: 36px;
+}
+.team-choices > details {
+  margin-top: 14px;
+}
+@media (max-width: 760px) {
+  .profile-art {
+    height: 170px;
+  }
+  .profile-art > .weapon-art {
+    width: 70px;
+    height: 70px;
+    right: -8px;
+  }
+  .roster-art > .weapon-art {
+    width: 55px;
+    height: 55px;
+  }
+  .weapon-detail > .weapon-art {
+    width: 85px;
+    height: 85px;
+  }
+  .weapon-detail {
+    gap: 8px;
+    padding: 8px;
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "@chaos/battle-engine",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts"
+}

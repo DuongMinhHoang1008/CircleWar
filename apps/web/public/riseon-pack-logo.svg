@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 650" role="img" aria-labelledby="title desc">
+  <title id="title">RiseOn Game Studio</title>
+  <desc id="desc">A crowned champion portrait over an orange medallion with the RISEON wordmark.</desc>
+  <defs>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff7c1b"/><stop offset="1" stop-color="#ec390d"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff185"/><stop offset=".45" stop-color="#ffc21a"/><stop offset="1" stop-color="#f27808"/></linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#ffd099"/><stop offset="1" stop-color="#d9794b"/></linearGradient>
+    <clipPath id="medallion"><circle cx="256" cy="226" r="202"/></clipPath>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="7"/><feOffset dy="7"/><feComponentTransfer><feFuncA type="linear" slope=".65"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="256" cy="226" r="220" fill="#080b12" stroke="#1c2431" stroke-width="10"/>
+  <circle cx="256" cy="226" r="202" fill="url(#orange)" stroke="#f7a134" stroke-width="5"/>
+  <g clip-path="url(#medallion)" opacity=".22" fill="none" stroke="#ffd26d" stroke-width="8"><path d="m62 166 64 10-11 64-64-12zm334 8 54-12 14 57-54 14zM77 293l37 8-14 44-38-9zm333-5 34 8-13 41-36-8z"/><path d="m118 115 25 4m247 12 24-5M93 369l26-5m285 1 27 5"/></g>
+  <g filter="url(#shadow)">
+    <path d="m116 137 16-75 51 44 38-87 35 75 45-77 29 84 55-35 7 76-48 30H166z" fill="url(#gold)" stroke="#351b0d" stroke-width="13" stroke-linejoin="round"/>
+    <path d="m132 120 33 24h184l35-25-5 34H139z" fill="#e79008" stroke="#fff0a1" stroke-width="5"/>
+    <path d="m219 101 26-58 23 57z" fill="#1263ed" stroke="#15233b" stroke-width="8"/><path d="m184 123 12-29 18 23zm123-4 20-34 14 25z" fill="#8650d9" stroke="#381b40" stroke-width="6"/><circle cx="134" cy="82" r="10" fill="#f8f0c1"/><circle cx="379" cy="84" r="10" fill="#f8f0c1"/>
+    <path d="M148 188c-8-66 29-116 108-117 77 1 117 49 108 123l-22 73H160z" fill="#17151b" stroke="#111117" stroke-width="10"/>
+    <path d="M164 201c-3-56 27-91 91-93 66 2 96 38 91 96l-13 100c-7 50-37 78-78 78-43 0-73-29-79-79z" fill="url(#skin)" stroke="#402017" stroke-width="8"/>
+    <path d="M156 210c-7-42-1-85 30-111 12 18 26 27 43 24 20-3 31-24 53-25 26-1 38 20 70 12 9 31 7 65 2 95-17-16-30-38-35-64-30 30-77 44-153 48z" fill="#1b171a"/>
+    <path d="M183 217q28-23 55 0m35 0q29-23 55 0" fill="none" stroke="#3a2020" stroke-width="12" stroke-linecap="round"/><path d="M193 234q18-12 34 0m57 0q17-12 34 0" fill="none" stroke="#211923" stroke-width="7" stroke-linecap="round"/><ellipse cx="212" cy="237" rx="7" ry="9" fill="#13131a"/><ellipse cx="304" cy="237" rx="7" ry="9" fill="#13131a"/><path d="m255 239-14 50 18 5" fill="none" stroke="#a8583d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M224 314q31 29 65 0-6 39-34 40-24-2-31-40z" fill="#79244a" stroke="#572038" stroke-width="5"/><path d="M230 317q25 10 52 0" fill="none" stroke="#f3a0b0" stroke-width="5"/>
+    <path d="M110 465c9-66 47-105 101-117l45 35 45-35c57 12 91 51 101 117z" fill="#111923" stroke="#0b1018" stroke-width="12"/><path d="m168 371 55 94m121-94-55 94" fill="none" stroke="#f4f1e9" stroke-width="13"/><path d="m183 363 62 102m91-102-62 102" fill="none" stroke="#2396e9" stroke-width="8"/>
+  </g>
+  <path d="M50 430q206 55 412 0v86H50z" fill="#090c13" stroke="#f48b24" stroke-width="5"/>
+  <text x="256" y="492" fill="url(#gold)" stroke="#3c1908" stroke-width="4" paint-order="stroke" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="62" font-style="italic" font-weight="1000" letter-spacing="-3">RISEON</text>
+  <path d="M87 539h338" stroke="#f07620" stroke-width="5"/><text x="256" y="572" fill="#fff7e7" text-anchor="middle" font-family="monospace" font-size="22" font-weight="900" letter-spacing="8">GAME STUDIO</text>
+</svg>

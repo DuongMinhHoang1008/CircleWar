@@ -1,0 +1,13 @@
+{
+  "characters": 20,
+  "weapons": 20,
+  "automaticStacking": true,
+  "rosePopup": true,
+  "courageDescription": true,
+  "anchoredGroups": true,
+  "fullComboComposition": true,
+  "bossExclusions": true,
+  "ideaGroup": true,
+  "mobileOverflow": false,
+  "pageErrors": []
+}
