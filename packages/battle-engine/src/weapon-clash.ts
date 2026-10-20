@@ -1,6 +1,7 @@
 import type { BattleState, Fighter } from "./types";
 import { DIRECTIONS, div, UNIT } from "./math";
 import { capsuleHit } from "./physics";
+import { weaponCount, weaponReach } from "./weapons";
 
 const CLASH_COOLDOWN = 12;
 const CLASH_RADIUS = 650;
@@ -18,34 +19,6 @@ export function reverseWeaponSpin(f: Fighter, tick: number) {
 export function rotateWeaponAngle(f: Fighter, multiplier = 1) {
   const direction = f.memory.spinDirection || 1;
   f.angle = (f.angle + f.stats.rotation * multiplier * direction + 32) % 32;
-}
-
-function weaponCount(f: Fighter) {
-  const number = Number(f.characterId?.slice(-2) || 0);
-  return f.characterId
-    ? [2, 7, 8].includes(number)
-      ? 2
-      : 1
-    : f.classId === "assassin" || f.classId === "berserker"
-      ? 2
-      : 1;
-}
-
-function weaponReach(s: BattleState, f: Fighter) {
-  const number = Number(f.characterId?.slice(-2) || 0);
-  if (f.characterId)
-    return div(
-      f.stats.reach *
-        (f.superUntil > s.tick &&
-        (number === 2 || (number === 12 && (f.memory.swordHits || 0) < 3))
-          ? 125
-          : 100),
-      100,
-    );
-  return (
-    f.stats.reach +
-    (f.superUntil > s.tick && f.classId === "swordsman" ? 1800 : 0)
-  );
 }
 
 function segment(f: Fighter, weapon: number, reach: number) {

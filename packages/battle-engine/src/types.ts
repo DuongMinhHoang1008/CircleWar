@@ -1,9 +1,9 @@
 import type { Loadout, Stats } from "../../shared/src/balance";
 import type { TeamChoice } from "../../shared/src/catalog";
-export const ENGINE_VERSION = "chaos-integer-v19";
+export const ENGINE_VERSION = "chaos-integer-v22";
 export const TICK_RATE = 30;
 export interface BattleConfig {
-  teams: { id: string; loadouts: Loadout[]; choice?: TeamChoice }[];
+  teams: { id: string; name?: string; loadouts: Loadout[]; choice?: TeamChoice }[];
   shrinkSeconds: number;
   width: number;
   height: number;
@@ -17,6 +17,7 @@ export interface Fighter {
   characterId?: Loadout["characterId"];
   slot: number;
   equipment: string[];
+  equipmentLevels?: Record<string, number>;
   level: number;
   skillReady: number;
   nextAttack: number;
@@ -59,6 +60,8 @@ export interface Projectile {
   normal?: boolean;
   push?: number;
   secondary?: number;
+  kind?: "skill" | "super";
+  slow?: number;
 }
 export interface Zone {
   owner: number;
@@ -136,8 +139,10 @@ export interface ReplayFrame {
     number,
   ][];
   buffs: BattleState["fighters"][number]["buffs"][];
-  /** id, owner, x, y */
-  projectiles: [number, number, number, number][];
+  /** id, owner, x, y; optional visual metadata keeps older frames readable. */
+  projectiles: [
+    number, number, number, number, number?, number?, boolean?, ("skill" | "super")?,
+  ][];
   zones: Zone[];
   pending: BattleState["pending"];
   events: BattleState["events"];

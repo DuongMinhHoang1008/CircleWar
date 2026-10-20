@@ -2,6 +2,7 @@ import { z } from "zod";
 import { CLASSES } from "./balance";
 import { CHARACTER_IDS } from "./catalog";
 import { xpForNextLevel } from "./progression";
+import { DEFAULT_SHRINK_SECONDS } from "./arena";
 export const PROTOCOL = 4;
 export const settingsSchema = z
   .object({
@@ -21,7 +22,7 @@ export const DEFAULT_SETTINGS: z.infer<typeof settingsSchema> = {
   // Each new player starts with one unit; field capacity is upgraded in-game.
   teamSize: 1,
   preparationSeconds: 30,
-  shrinkSeconds: 60,
+  shrinkSeconds: DEFAULT_SHRINK_SECONDS,
   spectators: true,
   comeback: true,
 };

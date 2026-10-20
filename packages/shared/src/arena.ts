@@ -1,0 +1,2 @@
+export const DEFAULT_ARENA_SIZE = 72000;
+export const DEFAULT_SHRINK_SECONDS = 20;

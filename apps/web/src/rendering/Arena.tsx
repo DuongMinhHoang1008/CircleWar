@@ -15,6 +15,8 @@ import {
   ENGINE_VERSION,
   safeBounds,
   roundTempo,
+  weaponCount,
+  weaponReach,
   stepBattle,
   type ReplayFrame,
   type BattleConfig,
@@ -32,7 +34,9 @@ import {
 } from "../../../../packages/shared/src/catalog";
 import { avatar, Portrait, weaponArtUrl, weaponAtlasUrl, weaponFrame } from "../GameCatalog";
 import type { Fighter } from "../../../../packages/battle-engine/src/types";
-const colors = [0x5de1ff, 0xff668c, 0xf2c66d, 0xb99bff, 0x7cf1d0, 0xff9c75];
+import { TEAM_COLORS } from "./team-colors";
+import { loadCombatFx, isCombatFx, type CombatFxKind } from "./combat-fx";
+const colors = TEAM_COLORS.map(color => color.value);
 const fxArt = {
   slash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M14 94Q49 18 112 24 82 43 59 70 39 91 14 94Z" fill="#ffe5a0" fill-opacity=".82"/><path d="M18 96Q57 44 109 25" fill="none" stroke="#fff8d6" stroke-width="7" stroke-linecap="round"/><path d="m32 73 9 2-7 8m33-34 8 2-7 7m19-24 8 2-7 7" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="m19 24 4 9 9 4-9 4-4 9-4-9-9-4 9-4zM103 79l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#fff4c5"/></svg>`,
   shatter: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="m56 53 9-38 13 35-10 11zM66 69l36-21-20 33-17-3zM57 70l-8 41-13-35 11-12zM48 60 13 43l38 3 7 10zM75 81l23 26-35-16-1-9zM44 49 30 16l24 27-5 8zM54 79l-7 31-8-24z" fill="#ff7989" stroke="#ffe8bc" stroke-width="3" stroke-linejoin="round"/><path d="m29 69-9 9m77-42 10-8m-51 69-2 13" stroke="#fff5d9" stroke-width="4" stroke-linecap="round"/></svg>`,
@@ -48,7 +52,7 @@ const fxArt = {
 };
 type FxKind = keyof typeof fxArt;
 type CharacterFxKind = "characterSkill" | "characterSuper" | "characterItem";
-type EffectKind = FxKind | CharacterFxKind;
+type EffectKind = FxKind | CharacterFxKind | CombatFxKind;
 type CharacterFxSpec = {
   color: string;
   light: string;
@@ -254,8 +258,10 @@ function replayStateAt(
       owner: p[1],
       x: lerp(p[2], q[2]),
       y: lerp(p[3], q[3]),
-      vx: (q[2] - p[2]) / span,
-      vy: (q[3] - p[3]) / span,
+      vx: p[4] ?? (q[2] - p[2]) / span,
+      vy: p[5] ?? (q[3] - p[3]) / span,
+      normal: p[6],
+      kind: p[7],
       life: 0,
       pierce: 0,
       hit: [],
@@ -347,6 +353,7 @@ export function Arena({
     const faces: (Sprite | undefined)[] = [],
       masks: (Graphics | undefined)[] = [];
     const weapons: Sprite[][] = [];
+    const viewWidth = config.width / 100, viewHeight = config.height / 100;
     const battle = createBattle(config, seed);
     let state: BattleState = battle;
     let started = performance.now(),
@@ -407,8 +414,8 @@ export function Arena({
       const instance = new Application();
       app = instance;
       await instance.init({
-        width: 1200,
-        height: 720,
+        width: viewWidth,
+        height: viewHeight,
         background: "#151314",
         antialias: true,
         autoStart: false,
@@ -440,7 +447,15 @@ export function Arena({
         }),
       );
       if (disposed) return;
+      const animatedFx = await loadCombatFx().catch(() => ({
+        impactBurst: [fxTextures.slash], superBurst: [fxTextures.zone],
+        burnLoop: [fxTextures.bolt], slowLoop: [fxTextures.zone],
+        passiveBurst: [fxTextures.utility], healBurst: [fxTextures.heal],
+        shieldBurst: [fxTextures.shield], projectile: [fxTextures.bolt],
+      }));
+      if (disposed) return;
       const textureForEffect = (kind: EffectKind, characterId?: string) => {
+        if (isCombatFx(kind)) return animatedFx[kind][0];
         if (
           kind === "characterSkill" ||
           kind === "characterSuper" ||
@@ -470,6 +485,13 @@ export function Arena({
         instance.stage.addChild(sprite);
         return sprite;
       });
+      const statusNodes = state.fighters.map(() => Array.from({ length: 3 }, () => {
+        const sprite = new Sprite(animatedFx.passiveBurst[0]);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      }));
       for (const f of state.fighters) {
         const label = new Text({
           text: CHARACTERS[f.classId].short,
@@ -564,10 +586,12 @@ export function Arena({
             }
           }
           weapons[f.id] = Array.from(
-            { length: [2, 7, 8].includes(index + 1) ? 2 : 1 },
+            { length: weaponCount(f) },
             () => {
               const sprite = new Sprite(frames.get(f.characterId!)!);
-              sprite.anchor.set(0.12, 0.5);
+              // Expansion art is drawn vertically; the brush (#24) points down.
+              if (index >= 20) sprite.anchor.set(0.5, index === 23 ? 0.08 : 0.92);
+              else sprite.anchor.set(0.12, 0.5);
               instance.stage.addChild(sprite);
               return sprite;
             },
@@ -601,24 +625,17 @@ export function Arena({
         instance.stage.addChild(text);
         callouts.push(text);
       }
-      const effectNodes = Array.from({ length: 72 }, () => {
+      const effectNodes = Array.from({ length: 128 }, () => {
         const sprite = new Sprite(fxTextures.utility);
         sprite.anchor.set(0.5);
         sprite.visible = false;
         instance.stage.addChild(sprite);
         return sprite;
       });
-      const effectData: (
-        | {
-            tick: number;
-            life: number;
-            size: number;
-            rotation: number;
-            kind: EffectKind;
-            characterId?: string;
-          }
-        | undefined
-      )[] = Array(effectNodes.length).fill(undefined);
+      const effectData = Array.from({ length: effectNodes.length }, () => ({
+        active: false, tick: 0, life: 24, size: 1, rotation: 0,
+        kind: "utility" as EffectKind, characterId: undefined as string | undefined,
+      }));
       let effectCursor = 0,
         lastFxTick = state.tick;
       const burst = (
@@ -633,29 +650,30 @@ export function Arena({
         const index = effectCursor++ % effectNodes.length;
         const sprite = effectNodes[index];
         sprite.texture = textureForEffect(kind, characterId);
+        sprite.blendMode = isCombatFx(kind) ? "add" : "normal";
         sprite.position.set(
-          x * (1200 / config.width),
-          y * (720 / config.height),
+          x * (viewWidth / config.width),
+          y * (viewHeight / config.height),
         );
         sprite.visible = true;
         sprite.alpha = 1;
         sprite.scale.set(0.42 * size);
         sprite.rotation = rotation;
-        effectData[index] = {
-          tick,
-          life:
+        const fx = effectData[index];
+        fx.active = true;
+        fx.tick = tick;
+        fx.life =
             kind === "clash"
               ? 16
               : kind === "shatter"
                 ? 36
                 : kind === "characterSuper"
                   ? 48
-                  : 24,
-          size,
-          rotation,
-          kind,
-          characterId,
-        };
+                  : 24;
+        fx.size = size;
+        fx.rotation = rotation;
+        fx.kind = kind;
+        fx.characterId = characterId;
       };
       const zoneNodes = Array.from({ length: 80 }, () => {
         const sprite = new Sprite(fxTextures.zone);
@@ -683,10 +701,10 @@ export function Arena({
       for (const label of labels) instance.stage.addChild(label);
       for (const text of callouts) instance.stage.addChild(text);
       instance.stage.eventMode = "static";
-      instance.stage.hitArea = new Rectangle(0, 0, 1200, 720);
+      instance.stage.hitArea = new Rectangle(0, 0, viewWidth, viewHeight);
       instance.stage.on("pointertap", (e) => {
-        const x = (e.global.x * config.width) / 1200,
-          y = (e.global.y * config.height) / 720;
+        const x = (e.global.x * config.width) / viewWidth,
+          y = (e.global.y * config.height) / viewHeight;
         const f = state.fighters
           .filter(
             (f) =>
@@ -701,8 +719,8 @@ export function Arena({
           )[0];
         if (f) options.current.onInspect?.(f, state.tick);
       });
-      const sx = 1200 / config.width,
-        sy = 720 / config.height;
+      const sx = viewWidth / config.width,
+        sy = viewHeight / config.height;
       function draw() {
         if (disposed) return;
         const now = performance.now(),
@@ -760,6 +778,10 @@ export function Arena({
             target = state.fighters[e.target];
           if (!source || !target) continue;
           if (e.type === "hit") {
+            const dx = source.x - target.x, dy = source.y - target.y;
+            const length = Math.max(1, Math.hypot(dx, dy));
+            burst("impactBurst", target.x + dx / length * target.radius * 1.3,
+              target.y + dy / length * target.radius * 1.3, e.tick, 0.8);
             burst(
               "slash",
               target.x,
@@ -776,20 +798,24 @@ export function Arena({
           } else if (e.type === "kill") {
             burst("shatter", target.x, target.y, e.tick, 1.25);
           } else if (e.type === "super") {
+            burst("superBurst", source.x, source.y, e.tick, 1.4);
             burst(
               "characterSuper",
               source.x,
               source.y,
               e.tick,
-              source.characterId === "char_20" ? 1.05 : 0.9,
+              source.characterId === "char_20" ? 0.8 : 0.65,
               0,
               source.characterId,
             );
           } else if (e.type === "heal") {
-            burst("heal", target.x, target.y, e.tick, 0.85);
+            burst("healBurst", target.x, target.y - target.radius * 1.7, e.tick, 1.05);
           } else if (e.type === "shield") {
-            burst("shield", target.x, target.y, e.tick, 0.8);
+            burst("shieldBurst", target.x, target.y, e.tick, 1.05);
+          } else if (e.type.startsWith("passive:")) {
+            burst("passiveBurst", source.x, source.y, e.tick, 0.75);
           } else if (e.type.startsWith("skill:")) {
+            burst("passiveBurst", source.x, source.y, e.tick, 0.6);
             burst(
               "characterSkill",
               source.x,
@@ -818,30 +844,32 @@ export function Arena({
         }
         lastFxTick = Math.max(lastFxTick, state.tick);
         g.clear();
-        for (let x = 0; x < 1200; x += 60)
+        for (let x = 0; x < viewWidth; x += 60)
           g.moveTo(x, 0)
-            .lineTo(x, 720)
+            .lineTo(x, viewHeight)
             .stroke({ color: 0x393334, width: 1, alpha: 0.45 });
-        for (let y = 0; y < 720; y += 60)
+        for (let y = 0; y < viewHeight; y += 60)
           g.moveTo(0, y)
-            .lineTo(1200, y)
+            .lineTo(viewWidth, y)
             .stroke({ color: 0x393334, width: 1, alpha: 0.45 });
         const bounds = safeBounds(state);
+        const shrinking = state.tick > Math.min(900, config.shrinkSeconds * 15) && state.tick < config.shrinkSeconds * 30;
+        const wallPulse = shrinking ? 0.5 + Math.sin(state.tick * 0.22) * 0.5 : 0;
         const inset = bounds.left * sx;
         const insetY = bounds.top * sy;
         if (inset > 0 || insetY > 0) {
-          g.rect(0, 0, 1200, insetY)
-            .rect(0, 720 - insetY, 1200, insetY)
-            .rect(0, insetY, inset, 720 - 2 * insetY)
-            .rect(1200 - inset, insetY, inset, 720 - 2 * insetY)
+          g.rect(0, 0, viewWidth, insetY)
+            .rect(0, viewHeight - insetY, viewWidth, insetY)
+            .rect(0, insetY, inset, viewHeight - 2 * insetY)
+            .rect(viewWidth - inset, insetY, inset, viewHeight - 2 * insetY)
             .fill({ color: 0x0c0b0b, alpha: 0.94 });
         }
         // The visible edge matches the same collision bounds used by the engine.
-        g.rect(inset, insetY, 1200 - 2 * inset, 720 - 2 * insetY)
-          .stroke({ color: 0xf6ad13, width: 10, alpha: 0.09 })
-          .rect(inset, insetY, 1200 - 2 * inset, 720 - 2 * insetY)
+        g.rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
+          .stroke({ color: 0xf6ad13, width: 10 + wallPulse * 4, alpha: 0.09 + wallPulse * 0.12 })
+          .rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
           .stroke({ color: 0xf6ad13, width: 5, alpha: 0.25 })
-          .rect(inset, insetY, 1200 - 2 * inset, 720 - 2 * insetY)
+          .rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
           .stroke({ color: 0xf9de0b, width: 2 });
         zoneNodes.forEach((sprite, i) => {
           const z = state.zones[i];
@@ -900,15 +928,15 @@ export function Arena({
         });
         effectNodes.forEach((sprite, i) => {
           const fx = effectData[i];
-          if (!fx) return;
+          if (!fx.active) return;
           const progress = (state.tick - fx.tick) / fx.life;
           if (progress >= 1) {
             sprite.visible = false;
-            effectData[i] = undefined;
+            fx.active = false;
             return;
           }
           const swell =
-            fx.kind === "shatter"
+            isCombatFx(fx.kind) ? 0.65 + progress * 0.25 : fx.kind === "shatter"
               ? 0.45 + progress * 1.8
               : fx.kind === "clash"
                 ? 0.34 + progress * 0.55
@@ -919,11 +947,15 @@ export function Arena({
           sprite.alpha = Math.max(
             0,
             (fx.kind === "slash" || fx.kind === "shatter" ? 0.58 : 1) *
-              (1 - progress),
+              (isCombatFx(fx.kind) ? Math.min(1, (1 - progress) * 2.5) : 1 - progress),
           );
           sprite.scale.set(swell * fx.size);
+          if (isCombatFx(fx.kind)) {
+            const frames = animatedFx[fx.kind];
+            sprite.texture = frames[Math.min(frames.length - 1, Math.floor(progress * frames.length))];
+          }
           sprite.rotation =
-            fx.rotation + progress * (fx.kind === "shatter" ? 1.6 : 0.55);
+            isCombatFx(fx.kind) ? fx.rotation : fx.rotation + progress * (fx.kind === "shatter" ? 1.6 : 0.55);
         });
         const shown = state.events
           .filter(
@@ -975,7 +1007,7 @@ export function Arena({
           text.position.set(
             Math.max(
               70,
-              Math.min(1130, (e.type === "clash" ? (e.x ?? f.x) : f.x) * sx),
+              Math.min(viewWidth - 70, (e.type === "clash" ? (e.x ?? f.x) : f.x) * sx),
             ),
             Math.max(
               20,
@@ -995,6 +1027,21 @@ export function Arena({
                 config.teams.findIndex((t) => t.id === f.team) % colors.length
               ];
           labels[i].visible = f.hp > 0;
+          let burning = f.burnUntil > state.tick, buffed = false;
+          for (const buff of f.buffs) {
+            if (buff.until <= state.tick) continue;
+            if (buff.kind === "burnDot" || buff.kind === "dot") burning = true;
+            if (buff.kind === "attack" || buff.kind === "bonus" || buff.kind === "electric" || buff.kind === "envelope" || buff.kind === "haste") buffed = true;
+          }
+          for (let slot = 0; slot < 3; slot++) {
+            const icon = statusNodes[i][slot];
+            icon.visible = f.hp > 0 && !options.current.low && (slot === 0 ? burning : slot === 1 ? f.slowUntil > state.tick : buffed);
+            if (!icon.visible) continue;
+            const frames = animatedFx[slot === 0 ? "burnLoop" : slot === 1 ? "slowLoop" : "passiveBurst"];
+            icon.texture = frames[Math.floor(state.tick / 3) % frames.length];
+            icon.position.set(x - 20 + slot * 20, y + visualRadius + 17);
+            icon.width = icon.height = 19;
+          }
           weapons[i]?.forEach((w) => (w.visible = f.hp > 0));
           const auraKind: EffectKind | null =
             f.superUntil > state.tick
@@ -1039,39 +1086,35 @@ export function Arena({
             .fill(CHARACTERS[f.classId].color)
             .stroke({ color, width: 3 });
           const number = Number(f.characterId?.slice(-2) || 0);
-          const count = f.characterId
-            ? [2, 7, 8].includes(number)
-              ? 2
-              : 1
-            : f.classId === "assassin" || f.classId === "berserker"
-              ? 2
-              : 1;
+          const count = weaponCount(f);
           for (let w = 0; w < count; w++) {
             const d = DIRECTIONS[(f.angle + w * 16) % 32],
-              reach =
-                (f.characterId
-                  ? f.stats.reach *
-                    (f.superUntil > state.tick &&
-                    (number === 2 ||
-                      (number === 12 && (f.memory.swordHits || 0) < 3))
-                      ? 1.25
-                      : 1)
-                  : f.stats.reach +
-                    (f.superUntil > state.tick && f.classId === "swordsman"
-                      ? 1800
-                      : 0)) * sx;
+              reach = weaponReach(state, f) * sx;
             const weapon = weapons[i]?.[w];
+            if (!options.current.low) {
+              const angle = ((f.angle + w * 16) * Math.PI) / 16;
+              const spin = f.memory.spinDirection || 1;
+              const trailRadius = reach * 0.92, startAngle = angle - spin * 0.55;
+              g.moveTo(x + Math.cos(startAngle) * trailRadius, y + Math.sin(startAngle) * trailRadius)
+                .arc(x, y, trailRadius, startAngle, angle, spin < 0)
+                .stroke({ color, width: 5, alpha: 0.15 });
+            }
             if (weapon) {
               weapon.position.set(
                 x + (d[0] * r * 0.7) / 1024,
                 y + (d[1] * r * 0.7) / 1024,
               );
-              weapon.width = reach * 1.24;
-              weapon.height = Math.max(
-                6,
-                (reach * weapon.texture.height * 1.55) / weapon.texture.width,
-              );
-              weapon.rotation = ((f.angle + w * 16) * Math.PI) / 16;
+              const length = Math.max(1, reach - r * 0.7);
+              const angle = ((f.angle + w * 16) * Math.PI) / 16;
+              if (number >= 21) {
+                weapon.height = length / 0.84;
+                weapon.width = Math.max(18, weapon.height * 0.5);
+                weapon.rotation = angle + (number === 24 ? -Math.PI / 2 : Math.PI / 2);
+              } else {
+                weapon.width = length / 0.88;
+                weapon.height = Math.max(26, Math.min(46, length * 0.9));
+                weapon.rotation = angle;
+              }
             }
             g.moveTo(x + (d[0] * r) / 1024, y + (d[1] * r) / 1024)
               .lineTo(x + (d[0] * reach) / 1024, y + (d[1] * reach) / 1024)
@@ -1091,11 +1134,13 @@ export function Arena({
           g.rect(x - 23, y - visualRadius - 7, (46 * f.energy) / 100, 2).fill(
             0x9c94ff,
           );
+          if (f.shield > 0)
+            g.rect(x - 23, y - visualRadius - 17, 46 * Math.min(1, f.shield / 100), 3)
+              .fill(0x8cdbff);
+          if (burning)
+            g.circle(x, y, visualRadius + 5).stroke({ color: 0xff933b, width: 2, alpha: 0.75 });
           if (f.characterId) {
-            const cd =
-              [7, 6, 7, 6, 7, 8, 8, 7, 7, 8, 8, 6, 8, 7, 7, 7, 6, 7, 8, 7][
-                Number(f.characterId.slice(-2)) - 1
-              ] * 30;
+            const cd = 7 * 30;
             g.rect(
               x - 23,
               y + visualRadius + 5,
@@ -1111,15 +1156,17 @@ export function Arena({
             return;
           }
           sprite.visible = true;
-          const owner = state.fighters[p.owner];
-          sprite.texture =
-            p.normal === false
-              ? textureForEffect("characterSkill", owner?.characterId)
-              : fxTextures.bolt;
+          sprite.texture = animatedFx.projectile[Math.floor(state.tick / 2) % animatedFx.projectile.length];
+          sprite.tint = p.kind === "super" ? 0xffca60 : p.normal ? 0x92edff : 0xe3a4ff;
           sprite.position.set(p.x * sx, p.y * sy);
-          sprite.width = 23;
-          sprite.height = 18;
+          sprite.width = p.kind === "super" ? 38 : p.normal ? 25 : 30;
+          sprite.height = p.kind === "super" ? 24 : 17;
           sprite.rotation = Math.atan2(p.vy, p.vx);
+          const speed = Math.max(1, Math.hypot(p.vx, p.vy));
+          const trail = p.kind === "super" ? 2600 : 1800;
+          g.moveTo(p.x * sx, p.y * sy)
+            .lineTo((p.x - p.vx * trail / speed) * sx, (p.y - p.vy * trail / speed) * sy)
+            .stroke({ color: sprite.tint, width: p.kind === "super" ? 5 : 3, alpha: 0.65 });
         });
         const events = state.events.filter((e) => e.type === "kill");
         if (events.length > heard && !options.current.muted) {
@@ -1213,10 +1260,20 @@ export function Arena({
           {label || (replay ? "REPLAY CHÍNH THỨC" : "PHÒNG TẬP OFFLINE")}
         </span>
         <span>
-          {hud.alive} đội còn sống · {(hud.tick / 30).toFixed(1)}s
+          {hud.alive} đội · {(hud.tick / 30).toFixed(1)}s · Tường {Math.min(30, config.shrinkSeconds / 2)}–{config.shrinkSeconds}s
         </span>
       </div>
-      <div className="canvas-mount" ref={mount} />
+      <div className="team-color-legend" aria-label="Màu của từng đội">
+        {config.teams.map((team, index) => {
+          const color = TEAM_COLORS[index % TEAM_COLORS.length];
+          return <span key={team.id} className="team-color-key" style={{ borderColor: color.css }}>
+            <i style={{ backgroundColor: color.css }} aria-hidden="true" />
+            <b>{index + 1}. {team.name || `Đội ${index + 1}`}</b>
+            <small>{color.name}</small>
+          </span>;
+        })}
+      </div>
+      <div className="canvas-mount" style={{ aspectRatio: `${config.width}/${config.height}` }} ref={mount} />
       <div className="arena-bottom">
         <span>
           {hud.hash

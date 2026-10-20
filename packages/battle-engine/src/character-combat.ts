@@ -8,29 +8,46 @@ import {
   availableTraits,
   TRAITS,
   validChoice,
+  CATALOG_ITEMS,
 } from "../../shared/src/catalog";
-import type { BattleState, Fighter, Zone } from "./types";
+import type { BattleState, Fighter } from "./types";
 import { div, normalize, UNIT, DIRECTIONS, random } from "./math";
 import { capsuleHit } from "./physics";
 import { safeBounds } from "./bounds";
 import { roundTempo } from "./pacing";
-import { cardEvolutionSteps } from "../../shared/src/progression";
+import { itemMultiplier } from "../../shared/src/balance";
+import { CHARACTER_BALANCE } from "../../shared/src/combat-balance";
+import {
+  isRanged,
+  weaponCount,
+  weaponReach,
+  RANGED_ATTACK_RANGE,
+  RANGED_SKILL_RANGE,
+  RANGED_SUPER_RANGE,
+} from "./weapons";
 import {
   isClashProtected,
   reverseWeaponSpin,
   rotateWeaponAngle,
 } from "./weapon-clash";
 
-const CDs = [7, 6, 7, 6, 7, 8, 8, 7, 7, 8, 8, 6, 8, 7, 7, 7, 6, 7, 8, 7, 7, 8, 7, 7, 7];
 const no = (f: Fighter) => Number(f.characterId?.slice(-2) || 0);
 const superValue = (f: Fighter, value: number) =>
   div(value * f.stats.superPower, 100);
-const has = (f: Fighter, n: number) =>
-  f.equipment.includes(`item_${String(n).padStart(2, "0")}`);
-const affinity = (f: Fighter, n: number) =>
-  [9, 1, 12, 17, 2, 14, 19, 3, 16, 13, 4, 6, 10, 8, 11, 18, 7, 15, 5, 20][
-    n - 1
-  ] === no(f);
+// Late-round damage ramps must outpace recovery so defensive mirrors can finish.
+const recoveryValue = (f: Fighter, value: number) =>
+  div(value * Math.min(150, f.stats.superPower), 100);
+const has = (f: Fighter, n: number) => f.equipment.includes(CATALOG_ITEMS[n - 1].id);
+const affinity = (f: Fighter, n: number) => CATALOG_ITEMS[n - 1].affinity === f.characterId;
+const itemValue = (f: Fighter, n: number, value: number) => {
+  const id = CATALOG_ITEMS[n - 1].id;
+  return Math.max(
+    1,
+    Math.round(
+      value * itemMultiplier(id, f.equipmentLevels?.[id] || 1, affinity(f, n)),
+    ),
+  );
+};
 const distance = (a: { x: number; y: number }, b: { x: number; y: number }) =>
   (a.x - b.x) ** 2 + (a.y - b.y) ** 2;
 const within = (
@@ -38,14 +55,6 @@ const within = (
   b: { x: number; y: number },
   r: number,
 ) => distance(a, b) <= (r * 100) ** 2;
-function nearby(s: BattleState, f: Fighter, r: number, ally = false) {
-  return s.fighters.filter(
-    (t) =>
-      t.hp > 0 &&
-      (ally ? t.team === f.team : t.team !== f.team) &&
-      within(f, t, r),
-  );
-}
 function nearest(
   s: BattleState,
   f: Fighter,
@@ -53,12 +62,20 @@ function nearest(
   ally = false,
   weak = false,
 ) {
-  return nearby(s, f, r, ally).sort(
-    (a, b) =>
-      (weak ? a.hp * b.stats.hp - b.hp * a.stats.hp : 0) ||
-      distance(f, a) - distance(f, b) ||
-      a.id - b.id,
-  )[0];
+  let target: Fighter | undefined;
+  let closest = Infinity;
+  const rangeSquared = (r * 100) ** 2;
+  for (const t of s.fighters) {
+    if (t.hp <= 0 || (ally ? t.team !== f.team : t.team === f.team)) continue;
+    const d = distance(f, t);
+    if (d > rangeSquared) continue;
+    const healthOrder = weak && target ? t.hp * target.stats.hp - target.hp * t.stats.hp : 0;
+    if (!target || healthOrder < 0 || (healthOrder === 0 && (d < closest || (d === closest && t.id < target.id)))) {
+      target = t;
+      closest = d;
+    }
+  }
+  return target;
 }
 function event(s: BattleState, type: string, f: Fighter, t = f, amount = 0) {
   s.events.push({ tick: s.tick, type, source: f.id, target: t.id, amount });
@@ -112,7 +129,7 @@ function slow(
   if (has(f, 15) && !f.memory.herb) {
     f.memory.herb = 1;
     f.slowUntil = 0;
-    f.memory.immuneSlow = s.tick + (affinity(f, 15) ? 60 : 45);
+    f.memory.immuneSlow = s.tick + itemValue(f, 15, 30);
     event(s, "item:15", f);
     return;
   }
@@ -149,12 +166,18 @@ function launch(
   f: Fighter,
   t: Fighter,
   power: number,
-  normal = false,
-  pushPower = 0,
+  options: {
+    normal?: boolean;
+    push?: number;
+    range?: number;
+    kind?: "skill" | "super";
+    slow?: number;
+  } = {},
 ) {
-  if (s.projectiles.length >= 240) return;
+  if (s.projectiles.length >= 240) return false;
+  const { normal = false, push = 0, range = 300, kind } = options;
   const d = DIRECTIONS[aim(f, t)];
-  const projectileSpeed = normal ? 700 : 1700;
+  const projectileSpeed = normal ? 900 : 1100;
   s.projectiles.push({
     id: s.nextProjectile++,
     owner: f.id,
@@ -162,70 +185,17 @@ function launch(
     y: f.y,
     vx: div(d[0] * projectileSpeed, UNIT),
     vy: div(d[1] * projectileSpeed, UNIT),
-    life: 90,
+    life: Math.max(1, div(range * 100, projectileSpeed)),
     pierce: 0,
     hit: [],
     power,
     normal,
-    push: pushPower,
-  });
-}
-function zone(s: BattleState, f: Fighter, z: Partial<Zone>) {
-  if (s.zones.length >= 180) return;
-  s.zones.push({
-    owner: f.id,
-    x: f.x,
-    y: f.y,
-    until: s.tick + 120,
-    start: s.tick,
-    every: 30,
-    power: 0,
-    radius: 140,
-    ...z,
-  });
-}
-function pending(
-  s: BattleState,
-  f: Fighter,
-  tick: number,
-  kind: string,
-  t: { x: number; y: number },
-  target?: number,
-  angle?: number,
-) {
-  if (s.pending.length >= 180) return;
-  s.pending.push({
-    owner: f.id,
-    tick: s.tick + tick,
+    push,
     kind,
-    x: t.x,
-    y: t.y,
-    target,
-    angle,
+    slow: options.slow,
   });
-  event(
-    s,
-    "warn:" + kind,
-    f,
-    target === undefined ? f : s.fighters[target],
-    tick,
-  );
+  return true;
 }
-function dash(
-  s: BattleState,
-  f: Fighter,
-  t: Fighter,
-  length: number,
-  power: number,
-) {
-  const d = DIRECTIONS[aim(f, t)];
-  f.vx = div(d[0] * Math.min(900, div(length * 100, 9)), UNIT);
-  f.vy = div(d[1] * Math.min(900, div(length * 100, 9)), UNIT);
-  f.memory.dash = s.tick + 9;
-  f.memory.dashPower = power;
-  f.memory.dashSteps = div(length * 100, 9);
-}
-
 function threshold(s: BattleState, f: Fighter) {
   if (f.hp <= 0) return;
   const low40 = f.hp * 100 <= f.stats.hp * 40,
@@ -233,17 +203,17 @@ function threshold(s: BattleState, f: Fighter) {
     low25 = f.hp * 100 <= f.stats.hp * 25;
   if (low40 && has(f, 2) && !f.memory.bedding) {
     f.memory.bedding = 1;
-    shield(s, f, f, affinity(f, 2) ? 45 : 35, 90);
+    shield(s, f, f, itemValue(f, 2, 28), 90);
   }
   if (low25 && has(f, 18) && !f.memory.briefs) {
     f.memory.briefs = 1;
-    shield(s, f, f, affinity(f, 18) ? 35 : 25, 60);
-    buff(s, f, "speed", 15, 60);
+    shield(s, f, f, itemValue(f, 18, 28), 60);
+    buff(s, f, "speed", itemValue(f, 18, 8), 60, -18);
     event(s, "item:18", f);
   }
   if (low30 && has(f, 17) && !f.memory.pork) {
     f.memory.pork = 1;
-    heal(s, f, f, affinity(f, 17) ? 25 : 20);
+    heal(s, f, f, itemValue(f, 17, 16));
   }
   if (low40) friendEvent(s, f, "low");
 }
@@ -262,7 +232,11 @@ export function characterDamage(
     isClashProtected(t, s.tick)
   )
     return 0;
-  let amount = Math.max(1, Math.min(300, raw - t.stats.defense));
+  // Armor is percentage damage reduction; shields absorb the remainder before HP.
+  let amount = Math.max(
+    1,
+    Math.min(300, div(raw * (100 - Math.min(60, t.stats.defense)), 100)),
+  );
   const absorbed = Math.min(t.shield, amount);
   amount -= absorbed;
   t.shield -= absorbed;
@@ -278,9 +252,9 @@ export function characterDamage(
   t.hp -= amount;
   t.taken += amount;
   f.dealt += amount;
-  if (amount) {
-    energy(s, f, div((amount + 3) * f.stats.charge, 100));
-    energy(s, t, div((amount + 4) * t.stats.charge, 180));
+  if (amount || absorbed) {
+    energy(s, f, div((amount + absorbed + 3) * f.stats.charge, 160));
+    energy(s, t, div((amount + absorbed + 4) * t.stats.charge, 240));
   }
   event(s, "hit", f, t, amount);
   if (knock) push(f, t, knock);
@@ -288,6 +262,7 @@ export function characterDamage(
     t.deadAt = s.tick;
     f.kills++;
     event(s, "kill", f, t);
+    if (has(f, 13)) heal(s, f, f, itemValue(f, 13, 12));
   } else {
     threshold(s, t);
   }
@@ -299,12 +274,35 @@ function nextBonus(s: BattleState, f: Fighter, value: number, source = -1) {
 }
 function normalEffects(s: BattleState, f: Fighter, t: Fighter, amount: number) {
   f.hits++;
+  const profile = CHARACTER_BALANCE[f.characterId || ""];
+  if (profile && f.hits % 4 === 0 && (f.memory.passiveReady || 0) <= s.tick) {
+    f.memory.passiveReady = s.tick + 90;
+    if (profile.role === "tank")
+      shield(s, f, f, Math.round((profile.passive * f.stats.hp) / 285), 60);
+    if (profile.role === "fighter" || profile.role === "assassin")
+      nextBonus(s, f, profile.passive, -3000 - no(f));
+    if (profile.role === "controller" && t.hp > 0)
+      slow(s, f, t, profile.passive, 30);
+    if (profile.role === "ranger") energy(s, f, profile.passive);
+    if (profile.role === "support") {
+      const ally = nearest(s, f, 160, true, true);
+      if (ally)
+        heal(s, f, ally, Math.round((profile.passive * f.stats.hp) / 240));
+    }
+    event(s, "passive:" + f.characterId, f);
+  }
+  if (t.hp > 0 && f.stats.burn > 0)
+    buff(s, t, "burnDot", f.stats.burn, 60, f.id);
+  if (t.stats.thorns > 0 && t.hp > 0)
+    characterDamage(s, t, f, t.stats.thorns, false, 0);
+  if (has(f, 16) && f.hits % 4 === 0)
+    nextBonus(s, f, itemValue(f, 16, 18), -16);
   if (has(f, 7)) {
     f.memory.iceHits = Math.min(4, (f.memory.iceHits || 0) + 1);
     if (f.memory.iceHits >= 4 && s.tick >= (f.memory.iceReady || 0)) {
       f.memory.iceHits = 0;
       f.memory.iceReady = s.tick + 90;
-      if (t.hp > 0) slow(s, f, t, affinity(f, 7) ? 25 : 20, 30);
+      if (t.hp > 0) slow(s, f, t, itemValue(f, 7, 15), 30);
     }
   }
   if (has(f, 14)) {
@@ -312,7 +310,7 @@ function normalEffects(s: BattleState, f: Fighter, t: Fighter, amount: number) {
     if (f.memory.sourHits >= 3 && s.tick >= (f.memory.sourReady || 0)) {
       f.memory.sourHits = 0;
       f.memory.sourReady = s.tick + 150;
-      if (t.hp > 0) buff(s, t, "dot", affinity(f, 14) ? 5 : 4, 90, f.id);
+      if (t.hp > 0) buff(s, t, "dot", itemValue(f, 14, 2), 90, f.id);
     }
   }
 }
@@ -326,7 +324,7 @@ function normalHit(s: BattleState, f: Fighter, t: Fighter, scale = 100) {
       b.until = s.tick;
     }
   }
-  auxiliary = Math.min(100, auxiliary);
+  // Independent bonds/items contribute additively; the final damage cap remains.
   hit = div(hit * (100 + auxiliary) * scale, 10000);
   if (random(s) % 100 < f.stats.crit) hit = div(hit * f.stats.critPower, 100);
   if (f.memory.armorIgnore) {
@@ -407,11 +405,13 @@ function friendGroupEvent(
     (id === "G02" &&
       ((no(source) === 1 && kind === "gale") ||
         (no(source) === 19 && kind === "gift") ||
-        kind === "skill" || kind === "super")) ||
+        kind === "skill" ||
+        kind === "super")) ||
     (id === "G03" &&
       ((no(source) === 2 && kind === "hug") ||
         (no(source) === 10 && kind === "ram") ||
-        kind === "skill" || kind === "super")) ||
+        kind === "skill" ||
+        kind === "super")) ||
     (id === "G04" && three && kind === "pulse" && s.tick === 600) ||
     (id === "G05" && kind === "super") ||
     (id === "G06" && kind === "super") ||
@@ -539,9 +539,7 @@ export function initializeCharacters(s: BattleState) {
       f.stats.hp = f.baseStats.hp;
       f.hp = f.stats.hp;
     }
-    if (has(f, 12)) shield(s, f, f, affinity(f, 12) ? 50 : 40, 300);
-    if ((has(f, 6) && affinity(f, 6)) || (has(f, 11) && affinity(f, 11)))
-      shield(s, f, f, 10, 150);
+    if (has(f, 12)) shield(s, f, f, itemValue(f, 12, 30), 300);
     const support = traits.find((t) => t.trait === "Hỗ trợ");
     if (support) shield(s, f, f, support.members.length >= 3 ? 16 : 10, 150);
   }
@@ -630,11 +628,10 @@ export function beforeCharacterTick(s: BattleState) {
           if (b.kind === "armor") f.stats.defense += b.value;
           continue;
         }
-        if (b.kind === "attack") attack = Math.max(attack, b.value);
-        if (b.kind === "speed" || b.kind === "deliverySpeed")
-          speed = Math.max(speed, b.value);
+        if (b.kind === "attack") attack += b.value;
+        if (b.kind === "speed" || b.kind === "deliverySpeed") speed += b.value;
         if (b.kind === "armor") f.stats.defense += b.value;
-        if (b.kind === "haste") haste = Math.max(haste, b.value);
+        if (b.kind === "haste") haste += b.value - 100;
       }
     attack += synergyAttack;
     speed += synergySpeed;
@@ -682,11 +679,11 @@ export function beforeCharacterTick(s: BattleState) {
     f.slowUntil = Math.max(0, ...slows.map((b) => b.until));
     f.memory.slowPower = Math.max(0, ...slows.map((b) => b.value));
     if (has(f, 1) && s.tick % 300 === 0 && s.tick <= 1800) {
-      energy(s, f, affinity(f, 1) && s.tick <= 600 ? 10 : 8);
+      energy(s, f, itemValue(f, 1, 5));
       event(s, "item:01", f);
     }
     if (has(f, 19) && s.tick % 150 === 0 && s.tick <= 600)
-      heal(s, f, f, affinity(f, 19) ? 6 : 5);
+      heal(s, f, f, itemValue(f, 19, 4));
   }
   for (const cfg of s.config.teams) {
     for (const group of FRIEND_GROUPS) {
@@ -720,17 +717,8 @@ export function characterContacts(s: BattleState, a: Fighter, b: Fighter) {
     f.memory[key] = s.tick + 24;
     if (has(f, 11) && s.tick >= (f.memory.fridgeReady || 0)) {
       f.memory.fridgeReady = s.tick + 120;
-      slow(s, f, t, 20, 30);
+      slow(s, f, t, itemValue(f, 11, 12), 30);
       event(s, "item:11", f, t);
-    }
-    if (has(f, 13) && !f.memory.goat) {
-      f.memory.goat = 1;
-      characterDamage(
-        s,
-        f,
-        t,
-        div(f.stats.attack * (affinity(f, 13) ? 75 : 60), 100),
-      );
     }
     if ((f.memory.dash || 0) > s.tick) {
       f.memory.dash = 0;
@@ -768,6 +756,7 @@ function resolveBondEvent(
   );
   if (
     fs.length !== b.size ||
+    !fs.includes(source) ||
     fs.some((f) => f.hp <= 0) ||
     fs.some((f) => fs.some((t) => !within(f, t, b.size === 2 ? 240 : 280)))
   )
@@ -783,7 +772,11 @@ function resolveBondEvent(
     ok = kind === "super" && no(source) === triggers[Number(b.id.slice(1)) - 1];
   } else {
     const newBonds: Record<string, number[]> = {
-      P14: [21, 23], P15: [22, 24], P16: [24, 25], P17: [21, 25], P18: [22, 23],
+      P14: [21, 23],
+      P15: [22, 24],
+      P16: [24, 25],
+      P17: [21, 25],
+      P18: [22, 23],
     };
     ok = newBonds[b.id]
       ? newBonds[b.id].includes(no(source)) &&
@@ -890,421 +883,132 @@ function resolveBondEvent(
   }
 }
 
-function legacySkill(s: BattleState, f: Fighter) {
-  const n = no(f),
-    up = f.level >= 5;
-  let t: Fighter | undefined;
-  if ([2, 4, 5, 8, 9, 12, 16, 17, 18, 3].includes(n)) {
-    t = nearest(
-      s,
-      f,
-      (
-        {
-          2: 180,
-          3: 260,
-          4: 320,
-          5: 300,
-          8: 200,
-          9: 280,
-          12: 150,
-          16: 260,
-          17: 220,
-          18: 180,
-        } as Record<number, number>
-      )[n],
-      false,
-      n === 8,
-    );
-    if (!t) return false;
-  }
-  switch (n) {
-    case 1:
-      nearby(s, f, 140).forEach((t) =>
-        characterDamage(s, f, t, div(f.stats.attack * 55, 100), false, 300),
-      );
-      bondEvent(s, f, "gale");
-      break;
-    case 2:
-      dash(s, f, t!, 100, up ? 130 : 110);
-      break;
-    case 3:
-      pending(s, f, 15, "jam", t!);
-      break;
-    case 4:
-      launch(s, f, t!, 100, false, up ? 450 : 350);
-      break;
-    case 5:
-      f.memory.markTarget = t!.id;
-      f.memory.markUntil = s.tick + (up ? 120 : 90);
-      bondEvent(s, f, "mark");
-      break;
-    case 6:
-      nearby(s, f, 160, true).forEach((a) => {
-        shield(s, f, a, up ? 22 : 16, 60);
-        buff(s, a, "speed", 12, 60, f.id);
-        buff(s, a, "attack", 12, 60, f.id);
-        bondEvent(s, f, "rally", a);
-      });
-      break;
-    case 7:
-      nearby(s, f, 130).forEach((a) => {
-        characterDamage(s, f, a, div(f.stats.attack * (up ? 90 : 70), 100));
-        if ((a.memory.immuneInterrupt || 0) <= s.tick) {
-          a.memory.interrupt = s.tick + 15;
-          a.memory.immuneInterrupt = s.tick + 45;
-        }
-      });
-      break;
-    case 8:
-      dash(s, f, t!, 110, up ? 140 : 120);
-      break;
-    case 9:
-      pending(s, f, 18, "meeting", t!);
-      break;
-    case 10: {
-      const a = nearest(s, f, 240);
-      if (!a) return false;
-      const d = DIRECTIONS[aim(f, a)];
-      f.vx = div(d[0] * f.stats.speed, UNIT);
-      f.vy = div(d[1] * f.stats.speed, UNIT);
-      buff(s, f, "deliverySpeed", 25, 30);
-      f.memory.ram = s.tick + 30;
-      break;
-    }
-    case 11: {
-      const a = nearest(s, f, 220, true, true)!;
-      shield(s, f, a, up ? 38 : 30, 90);
-      a.buffs = a.buffs.filter((b) => b.kind !== "slow");
-      a.slowUntil = 0;
-      bondEvent(s, f, "flag", a);
-      break;
-    }
-    case 12:
-      pending(s, f, 9, "slice", t!, undefined, aim(f, t!));
-      break;
-    case 13: {
-      const a = nearest(s, f, 240, true, true)!;
-      const amount = heal(s, f, a, up ? 22 : 18);
-      if (amount) bondEvent(s, f, "apple", a);
-      break;
-    }
-    case 14:
-      if (s.zones.filter((z) => z.owner === f.id && z.trap).length >= 2) {
-        const index = s.zones.findIndex((z) => z.owner === f.id && z.trap);
-        s.zones.splice(index, 1);
-      }
-      zone(s, f, {
-        radius: 75,
-        trap: true,
-        start: s.tick + 15,
-        until: s.tick + (up ? 180 : 150),
-        power: 125,
-      });
-      break;
-    case 15: {
-      const a = nearest(s, f, 220, true, true)!;
-      shield(s, f, a, up ? 36 : 28, 90);
-      if (a.id !== f.id) {
-        const d = DIRECTIONS[aim(f, a)];
-        f.vx = div(d[0] * f.stats.speed, UNIT);
-        f.vy = div(d[1] * f.stats.speed, UNIT);
-      }
-      bondEvent(s, f, "guard", a);
-      break;
-    }
-    case 16:
-      pending(s, f, 15, "ink", f, undefined, aim(f, t!));
-      break;
-    case 17: {
-      const d = DIRECTIONS[aim(f, t!)];
-      f.vx = div(d[0] * f.stats.speed, UNIT);
-      f.vy = div(d[1] * f.stats.speed, UNIT);
-      buff(s, f, "deliverySpeed", 30, 30);
-      f.memory.delivery = s.tick + 30;
-      break;
-    }
-    case 18:
-      pending(s, f, 0, "soup", f, undefined, aim(f, t!));
-      break;
-    case 19: {
-      const a = nearest(s, f, 220, true, true)!;
-      shield(s, f, a, up ? 28 : 20, 90);
-      buff(s, a, "attack", 10, 60, f.id);
-      bondEvent(s, f, "gift", a);
-      break;
-    }
-    case 20: {
-      const a = nearest(s, f, 240, true, true)!;
-      shield(s, f, a, up ? 26 : 20, 90);
-      a.buffs = a.buffs.filter((b) => b.kind !== "slow");
-      a.slowUntil = 0;
-      bondEvent(s, f, "rose", a);
-      break;
-    }
-  }
-  event(s, "skill:" + String(n).padStart(2, "0"), f, t || f);
-  return true;
-}
-function legacySuperCast(s: BattleState, f: Fighter) {
-  const n = no(f);
-  if (n === 9 && !nearest(s, f, 300)) return false;
-  f.energy = 0;
-  f.superUntil = s.tick + 120;
-  f.supers++;
-  event(s, "super", f);
-  f.memory.hugHits = 0;
-  f.memory.swordHits = 0;
-  if (has(f, 20) && affinity(f, 20)) {
-    const ally = nearest(s, f, 240, true, true);
-    if (ally) {
-      shield(s, f, ally, 8, 90);
-      event(s, "item:20", f, ally, 8);
-    }
-  }
-  if (has(f, 8)) buff(s, f, "electric", affinity(f, 8) ? 60 : 50, 120, -8);
-  if (has(f, 9)) buff(s, f, "attack", 12, affinity(f, 9) ? 120 : 90, -9);
-  switch (n) {
-    case 1:
-      shield(s, f, f, superValue(f, 45), 120);
-      zone(s, f, { follow: true, radius: 110, power: 55, super: true });
-      break;
-    case 2:
-      break;
-    case 3:
-      zone(s, f, { follow: true, power: 40, slow: 20, super: true });
-      break;
-    case 4:
-      buff(s, f, "speed", 20, 120);
-      break;
-    case 5:
-      buff(s, f, "haste", 133, 120);
-      break;
-    case 6:
-      nearby(s, f, 180, true).forEach((a) =>
-        shield(s, f, a, superValue(f, 30), 120),
-      );
-      zone(s, f, { follow: true, radius: 180, attack: 20 });
-      break;
-    case 7:
-      for (const dt of [0, 45, 90]) pending(s, f, dt, "sound", f);
-      break;
-    case 8:
-      buff(s, f, "speed", 15, 120);
-      break;
-    case 9: {
-      const a = nearest(s, f, 300)!;
-      pending(s, f, 30, "deadline", a, a.id);
-      break;
-    }
-    case 10:
-      shield(s, f, f, superValue(f, 50), 120);
-      break;
-    case 11:
-      nearby(s, f, 200, true).forEach((a) => {
-        shield(s, f, a, superValue(f, 50), 120);
-        a.buffs = a.buffs.filter((b) => b.kind !== "slow");
-        a.memory.immuneSlow = s.tick + 30;
-      });
-      break;
-    case 12:
-      break;
-    case 13:
-      zone(s, f, { follow: true, radius: 160, heal: 6, super: true });
-      break;
-    case 14:
-      for (const angle of [0, 11, 21]) {
-        const d = DIRECTIONS[angle];
-        pending(
-          s,
-          f,
-          21,
-          "giftBomb",
-          { x: f.x + div(d[0] * 9000, UNIT), y: f.y + div(d[1] * 9000, UNIT) },
-          undefined,
-          f.superUntil,
-        );
-      }
-      break;
-    case 15:
-      buff(s, f, "armor", 4, 120);
-      zone(s, f, {
-        follow: true,
-        radius: 130,
-        power: 45,
-        push: 200,
-        super: true,
-      });
-      break;
-    case 16:
-      zone(s, f, { radius: 150, power: 50, super: true });
-      break;
-    case 17:
-      buff(s, f, "speed", 20, 120);
-      buff(s, f, "haste", 125, 120);
-      shield(s, f, f, superValue(f, 25), 120);
-      break;
-    case 18:
-      pending(s, f, 18, "hotpot", f);
-      break;
-    case 19:
-      nearby(s, f, 180, true).forEach((a) => {
-        shield(s, f, a, superValue(f, 35), 120);
-        buff(s, a, "envelope", 60, 120, -19);
-      });
-      break;
-    case 20:
-      zone(s, f, {
-        follow: true,
-        radius: 150,
-        power: 30,
-        slow: 20,
-        heal: 4,
-        super: true,
-      });
-      break;
-  }
-  bondEvent(s, f, "super");
-  return true;
-}
-function cone(
-  s: BattleState,
-  f: Fighter,
-  x: number,
-  y: number,
-  angle: number,
-  length: number,
-  power: number,
-) {
-  const d = DIRECTIONS[angle];
-  let hit = false;
+function abilityTarget(s: BattleState, f: Fighter, rangedRange: number) {
+  if (isRanged(f)) return nearest(s, f, rangedRange);
+  let target: Fighter | undefined;
+  let closest = Infinity;
   for (const t of s.fighters) {
-    if (t.hp <= 0 || t.team === f.team || !within({ x, y }, t, length))
-      continue;
-    const dx = t.x - x,
-      dy = t.y - y,
-      dot = dx * d[0] + dy * d[1];
-    if (dot <= 0 || dot * dot < ((dx * dx + dy * dy) * UNIT * UNIT) / 2)
-      continue;
-    characterDamage(s, f, t, div(f.stats.attack * power, 100));
-    hit = true;
+    if (t.hp <= 0 || t.team === f.team || isClashProtected(t, s.tick)) continue;
+    const d = distance(f, t);
+    if (d <= (weaponReach(s, f) + t.radius) ** 2 && d < closest) {
+      target = t;
+      closest = d;
+    }
   }
-  return hit;
-}
-function resolvePending(s: BattleState) {
-  const ready = s.pending.filter((p) => p.tick <= s.tick);
-  s.pending = s.pending.filter((p) => p.tick > s.tick);
-  for (const p of ready) {
-    const f = s.fighters[p.owner];
-    if (f.hp <= 0) continue;
-    const up = f.level >= 5;
-    if (p.kind === "jam")
-      zone(s, f, {
-        x: p.x,
-        y: p.y,
-        radius: up ? 95 : 85,
-        start: s.tick,
-        until: s.tick + 75,
-        every: 15,
-        power: 45,
-        slow: 25,
-      });
-    if (p.kind === "meeting") {
-      let hit = false;
-      for (const t of s.fighters)
-        if (t.hp > 0 && t.team !== f.team && within(p, t, 75)) {
-          characterDamage(s, f, t, div(f.stats.attack * 75, 100));
-          slow(s, f, t, 25, 36);
-          hit = true;
-        }
-      if (hit) bondEvent(s, f, "meeting");
-    }
-    if (p.kind === "slice") cone(s, f, f.x, f.y, p.angle!, 130, up ? 140 : 120);
-    if (p.kind === "ink") {
-      const d = DIRECTIONS[p.angle!];
-      zone(s, f, {
-        x: p.x,
-        y: p.y,
-        start: s.tick,
-        until: s.tick + 75,
-        every: 15,
-        power: 45,
-        slow: 20,
-        line: { dx: d[0], dy: d[1], length: 180, width: up ? 55 : 45 },
-      });
-    }
-    if (p.kind === "soup" && cone(s, f, p.x, p.y, p.angle!, 150, up ? 110 : 90))
-      bondEvent(s, f, "soup");
-    if (p.kind === "sound")
-      nearby(s, f, 150).forEach((t) =>
-        characterDamage(
-          s,
-          f,
-          t,
-          div(f.stats.attack * 60 * f.stats.superPower, 10000),
-          false,
-          250,
-        ),
-      );
-    if (p.kind === "hotpot")
-      zone(s, f, { x: p.x, y: p.y, radius: 140, power: 55, super: true });
-    if (p.kind === "deadline") {
-      const a = s.fighters[p.target!];
-      if (a.hp <= 0) continue;
-      for (const t of nearby(s, a, 100, true))
-        if (t.team !== f.team)
-          characterDamage(
-            s,
-            f,
-            t,
-            div(f.stats.attack * 180 * f.stats.superPower, 10000),
-          );
-    }
-    if (p.kind === "giftBomb") {
-      for (const t of s.fighters)
-        if (t.hp > 0 && t.team !== f.team && within(p, t, 90)) {
-          const key = "bomb:" + f.id;
-          if (t.memory[key] !== p.angle) {
-            t.memory[key] = p.angle!;
-            t.memory[key + ":hits"] = 0;
-          }
-          if ((t.memory[key + ":hits"] || 0) >= 2) continue;
-          t.memory[key + ":hits"] = (t.memory[key + ":hits"] || 0) + 1;
-          characterDamage(
-            s,
-            f,
-            t,
-            div(f.stats.attack * 90 * f.stats.superPower, 10000),
-          );
-        }
-    }
-    event(s, "impact:" + p.kind, f);
-  }
+  return target;
 }
 
-/** Shared, readable skill rules. Character identity keeps its VFX event, while
- * combat behavior is intentionally limited to one clear action per role. */
+// Melee abilities require physical reach. Ranged damage resolves on collision.
 function skill(s: BattleState, f: Fighter) {
   const n = no(f);
-  const power = 100;
-  const enemy = nearest(s, f, 300);
+  const role = CHARACTER_BALANCE[f.characterId!].role;
+  if (role === "support") {
+    const ally = nearest(s, f, 180, true, true);
+    if (!ally) return false;
+    shield(s, f, ally, f.stats.attack, 90);
+    const enemy = abilityTarget(s, f, RANGED_SKILL_RANGE);
+    if (enemy) {
+      if (isRanged(f))
+        launch(s, f, enemy, 80, { kind: "skill", range: RANGED_SKILL_RANGE });
+      else characterDamage(s, f, enemy, div(f.stats.attack * 80, 100));
+    }
+    event(s, "skill:" + String(n).padStart(2, "0"), f, ally);
+    bondEvent(s, f, "skill");
+    return true;
+  }
+  const enemy = abilityTarget(s, f, RANGED_SKILL_RANGE);
   if (!enemy) return false;
-  characterDamage(s, f, enemy, div(f.stats.attack * 120 * power, 10000));
+  const power =
+    role === "tank"
+      ? 110
+      : role === "assassin"
+        ? 150
+        : role === "ranger"
+          ? 140
+          : role === "fighter"
+            ? 130
+            : 120;
+  if (isRanged(f)) {
+    if (
+      !launch(s, f, enemy, power, {
+        range: RANGED_SKILL_RANGE,
+        kind: "skill",
+        slow: role === "controller" ? 15 : 0,
+      })
+    )
+      return false;
+  } else characterDamage(s, f, enemy, div(f.stats.attack * power, 100));
+  if (role === "tank") shield(s, f, f, div(f.stats.hp * 3, 100), 60);
   event(s, "skill:" + String(n).padStart(2, "0"), f, enemy);
   bondEvent(s, f, "skill");
   return true;
 }
 
-/** Supers use the same role action with a stronger value and retain the
- * existing generic super event so current VFX continue to play. */
 function superCast(s: BattleState, f: Fighter) {
-  const power = 200;
-  const enemy = nearest(s, f, 360);
-  if (!enemy) return false;
+  const role = CHARACTER_BALANCE[f.characterId!].role;
+  const target =
+    role === "support"
+      ? nearest(s, f, 180, true, true)
+      : abilityTarget(s, f, RANGED_SUPER_RANGE);
+  if (!target) return false;
+  const power =
+    role === "tank"
+      ? 150
+      : role === "assassin"
+        ? 320
+        : role === "ranger"
+          ? 300
+          : role === "fighter"
+            ? 280
+            : 240;
+  if (role === "support") {
+    heal(s, f, target, recoveryValue(f, div(target.stats.hp * 10, 100)));
+    shield(s, f, target, recoveryValue(f, div(f.stats.attack, 2)), 90);
+    const enemy = abilityTarget(s, f, RANGED_SUPER_RANGE);
+    if (enemy) {
+      if (isRanged(f))
+        launch(s, f, enemy, superValue(f, 160), {
+          kind: "super",
+          range: RANGED_SUPER_RANGE,
+        });
+      else
+        characterDamage(
+          s,
+          f,
+          enemy,
+          superValue(f, div(f.stats.attack * 160, 100)),
+        );
+    }
+  } else if (isRanged(f)) {
+    if (
+      !launch(s, f, target, superValue(f, power), {
+        range: RANGED_SUPER_RANGE,
+        kind: "super",
+        slow: role === "controller" ? 20 : 0,
+      })
+    )
+      return false;
+  } else
+    characterDamage(
+      s,
+      f,
+      target,
+      superValue(f, div(f.stats.attack * power, 100)),
+    );
+  if (role === "tank")
+    shield(s, f, f, recoveryValue(f, div(f.stats.hp * 12, 100)), 90);
   f.energy = 0;
   f.superUntil = s.tick + 120;
   f.supers++;
-  event(s, "super", f);
-  characterDamage(s, f, enemy, div(f.stats.attack * 200 * power, 10000));
+  if (has(f, 8)) buff(s, f, "electric", itemValue(f, 8, 25), 120, -8);
+  if (has(f, 9)) buff(s, f, "attack", itemValue(f, 9, 8), 90, -9);
+  if (has(f, 20)) {
+    const ally = nearest(s, f, 180, true, true);
+    if (ally) shield(s, f, ally, itemValue(f, 20, 8), 90);
+  }
+  if (has(f, 21)) energy(s, f, itemValue(f, 21, 6));
+  if (has(f, 23)) shield(s, f, f, itemValue(f, 23, 8), 90);
+  event(s, "super", f, target);
   bondEvent(s, f, "super");
   return true;
 }
@@ -1329,12 +1033,12 @@ export function characterCombat(s: BattleState) {
       f.skillReady = s.tick + 7 * 30;
     }
   }
-  resolvePending(s);
+
   for (const f of s.fighters) {
     if (f.hp <= 0) continue;
     for (const b of f.buffs)
       if (
-        (b.kind === "dot" || b.kind === "soupDot") &&
+        (b.kind === "dot" || b.kind === "soupDot" || b.kind === "burnDot") &&
         b.until >= s.tick &&
         (b.until - s.tick) % 30 === 0 &&
         s.tick > b.until - (b.kind === "dot" ? 90 : 60)
@@ -1345,16 +1049,29 @@ export function characterCombat(s: BattleState) {
             s,
             src,
             f,
-            b.kind === "dot" ? b.value : div(src.stats.attack * b.value, 100),
+            b.kind === "soupDot"
+              ? div(src.stats.attack * b.value, 100)
+              : b.value,
             false,
             0,
           );
       }
     if (f.hp <= 0 || (f.memory.interrupt || 0) > s.tick) continue;
     rotateWeaponAngle(f);
+    if (f.characterId && isRanged(f)) {
+      if (f.nextAttack <= s.tick) {
+        const t = nearest(s, f, RANGED_ATTACK_RANGE);
+        if (
+          t &&
+          launch(s, f, t, 100, { normal: true, range: RANGED_ATTACK_RANGE })
+        )
+          f.nextAttack = s.tick + f.stats.cooldown;
+      }
+      continue;
+    }
     {
-      const reach = f.stats.reach;
-      const count = 1;
+      const reach = weaponReach(s, f);
+      const count = weaponCount(f);
       for (let w = 0; w < count; w++) {
         const d = DIRECTIONS[(f.angle + w * 16) % 32],
           ax = f.x + div(d[0] * f.radius, UNIT),
@@ -1362,7 +1079,7 @@ export function characterCombat(s: BattleState) {
           x = f.x + div(d[0] * reach, UNIT),
           y = f.y + div(d[1] * reach, UNIT);
         for (const t of s.fighters) {
-          const key = "0:" + t.id;
+          const key = w + ":" + t.id;
           if (
             t.hp <= 0 ||
             t.team === f.team ||
@@ -1416,6 +1133,8 @@ export function characterCombat(s: BattleState) {
             false,
             p.push || 150,
           );
+        if (p.slow && t.hp > 0 && !isClashProtected(t, s.tick))
+          slow(s, f, t, p.slow, p.kind === "super" ? 45 : 30);
         p.hit.push(t.id);
         if (p.pierce-- <= 0) p.life = 0;
       }

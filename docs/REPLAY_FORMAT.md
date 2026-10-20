@@ -54,3 +54,41 @@ Each Durable Object Alarm batch becomes one gzip-compressed, base64 storage valu
 The browser verifies count, endpoints and hash after decompression. For late joins it loads the chunk nearest the shared server timeline and its predecessor, then prefetches ahead. When a request fails, playback holds the last available frame and retries after a short backoff. New game/round persistence removes previous replay keys; only the latest round remains.
 
 This format supports late-join resume but has no seek UI. Frames are outcome-bearing: clients can infer the winner by downloading later chunks ahead of playback. That is compatible with current autonomous battles only; a future result-sensitive action requires a different delivery strategy. No production rollout or provider capacity claim has been made.
+
+## Combat readability update (v20)
+
+`chaos-integer-v20` limits roster melee skills and Supers to physical weapon reach
+plus the target's body radius. Roster ranger/frost attacks use colliding projectiles:
+240 units for normal targeting, 260 for skills, and 300 for Supers. Missed shots
+expire after their bounded flight; damage is no longer applied at cast time.
+Roster melee reach gains 20 units, subject to the existing 70-unit cap. Weapon
+rendering, clashes and normal hits share the same weapon count and reach.
+
+Projectile samples now contain `(id, owner, x, y, vx?, vy?, normal?, kind?)`, where
+`kind` is `skill` or `super`. Optional fields retain the direction and VFX type even
+when a projectile has only one recorded sample. The renderer tolerates old
+four-field tuples, but the existing engine-version gate requires a new battle for
+v20 playback; v19 snapshots must not be simulated with the changed rules.
+
+## Balance update (v21)
+
+`chaos-integer-v21` uses distinct role profiles, current-rarity budgets,
+percentage armor reduction, leveled item procs and additive synergy sources.
+Fighters persist `equipmentLevels`; controller projectiles persist their slow
+power in simulation checkpoints. Render tuples retain the v20 visual fields.
+Team configuration can include a display `name` for the color legend.
+See [BALANCE.md](BALANCE.md) for the rules and reproducible validation commands.
+
+## Square arena update (v22)
+
+New room, practice, campaign and simulation presets use 72000 × 72000 fixed-point
+units (720 × 720 world units). The default wall schedule starts shrinking at 10s
+and stops at 20s. Square arenas skip the rectangular trimming stage; explicitly
+configured rectangles retain that stage. The renderer sizes its coordinate space
+from recorded dimensions, keeping circles, pointer selection, projectiles and
+walls aligned for either aspect ratio.
+
+The 64-frame vector atlas in `apps/web/public/effects/combat-fx.svg` adds visual-only
+impact, cast, status, recovery and projectile animation. It does not enlarge damage
+areas. Regenerate it with `npm run build:fx`. Sprite frames are shared and effect
+instances/data are pooled. Existing replay fields suffice for these effects.

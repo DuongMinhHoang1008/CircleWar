@@ -1,4 +1,5 @@
 import { computeStats } from "../../shared/src/balance";
+import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "../../shared/src/arena";
 import { combat } from "./combat";
 import { DIRECTIONS, div, hash, random, UNIT, normalize } from "./math";
 import { collide, constrain, pairs } from "./physics";
@@ -24,6 +25,7 @@ export * from "./types";
 export * from "./math";
 export * from "./bounds";
 export * from "./pacing";
+export * from "./weapons";
 export function createBattle(config: BattleConfig, seed: number): BattleState {
   if (
     config.teams.length < 2 ||
@@ -81,6 +83,7 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
       characterId: l.characterId,
       slot,
       equipment: [...l.equipment],
+      equipmentLevels: { ...l.equipmentLevels },
       level: l.level,
       skillReady: 0,
       nextAttack: stats.cooldown,
@@ -236,7 +239,9 @@ export function captureReplayFrame(s: BattleState): ReplayFrame {
       f.facing,
     ]),
     buffs: s.fighters.map((f) => structuredClone(f.buffs)),
-    projectiles: s.projectiles.map((p) => [p.id, p.owner, p.x, p.y]),
+    projectiles: s.projectiles.map((p) => [
+      p.id, p.owner, p.x, p.y, p.vx, p.vy, p.normal ?? false, p.kind,
+    ]),
     zones: structuredClone(s.zones),
     pending: structuredClone(s.pending),
     events: s.events
@@ -270,9 +275,9 @@ export function debugConfig(count: number): BattleConfig {
         () => ({ classId: classes[index++ % 6], level: 0, equipment: [] }),
       ),
     })),
-    shrinkSeconds: 60,
-    width: 120000,
-    height: 72000,
+    shrinkSeconds: DEFAULT_SHRINK_SECONDS,
+    width: DEFAULT_ARENA_SIZE,
+    height: DEFAULT_ARENA_SIZE,
   };
 }
 export function rosterConfig(count: number): BattleConfig {

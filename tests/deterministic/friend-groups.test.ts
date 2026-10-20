@@ -122,16 +122,14 @@ it("preserves the thirteen user groups, exclusions and required anchors", () => 
     ).toBe(true);
   }
   expect(
-    validChoice(
-      [{ characterId: "char_09" }, { characterId: "char_22" }],
-      { group: "G12" },
-    ),
+    validChoice([{ characterId: "char_09" }, { characterId: "char_22" }], {
+      group: "G12",
+    }),
   ).toBe(true);
   expect(
-    validChoice(
-      [{ characterId: "char_09" }, { characterId: "char_01" }],
-      { group: "G12" },
-    ),
+    validChoice([{ characterId: "char_09" }, { characterId: "char_01" }], {
+      group: "G12",
+    }),
   ).toBe(false);
   for (const id of ["char_21", "char_23", "char_24", "char_25"])
     expect(FRIEND_GROUPS.find((g) => g.id === "G12")?.members).toContain(id);
@@ -187,7 +185,11 @@ it("RiseOn shields only the partner and obeys shared cooldown, range and source 
   beforeCharacterTick(s);
   f.skillReady = 0;
   characterCombat(s);
-  expect(s.events.some((e) => e.type === "shield" && e.target === partner.id && e.amount === 10)).toBe(true);
+  expect(
+    s.events.some(
+      (e) => e.type === "shield" && e.target === partner.id && e.amount === 10,
+    ),
+  ).toBe(true);
   expect(s.groups["a:G02"].uses).toBe(1);
   s.tick = 2;
   beforeCharacterTick(s);
@@ -216,7 +218,13 @@ it("Hoàng tử 34 activates its link from a skill and grants both shields", () 
   f.skillReady = 0;
   characterCombat(s);
   expect(s.groups["a:G03"].uses).toBe(1);
-  expect(s.events.filter((e) => e.type === "shield" && [f.id, partner.id].includes(e.target)).map((e) => e.amount)).toEqual([8, 8]);
+  expect(
+    s.events
+      .filter(
+        (e) => e.type === "shield" && [f.id, partner.id].includes(e.target),
+      )
+      .map((e) => e.amount),
+  ).toEqual([8, 8]);
 });
 it("ABI gets 2/3 armor tiers and a single shield pulse at 20 seconds", () => {
   const s = team("G04", ["char_03", "char_10", "char_15"]);
@@ -274,7 +282,14 @@ it("new Super groups apply their own effects and shared cooldown", () => {
           partner.buffs.some((b) => b.kind === "haste" && b.value === 115),
         ).toBe(true);
     } else {
-      expect(s.events.some((e) => e.type === "shield" && e.target === partner.id && e.amount === (group === "G09" ? 16 : 24))).toBe(true);
+      expect(
+        s.events.some(
+          (e) =>
+            e.type === "shield" &&
+            e.target === partner.id &&
+            e.amount === (group === "G09" ? 16 : 24),
+        ),
+      ).toBe(true);
       expect(partner.energy).toBeGreaterThanOrEqual(group === "G09" ? 4 : 6);
     }
     s.tick = 2;
@@ -291,7 +306,10 @@ it("anchors must cast themselves, remain alive, and stay in group range", () => 
     ["G11", "char_14"],
     ["G12", "char_09"],
   ]) {
-    const ids = group === "G12" ? [anchor, "char_22", "char_01"] : [anchor, "char_01", "char_02"];
+    const ids =
+      group === "G12"
+        ? [anchor, "char_22", "char_01"]
+        : [anchor, "char_01", "char_02"];
     const s = team(group, ids);
     if (group === "G12") s.fighters.at(-1)!.x = 75000;
     s.tick = 1;
@@ -331,7 +349,14 @@ it("Full Combo requires one living member of each branch, with separate pair eff
     s.fighters[0].energy = 100;
     characterCombat(s);
     const f = s.fighters[1];
-    expect(s.events.some((e) => e.type === "shield" && e.target === f.id && e.amount === (partner === "char_16" ? 18 : 0))).toBe(partner === "char_16");
+    expect(
+      s.events.some(
+        (e) =>
+          e.type === "shield" &&
+          e.target === f.id &&
+          e.amount === (partner === "char_16" ? 18 : 0),
+      ),
+    ).toBe(partner === "char_16");
     expect(f.energy).toBeGreaterThanOrEqual(partner === "char_16" ? 0 : 6);
     expect(
       f.buffs.some(
@@ -438,7 +463,7 @@ it("36 heals only living members, cannot revive, and keeps its counters across c
   expect(rose.hp).toBe(88);
   expect(leg.hp).toBe(leg.stats.hp - 12);
   expect(s.groups["a:G07"].uses).toBe(1);
-  expect(rose.stats.crit).toBe(13);
+  expect(rose.stats.crit).toBe(rose.baseStats.crit + 5);
   const restored = restoreBattleState(serializeBattleState(s));
   expect(calculateStateHash(restored)).toBe(calculateStateHash(s));
   expect(restored.groups["a:G07"].uses).toBe(1);

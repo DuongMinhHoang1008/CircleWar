@@ -1,0 +1,14 @@
+{
+  "size": 128,
+  "frames": 8,
+  "rows": {
+    "impactBurst": 0,
+    "superBurst": 1,
+    "burnLoop": 2,
+    "slowLoop": 3,
+    "passiveBurst": 4,
+    "healBurst": 5,
+    "shieldBurst": 6,
+    "projectile": 7
+  }
+}

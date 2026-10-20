@@ -22,7 +22,7 @@ export function damage(
     isClashProtected(target, s.tick)
   )
     return false;
-  let amount = Math.max(1, Math.min(300, raw - target.stats.defense));
+  let amount = Math.max(1, Math.min(300, div(raw * (100 - Math.min(60, target.stats.defense)), 100)));
   const absorbed = Math.min(target.shield, amount);
   target.shield -= absorbed;
   amount -= absorbed;

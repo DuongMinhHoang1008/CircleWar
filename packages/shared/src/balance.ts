@@ -1,5 +1,6 @@
 import { CATALOG_ITEMS, character, ROSTER, type CharacterId } from "./catalog";
-import { cardEvolutionSteps, cardRarityMultiplier } from "./progression";
+import { cardRarityMultiplier } from "./progression";
+import { CHARACTER_BALANCE, ITEM_EFFECT_TEXT } from "./combat-balance";
 export const BENCH_CAPACITY = 5;
 export const ITEM_BAG_CAPACITY = 8;
 export const SHOP_SIZE = 5;
@@ -179,18 +180,49 @@ export interface Loadout {
   equipment: string[];
   equipmentLevels?: Record<string, number>;
 }
+export function itemMultiplier(id: string, level = 1, matched = false) {
+  const it = CATALOG_ITEMS.find((it) => it.id === id);
+  return (
+    (it ? cardRarityMultiplier(it.rarity, level) : 1) * (matched ? 1.08 : 1)
+  );
+}
+export function itemModifiers(
+  id: string,
+  level = 1,
+  matched = false,
+): Partial<Stats> {
+  const it = ITEMS.find((it) => it.id === id);
+  const result: Partial<Stats> = {};
+  const multiplier = itemMultiplier(id, level, matched);
+  for (const key of Object.keys(it?.modifiers || {}) as (keyof Stats)[]) {
+    const value = it!.modifiers[key] || 0;
+    // Small negative cooldown bonuses cannot silently round back to zero.
+    result[key] =
+      value < 0
+        ? -Math.max(1, Math.round(-value * multiplier))
+        : Math.round(value * multiplier);
+  }
+  return result;
+}
+export function itemEffectDescription(id: string, level = 1, matched = false) {
+  return (ITEM_EFFECT_TEXT[id] || "Chỉ số cộng trực tiếp.").replace(
+    /\{(\d+)\}/g,
+    (_, value: string) =>
+      String(
+        Math.max(
+          1,
+          Math.round(Number(value) * itemMultiplier(id, level, matched)),
+        ),
+      ),
+  );
+}
 export function computeStats(loadout: Loadout): Stats {
   const s = { ...CHARACTERS[loadout.classId].stats };
   const c = character(loadout.characterId);
   if (c) {
-    const levelBonus = Math.max(0, loadout.level - 1);
-    const evolutionSteps = cardEvolutionSteps(c.tier, loadout.level);
-    s.hp += levelBonus * 18 + evolutionSteps * 36;
-    s.attack += levelBonus * 2 + evolutionSteps * 4;
-    s.defense += evolutionSteps;
-    s.speed += evolutionSteps * 10;
+    Object.assign(s, CHARACTER_BALANCE[c.id].stats);
     const rarityMultiplier = cardRarityMultiplier(c.tier, loadout.level);
-    for (const key of ["hp", "attack", "defense", "speed", "shield", "thorns", "burn", "crit", "critPower", "superPower"] as const)
+    for (const key of ["hp", "attack"] as const)
       s[key] = Math.round(s[key] * rarityMultiplier);
   }
   if ((loadout.weaponRank || 1) >= 2) s.attack += 2;
@@ -201,39 +233,15 @@ export function computeStats(loadout: Loadout): Stats {
   for (const id of loadout.equipment) {
     const it = ITEMS.find((i) => i.id === id);
     if (it) {
-      const level = loadout.equipmentLevels?.[id] || 1;
-      const rarityMultiplier = cardRarityMultiplier(it.rarity, level);
-      const evolutionSteps = cardEvolutionSteps(it.rarity, level);
-      for (const key of Object.keys(it.modifiers) as (keyof Stats)[]) {
-        const modifier = it.modifiers[key] || 0;
-        const growth = 0.05 * Math.max(0, level - 1) + 0.25 * evolutionSteps;
-        const levelScaled = modifier >= 0
-          ? modifier * (1 + growth)
-          : modifier * (1 - Math.min(0.75, growth));
-        const scaled = levelScaled * rarityMultiplier;
-        s[key] += Math.round(scaled);
-      }
+      const modifiers = itemModifiers(
+        id,
+        loadout.equipmentLevels?.[id] || 1,
+        !!c && CATALOG_ITEMS.find((it) => it.id === id)?.affinity === c.id,
+      );
+      for (const key of Object.keys(modifiers) as (keyof Stats)[])
+        s[key] += modifiers[key] || 0;
     }
   }
-  if (c)
-    for (const id of loadout.equipment) {
-      const it = CATALOG_ITEMS.find((i) => i.id === id);
-      if (it?.affinity !== c.id) continue;
-      if (id === "item_03") s.hp += 10;
-      if (id === "item_04") s.speed += 15;
-      if (id === "item_05") s.speed += 30;
-      if (id === "item_10") s.charge += 5;
-      if (id === "item_16") s.attack += 1;
-      if (id === "item_20") s.shield += 8;
-      if (id === "item_21") s.charge += 5;
-      if (id === "item_22") {
-        s.speed += 10;
-        s.stability += 20;
-      }
-      if (id === "item_23") s.defense += 1;
-      if (id === "item_24") s.thorns += 1;
-      if (id === "item_25") s.shield += 6;
-    }
   s.hp = Math.min(1600, s.hp);
   s.attack = Math.min(150, s.attack);
   s.defense = Math.min(60, s.defense);

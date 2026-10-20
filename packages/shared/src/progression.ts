@@ -1,5 +1,6 @@
 export const CARD_MAX_LEVEL = 10;
 export const DUPLICATE_CARD_XP = 150;
+export const PACK_CAPACITY = 100;
 
 /** Daily quests roll over at 00:00 UTC so clients and the room server agree. */
 export function dailyQuestDay(now = Date.now()) {
@@ -26,23 +27,44 @@ export function addCardXp(card: { level: number; xp: number }, gained: number) {
 /** A card carries its earned EXP when used as training material. */
 export function cardTotalXp(card: { level: number; xp: number }) {
   let total = card.xp + xpForNextLevel(card.level);
-  for (let level = 1; level < card.level; level++) total += xpForNextLevel(level);
+  for (let level = 1; level < card.level; level++)
+    total += xpForNextLevel(level);
   return total;
 }
 
 export function cardEvolution(baseTier: string | number, level: number) {
-  const base = typeof baseTier === "number"
-    ? Math.max(1, Math.min(4, baseTier + 1))
-    : Math.max(1, Math.min(4, Number(baseTier.replace(/^T/, "")) || 1));
+  const base =
+    typeof baseTier === "number"
+      ? Math.max(1, Math.min(4, baseTier + 1))
+      : Math.max(1, Math.min(4, Number(baseTier.replace(/^T/, "")) || 1));
   if (level >= 10) return { tier: "GOD", tierIndex: 5, evolved: base < 5 };
   const steps = level >= 7 ? 2 : level >= 3 ? 1 : 0;
   const tierIndex = Math.min(5, base + steps);
-  return { tier: tierIndex === 5 ? "GOD" : `T${tierIndex}`, tierIndex, evolved: tierIndex > base };
+  return {
+    tier: tierIndex === 5 ? "GOD" : `T${tierIndex}`,
+    tierIndex,
+    evolved: tierIndex > base,
+  };
 }
 
 /** Small rarity-based power steps; leveling and evolution use the same tier shown on the card. */
 export function cardRarityMultiplier(baseTier: string | number, level: number) {
-  return 1 + (cardEvolution(baseTier, level).tierIndex - 1) * 0.08;
+  // Progress within a rarity adds at most 6%; no extra lifetime-level budget.
+  const current = Math.max(1, level);
+  const tier = cardEvolution(baseTier, current).tierIndex;
+  let first = current, last = current;
+  for (let l = 1; l <= CARD_MAX_LEVEL; l++) {
+    if (cardEvolution(baseTier, l).tierIndex !== tier) continue;
+    first = Math.min(first, l);
+    last = Math.max(last, l);
+  }
+  const progress =
+    tier === 5
+      ? (current - 3) / 7
+      : last > first
+        ? (current - first) / (last - first)
+        : 0;
+  return 1 + (tier - 1) * 0.18 + Math.max(0, Math.min(1, progress)) * 0.06;
 }
 
 /** Number of tier steps this card has gained over its printed tier. */

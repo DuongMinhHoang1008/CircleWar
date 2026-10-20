@@ -89,9 +89,9 @@ describe("approved catalog gameplay", () => {
   it("applies baseline, signature affinity, weapon rank and level without modifying catalog", () => {
     const plain = computeStats(load("char_12")),
       xoi = computeStats(load("char_12", ["item_03"]));
-    expect(xoi.hp - plain.hp).toBe(75);
+    expect(xoi.hp - plain.hp).toBe(45);
     const wrong = computeStats(load("char_02", ["item_03"]));
-    expect(wrong.hp - computeStats(load("char_02")).hp).toBe(65);
+    expect(wrong.hp - computeStats(load("char_02")).hp).toBe(42);
     const weapon = computeStats({
       ...load("char_12"),
       level: 6,
@@ -129,28 +129,35 @@ describe("approved catalog gameplay", () => {
       ).toBe(true);
     }
   });
-  it("generic Super and skill hit one target at their stated power", () => {
+  it("tank Super and skill apply armor percentage and grant finite shields", () => {
     const s = fixture(["char_01"]),
       f = s.fighters[0];
-    const enemy = s.fighters[1], startingHp = enemy.hp;
+    const enemy = s.fighters[1],
+      startingHp = enemy.hp;
     Object.assign(f, { x: 60000, y: 36000 });
     Object.assign(enemy, { x: 65000, y: 36000 });
+    f.baseStats.rotation = enemy.baseStats.rotation = 0;
+    f.angle = 16;
+    enemy.angle = 0;
     f.energy = 100;
     s.tick = 1;
     beforeCharacterTick(s);
     characterCombat(s);
     expect(startingHp - enemy.hp).toBe(
-      Math.round((f.stats.attack * 4 * f.stats.superPower) / 100) -
-        enemy.stats.defense,
+      Math.floor(
+        (Math.floor(f.stats.attack * 1.5) * (100 - enemy.stats.defense)) / 100,
+      ),
     );
-    expect(f.shield).toBe(0);
+    expect(f.shield).toBe(Math.floor((f.stats.hp * 12) / 100));
     const hpBeforeSkill = enemy.hp;
     f.skillReady = 0;
     s.tick = 2;
     beforeCharacterTick(s);
     characterCombat(s);
     expect(hpBeforeSkill - enemy.hp).toBe(
-      Math.floor(f.stats.attack * 1.2) - enemy.stats.defense,
+      Math.floor(
+        (Math.floor(f.stats.attack * 1.1) * (100 - enemy.stats.defense)) / 100,
+      ),
     );
   });
   it("expires shields, has finite low-HP protection, and cannot revive a lethal hit", () => {
@@ -159,7 +166,7 @@ describe("approved catalog gameplay", () => {
       enemy = s.fighters[1];
     characterDamage(s, enemy, f, 230);
     expect(f.memory.bedding).toBe(1);
-    expect(f.shield).toBe(45);
+    expect(f.shield).toBe(36);
     s.tick = 91;
     beforeCharacterTick(s);
     expect(f.shield).toBe(0);
@@ -180,12 +187,12 @@ describe("approved catalog gameplay", () => {
       beforeCharacterTick(s);
       characterCombat(s);
     }
-    expect(f.hp).toBe(f.stats.hp - 30);
-    expect(f.energy).toBe(20);
+    expect(f.hp).toBe(f.stats.hp - 34);
+    expect(f.energy).toBe(12);
     s.tick = 2100;
     beforeCharacterTick(s);
     characterCombat(s);
-    expect(f.energy).toBe(20);
+    expect(f.energy).toBe(12);
   });
   it("magazine contact cannot proc three times in solver passes and herb clears slow", () => {
     const s = fixture(["char_04"], [["item_11"]]),

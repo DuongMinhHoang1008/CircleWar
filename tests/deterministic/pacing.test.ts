@@ -1,4 +1,5 @@
 import { expect, it } from "vitest";
+import { DEFAULT_SETTINGS } from "../../packages/shared/src/protocol";
 import {
   applyRoundTempo,
   calculateStateHash,
@@ -10,6 +11,24 @@ import {
   serializeBattleState,
   stepBattle,
 } from "../../packages/battle-engine/src/index";
+
+it("starts new arenas square and shrinks from 10 to 20 seconds by default", () => {
+  const config = debugConfig(2);
+  expect(config.width).toBe(72000);
+  expect(config.height).toBe(config.width);
+  expect(config.shrinkSeconds).toBe(DEFAULT_SETTINGS.shrinkSeconds);
+  const s = createBattle(config, 73);
+  s.tick = 300;
+  expect(safeBounds(s).left).toBe(0);
+  s.tick = 301;
+  expect(safeBounds(s).left).toBeGreaterThan(0);
+  s.tick = 600;
+  const final = safeBounds(s);
+  expect(final.right - final.left).toBe(28800);
+  expect(final.bottom - final.top).toBe(28800);
+  s.tick = 1200;
+  expect(safeBounds(s)).toEqual(final);
+});
 
 it("grows combat stats from loadout baselines, accelerates bodies and resets next round", () => {
   const config = debugConfig(2);

@@ -27,6 +27,7 @@ import {
 } from "../../../packages/battle-engine/src/index";
 import { Connection, defaultApi } from "./networking";
 import { Arena } from "./rendering/Arena";
+import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "../../../packages/shared/src/arena";
 import "./styles.css";
 import "./catalog.css";
 import {
@@ -39,7 +40,7 @@ import {
   type TeamChoice,
 } from "../../../packages/shared/src/catalog";
 import { CatalogLibrary, InfoPopup, Portrait, ItemSprite, TeamChoices, type Inspect } from "./GameCatalog";
-import { addCardXp, cardEvolution, cardTotalXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel } from "../../../packages/shared/src/progression";
+import { addCardXp, cardEvolution, cardTotalXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "../../../packages/shared/src/progression";
 interface GlobalProfile {
   cards: { characterId: CharacterId; level: number; xp: number }[];
   itemCards: { itemId: string; level: number; xp: number }[];
@@ -210,7 +211,7 @@ function App() {
     [count, setCount] = useState(18),
     [simulationTeamCount, setSimulationTeamCount] = useState(4),
     [simulationTeamSize, setSimulationTeamSize] = useState(2),
-    [simulationShrinkSeconds, setSimulationShrinkSeconds] = useState(30),
+    [simulationShrinkSeconds, setSimulationShrinkSeconds] = useState(DEFAULT_SHRINK_SECONDS),
     [simulationLineups, setSimulationLineups] = useState<CharacterId[][]>(
       Array.from({ length: 8 }, (_, team) =>
         Array.from({ length: 3 }, (_, slot) =>
@@ -436,8 +437,8 @@ function App() {
     if (room?.phase !== "LOBBY" || !me || me.ready) return Promise.resolve();
     return act(profileSyncAction());
   }
-  const queuedPacks = Math.min(10, profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000));
-  const packWait = queuedPacks >= 10 ? 0 : Math.max(0, 60_000 - ((now - profile.lastPackAt) % 60_000));
+  const queuedPacks = Math.min(PACK_CAPACITY, profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000));
+  const packWait = queuedPacks >= PACK_CAPACITY ? 0 : Math.max(0, 60_000 - ((now - profile.lastPackAt) % 60_000));
   function openPack(count = 1) {
     const amount = Math.min(count, queuedPacks);
     if (amount <= 0 || openingPack) return;
@@ -486,7 +487,7 @@ function App() {
       if (evolved) evolvedPull = pulledResult;
     }
     const remainingPacks = queuedPacks - amount;
-    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= 10 ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
+    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
     const next: GlobalProfile = {
       ...profile,
       cards,
@@ -512,10 +513,10 @@ function App() {
   }
   function claimMission(mission: "draw" | "win" | "campaign") {
     const goal = mission === "draw" ? 3 : 1;
-    if (profile.missions[mission] < goal || profile.claimedMissions.includes(mission) || queuedPacks >= 10) return;
-    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= 10 ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
+    if (profile.missions[mission] < goal || profile.claimedMissions.includes(mission) || queuedPacks >= PACK_CAPACITY) return;
+    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
     const nextPacks = queuedPacks + 1;
-    saveProfile({ ...profile, packs: nextPacks, lastPackAt: nextPacks >= 10 ? now : accruedAt, claimedMissions: [...profile.claimedMissions, mission] });
+    saveProfile({ ...profile, packs: nextPacks, lastPackAt: nextPacks >= PACK_CAPACITY ? now : accruedAt, claimedMissions: [...profile.claimedMissions, mission] });
   }
   function toggleProfileTeam(characterId: CharacterId) {
     const includes = profile.team.includes(characterId);
@@ -633,8 +634,8 @@ function App() {
       return { characterId: entry.id as CharacterId, classId: entry.base as ClassId, level: Math.min(10, 1 + Math.floor(profile.campaignStage / 2)), weaponRank: 1, equipment: [] };
     });
     base.teams = [
-      { id: "team-player", loadouts: playerLoadouts },
-      { id: "team-rival", loadouts: opponentLoadouts },
+      { id: "team-player", name, loadouts: playerLoadouts },
+      { id: "team-rival", name: `Đối thủ ải ${profile.campaignStage + 1}`, loadouts: opponentLoadouts },
     ];
     setCampaignWon(null);
     setCampaignBattle({ config: base, seed: 51000 + profile.campaignStage * 97 + Math.floor(Math.random() * 97) });
@@ -644,14 +645,14 @@ function App() {
     const won = winningTeam === "team-player";
     setCampaignWon(won);
     if (!won) return;
-    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= 10
+    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY
       ? now
       : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
-    const packs = Math.min(10, queuedPacks + 3);
+    const packs = Math.min(PACK_CAPACITY, queuedPacks + 3);
     saveProfile({
       ...profile,
       packs,
-      lastPackAt: packs >= 10 ? now : accruedAt,
+      lastPackAt: packs >= PACK_CAPACITY ? now : accruedAt,
       campaignStage: profile.campaignStage + 1,
       missions: { ...profile.missions, campaign: profile.missions.campaign + 1 },
     });
@@ -687,9 +688,9 @@ function App() {
     const won = room.champion === id;
     const next = { ...profile, processedMatches: [...profile.processedMatches, matchKey] };
     if (won) {
-      const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= 10 ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
-      next.packs = Math.min(10, queuedPacks + (room.mode === "campaign" ? 3 : 5));
-      next.lastPackAt = next.packs >= 10 ? now : accruedAt;
+      const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
+      next.packs = Math.min(PACK_CAPACITY, queuedPacks + (room.mode === "campaign" ? 3 : 5));
+      next.lastPackAt = next.packs >= PACK_CAPACITY ? now : accruedAt;
       next.missions = { ...profile.missions };
       if (room.mode === "campaign") {
         next.campaignStage = profile.campaignStage + 1;
@@ -708,17 +709,18 @@ function App() {
         equipment: [],
       });
       return {
-        width: 120000,
-        height: 72000,
+        width: DEFAULT_ARENA_SIZE,
+        height: DEFAULT_ARENA_SIZE,
         shrinkSeconds: simulationShrinkSeconds,
         teams: Array.from({ length: simulationTeamCount }, (_, index) => ({
           id: `team-${String(index).padStart(2, "0")}`,
+          name: index === 0 ? name : `Đội mô phỏng ${index + 1}`,
           loadouts: simulationLineups[index]
             .slice(0, simulationTeamSize)
             .map((characterId, slot) =>
               index === 0
                 ? {
-                    ...practice[slot],
+                    ...(practice[slot] || loadout(characterId)),
                     characterId,
                     classId: character(characterId)!.base as ClassId,
                   }
@@ -743,7 +745,7 @@ function App() {
     const rest = total - size,
       enemyTeams = Math.ceil(rest / 3);
     c.teams = [
-      { id: "team-00", loadouts: practice.slice(0, size) },
+      { id: "team-00", name, loadouts: practice.slice(0, size) },
       ...Array.from({ length: enemyTeams }, (_, i) => ({
         id: "team-" + String(i + 1).padStart(2, "0"),
         loadouts: Array.from(
@@ -784,6 +786,7 @@ function App() {
     simulationTeamSize,
     simulationShrinkSeconds,
     simulationLineups,
+    name,
   ]);
   const slots = offline ? debug.teams[0].loadouts : me?.loadouts || [];
   const selected = slots[Math.min(target, Math.max(0, slots.length - 1))];
@@ -1048,8 +1051,8 @@ function App() {
                 <span className="pack-eyebrow">RISEON · COLLECTOR SERIES</span>
                 <h2>Mở thẻ.<br /><em>Viết nên huyền thoại.</em></h2>
                 <p>Mỗi pack hé lộ một nhân vật hoặc vật phẩm. Sưu tầm, nâng cấp và tạo đội hình của riêng bạn.</p>
-                <div className="pack-queue-card"><span>PACK ĐANG CHỜ</span><strong>{queuedPacks}<small> / 10</small></strong><i><b style={{ width: `${queuedPacks * 10}%` }} /></i></div>
-                <div className="pack-open-options">{[1, 3, 5, 10].map((count) => <button key={count} className={count === 1 ? "primary" : ""} disabled={!profileReady || queuedPacks < count || openingPack} onClick={() => openPack(count)}>Mở x{count}</button>)}</div>
+                <div className="pack-queue-card"><span>PACK ĐANG CHỜ</span><strong>{queuedPacks}<small> / {PACK_CAPACITY}</small></strong><i><b style={{ width: `${queuedPacks / PACK_CAPACITY * 100}%` }} /></i></div>
+                <div className="pack-open-options">{[1, 3, 5, 10, 20, 50, 100].map((count) => <button key={count} className={count === 1 ? "primary" : ""} disabled={!profileReady || queuedPacks < count || openingPack} onClick={() => openPack(count)}>Mở x{count}</button>)}</div>
                 <div className="pack-promise"><span>✦ 1 thẻ mỗi pack</span><span>✦ Nhân vật & vật phẩm</span><span>✦ 4 bậc hiếm</span></div>
               </div>
               <div className="pack-hero-art">
@@ -1066,9 +1069,9 @@ function App() {
                 <span className="pack-total-badge">{queuedPacks} PACK{queuedPacks === 1 ? "" : "S"}</span>
               </div>
             </section>
-            <div className="pack-recharge">{queuedPacks >= 10 ? "Hàng chờ đã đầy · pack tự hồi khi còn chỗ" : `Pack tiếp theo sau ${Math.floor(packWait / 60000)}:${String(Math.floor(packWait / 1000) % 60).padStart(2, "0")} · tự hồi mỗi phút, tối đa 10`}</div>
+            <div className="pack-recharge">{queuedPacks >= PACK_CAPACITY ? "Hàng chờ đã đầy · pack tự hồi khi còn chỗ" : `Pack tiếp theo sau ${Math.floor(packWait / 60000)}:${String(Math.floor(packWait / 1000) % 60).padStart(2, "0")} · tự hồi mỗi phút, tối đa ${PACK_CAPACITY}`}</div>
             <h3>Nhiệm Vụ Hằng Ngày · tiến độ làm mới mỗi ngày · mỗi nhiệm vụ nhận 1 pack</h3>
-            {([ ["draw", "Bóc 3 thẻ"], ["win", "Thắng một trận PvP"], ["campaign", "Thắng một ải"] ] as const).map(([mission, label]) => { const goal = mission === "draw" ? 3 : 1; const progress = Math.min(goal, profile.missions[mission]); const claimed = profile.claimedMissions.includes(mission); return <div className="mission-row" key={mission}><span>{label} · {progress}/{goal}</span><button disabled={!profileReady || claimed || progress < goal || queuedPacks >= 10} onClick={() => claimMission(mission)}>{claimed ? "Đã nhận" : "Nhận pack"}</button></div>; })}
+            {([ ["draw", "Bóc 3 thẻ"], ["win", "Thắng một trận PvP"], ["campaign", "Thắng một ải"] ] as const).map(([mission, label]) => { const goal = mission === "draw" ? 3 : 1; const progress = Math.min(goal, profile.missions[mission]); const claimed = profile.claimedMissions.includes(mission); return <div className="mission-row" key={mission}><span>{label} · {progress}/{goal}</span><button disabled={!profileReady || claimed || progress < goal || queuedPacks >= PACK_CAPACITY} onClick={() => claimMission(mission)}>{claimed ? "Đã nhận" : "Nhận pack"}</button></div>; })}
           </>}
           {screen === "inventory" && <div className="inventory-workspace">
             <div className="inventory-columns">
@@ -1099,7 +1102,7 @@ function App() {
             </section>
             <section className="training-card-pool"><div className="training-section-heading"><span>02 · THẺ CỦA BẠN</span><strong>Kéo thả để chọn</strong></div><p>Kéo thẻ vào lò để nhận EXP hoặc vào khung hy sinh. Nhân vật trong đội và vật phẩm đang gắn chỉ có thể làm thẻ nhận EXP.</p><div className="training-pool-grid">{profile.cards.map((card) => { const key = `character:${card.characterId}`; const c = character(card.characterId); const disabled = profile.team.includes(card.characterId); const selected = trainingSacrifice.includes(key); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${disabled ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => disabled ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><Portrait id={card.characterId} /><b>{c?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{disabled ? "ĐANG TRONG ĐỘI · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{profile.itemCards.map((card) => { const key = `item:${card.itemId}`; const it = itemInfo(card.itemId); const selected = trainingSacrifice.includes(key); const equipped = Object.values(profile.equipment).some((ids) => ids.includes(card.itemId)); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${equipped ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => equipped ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><ItemSprite id={card.itemId} /><b>{it?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{equipped ? "ĐANG GẮN · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{!profile.cards.length && !profile.itemCards.length && <div className="training-pool-empty">Mở pack để nhận thẻ có thể luyện.</div>}</div></section>
           </div>}
-          {screen === "campaign" && <><div className="panel-title"><h2>Đi ải · ải {profile.campaignStage + 1}</h2><b>Đã vượt {profile.campaignStage}</b></div><p className="muted">Trận chạy cục bộ, tách khỏi phòng Multiplayer. Dùng team trong Kho đồ; thắng nhận 3 pack (tối đa 10 pack đang chờ).</p>{!campaignBattle && <button className="primary wide" disabled={!profileReady} onClick={launchCampaign}>Bắt đầu ải {profile.campaignStage + 1}</button>}{campaignBattle && <>{campaignWon === null && <Arena key={`campaign-${campaignBattle.seed}`} config={campaignBattle.config} seed={campaignBattle.seed} replay={null} loadReplayChunk={async () => []} muted={muted} low={low} label="ĐI ẢI · TRẬN CỤC BỘ" highlightTeamId="team-player" onError={report} onFinished={finishCampaign} />}<div className="campaign-result">{campaignWon === null ? "Trận đang diễn ra…" : campaignWon ? "🏆 Vượt ải thành công · đã nhận 3 pack" : "💥 Ải thất bại · hãy chỉnh team rồi thử lại"}</div>{campaignWon !== null && <button className="primary wide" onClick={() => setCampaignBattle(null)}>{campaignWon ? `Đi tiếp · ải ${profile.campaignStage + 1}` : "Thử lại"}</button>}</>}</>}
+          {screen === "campaign" && <><div className="panel-title"><h2>Đi ải · ải {profile.campaignStage + 1}</h2><b>Đã vượt {profile.campaignStage}</b></div><p className="muted">Trận chạy cục bộ, tách khỏi phòng Multiplayer. Dùng team trong Kho đồ; thắng nhận 3 pack (tối đa 100 pack đang chờ).</p>{!campaignBattle && <button className="primary wide" disabled={!profileReady} onClick={launchCampaign}>Bắt đầu ải {profile.campaignStage + 1}</button>}{campaignBattle && <>{campaignWon === null && <Arena key={`campaign-${campaignBattle.seed}`} config={campaignBattle.config} seed={campaignBattle.seed} replay={null} loadReplayChunk={async () => []} muted={muted} low={low} label="ĐI ẢI · TRẬN CỤC BỘ" highlightTeamId="team-player" onError={report} onFinished={finishCampaign} />}<div className="campaign-result">{campaignWon === null ? "Trận đang diễn ra…" : campaignWon ? "🏆 Vượt ải thành công · đã nhận 3 pack" : "💥 Ải thất bại · hãy chỉnh team rồi thử lại"}</div>{campaignWon !== null && <button className="primary wide" onClick={() => setCampaignBattle(null)}>{campaignWon ? `Đi tiếp · ải ${profile.campaignStage + 1}` : "Thử lại"}</button>}</>}</>}
         </section> : <div className="layout">
           <aside className="panel">
             <div className="panel-title">
@@ -1161,7 +1164,7 @@ function App() {
                       </select>
                     </label>
                     <label>
-                      Thu đấu trường sau
+                      Tường dừng thu sau
                       <select
                         aria-label="Thời gian thu đấu trường mô phỏng"
                         value={simulationShrinkSeconds}
@@ -1672,10 +1675,6 @@ function App() {
                         </button>
                       ))}
                     </div>
-                    <strong>
-                      {p.hp}
-                      <small> HP</small>
-                    </strong>
                   </div>
                 ))
               )}
@@ -1695,12 +1694,7 @@ function App() {
                           calculateRoundRewards(r.rank, room.results.length)
                             .gold
                         }
-                        G / −
-                        {
-                          calculateRoundRewards(r.rank, room.results.length)
-                            .hpLost
-                        }
-                        HP
+                        G
                       </small>
                     </div>
                   ))}
@@ -2059,7 +2053,7 @@ function App() {
           <span>Made for the chaos.</span>
         </footer>
       </main>
-      <InfoPopup info={info} close={() => setInfo(null)} inspect={setInfo} />
+      <InfoPopup info={info?.kind === "item" ? { ...info, itemLevel: profile.itemCards.find(card => card.itemId === info.id)?.level || 1 } : info} close={() => setInfo(null)} inspect={setInfo} />
     </div>
   );
 }

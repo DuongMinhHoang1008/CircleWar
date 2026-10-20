@@ -786,6 +786,8 @@ header nav button small { display: inline-grid; min-width: 18px; height: 18px; p
   margin-left: 8px;
 }
 .arena-shell {
+  width: min(100%, 760px);
+  margin-inline: auto;
   position: relative;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -817,7 +819,7 @@ header nav button small { display: inline-grid; min-width: 18px; height: 18px; p
   box-shadow: 0 0 8px var(--accent);
 }
 .canvas-mount {
-  aspect-ratio: 5/3;
+  aspect-ratio: 1;
   background: var(--surface-low);
 }
 .canvas-mount canvas {
@@ -1411,3 +1413,9 @@ select:focus-visible {
 input[type="checkbox"] {
   accent-color: var(--accent);
 }
+
+.team-color-legend { display:flex; flex-wrap:wrap; gap:6px; padding:10px 12px; background:#191619; }
+.team-color-key { display:flex; align-items:center; gap:6px; padding:5px 8px; border:1px solid; border-radius:7px; font-size:11px; min-width:0; }
+.team-color-key i { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.team-color-key b { max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.team-color-key small { color:#bbb; }

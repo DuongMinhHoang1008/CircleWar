@@ -1,6 +1,31 @@
 # Triển khai
 
-Source đã có cấu hình GitHub Pages và Cloudflare SQLite Durable Objects. **Chưa publish production**; không cần VPS hoặc máy cá nhân chạy liên tục sau khi deploy.
+Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không cần VPS hoặc máy cá nhân chạy liên tục.
+
+## Production hiện tại
+
+- Website: https://riseon-ultimate-battle.pages.dev
+- API: https://circle-chaos.circle-chaos.workers.dev
+- Engine: `chaos-integer-v22`, triển khai ngày 20/10/2026.
+- Worker version: `2584c392-76d4-4590-a325-179c74e0dde8`.
+- Pages deployment: https://d27bdf2c.riseon-ultimate-battle.pages.dev (bao gồm sửa Mô phỏng cho hồ sơ mới chỉ có một nhân vật).
+
+Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:
+
+```powershell
+npm test
+npm run build
+npm run deploy:worker
+$env:VITE_API_URL = 'https://circle-chaos.circle-chaos.workers.dev'
+$env:BASE_PATH = '/'
+npx vite build --config apps/web/vite.config.ts
+npx wrangler pages deploy dist/web --project-name riseon-ultimate-battle --branch main
+$env:TEST_WEB = 'https://riseon-ultimate-battle.pages.dev'
+$env:TEST_API = $env:VITE_API_URL
+npx tsx tests/integration/deployment-smoke.ts
+```
+
+Smoke test tạo hồ sơ/phòng thử riêng, kiểm tra CORS, kết nối lại hồ sơ, WebSocket, đấu trường vuông, thời gian thu 20 giây và atlas VFX 64 frame. Phòng thử được rời sau kiểm tra. `npm run build` chỉ dry-run Worker; cần chạy `deploy:worker` riêng như trên.
 
 ## Cloudflare Workers
 
@@ -15,11 +40,11 @@ npm run build
 npm run deploy:worker
 ```
 
-Wrangler tạo binding `ROOMS` và migration `v1` với `new_sqlite_classes: ["Room"]`. Không đổi migration đã deploy; thêm migration mới nếu thay class. Không dùng KV-backed DO cũ vì không phù hợp Free. Worker URL dạng `https://circle-chaos.<account>.workers.dev`.
+Wrangler tạo bindings `ROOMS`, `PROFILES`, `TRADES` với các migration SQLite `v1`, `v2`, `v3`. Không đổi migration đã deploy; thêm migration mới nếu thay class. Không dùng KV-backed DO cũ vì không phù hợp Free. Worker URL dạng `https://circle-chaos.<account>.workers.dev`.
 
 `GET /health` trả trạng thái. Source không yêu cầu shared secret frontend hoặc API key của người dùng. Khi CI deploy Worker, dùng Cloudflare API token scope tối thiểu qua secret server-side; không đặt vào biến `VITE_*`.
 
-## GitHub Pages
+## GitHub Pages (phương án thay thế)
 
 1. Push repository lên GitHub, nhánh `main`.
 2. Settings → Pages → Source = GitHub Actions.
@@ -61,4 +86,4 @@ Sau khi thay engine version, không ghi đè engine của phòng đang mô phỏ
 
 Replay frames are stored as gzip-compressed, base64 values under per-room keys scoped to game, round and chunk index. Room state and chunk writes commit in one Durable Object storage transaction. The replay metadata endpoint omits seed, official result and terminal simulation state; authenticated clients request chunks individually. The current application has no live battle action that can use information from later replay chunks, but the frames reveal the winner before playback ends.
 
-The format change has only been verified locally with Miniflare/Wrangler. This project has not been published to production. Completed old-format replays use a deterministic compatibility path; old active simulations begin recording from their first state after upgrade. Test this path against a preserved old Durable Object record before production rollout. Deploy Worker and frontend together. Confirm staging CPU, storage, alarms and quota behavior before public rollout.
+Completed old-format replays use a deterministic compatibility path; old active simulations begin recording from their first state after upgrade. Compatibility with preserved historical Durable Object records has not been measured by the deployment smoke test. Deploy Worker and frontend together. Confirm staging CPU, storage, alarms and quota behavior before increasing load.

@@ -1,4 +1,11 @@
 import data from "./catalog-data.json";
+import { cardRarityMultiplier } from "./progression";
+import {
+  CHARACTER_BALANCE,
+  ITEM_BALANCE,
+  ITEM_EFFECT_TEXT,
+  ROLE_TEXT,
+} from "./combat-balance";
 export const CHARACTER_IDS = [
   "char_01",
   "char_02",
@@ -27,7 +34,22 @@ export const CHARACTER_IDS = [
   "char_25",
 ] as const;
 export type CharacterId = (typeof CHARACTER_IDS)[number];
-export const ROSTER = data.characters;
+export const ROSTER = data.characters.map((c) => {
+  const profile = CHARACTER_BALANCE[c.id];
+  const text = ROLE_TEXT[profile.role];
+  const { hp, attack, defense, speed } = profile.stats;
+  return {
+    ...c,
+    stats: [hp!, attack!, defense!, speed!],
+    passive: [
+      c.passive[0],
+      `${text.passive} Giá trị gốc: ${profile.passive}${["fighter", "assassin", "controller"].includes(profile.role) ? "%" : ""}.`,
+    ],
+    skill: [c.skill[0], text.skill],
+    super: [c.super[0], text.super],
+    upgrade: "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
+  };
+});
 export const BONDS = data.bonds;
 export interface FriendGroup {
   id: string;
@@ -64,7 +86,14 @@ export function groupTier(
     );
   return three ? 3 : 2;
 }
-export const CATALOG_ITEMS = data.items;
+export const CATALOG_ITEMS = data.items.map((it) => ({
+  ...it,
+  modifiers: ITEM_BALANCE[it.id],
+  description: ITEM_EFFECT_TEXT[it.id].replace(/\{(\d+)\}/g,
+    (_, value: string) => String(Math.round(Number(value) * cardRarityMultiplier(it.rarity, 1)))),
+  affinityDescription:
+    "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm.",
+}));
 export const character = (id?: string) => ROSTER.find((c) => c.id === id);
 export const itemInfo = (id: string) => CATALOG_ITEMS.find((i) => i.id === id);
 export interface TeamChoice {
@@ -85,7 +114,7 @@ export const TRAITS = [
   "Vật Linh",
 ];
 export const TRAIT_TEXT: Record<string, string> = {
-  "Hộ vệ": "2/3 Hộ vệ: +1/+2 giáp cho các Hộ vệ.",
+  "Hộ vệ": "2/3 Hộ vệ: +1%/+2% giảm sát thương cho các Hộ vệ.",
   "Đấu sĩ": "2/3 Đấu sĩ: +4%/+6% ATK.",
   "Kiểm soát": "2/3 Kiểm soát: +5/+8 sức mạnh Super.",
   "Hỗ trợ": "2/3 Hỗ trợ: 10/16 khiên đầu round trong 5 giây.",

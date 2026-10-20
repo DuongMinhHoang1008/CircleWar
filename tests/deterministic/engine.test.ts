@@ -12,7 +12,11 @@ import {
 } from "../../packages/battle-engine/src/index";
 describe("integer battle engine", () => {
   it("keeps fighting beyond the wall timer and stops only after a team is eliminated", () => {
-    const s = createBattle(debugConfig(2), 91);
+    // Preserve this explicit legacy rectangle fixture independently of new defaults.
+    const s = createBattle(
+      { ...debugConfig(2), width: 120000, height: 72000, shrinkSeconds: 60 },
+      91,
+    );
     const [a, b] = s.fighters;
     Object.assign(a, { x: 40000, y: 36000, vx: 0, vy: 400 });
     Object.assign(b, { x: 80000, y: 36000, vx: 0, vy: -400 });

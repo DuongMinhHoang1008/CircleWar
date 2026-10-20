@@ -13,7 +13,7 @@ import {
 } from "../../../packages/shared/src/room";
 import { hash } from "../../../packages/battle-engine/src/index";
 import { CHARACTER_IDS, CATALOG_ITEMS, type CharacterId } from "../../../packages/shared/src/catalog";
-import { addCardXp, DUPLICATE_CARD_XP, xpForNextLevel } from "../../../packages/shared/src/progression";
+import { addCardXp, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "../../../packages/shared/src/progression";
 interface Env {
   ROOMS: DurableObjectNamespace<Room>;
   PROFILES: DurableObjectNamespace<Profile>;
@@ -203,7 +203,7 @@ function validProfile(raw: unknown): raw is GlobalProfile {
     p.cards.every((c) => ids.has(c.characterId) && Number.isInteger(c.level) && c.level >= 1 && c.level <= 10 && Number.isInteger(c.xp) && c.xp >= 0 && (c.level === 10 ? c.xp === 0 : c.xp < xpForNextLevel(c.level))) &&
     Array.isArray(p.itemCards) && p.itemCards.length <= CATALOG_ITEMS.length && new Set(p.itemCards.map((item) => item.itemId)).size === p.itemCards.length && p.itemCards.every((item) => items.has(item.itemId) && Number.isInteger(item.level) && item.level >= 1 && item.level <= 10 && Number.isInteger(item.xp) && item.xp >= 0 && (item.level === 10 ? item.xp === 0 : item.xp < xpForNextLevel(item.level))) && equipmentValid &&
     Array.isArray(p.team) && p.team.length >= 1 && p.team.length <= 3 && new Set(p.team).size === p.team.length && p.team.every((id) => ids.has(id) && p.cards!.some((card) => card.characterId === id)) &&
-    Number.isInteger(p.packs) && p.packs! >= 0 && p.packs! <= 10 && Number.isFinite(p.lastPackAt) &&
+    Number.isInteger(p.packs) && p.packs! >= 0 && p.packs! <= PACK_CAPACITY && Number.isFinite(p.lastPackAt) &&
     !!p.missions && [p.missions.draw, p.missions.win, p.missions.campaign].every((n) => Number.isInteger(n) && n >= 0) &&
     Array.isArray(p.claimedMissions) && p.claimedMissions.every((m) => ["draw", "win", "campaign"].includes(m)) &&
     Number.isInteger(p.campaignStage) && p.campaignStage! >= 0 && Array.isArray(p.processedMatches) && p.processedMatches.length <= 5000 && p.processedMatches.every((key) => typeof key === "string" && key.length <= 128) &&
@@ -215,9 +215,9 @@ function starterProfile(): GlobalProfile {
 function accrue(profile: GlobalProfile, now = Date.now()) {
   const elapsed = Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000);
   if (!elapsed) return;
-  const gained = Math.min(10 - profile.packs, elapsed);
+  const gained = Math.min(PACK_CAPACITY - profile.packs, elapsed);
   if (gained > 0) profile.packs += gained;
-  profile.lastPackAt = profile.packs >= 10 ? now : profile.lastPackAt + elapsed * 60_000;
+  profile.lastPackAt = profile.packs >= PACK_CAPACITY ? now : profile.lastPackAt + elapsed * 60_000;
 }
 export class Profile extends DurableObject<Env> {
   async fetch(req: Request) {
@@ -235,6 +235,7 @@ export class Profile extends DurableObject<Env> {
           if (!stored) {
             const candidate = body.profile && typeof body.profile === "object" ? normalizeProfile(body.profile as Partial<GlobalProfile>) : starterProfile();
             const profile = validProfile(candidate) ? candidate : starterProfile();
+            accrue(profile);
             stored = { tokenHash, profile };
             await this.ctx.storage.put("profile", stored);
           } else if (stored.tokenHash !== tokenHash) return json({ error: "Không có quyền truy cập hồ sơ" }, 401);

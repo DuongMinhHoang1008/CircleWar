@@ -15,16 +15,21 @@ import {
 } from "../../../packages/shared/src/catalog";
 import {
   computeStats,
+  itemModifiers,
+  itemMultiplier,
+  itemEffectDescription,
   type Loadout,
 } from "../../../packages/shared/src/balance";
 import type { Fighter } from "../../../packages/battle-engine/src/types";
 import weaponAtlas from "./rendering/weapon-atlas.json";
+import { cardEvolution } from "../../../packages/shared/src/progression";
 export type Inspect = {
   kind: "character" | "item";
   id: string;
   loadout?: Loadout;
   live?: Fighter;
   liveTick?: number;
+  itemLevel?: number;
   actions?: { label: string; run: () => void; disabled?: boolean }[];
 };
 export const avatar = (id: string) =>
@@ -336,23 +341,31 @@ export function Portrait({
 }
 const labels: Record<string, string> = {
   hp: "Máu tối đa",
-  attack: "ATK",
-  defense: "Giáp",
-  speed: "Tốc độ",
+  attack: "Sát thương / đòn",
+  defense: "Giảm sát thương (%)",
+  speed: "Di chuyển (đơn vị/s)",
   crit: "Chí mạng (%)",
-  cooldown: "Nhịp đánh (tick)",
-  charge: "Nạp Super",
-  superPower: "Sức mạnh Super",
+  cooldown: "Hồi đòn (giây; thấp = nhanh)",
+  charge: "Tốc độ nạp Super (%)",
+  superPower: "Hiệu lực Super (%)",
   mass: "Khối lượng",
-  reach: "Tầm vũ khí (×100)",
-  rotation: "Tốc độ xoay",
+  reach: "Tầm vũ khí (đơn vị)",
+  rotation: "Xoay (vòng/s)",
   critPower: "Sát thương chí mạng (%)",
-  shield: "Khiên ban đầu",
+  shield: "Khiên đầu trận (HP hấp thụ)",
   thorns: "Phản đòn",
   burn: "Đốt",
   bounce: "Độ nảy",
   stability: "Kháng đẩy",
 };
+function statValue(key: string, value: number) {
+  if (["defense", "crit", "critPower", "charge", "superPower"].includes(key)) return `${value}%`;
+  if (key === "speed") return Math.round(value * 30 / 100);
+  if (key === "cooldown") return (value / 30).toFixed(2);
+  if (key === "reach") return value / 100;
+  if (key === "rotation") return (value * 30 / 32).toFixed(2);
+  return value;
+}
 export function InfoPopup({
   info,
   close,
@@ -386,6 +399,12 @@ export function InfoPopup({
         },
       )
     : null;
+  const itemLevel = info?.itemLevel || (it && info?.loadout?.equipmentLevels?.[it.id]) || 1;
+  const matched = !!it && info?.loadout?.characterId === it.affinity;
+  const currentItemStats = it ? itemModifiers(it.id, itemLevel, matched) : {};
+  const nextItemStats = it ? itemModifiers(it.id, Math.min(10, itemLevel + 1), matched) : {};
+  const effectText = it ? itemEffectDescription(it.id, itemLevel, matched) : "";
+  const nextEffectText = it ? itemEffectDescription(it.id, Math.min(10, itemLevel + 1), matched) : "";
   return (
     <dialog
       ref={ref}
@@ -496,7 +515,7 @@ export function InfoPopup({
                 .map(([k, v]) => (
                   <div key={k}>
                     <small>{labels[k] || k}</small>
-                    <b>{v}</b>
+                    <b>{statValue(k, v)}</b>
                   </div>
                 ))}
             </div>
@@ -510,11 +529,14 @@ export function InfoPopup({
                   .map(([k, v]) => (
                     <div key={k}>
                       <small>{labels[k] || k}</small>
-                      <b>{v}</b>
+                      <b>{statValue(k, v)}</b>
                     </div>
                   ))}
               </div>
             </details>
+            <p className="info-note">Giáp giảm sát thương theo phần trăm và không bị tiêu hao.
+              Khiên là HP hấp thụ tạm thời, bị trừ sau giáp và trước máu.
+              Ví dụ: đòn 100 gặp giáp 10% còn 90; có 30 khiên thì chỉ mất 60 HP.</p>
             <div className="skill-list">
               {[
                 ["⚔", c.weaponName, c.weapon],
@@ -551,7 +573,7 @@ export function InfoPopup({
               thêm 12G, tổng +4 ATK và +10 sức mạnh Super.
             </p>
             <p>
-              <b>Mốc level 5:</b> {concise(c.upgrade)}
+              <b>Tiến hóa và tăng trưởng:</b> {c.upgrade}
             </p>
             <p>
               <b>Cách đối phó:</b> {concise(c.weakness)}
@@ -675,9 +697,10 @@ export function InfoPopup({
               trước trang bị và tăng nhịp. Kỹ năng tự động, Super dùng ở 100
               năng lượng. Mỗi 10 giây tăng nhịp; hết round reset phần tăng thời
               gian. Bonus ATK/tốc độ từ các hội, đặc tính và liên kết khác nhau
-              cộng số phần trăm; buff cá nhân/trang bị cùng loại giữ mức cao
-              nhất. Khiên hiệu ứng tối đa 100; năng lượng từ nhiều nguồn cộng
-              dồn trong tick, tối đa 100. Chỉ số nền của thẻ dùng rarity hiện tại, nên thẻ cùng rarity có cùng mức chỉ số dù là base hay đã tiến hóa.
+              cộng số phần trăm; cặp đôi, bộ ba, hội và class/race đủ điều kiện cùng hoạt động,
+              hồi chiêu riêng. Cùng một nguồn làm mới thời gian, không tự nhân vô hạn.
+              Khiên cộng thành từng lớp, tối đa 100; năng lượng tối đa 100.
+              Mỗi nhân vật có phân bổ chỉ số và vai trò riêng, sức mạnh theo rarity hiện tại.
             </p>
           </>
         )}
@@ -689,25 +712,28 @@ export function InfoPopup({
               </div>
               <span className="eyebrow">
                 VẬT PHẨM ·{" "}
-                {["THƯỜNG", "HIẾM", "SỬ THI", "HUYỀN THOẠI"][it.rarity]}
+                {["THƯỜNG", "HIẾM", "SỬ THI", "HUYỀN THOẠI", "GOD"][cardEvolution(it.rarity, itemLevel).tierIndex - 1]} · Lv.{itemLevel}
               </span>
               <h2 id="info-title">{it.name}</h2>
               <div className="badges">
                 <span>Trang bị · giữ lại sau trận</span>
-                <span>{it.price}G</span>
               </div>
               <blockquote>{it.quote}</blockquote>
             </div>
             <h3>{it.effectName}</h3>
-            <p className="item-effect">{concise(it.description, 110)}</p>
-            {humanText(it.description).length > 110 && <details><summary>Chi tiết hiệu ứng</summary><p>{humanText(it.description)}</p></details>}
+            <p className="item-effect">{effectText}</p>
+            <p className="info-note">Lv.{itemLevel} · Hiệu lực {Math.round(itemMultiplier(it.id, itemLevel, matched) * 100)}%
+              {itemLevel < 10 && ` → Lv.${itemLevel + 1}: ${Math.round(itemMultiplier(it.id, itemLevel + 1, matched) * 100)}%`}.
+              Cấp vật phẩm tăng cả chỉ số và hiệu ứng kích hoạt.</p>
+            {itemLevel < 10 && nextEffectText !== effectText && <p className="muted">Hiệu ứng cấp tiếp theo: {nextEffectText}</p>}
             <div className="profile-stats">
-              {Object.entries(it.modifiers).map(([key, value]) => (
+              {Object.entries(currentItemStats).map(([key, value]) => (
                 <div key={key}>
                   <small>{labels[key] || key}</small>
                   <b>
                     {Number(value) > 0 ? "+" : ""}
-                    {value}
+                    {statValue(key, Number(value))}
+                    {itemLevel < 10 && nextItemStats[key as keyof typeof nextItemStats] !== value && <small> → {statValue(key, nextItemStats[key as keyof typeof nextItemStats] || 0)}</small>}
                   </b>
                 </div>
               ))}
@@ -740,9 +766,11 @@ export function InfoPopup({
               Một nhân vật chỉ gắn một vật phẩm. Vật phẩm vẫn nằm trong Kho đồ sau trận và có thể dùng lại ở các trận tiếp theo. Bản trùng khi mở pack cộng kinh nghiệm, không tạo số lượng bản dùng một lần.
             </p>
             <p>
-              Chỉ số cộng thẳng tính trước tăng nhịp thời gian. Cooldown tối
-              thiểu 8 tick; speed tối đa 900; chí mạng tối đa 65%; giáp tối đa
-              60. HP thêm chỉ thuộc nhân vật, không hồi HP người chơi. Khiên có
+              Chỉ số cộng thẳng tính trước tăng nhịp thời gian. Hồi đòn tối
+              thiểu 0,27 giây; di chuyển tối đa 270 đơn vị/giây; chí mạng tối đa 65%; giáp tối đa
+              60%. Giáp 10% giảm đòn 100 xuống 90, sau đó khiên hấp thụ trước HP.
+              Hiệu lực hồi máu/khiên của Super tối đa 150% để trận kéo dài vẫn phân thắng bại.
+              HP thêm chỉ thuộc nhân vật, không hồi HP người chơi. Khiên có
               thời hạn và chịu trần 100.
             </p>
             <p>
@@ -1103,7 +1131,6 @@ export function CatalogLibrary({
                       <ItemSprite id={i.id} className="item-icon" />
                       <span className="item-meta">
                         {["Thường", "Hiếm", "Sử thi", "Huyền thoại"][i.rarity]}{" "}
-                        · {i.price}G
                       </span>
                       <h3>{i.name}</h3>
                       <p>{humanText(i.description)}</p>

@@ -10,7 +10,8 @@ import {
   capacityUpgradePrice,
 } from "./balance";
 import { DEFAULT_SETTINGS, type Action, type Settings } from "./protocol";
-import { addCardXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel } from "./progression";
+import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "./arena";
+import { addCardXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "./progression";
 import {
   ROSTER,
   character,
@@ -197,7 +198,7 @@ function currentSettings(settings: Settings): Settings {
   return {
     ...rest,
     teamSize: 1,
-    shrinkSeconds: rest.shrinkSeconds ?? battleSeconds ?? 60,
+    shrinkSeconds: rest.shrinkSeconds ?? battleSeconds ?? DEFAULT_SHRINK_SECONDS,
   };
 }
 export function newRoom(code: string, seed: number, now: number): RoomState {
@@ -314,6 +315,7 @@ export function lock(s: RoomState, now: number) {
     .filter((p) => !p.spectator && p.hp > 0)
     .map((p) => ({
       id: p.id,
+      name: p.name,
       loadouts: structuredClone(p.loadouts),
       choice: structuredClone(p.choice || {}),
     }));
@@ -325,7 +327,7 @@ export function lock(s: RoomState, now: number) {
       unit.level = Math.min(10, Math.floor(stage / 3));
       return unit;
     });
-    teams.push({ id: "campaign-bot", loadouts: botTeam, choice: {} });
+    teams.push({ id: "campaign-bot", name: "Đối thủ ải", loadouts: botTeam, choice: {} });
   }
   if (teams.length < 2) {
     s.phase = "FINISHED";
@@ -336,8 +338,8 @@ export function lock(s: RoomState, now: number) {
   const config: BattleConfig = {
     teams,
     shrinkSeconds: s.settings.shrinkSeconds,
-    width: 120000,
-    height: 72000,
+    width: DEFAULT_ARENA_SIZE,
+    height: DEFAULT_ARENA_SIZE,
   };
   const seed = random(s);
   s.simulation = createBattle(config, seed);
@@ -505,7 +507,7 @@ export function applyAction(
         p.choice = {};
       } else if (action.type === "CLAIM_PACK") {
         requireRule(s.phase === "LOBBY" || s.phase === "FINISHED", "Chỉ nhận pack ngoài trận");
-        requireRule(p.packs < 10, "Kho đã đủ 10 pack");
+        requireRule(p.packs < PACK_CAPACITY, "Kho đã đủ 100 pack");
         requireRule(!p.lastPackAt || now - p.lastPackAt >= 60_000, "Lượt nhận pack chưa hồi");
         p.packs++;
         p.lastPackAt = now;
@@ -527,7 +529,7 @@ export function applyAction(
         const goals = { draw: 3, win: 1, campaign: 1 };
         requireRule(!p.claimedMissions.includes(action.mission), "Nhiệm vụ đã nhận");
         requireRule(p.missions[action.mission] >= goals[action.mission], "Nhiệm vụ chưa hoàn thành");
-        requireRule(p.packs < 10, "Kho pack đầy");
+        requireRule(p.packs < PACK_CAPACITY, "Kho pack đầy");
         p.claimedMissions.push(action.mission);
         p.packs++;
       } else if (action.type === "TEAM_CHOICE") {
@@ -811,7 +813,7 @@ export function settle(s: RoomState, now: number) {
     }
     const won = r.id === winner?.id;
     const campaignWin = s.mode === "campaign" && won;
-    p.packs = Math.min(10, p.packs + (won ? (campaignWin ? 3 : 5) : 0));
+    p.packs = Math.min(PACK_CAPACITY, p.packs + (won ? (campaignWin ? 3 : 5) : 0));
     if (won && !campaignWin) p.missions.win++;
     if (campaignWin) { p.missions.campaign++; p.campaignStage = (p.campaignStage || 0) + 1; }
     p.totalDamage += r.damage;
