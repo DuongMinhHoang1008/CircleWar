@@ -29,6 +29,27 @@ export interface Identity {
 }
 export const defaultApi =
   import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8787" : "");
+
+// Older workers hashed frames before JSON serialization. An undefined value in
+// an array was hashed as an empty slot there, but is sent as null to clients.
+function legacyReplayFrameHash(frames: ReplayFrame[]) {
+  const restoreUndefinedArraySlots = (value: unknown): unknown => {
+    if (Array.isArray(value))
+      return value.map((item) =>
+        item === null ? undefined : restoreUndefinedArraySlots(item),
+      );
+    if (value && typeof value === "object")
+      return Object.fromEntries(
+        Object.entries(value).map(([key, item]) => [
+          key,
+          restoreUndefinedArraySlots(item),
+        ]),
+      );
+    return value;
+  };
+  return hash(restoreUndefinedArraySlots(frames));
+}
+
 export class Connection {
   socket: WebSocket | null = null;
   identity: Identity | null = null;
@@ -144,7 +165,8 @@ export class Connection {
       frames.length !== packed.count ||
       frames[0]?.tick !== packed.fromTick ||
       frames[frames.length - 1]?.tick !== packed.toTick ||
-      hash(frames) !== packed.hash
+      (hash(frames) !== packed.hash &&
+        legacyReplayFrameHash(frames) !== packed.hash)
     )
       throw Error("Replay chunk sai checksum");
     return frames;

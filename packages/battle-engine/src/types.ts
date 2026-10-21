@@ -3,12 +3,14 @@ import type { TeamChoice } from "../../shared/src/catalog";
 export const ENGINE_VERSION = "chaos-integer-v22";
 export const TICK_RATE = 30;
 export interface BattleConfig {
+  campaign?: { stage: number; enemyTeamId: string };
   teams: { id: string; name?: string; loadouts: Loadout[]; choice?: TeamChoice }[];
   shrinkSeconds: number;
   width: number;
   height: number;
 }
 export interface Fighter {
+  boss?: boolean;
   id: number;
   team: string;
   classId: Loadout["classId"];

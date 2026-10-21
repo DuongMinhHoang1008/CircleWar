@@ -12,7 +12,7 @@
     "dev": "concurrently -k -n web,worker \"npm:dev:web\" \"npm:dev:worker\"",
     "dev:web": "vite --config apps/web/vite.config.ts --host 127.0.0.1",
     "dev:worker": "wrangler dev --config apps/worker/wrangler.jsonc",
-    "build:fx": "node scripts/build-combat-fx.mjs",
+    "build:fx": "node scripts/build-combat-fx.mjs && node scripts/build-character-fx.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "benchmark": "tsx tests/performance/benchmark.ts",

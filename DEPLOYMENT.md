@@ -6,9 +6,11 @@ Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không 
 
 - Website: https://riseon-ultimate-battle.pages.dev
 - API: https://circle-chaos.circle-chaos.workers.dev
-- Engine: `chaos-integer-v22`, triển khai ngày 20/10/2026.
-- Worker version: `2584c392-76d4-4590-a325-179c74e0dde8`.
-- Pages deployment: https://d27bdf2c.riseon-ultimate-battle.pages.dev (bao gồm sửa Mô phỏng cho hồ sơ mới chỉ có một nhân vật).
+- Engine: `chaos-integer-v22`, giao diện v`2026.10.21.2`, triển khai ngày 21/10/2026.
+- Worker version: `a18c1278-6fd0-4415-9b89-75262d11ef9e`.
+- Pages deployment: https://1d431dad.riseon-ultimate-battle.pages.dev.
+- Kiểm tra bản này: 41 kiểm tra catalog/cân bằng/hội/campaign/VFX/khôi phục pack đều qua; typecheck, build frontend và Worker dry-run qua. Hồ sơ thử riêng mở đủ 100 pack và reload giữa animation vẫn giữ thẻ/EXP, xem lại kết quả được. Không dùng pack của người chơi để thử.
+- Production API smoke: `npx tsx tests/integration/profile-sync-smoke.ts` với `TEST_WEB`/`TEST_API` như bên dưới; kết quả ở `reports/deployment-2026-10-21.json`. Đã kiểm tra health/CORS, SAVE kết quả 100 pack, retry idempotent, INIT cũ không ghi đè thẻ, release manifest và atlas mới 160 frame. Browser production không có lỗi console trong lượt kiểm tra menu/patch notes. Không chạy lại bài kiểm tra tải nhiều phòng trong bản này.
 
 Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:
 

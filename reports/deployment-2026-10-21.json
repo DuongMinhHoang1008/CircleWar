@@ -1,0 +1,15 @@
+{
+  "time": "2026-10-21T05:19:04.858Z",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "status": "PASS",
+  "checks": [
+    "health",
+    "profile CORS",
+    "100-pack result SAVE",
+    "idempotent retry",
+    "stale INIT preserves rewards",
+    "release manifest",
+    "160 character VFX frames"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "size": 128,
+  "frames": 8,
+  "rows": {
+    "char_26:skill": 0,
+    "char_26:super": 1,
+    "char_27:skill": 2,
+    "char_27:super": 3,
+    "char_28:skill": 4,
+    "char_28:super": 5,
+    "char_29:skill": 6,
+    "char_29:super": 7,
+    "char_30:skill": 8,
+    "char_30:super": 9,
+    "char_03:projectile": 10,
+    "char_05:projectile": 11,
+    "char_07:projectile": 12,
+    "char_09:projectile": 13,
+    "char_13:projectile": 14,
+    "char_14:projectile": 15,
+    "char_16:projectile": 16,
+    "char_22:projectile": 17,
+    "char_24:projectile": 18,
+    "char_29:projectile": 19
+  },
+  "palettes": {
+    "char_03": "#bc7dff",
+    "char_05": "#68dcff",
+    "char_07": "#ff8fbd",
+    "char_09": "#ffbe58",
+    "char_13": "#ef6b86",
+    "char_14": "#ffd56a",
+    "char_16": "#f17cdc",
+    "char_22": "#b29bff",
+    "char_24": "#f8de98",
+    "char_29": "#50e5ff",
+    "char_26": "#40e7e6",
+    "char_27": "#ff823b",
+    "char_28": "#ffbf62",
+    "char_30": "#ffe862"
+  }
+}

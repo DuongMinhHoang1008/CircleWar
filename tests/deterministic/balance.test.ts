@@ -60,8 +60,8 @@ describe("rarity-normalized combat balance", () => {
     expect(
       new Set(ROSTER.map((c) => JSON.stringify(CHARACTER_BALANCE[c.id].stats)))
         .size,
-    ).toBe(25);
-    expect(new Set(ROSTER.map((c) => c.stats.join(","))).size).toBe(25);
+    ).toBe(ROSTER.length);
+    expect(new Set(ROSTER.map((c) => c.stats.join(","))).size).toBe(ROSTER.length);
     for (const c of ROSTER) {
       const stats = computeStats(load(c.id as CharacterId));
       expect(stats.hp).toBeGreaterThan(0);

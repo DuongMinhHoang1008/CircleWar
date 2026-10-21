@@ -420,10 +420,11 @@ function friendGroupEvent(
     (id === "G10" && kind === "pulse" && [300, 600].includes(s.tick)) ||
     (id === "G11" && no(source) === 14 && kind === "super") ||
     (id === "G12" && no(source) === 9 && ["meeting", "super"].includes(kind)) ||
-    (id === "G13" && [3, 15].includes(no(source)) && kind === "super");
+    (id === "G13" && [3, 15].includes(no(source)) && kind === "super") ||
+    (id === "G14" && kind === "super");
   if (!trigger) return;
   if (
-    ["G02", "G03", "G05", "G06", "G08", "G09", "G11", "G12", "G13"].includes(
+    ["G02", "G03", "G05", "G06", "G08", "G09", "G11", "G12", "G13", "G14"].includes(
       id,
     ) &&
     members.some((f) =>
@@ -507,6 +508,7 @@ function friendGroupEvent(
         energy(s, t, three ? 6 : 4);
         buff(s, t, "attack", three ? 12 : 8, 90, -1000 - Number(id.slice(1)));
       });
+  if (id === "G14") members.forEach((t) => shield(s, source, t, three ? 12 : 8, 90));
   if (id === "G12")
     members
       .filter((t) => t.id !== source.id)
@@ -768,7 +770,7 @@ function resolveBondEvent(
   const get = (n: number) => fs.find((f) => no(f) === n)!;
   let ok = false;
   if (b.size === 3) {
-    const triggers = [15, 7, 18, 9, 6, 19, 10, 12, 20, 21];
+    const triggers = [15, 7, 18, 9, 6, 19, 10, 12, 20, 21, 26];
     ok = kind === "super" && no(source) === triggers[Number(b.id.slice(1)) - 1];
   } else {
     const newBonds: Record<string, number[]> = {
@@ -777,6 +779,9 @@ function resolveBondEvent(
       P16: [24, 25],
       P17: [21, 25],
       P18: [22, 23],
+      P19: [26, 27],
+      P20: [28, 29],
+      P21: [29, 30],
     };
     ok = newBonds[b.id]
       ? newBonds[b.id].includes(no(source)) &&
@@ -843,8 +848,20 @@ function resolveBondEvent(
     case "P18":
       fs.forEach((f) => shield(s, source, f, 8, 90));
       break;
+    case "P19":
+      energy(s, get(no(source) === 26 ? 27 : 26), 8);
+      break;
+    case "P20":
+      shield(s, source, get(no(source) === 28 ? 29 : 28), 8, 90);
+      break;
+    case "P21":
+      energy(s, get(no(source) === 29 ? 30 : 29), 8);
+      break;
     case "T10":
       fs.forEach((f) => shield(s, source, f, 12, 90));
+      break;
+    case "T11":
+      fs.forEach((f) => shield(s, source, f, 8, 90));
       break;
     case "T09":
       fs.forEach((f) => shield(s, source, f, 15, 90));
@@ -918,7 +935,7 @@ function skill(s: BattleState, f: Fighter) {
   }
   const enemy = abilityTarget(s, f, RANGED_SKILL_RANGE);
   if (!enemy) return false;
-  const power =
+  let power =
     role === "tank"
       ? 110
       : role === "assassin"
@@ -928,6 +945,7 @@ function skill(s: BattleState, f: Fighter) {
           : role === "fighter"
             ? 130
             : 120;
+  if ([28, 29, 30].includes(n) && has(f, n)) power += 12;
   if (isRanged(f)) {
     if (
       !launch(s, f, enemy, power, {
@@ -938,6 +956,8 @@ function skill(s: BattleState, f: Fighter) {
     )
       return false;
   } else characterDamage(s, f, enemy, div(f.stats.attack * power, 100));
+  if (n === 27 && has(f, 27) && enemy.hp > 0)
+    buff(s, enemy, "burnDot", Math.max(1, f.stats.burn), 60, f.id);
   if (role === "tank") shield(s, f, f, div(f.stats.hp * 3, 100), 60);
   event(s, "skill:" + String(n).padStart(2, "0"), f, enemy);
   bondEvent(s, f, "skill");
@@ -945,13 +965,14 @@ function skill(s: BattleState, f: Fighter) {
 }
 
 function superCast(s: BattleState, f: Fighter) {
+  const n = no(f);
   const role = CHARACTER_BALANCE[f.characterId!].role;
   const target =
     role === "support"
       ? nearest(s, f, 180, true, true)
       : abilityTarget(s, f, RANGED_SUPER_RANGE);
   if (!target) return false;
-  const power =
+  let power =
     role === "tank"
       ? 150
       : role === "assassin"
@@ -961,6 +982,7 @@ function superCast(s: BattleState, f: Fighter) {
           : role === "fighter"
             ? 280
             : 240;
+  if ([28, 29, 30].includes(n) && has(f, n)) power += 15;
   if (role === "support") {
     heal(s, f, target, recoveryValue(f, div(target.stats.hp * 10, 100)));
     shield(s, f, target, recoveryValue(f, div(f.stats.attack, 2)), 90);
@@ -997,6 +1019,8 @@ function superCast(s: BattleState, f: Fighter) {
     );
   if (role === "tank")
     shield(s, f, f, recoveryValue(f, div(f.stats.hp * 12, 100)), 90);
+  if (n === 27 && has(f, 27) && target.hp > 0)
+    buff(s, target, "burnDot", Math.max(1, f.stats.burn), 90, f.id);
   f.energy = 0;
   f.superUntil = s.tick + 120;
   f.supers++;

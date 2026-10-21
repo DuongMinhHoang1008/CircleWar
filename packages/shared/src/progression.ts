@@ -1,6 +1,6 @@
 export const CARD_MAX_LEVEL = 10;
 export const DUPLICATE_CARD_XP = 150;
-export const PACK_CAPACITY = 100;
+export const PACK_CAPACITY = 150;
 
 /** Daily quests roll over at 00:00 UTC so clients and the room server agree. */
 export function dailyQuestDay(now = Date.now()) {
@@ -33,10 +33,14 @@ export function cardTotalXp(card: { level: number; xp: number }) {
 }
 
 export function cardEvolution(baseTier: string | number, level: number) {
-  const base =
-    typeof baseTier === "number"
+  const isJunk = typeof baseTier === "string" && baseTier === "RAC";
+  const base = isJunk ? 0 : typeof baseTier === "number"
       ? Math.max(1, Math.min(4, baseTier + 1))
       : Math.max(1, Math.min(4, Number(baseTier.replace(/^T/, "")) || 1));
+  if (isJunk) {
+    const index = level >= 10 ? 4 : level >= 7 ? 2 : level >= 3 ? 1 : 0;
+    return { tier: index === 0 ? "RAC" : `T${index}`, tierIndex: index, evolved: index > 0 };
+  }
   if (level >= 10) return { tier: "GOD", tierIndex: 5, evolved: base < 5 };
   const steps = level >= 7 ? 2 : level >= 3 ? 1 : 0;
   const tierIndex = Math.min(5, base + steps);
@@ -45,6 +49,14 @@ export function cardEvolution(baseTier: string | number, level: number) {
     tierIndex,
     evolved: tierIndex > base,
   };
+}
+
+/** A bonded transformation promotes the character by one rarity step while equipped. */
+export function cardEffectiveEvolution(baseTier: string | number, level: number, transformed = false) {
+  const current = cardEvolution(baseTier, level);
+  if (!transformed) return current;
+  const tierIndex = Math.min(5, Math.max(1, current.tierIndex) + 1);
+  return { tier: tierIndex === 5 ? "GOD" : `T${tierIndex}`, tierIndex, evolved: true };
 }
 
 /** Small rarity-based power steps; leveling and evolution use the same tier shown on the card. */

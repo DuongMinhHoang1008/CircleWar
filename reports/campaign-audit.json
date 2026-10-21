@@ -1,0 +1,182 @@
+[
+  {
+    "size": 1,
+    "stage": 1,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 11,
+    "matches": 12,
+    "maxTicks": 2042
+  },
+  {
+    "size": 1,
+    "stage": 4,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 6,
+    "matches": 12,
+    "maxTicks": 1347
+  },
+  {
+    "size": 1,
+    "stage": 5,
+    "boss": true,
+    "playerLevel": 3,
+    "wins": 5,
+    "matches": 12,
+    "maxTicks": 1065
+  },
+  {
+    "size": 1,
+    "stage": 6,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 6,
+    "matches": 12,
+    "maxTicks": 1021
+  },
+  {
+    "size": 1,
+    "stage": 9,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 3,
+    "matches": 12,
+    "maxTicks": 979
+  },
+  {
+    "size": 1,
+    "stage": 10,
+    "boss": true,
+    "playerLevel": 3,
+    "wins": 6,
+    "matches": 12,
+    "maxTicks": 1541
+  },
+  {
+    "size": 1,
+    "stage": 11,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 9,
+    "matches": 12,
+    "maxTicks": 1104
+  },
+  {
+    "size": 1,
+    "stage": 14,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 3,
+    "matches": 12,
+    "maxTicks": 1299
+  },
+  {
+    "size": 1,
+    "stage": 15,
+    "boss": true,
+    "playerLevel": 3,
+    "wins": 0,
+    "matches": 12,
+    "maxTicks": 1047
+  },
+  {
+    "size": 1,
+    "stage": 16,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 0,
+    "matches": 12,
+    "maxTicks": 1467
+  },
+  {
+    "size": 3,
+    "stage": 1,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 12,
+    "matches": 12,
+    "maxTicks": 1125
+  },
+  {
+    "size": 3,
+    "stage": 4,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 9,
+    "matches": 12,
+    "maxTicks": 1076
+  },
+  {
+    "size": 3,
+    "stage": 5,
+    "boss": true,
+    "playerLevel": 3,
+    "wins": 6,
+    "matches": 12,
+    "maxTicks": 1431
+  },
+  {
+    "size": 3,
+    "stage": 6,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 11,
+    "matches": 12,
+    "maxTicks": 1181
+  },
+  {
+    "size": 3,
+    "stage": 9,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 1,
+    "matches": 12,
+    "maxTicks": 1229
+  },
+  {
+    "size": 3,
+    "stage": 10,
+    "boss": true,
+    "playerLevel": 3,
+    "wins": 3,
+    "matches": 12,
+    "maxTicks": 1436
+  },
+  {
+    "size": 3,
+    "stage": 11,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 5,
+    "matches": 12,
+    "maxTicks": 1183
+  },
+  {
+    "size": 3,
+    "stage": 14,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 1,
+    "matches": 12,
+    "maxTicks": 1637
+  },
+  {
+    "size": 3,
+    "stage": 15,
+    "boss": true,
+    "playerLevel": 3,
+    "wins": 1,
+    "matches": 12,
+    "maxTicks": 1315
+  },
+  {
+    "size": 3,
+    "stage": 16,
+    "boss": false,
+    "playerLevel": 3,
+    "wins": 0,
+    "matches": 12,
+    "maxTicks": 1609
+  }
+]

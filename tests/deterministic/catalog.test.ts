@@ -46,10 +46,10 @@ function fixture(ids: string[], equipment: string[][] = []) {
 }
 describe("approved catalog gameplay", () => {
   it("has the complete expanded roster/item catalog and bijective affinities", () => {
-    expect(ROSTER).toHaveLength(25);
-    expect(CATALOG_ITEMS).toHaveLength(25);
-    expect(BONDS).toHaveLength(28);
-    expect(new Set(CATALOG_ITEMS.map((i) => i.affinity)).size).toBe(25);
+    expect(ROSTER).toHaveLength(30);
+    expect(CATALOG_ITEMS).toHaveLength(30);
+    expect(BONDS).toHaveLength(32);
+    expect(new Set(CATALOG_ITEMS.map((i) => i.affinity)).size).toBe(30);
     expect(CATALOG_ITEMS.map((item) => item.affinity)).toEqual([
       "char_09",
       "char_01",
@@ -76,6 +76,7 @@ describe("approved catalog gameplay", () => {
       "char_23",
       "char_24",
       "char_25",
+      "char_26", "char_27", "char_28", "char_29", "char_30",
     ]);
     for (const c of ROSTER.slice(0, 20)) {
       expect(BONDS.some((b) => b.size === 2 && b.members.includes(c.id))).toBe(
@@ -275,7 +276,7 @@ describe("approved catalog gameplay", () => {
       fresh.fighters.every((f) => !f.hits && f.energy === 0 && f.supers === 0),
     ).toBe(true);
   });
-  it("each of 12 pairs and 8 trios triggers its actual defined event", () => {
+  it("every pair and trio triggers its actual defined event", () => {
     const actors: Record<string, number> = {
       P01: 1,
       P02: 2,
@@ -305,6 +306,7 @@ describe("approved catalog gameplay", () => {
       P17: 21,
       P18: 22,
       T10: 21,
+      P19: 26, P20: 28, P21: 29, T11: 26,
     };
     for (const b of BONDS) {
       const config: BattleConfig = {

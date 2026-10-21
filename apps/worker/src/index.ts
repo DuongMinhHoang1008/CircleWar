@@ -171,6 +171,8 @@ interface GlobalProfile {
   claimedMissions: string[];
   campaignStage: number;
   processedMatches: string[];
+  packsSinceRare: number;
+  packsSinceHighRarity?: number;
   lastPull?: { kind: "character" | "item"; id: string; tier: string; rarity: string; duplicate?: boolean; xpGained?: number; oldXp?: number; experience?: number; oldLevel?: number; level?: number; leveledUp?: boolean };
 }
 interface StoredProfile { tokenHash: string; profile: GlobalProfile; appliedTrades?: string[] }
@@ -188,7 +190,7 @@ function normalizeProfile(raw: Partial<GlobalProfile>): GlobalProfile {
     const itemId = values.find((value) => owned.has(value) && !assigned.has(value));
     if (itemId) { equipment[characterId] = [itemId]; assigned.add(itemId); }
   }
-  return { ...starter, ...raw, team, cards, itemCards, equipment, lastPull, missions: raw.missions || starter.missions, claimedMissions: raw.claimedMissions || [], processedMatches: raw.processedMatches || [] };
+  return { ...starter, ...raw, team, cards, itemCards, equipment, lastPull, packsSinceRare: Number.isInteger(raw.packsSinceRare) ? Math.max(0, raw.packsSinceRare!) : 0, packsSinceHighRarity: Number.isInteger(raw.packsSinceHighRarity) ? Math.max(0, Math.min(99, raw.packsSinceHighRarity!)) : 0, missions: raw.missions || starter.missions, claimedMissions: raw.claimedMissions || [], processedMatches: raw.processedMatches || [] };
 }
 function validProfile(raw: unknown): raw is GlobalProfile {
   if (!raw || typeof raw !== "object") return false;
@@ -207,10 +209,12 @@ function validProfile(raw: unknown): raw is GlobalProfile {
     !!p.missions && [p.missions.draw, p.missions.win, p.missions.campaign].every((n) => Number.isInteger(n) && n >= 0) &&
     Array.isArray(p.claimedMissions) && p.claimedMissions.every((m) => ["draw", "win", "campaign"].includes(m)) &&
     Number.isInteger(p.campaignStage) && p.campaignStage! >= 0 && Array.isArray(p.processedMatches) && p.processedMatches.length <= 5000 && p.processedMatches.every((key) => typeof key === "string" && key.length <= 128) &&
-    (p.lastPull === undefined || (typeof p.lastPull.id === "string" && (p.lastPull.tier.startsWith("T") || p.lastPull.tier === "GOD")));
+    (p.packsSinceRare === undefined || (Number.isInteger(p.packsSinceRare) && p.packsSinceRare >= 0 && p.packsSinceRare <= 19)) &&
+    (p.packsSinceHighRarity === undefined || (Number.isInteger(p.packsSinceHighRarity) && p.packsSinceHighRarity >= 0 && p.packsSinceHighRarity <= 99)) &&
+    (p.lastPull === undefined || (typeof p.lastPull.id === "string" && (p.lastPull.tier.startsWith("T") || p.lastPull.tier === "RAC" || p.lastPull.tier === "GOD")));
 }
 function starterProfile(): GlobalProfile {
-  return { cards: [{ characterId: "char_01", level: 1, xp: 0 }], itemCards: [], equipment: {}, team: ["char_01"], packs: 10, lastPackAt: Date.now(), missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], campaignStage: 0, processedMatches: [] };
+  return { cards: [{ characterId: "char_01", level: 1, xp: 0 }], itemCards: [], equipment: {}, team: ["char_01"], packs: 50, lastPackAt: Date.now(), missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0 };
 }
 function accrue(profile: GlobalProfile, now = Date.now()) {
   const elapsed = Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000);
@@ -476,14 +480,17 @@ export class Room extends DurableObject<Env> {
     let chunk: { key: string; data: string } | undefined;
     if (d.room.replayFrames.length) {
       const frames = d.room.replayFrames,
-        packed = await gzipBase64(JSON.stringify(frames)),
+        serializedFrames = JSON.stringify(frames),
+        packed = await gzipBase64(serializedFrames),
         index = d.room.replayChunks.length,
         info = {
           index,
           fromTick: frames[0].tick,
           toTick: frames[frames.length - 1].tick,
           count: frames.length,
-          hash: hash(frames),
+          // Checksum the JSON representation that clients actually receive.
+          // Optional tuple entries become null during JSON serialization.
+          hash: hash(JSON.parse(serializedFrames)),
           bytes: packed.bytes,
         };
       d.room.replayChunks.push(info);

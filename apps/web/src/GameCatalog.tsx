@@ -12,6 +12,7 @@ import {
   availableTraits,
   type CharacterId,
   type TeamChoice,
+  isTransformedCharacter,
 } from "../../../packages/shared/src/catalog";
 import {
   computeStats,
@@ -32,15 +33,16 @@ export type Inspect = {
   itemLevel?: number;
   actions?: { label: string; run: () => void; disabled?: boolean }[];
 };
-export const avatar = (id: string) =>
-  `${import.meta.env.BASE_URL}avatars/${id}.png`;
-const rarityLabel = (tier: string) => ({ T1: "Thường", T2: "Hiếm", T3: "Sử thi", T4: "Huyền thoại", GOD: "GOD" }[tier] || tier);
+export const avatar = (id: string, transformed = false) =>
+  `${import.meta.env.BASE_URL}avatars/${id}${transformed ? "-evolved" : ""}.png`;
+const rarityLabel = (tier: string) => ({ RAC: "Rác", T1: "Thường", T2: "Hiếm", T3: "Sử thi", T4: "Huyền thoại", GOD: "GOD" }[tier] || tier);
 const rarityClass = (tier: string | number) => {
+  if (tier === "RAC") return "tier-rac";
   const index = typeof tier === "number" ? tier + 1 : Number(String(tier).replace(/^T/, ""));
   return index >= 5 || tier === "GOD" ? "tier-god" : `tier-t${Math.max(1, Math.min(4, index || 1))}`;
 };
-const concise = (text: string, max = 96) => {
-  const clean = humanText(text);
+const concise = (text: string | undefined, max = 96) => {
+  const clean = humanText(text || "");
   if (clean.length <= max) return clean;
   const cut = clean.slice(0, max).replace(/\s+\S*$/, "");
   return `${cut}…`;
@@ -48,14 +50,14 @@ const concise = (text: string, max = 96) => {
 export const weaponAtlasUrl = () =>
   `${import.meta.env.BASE_URL}weapons/weapon-atlas-v2.png`;
 export const weaponArtUrl = (id: string) =>
-  Number(id.slice(-2)) >= 21
+  Number(id.slice(-2)) >= 21 && Number(id.slice(-2)) <= 30
     ? `${import.meta.env.BASE_URL}weapons/${id}.svg`
     : weaponAtlasUrl();
 export const weaponFrame = (id: string) =>
   weaponAtlas.frames[(Number(id.slice(-2)) - 1) % weaponAtlas.frames.length];
 export function WeaponArt({ id }: { id: string }) {
   const frame = weaponFrame(id);
-  const custom = Number(id.slice(-2)) >= 21;
+  const custom = Number(id.slice(-2)) >= 21 && Number(id.slice(-2)) <= 30;
   return (
     <svg
       className="weapon-art"
@@ -251,6 +253,11 @@ const itemPhotoIds = new Set([
   "item_23",
   "item_24",
   "item_25",
+  "item_26",
+  "item_27",
+  "item_28",
+  "item_29",
+  "item_30",
 ]);
 export function ItemSprite({
   id,
@@ -323,14 +330,16 @@ const humanText = (value: string) =>
 export function Portrait({
   id,
   className = "",
+  transformed = false,
 }: {
   id: string;
   className?: string;
+  transformed?: boolean;
 }) {
   return (
     <img
       className={"portrait " + className}
-      src={avatar(id)}
+      src={avatar(id, transformed)}
       alt={character(id)?.name || id}
       loading="lazy"
       onError={(e) => {
@@ -382,12 +391,14 @@ export function InfoPopup({
       if (!ref.current?.open) ref.current?.showModal();
       body.current?.scrollTo(0, 0);
     } else ref.current?.close();
-  }, [info]);
+  }, [info?.kind, info?.id]);
   const c = info?.kind === "character" ? character(info.id) : undefined,
     it =
       info?.kind === "item"
         ? CATALOG_ITEMS.find((i) => i.id === info.id)
         : undefined;
+  const transformed = !!c && isTransformedCharacter(c.id, info?.loadout?.equipment || []);
+  const formName: Record<string,string> = { char_28: "Người Máy Đỉnh Cao Fu Di", char_29: "Siêu Chiến Binh Wacom", char_30: "Skyrocket Dog" };
   const stats = c
     ? info?.live?.stats ||
       computeStats(
@@ -405,6 +416,14 @@ export function InfoPopup({
   const nextItemStats = it ? itemModifiers(it.id, Math.min(10, itemLevel + 1), matched) : {};
   const effectText = it ? itemEffectDescription(it.id, itemLevel, matched) : "";
   const nextEffectText = it ? itemEffectDescription(it.id, Math.min(10, itemLevel + 1), matched) : "";
+  const transformationText: Record<string, string> = {
+    item_28: "Khi gắn cho Người Máy Sịp Đỏ Phế Thải, biến hình thành Người Máy Đỉnh Cao Fu Di; rarity, chỉ số, kỹ năng và Super được nâng một bậc.",
+    item_29: "Khi gắn cho Wacom Hỏng Hóc, biến hình thành Siêu Chiến Binh Wacom; rarity, chỉ số, kỹ năng và Super được nâng một bậc.",
+    item_30: "Khi gắn cho Chó Bóng Bay, biến hình thành Skyrocket Dog; rarity, chỉ số, kỹ năng và Super được nâng một bậc.",
+  };
+  const detailedItemEffectText = it
+    ? [effectText, transformationText[it.id]].filter(Boolean).join(" ")
+    : "";
   return (
     <dialog
       ref={ref}
@@ -435,12 +454,12 @@ export function InfoPopup({
           <>
             <div className="profile-hero">
               <div className="profile-art">
-                <Portrait id={c.id} />
+                <Portrait id={c.id} transformed={transformed} />
                 <WeaponArt id={c.id} />
               </div>
               <div>
                 <span className="eyebrow">NHÂN VẬT #{c.id.slice(-2)}</span>
-                <h2 id="info-title">{c.name}</h2>
+                <h2 id="info-title">{transformed ? formName[c.id] : c.name}</h2>
                 <div className="badges">
                   <span>{c.roleClass}</span>
                   <span>{c.race}</span>
@@ -541,8 +560,8 @@ export function InfoPopup({
               {[
                 ["⚔", c.weaponName, c.weapon],
                 ["✦", `Nội tại · ${c.passive[0]}`, c.passive[1]],
-                ["◷", `Kỹ năng · ${c.skill[0]}`, c.skill[1]],
-                ["★", `Super · ${c.super[0]}`, c.super[1]],
+                ["◷", `Kỹ năng · ${c.skill[0]}`, `${c.skill[1]}${transformed ? " Khi biến hình, kỹ năng được tăng sức mạnh." : ""}`],
+                ["★", `Super · ${c.super[0]}`, `${c.super[1]}${transformed ? " Khi biến hình, Super được tăng sức mạnh." : ""}`],
               ].map(([icon, name, text]) => (
                 <section className="skill-info" key={name}>
                   <span className="skill-icon">{icon}</span>
@@ -556,7 +575,7 @@ export function InfoPopup({
             </div>
             <h3>Đặc tính class / race</h3>
             <p>{concise(TRAIT_TEXT[c.roleClass] || "Class này hiện chưa có đủ hai nhân vật khác nhau để mở mốc class.")}</p>
-            <p>{concise(TRAIT_TEXT[c.race])}</p>
+            <p>{concise(TRAIT_TEXT[c.race] || `${c.race}: hiện chưa có mốc đặc tính riêng.`)}</p>
             <h3>Vũ khí & nâng cấp</h3>
             <div className="weapon-detail">
               <WeaponArt id={c.id} />
@@ -721,7 +740,7 @@ export function InfoPopup({
               <blockquote>{it.quote}</blockquote>
             </div>
             <h3>{it.effectName}</h3>
-            <p className="item-effect">{effectText}</p>
+            <p className="item-effect">{detailedItemEffectText}</p>
             <p className="info-note">Lv.{itemLevel} · Hiệu lực {Math.round(itemMultiplier(it.id, itemLevel, matched) * 100)}%
               {itemLevel < 10 && ` → Lv.${itemLevel + 1}: ${Math.round(itemMultiplier(it.id, itemLevel + 1, matched) * 100)}%`}.
               Cấp vật phẩm tăng cả chỉ số và hiệu ứng kích hoạt.</p>

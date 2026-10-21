@@ -73,7 +73,7 @@ function team(group: string, ids: string[]) {
   });
   return s;
 }
-it("preserves the thirteen user groups, exclusions and required anchors", () => {
+it("preserves the expanded groups, exclusions and required anchors", () => {
   expect(FRIEND_GROUPS.map((g) => g.name)).toEqual([
     "Mấy đứa 2k4",
     "The RiseOn Couple",
@@ -88,11 +88,12 @@ it("preserves the thirteen user groups, exclusions and required anchors", () => 
     "Full Combo",
     "Tất cả quỳ xuống",
     "Anh có ý tưởng",
+    "Tái Chế Thành Huyền Thoại",
   ]);
   expect(FRIEND_GROUPS.map((g) => g.members.length)).toEqual([
-    12, 3, 2, 3, 4, 5, 4, 4, 2, 20, 24, 23, 25,
+    12, 3, 2, 3, 4, 5, 3, 4, 2, 20, 24, 23, 25, 3,
   ]);
-  expect(FRIEND_GROUPS[6].members[0]).toBe("char_20");
+  expect(FRIEND_GROUPS[6].members).not.toContain("char_20");
   expect(FRIEND_GROUPS[6].members).not.toContain("char_04");
   expect(FRIEND_GROUPS[7].members).toEqual([
     "char_05",
@@ -451,7 +452,7 @@ it("Cốt đơ emits only two pulses and downgrades after losing a member", () =
   expect(s.groups["a:G10"].uses).toBe(2);
 });
 it("36 heals only living members, cannot revive, and keeps its counters across checkpoints", () => {
-  const s = team("G07", ["char_20", "char_13", "char_08"]);
+  const s = team("G07", ["char_11", "char_13", "char_08"]);
   s.tick = 1;
   beforeCharacterTick(s);
   const [rose, leg, wolf, enemy] = s.fighters;
@@ -459,7 +460,9 @@ it("36 heals only living members, cannot revive, and keeps its counters across c
   leg.hp -= 20;
   wolf.hp -= 20;
   characterDamage(s, enemy, rose, 5);
-  // Automatic Hỗ trợ trait supplied an initial shield; the hit is absorbed.
+  // Give the trigger a shield so this fixture isolates the group's healing.
+  rose.shields.push({ amount: 20, until: 100, source: rose.id });
+  rose.shield += 20;
   expect(rose.hp).toBe(88);
   expect(leg.hp).toBe(leg.stats.hp - 12);
   expect(s.groups["a:G07"].uses).toBe(1);

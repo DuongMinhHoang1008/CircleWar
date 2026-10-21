@@ -235,19 +235,21 @@
   border-radius: 6px;
 }
 .info-dialog {
+  box-sizing: border-box;
   border: 1px solid #504855;
   border-radius: 18px;
   background: #19171d;
   color: #f5f1f7;
   padding: 0;
   width: min(860px, calc(100vw - 28px));
+  height: min(90dvh, 860px);
   max-height: 90dvh;
   box-shadow: 0 30px 100px #000b;
   overflow: hidden;
 }
 .info-dialog[open] {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
 }
 .info-dialog::backdrop {
   background: #08070dbd;
@@ -270,10 +272,14 @@
   font-size: 18px;
 }
 .dialog-body {
-  padding: 24px;
-  overflow: auto;
-  overscroll-behavior: contain;
   min-height: 0;
+  padding: 24px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 .dialog-body h2 {
   font-size: 30px;
@@ -572,7 +578,7 @@ input:focus-visible {
   .catalog-toolbar > button { flex: 1 1 0; min-width: 0; padding: 9px 7px; }
   .catalog-page .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .catalog-page .item-card p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
-  .info-dialog { width: calc(100vw - 16px); max-height: calc(100dvh - 16px); border-radius: 14px; }
+  .info-dialog { width: calc(100vw - 16px); height: calc(100dvh - 16px); max-height: calc(100dvh - 16px); border-radius: 14px; }
   .profile-hero { grid-template-columns: minmax(88px, 30%) minmax(0, 1fr); gap: 12px; }
   .profile-hero > div:last-child { min-width: 0; }
   .profile-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }

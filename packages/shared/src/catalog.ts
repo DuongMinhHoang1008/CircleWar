@@ -32,6 +32,11 @@ export const CHARACTER_IDS = [
   "char_23",
   "char_24",
   "char_25",
+  "char_26",
+  "char_27",
+  "char_28",
+  "char_29",
+  "char_30",
 ] as const;
 export type CharacterId = (typeof CHARACTER_IDS)[number];
 export const ROSTER = data.characters.map((c) => {
@@ -94,6 +99,15 @@ export const CATALOG_ITEMS = data.items.map((it) => ({
   affinityDescription:
     "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm.",
 }));
+export const TRANSFORMED_FORMS: Record<string, { itemId: string; name: string }> = {
+  char_28: { itemId: "item_28", name: "Người Máy Đỉnh Cao Fu Di" },
+  char_29: { itemId: "item_29", name: "Siêu Chiến Binh Wacom" },
+  char_30: { itemId: "item_30", name: "Skyrocket Dog" },
+};
+export function isTransformedCharacter(id?: string, equipment: string[] = []) {
+  const form = id ? TRANSFORMED_FORMS[id] : undefined;
+  return !!form && equipment.includes(form.itemId);
+}
 export const character = (id?: string) => ROSTER.find((c) => c.id === id);
 export const itemInfo = (id: string) => CATALOG_ITEMS.find((i) => i.id === id);
 export interface TeamChoice {

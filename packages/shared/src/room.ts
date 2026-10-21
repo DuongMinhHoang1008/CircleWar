@@ -10,6 +10,7 @@ import {
   capacityUpgradePrice,
 } from "./balance";
 import { DEFAULT_SETTINGS, type Action, type Settings } from "./protocol";
+import { campaignEncounter, campaignPackReward } from "./campaign";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "./arena";
 import { addCardXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "./progression";
 import {
@@ -319,15 +320,12 @@ export function lock(s: RoomState, now: number) {
       loadouts: structuredClone(p.loadouts),
       choice: structuredClone(p.choice || {}),
     }));
+  let campaign: BattleConfig["campaign"];
   if (s.mode === "campaign" && teams.length === 1) {
     const stage = (s.players.find((p) => !p.spectator)?.campaignStage || 0) + 1;
-    const botTeam = Array.from({ length: Math.min(3, 1 + Math.floor(stage / 2)) }, (_, i) => {
-      const c = ROSTER[(stage * 3 + i * 7) % ROSTER.length];
-      const unit = makeUnit(c.id as CharacterId);
-      unit.level = Math.min(10, Math.floor(stage / 3));
-      return unit;
-    });
-    teams.push({ id: "campaign-bot", name: "Đối thủ ải", loadouts: botTeam, choice: {} });
+    const encounter = campaignEncounter(stage, teams[0].loadouts.length);
+    teams.push({ id: "campaign-bot", name: encounter.boss ? `BOSS · ẢI ${stage}` : `Đối thủ ải ${stage}`, loadouts: encounter.loadouts, choice: {} });
+    campaign = { stage, enemyTeamId: "campaign-bot" };
   }
   if (teams.length < 2) {
     s.phase = "FINISHED";
@@ -337,6 +335,7 @@ export function lock(s: RoomState, now: number) {
   }
   const config: BattleConfig = {
     teams,
+    campaign,
     shrinkSeconds: s.settings.shrinkSeconds,
     width: DEFAULT_ARENA_SIZE,
     height: DEFAULT_ARENA_SIZE,
@@ -507,7 +506,7 @@ export function applyAction(
         p.choice = {};
       } else if (action.type === "CLAIM_PACK") {
         requireRule(s.phase === "LOBBY" || s.phase === "FINISHED", "Chỉ nhận pack ngoài trận");
-        requireRule(p.packs < PACK_CAPACITY, "Kho đã đủ 100 pack");
+        requireRule(p.packs < PACK_CAPACITY, "Kho pack đã đầy");
         requireRule(!p.lastPackAt || now - p.lastPackAt >= 60_000, "Lượt nhận pack chưa hồi");
         p.packs++;
         p.lastPackAt = now;
@@ -813,7 +812,7 @@ export function settle(s: RoomState, now: number) {
     }
     const won = r.id === winner?.id;
     const campaignWin = s.mode === "campaign" && won;
-    p.packs = Math.min(PACK_CAPACITY, p.packs + (won ? (campaignWin ? 3 : 5) : 0));
+    p.packs = Math.min(PACK_CAPACITY, p.packs + (won ? (campaignWin ? campaignPackReward((p.campaignStage || 0) + 1) : 10) : 0));
     if (won && !campaignWin) p.missions.win++;
     if (campaignWin) { p.missions.campaign++; p.campaignStage = (p.campaignStage || 0) + 1; }
     p.totalDamage += r.damage;

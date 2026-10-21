@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+ <defs><linearGradient id="metal" x1="71" y1="42" x2="179" y2="216" gradientUnits="userSpaceOnUse"><stop stop-color="#fafafa"/><stop offset=".45" stop-color="#9ba3ad"/><stop offset="1" stop-color="#343b47"/></linearGradient><linearGradient id="rust" x1="97" y1="104" x2="153" y2="194" gradientUnits="userSpaceOnUse"><stop stop-color="#ff744f"/><stop offset="1" stop-color="#74333e"/></linearGradient></defs>
+ <path d="m69 60 50 12-2 65-31 8-32-32z" fill="url(#metal)" stroke="#27303d" stroke-width="8" stroke-linejoin="round"/>
+ <path d="m188 55-50 17 5 66 31 8 31-36z" fill="url(#metal)" stroke="#27303d" stroke-width="8" stroke-linejoin="round"/>
+ <path d="m82 117 43-15 49 16-8 71-40 35-39-36z" fill="url(#rust)" stroke="#27303d" stroke-width="9" stroke-linejoin="round"/>
+ <path d="m107 130 20-9 21 9-5 41-16 15-17-17z" fill="#252b35" stroke="#c2c9ce" stroke-width="6"/>
+ <path d="m117 141 8 10-6 8 12 10" stroke="#ffe57a" stroke-width="7" stroke-linecap="round"/><path d="m63 102 24 14m107-21-25 21m-61 65-15 24m73-24 17 25" stroke="#f3f4f6" stroke-width="8" stroke-linecap="round"/>
+ <circle cx="71" cy="62" r="7" fill="#fb4b57"/><circle cx="186" cy="58" r="7" fill="#fb4b57"/><path d="m97 96 12-9m39 0 12 10" stroke="#3c4654" stroke-width="7" stroke-linecap="round"/>
+</svg>

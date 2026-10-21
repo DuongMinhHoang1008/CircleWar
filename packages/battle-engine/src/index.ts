@@ -1,4 +1,5 @@
 import { computeStats } from "../../shared/src/balance";
+import { campaignStats, isCampaignBoss } from "../../shared/src/campaign";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "../../shared/src/arena";
 import { combat } from "./combat";
 import { DIRECTIONS, div, hash, random, UNIT, normalize } from "./math";
@@ -63,6 +64,9 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
     groups: {},
   };
   const spawn = { rng: (seed ^ 0x85ebca6b) >>> 0 || 1 };
+  if (config.campaign && (!Number.isInteger(config.campaign.stage) || config.campaign.stage < 1 || !config.teams.some(t => t.id === config.campaign!.enemyTeamId)))
+    throw Error("Invalid campaign config");
+  const campaignSquadSize = Math.max(1, ...config.teams.filter(t => t.id !== config.campaign?.enemyTeamId).map(t => t.loadouts.length));
   const loadouts = config.teams
     .flatMap((t) => t.loadouts.map((l, slot) => ({ team: t.id, l, slot })))
     .sort((a, b) => (a.team < b.team ? -1 : a.team > b.team ? 1 : 0));
@@ -73,11 +77,14 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
   }
   for (let id = 0; id < loadouts.length; id++) {
     const { team, l, slot } = loadouts[id],
-      stats = computeStats(l),
+      campaignEnemy = !!config.campaign && team === config.campaign.enemyTeamId,
+      boss = campaignEnemy && isCampaignBoss(config.campaign!.stage),
+      stats = campaignEnemy ? campaignStats(l, config.campaign!.stage, campaignSquadSize) : computeStats(l),
       cell = cells[id],
       d = DIRECTIONS[random(spawn) % 32];
     s.fighters.push({
       id,
+      boss: boss || undefined,
       team,
       classId: l.classId,
       characterId: l.characterId,
@@ -96,7 +103,7 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
       y: div(config.height * (2 * div(cell, 10) + 1), 12),
       vx: div(d[0] * stats.speed, UNIT),
       vy: div(d[1] * stats.speed, UNIT),
-      radius: 1700,
+      radius: boss ? 2800 : 1700,
       hp: stats.hp,
       shield: stats.shield,
       energy: 0,

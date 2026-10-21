@@ -66,6 +66,11 @@ export const CHARACTER_BALANCE: Record<string, CharacterBalance> = {
   char_23: unit("fighter", 245, 18, 7, 435, 27, 6600, 10, 100, 18),
   char_24: unit("ranger", 215, 18, 4, 430, 27, 4900, 12, 100, 3),
   char_25: unit("tank", 295, 16, 11, 385, 28, 6800, 6, 105, 5, 160),
+  char_26: unit("assassin", 215, 18, 4, 570, 21, 5700, 18, 95, 12, 85),
+  char_27: unit("fighter", 250, 18, 7, 420, 26, 6000, 8, 100, 14),
+  char_28: unit("tank", 195, 13, 3, 360, 31, 5600, 4, 100, 5, 120),
+  char_29: unit("ranger", 185, 14, 3, 390, 28, 5000, 9, 105, 5, 90),
+  char_30: unit("fighter", 205, 14, 4, 430, 28, 5900, 6, 100, 5, 80),
 };
 
 // Stat + triggered-effect budget for a T1 item; scale both with current rarity.
@@ -95,6 +100,11 @@ export const ITEM_BALANCE: Record<string, Partial<Stats>> = {
   item_23: { defense: 4, superPower: 10 },
   item_24: { hp: 20, thorns: 2 },
   item_25: { attack: 1, shield: 10, burn: 2 },
+  item_26: { charge: 18 },
+  item_27: { burn: 2, attack: 1 },
+  item_28: { speed: 24 },
+  item_29: { attack: 3 },
+  item_30: { speed: 28 },
 };
 
 export const ITEM_EFFECT_TEXT: Record<string, string> = {
@@ -133,6 +143,11 @@ export const ITEM_EFFECT_TEXT: Record<string, string> = {
     "Sau khi sống sót trước đòn thường, phản sát thương theo chỉ số Phản đòn. Không tạo chuỗi phản đòn.",
   item_25:
     "Đòn thường gây đốt theo chỉ số Đốt trong 2 giây; cùng nguồn làm mới thời gian, khác nguồn cộng dồn.",
+  item_26: "Tăng tốc độ nạp năng lượng Super.",
+  item_27: "Tăng nhẹ sát thương và sức mạnh hiệu ứng Đốt.",
+  item_28: "Tăng {24} tốc độ di chuyển.",
+  item_29: "Tăng {3} sát thương mỗi đòn.",
+  item_30: "Tăng {28} tốc độ di chuyển.",
 };
 
 export const ROLE_TEXT: Record<

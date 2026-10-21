@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+ <defs><linearGradient id="balloon" x1="70" y1="40" x2="185" y2="210" gradientUnits="userSpaceOnUse"><stop stop-color="#fff96b"/><stop offset=".45" stop-color="#ffd21d"/><stop offset="1" stop-color="#e88a04"/></linearGradient><linearGradient id="ribbon" x1="90" y1="50" x2="168" y2="194" gradientUnits="userSpaceOnUse"><stop stop-color="#ff74c2"/><stop offset=".5" stop-color="#56dfff"/><stop offset="1" stop-color="#ff5e66"/></linearGradient></defs>
+ <path d="M93 50c-28-24-57-1-48 30 7 23 37 34 69 45-2-31 3-56-21-75Zm70 0c28-24 57-1 48 30-7 23-37 34-69 45 2-31-3-56 21-75Z" fill="url(#balloon)" stroke="#bd7209" stroke-width="7"/>
+ <path d="m103 112 25 19 25-19-17 42 13 44-21-17-21 17 13-44z" fill="url(#ribbon)" stroke="#fff2aa" stroke-width="6" stroke-linejoin="round"/>
+ <path d="M84 73c14 15 28 24 44 31m46-31c-14 15-28 24-44 31" stroke="#fffde0" stroke-opacity=".82" stroke-width="7" stroke-linecap="round"/>
+ <circle cx="128" cy="154" r="13" fill="#fff6a6" stroke="#d18b12" stroke-width="6"/><path d="M128 167c-5 25-22 30-30 48m30-48c5 25 22 30 30 48" stroke="#ffdf49" stroke-width="7" stroke-linecap="round"/><path d="m80 211 7-14 9 13m71 1 9-14 7 13" fill="#ff6897" stroke="#fff1b0" stroke-width="4" stroke-linejoin="round"/>
+</svg>

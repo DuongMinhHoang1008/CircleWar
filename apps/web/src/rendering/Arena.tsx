@@ -30,12 +30,13 @@ import {
   BONDS,
   FRIEND_GROUPS,
   CHARACTER_IDS,
+  isTransformedCharacter,
   type CharacterId,
 } from "../../../../packages/shared/src/catalog";
 import { avatar, Portrait, weaponArtUrl, weaponAtlasUrl, weaponFrame } from "../GameCatalog";
 import type { Fighter } from "../../../../packages/battle-engine/src/types";
 import { TEAM_COLORS } from "./team-colors";
-import { loadCombatFx, isCombatFx, type CombatFxKind } from "./combat-fx";
+import { loadCombatFx, loadCharacterFx, characterFxColor, isCombatFx, type CombatFxKind, type CharacterFxFrames } from "./combat-fx";
 const colors = TEAM_COLORS.map(color => color.value);
 const fxArt = {
   slash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M14 94Q49 18 112 24 82 43 59 70 39 91 14 94Z" fill="#ffe5a0" fill-opacity=".82"/><path d="M18 96Q57 44 109 25" fill="none" stroke="#fff8d6" stroke-width="7" stroke-linecap="round"/><path d="m32 73 9 2-7 8m33-34 8 2-7 7m19-24 8 2-7 7" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="m19 24 4 9 9 4-9 4-4 9-4-9-9-4 9-4zM103 79l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#fff4c5"/></svg>`,
@@ -453,6 +454,7 @@ export function Arena({
         passiveBurst: [fxTextures.utility], healBurst: [fxTextures.heal],
         shieldBurst: [fxTextures.shield], projectile: [fxTextures.bolt],
       }));
+      const personalAnimatedFx = await loadCharacterFx().catch(() => ({} as CharacterFxFrames));
       if (disposed) return;
       const textureForEffect = (kind: EffectKind, characterId?: string) => {
         if (isCombatFx(kind)) return animatedFx[kind][0];
@@ -465,6 +467,8 @@ export function Arena({
             ? (characterId as CharacterId)
             : undefined;
           if (id) {
+            const frames = personalAnimatedFx[id]?.[kind === "characterSuper" ? "super" : "skill"];
+            if (frames?.length) return frames[Math.floor(state.tick / 3) % frames.length];
             const personal = characterFxTextures[id];
             return kind === "characterSkill"
               ? personal.skill
@@ -494,12 +498,12 @@ export function Arena({
       }));
       for (const f of state.fighters) {
         const label = new Text({
-          text: CHARACTERS[f.classId].short,
+          text: f.boss ? "BOSS" : CHARACTERS[f.classId].short,
           style: {
             fontFamily: "Arial",
-            fontSize: 10,
+            fontSize: f.boss ? 12 : 10,
             fontWeight: "bold",
-            fill: 0x231f20,
+            fill: f.boss ? 0xffd272 : 0x231f20,
           },
         });
         label.anchor.set(0.5);
@@ -510,7 +514,7 @@ export function Arena({
         state.fighters.map(async (f, i) => {
           if (!f.characterId) return;
           try {
-            const texture = await Assets.load<Texture>(avatar(f.characterId));
+            const texture = await Assets.load<Texture>(avatar(f.characterId, isTransformedCharacter(f.characterId, f.equipment)));
             if (disposed) return;
             const crops = [
               [0.23, 0, 0.5],
@@ -575,7 +579,11 @@ export function Arena({
           const index = Number(f.characterId.slice(-2)) - 1;
           if (!frames.has(f.characterId)) {
             if (index >= 20) {
-              frames.set(f.characterId, await Assets.load<Texture>(weaponArtUrl(f.characterId)));
+              const art = await Assets.load<Texture>(weaponArtUrl(f.characterId));
+              if (index >= 25) {
+                const inset = Math.round(art.width * 20 / 256);
+                frames.set(f.characterId, new Texture({ source: art.source, frame: new Rectangle(inset, inset, art.width - inset * 2, art.height - inset * 2) }));
+              } else frames.set(f.characterId, art);
             } else {
               const atlas = await Assets.load<Texture>(weaponAtlasUrl());
               const [x, y, width, height] = weaponFrame(f.characterId);
@@ -590,7 +598,8 @@ export function Arena({
             () => {
               const sprite = new Sprite(frames.get(f.characterId!)!);
               // Expansion art is drawn vertically; the brush (#24) points down.
-              if (index >= 20) sprite.anchor.set(0.5, index === 23 ? 0.08 : 0.92);
+              if (index >= 25) sprite.anchor.set(0.5, 1);
+              else if (index >= 20) sprite.anchor.set(0.5, index === 23 ? 0.08 : 0.92);
               else sprite.anchor.set(0.12, 0.5);
               instance.stage.addChild(sprite);
               return sprite;
@@ -604,9 +613,9 @@ export function Arena({
       for (const f of state.fighters)
         if (f.characterId) {
           const label = labels[f.id];
-          label.text = `${config.teams.findIndex((t) => t.id === f.team) + 1}.${f.slot + 1}`;
-          label.style.fontSize = 8;
-          label.style.fill = 0xffffff;
+          label.text = f.boss ? "BOSS" : `${config.teams.findIndex((t) => t.id === f.team) + 1}.${f.slot + 1}`;
+          label.style.fontSize = f.boss ? 12 : 8;
+          label.style.fill = f.boss ? 0xffd272 : 0xffffff;
           label.style.stroke = { color: 0x151018, width: 2 };
           instance.stage.addChild(label);
         }
@@ -798,13 +807,13 @@ export function Arena({
           } else if (e.type === "kill") {
             burst("shatter", target.x, target.y, e.tick, 1.25);
           } else if (e.type === "super") {
-            burst("superBurst", source.x, source.y, e.tick, 1.4);
+            if (!personalAnimatedFx[source.characterId || ""]?.super) burst("superBurst", source.x, source.y, e.tick, 1.4);
             burst(
               "characterSuper",
               source.x,
               source.y,
               e.tick,
-              source.characterId === "char_20" ? 0.8 : 0.65,
+              personalAnimatedFx[source.characterId || ""]?.super ? 1 : source.characterId === "char_20" ? 0.8 : 0.65,
               0,
               source.characterId,
             );
@@ -813,15 +822,15 @@ export function Arena({
           } else if (e.type === "shield") {
             burst("shieldBurst", target.x, target.y, e.tick, 1.05);
           } else if (e.type.startsWith("passive:")) {
-            burst("passiveBurst", source.x, source.y, e.tick, 0.75);
+            burst(personalAnimatedFx[source.characterId || ""]?.skill ? "characterSkill" : "passiveBurst", source.x, source.y, e.tick, 0.75, 0, source.characterId);
           } else if (e.type.startsWith("skill:")) {
-            burst("passiveBurst", source.x, source.y, e.tick, 0.6);
+            if (!personalAnimatedFx[source.characterId || ""]?.skill) burst("passiveBurst", source.x, source.y, e.tick, 0.6);
             burst(
               "characterSkill",
               source.x,
               source.y,
               e.tick,
-              0.72,
+              personalAnimatedFx[source.characterId || ""]?.skill ? 0.9 : 0.72,
               0,
               source.characterId,
             );
@@ -953,6 +962,9 @@ export function Arena({
           if (isCombatFx(fx.kind)) {
             const frames = animatedFx[fx.kind];
             sprite.texture = frames[Math.min(frames.length - 1, Math.floor(progress * frames.length))];
+          } else if (fx.kind === "characterSkill" || fx.kind === "characterSuper" || fx.kind === "characterItem") {
+            const frames = personalAnimatedFx[fx.characterId || ""]?.[fx.kind === "characterSuper" ? "super" : "skill"];
+            if (frames?.length) sprite.texture = frames[Math.min(frames.length - 1, Math.floor(progress * frames.length))];
           }
           sprite.rotation =
             isCombatFx(fx.kind) ? fx.rotation : fx.rotation + progress * (fx.kind === "shatter" ? 1.6 : 0.55);
@@ -1074,9 +1086,10 @@ export function Arena({
           }
           if (f.hp <= 0) return;
           labels[i].position.set(
-            x + (f.characterId ? visualRadius : 0),
-            y + (f.characterId ? visualRadius : 0),
+            f.boss ? x : x + (f.characterId ? visualRadius : 0),
+            f.boss ? y - visualRadius - 29 : y + (f.characterId ? visualRadius : 0),
           );
+          if (f.boss) g.circle(x, y, visualRadius + 6).stroke({ color: 0xffca68, width: 3, alpha: .85 });
           g.circle(x, y, visualRadius + 3).fill({ color, alpha: 0.18 });
           if (options.current.highlightTeamId === f.team)
             g.circle(x, y, visualRadius + 7).stroke({ color: 0xffe18a, width: 3, alpha: 0.95 });
@@ -1106,7 +1119,13 @@ export function Arena({
               );
               const length = Math.max(1, reach - r * 0.7);
               const angle = ((f.angle + w * 16) * Math.PI) / 16;
-              if (number >= 21) {
+              if (number >= 26) {
+                // The new assets are square silhouettes, not narrow staves.
+                // Fill their width while keeping the outer tip at weaponReach.
+                weapon.height = length / 0.95;
+                weapon.width = weapon.height * (f.classId === "ranger" || f.classId === "frost" ? 0.98 : 1.12);
+                weapon.rotation = angle + Math.PI / 2;
+              } else if (number >= 21) {
                 weapon.height = length / 0.84;
                 weapon.width = Math.max(18, weapon.height * 0.5);
                 weapon.rotation = angle + (number === 24 ? -Math.PI / 2 : Math.PI / 2);
@@ -1124,18 +1143,19 @@ export function Arena({
                 alpha: weapon ? 0.18 : 1,
               });
           }
-          g.rect(x - 23, y - visualRadius - 13, 46, 5).fill(0x393334);
+          const barWidth = f.boss ? 82 : 46;
+          g.rect(x - barWidth / 2, y - visualRadius - 13, barWidth, 5).fill(0x393334);
           g.rect(
-            x - 23,
+            x - barWidth / 2,
             y - visualRadius - 13,
-            (46 * f.hp) / f.stats.hp,
+            (barWidth * f.hp) / f.stats.hp,
             5,
           ).fill(color);
-          g.rect(x - 23, y - visualRadius - 7, (46 * f.energy) / 100, 2).fill(
+          g.rect(x - barWidth / 2, y - visualRadius - 7, (barWidth * f.energy) / 100, 2).fill(
             0x9c94ff,
           );
           if (f.shield > 0)
-            g.rect(x - 23, y - visualRadius - 17, 46 * Math.min(1, f.shield / 100), 3)
+            g.rect(x - barWidth / 2, y - visualRadius - 17, barWidth * Math.min(1, f.shield / 100), 3)
               .fill(0x8cdbff);
           if (burning)
             g.circle(x, y, visualRadius + 5).stroke({ color: 0xff933b, width: 2, alpha: 0.75 });
@@ -1156,17 +1176,21 @@ export function Arena({
             return;
           }
           sprite.visible = true;
-          sprite.texture = animatedFx.projectile[Math.floor(state.tick / 2) % animatedFx.projectile.length];
-          sprite.tint = p.kind === "super" ? 0xffca60 : p.normal ? 0x92edff : 0xe3a4ff;
+          const owner = state.fighters[p.owner];
+          const personalFrames = personalAnimatedFx[owner?.characterId || ""]?.projectile;
+          const frames = personalFrames || animatedFx.projectile;
+          sprite.texture = frames[Math.floor((state.tick + p.id) / 2) % frames.length];
+          sprite.tint = personalFrames ? 0xffffff : p.kind === "super" ? 0xffca60 : p.normal ? 0x92edff : 0xe3a4ff;
+          const trailColor = personalFrames ? characterFxColor(owner.characterId) : sprite.tint;
           sprite.position.set(p.x * sx, p.y * sy);
-          sprite.width = p.kind === "super" ? 38 : p.normal ? 25 : 30;
-          sprite.height = p.kind === "super" ? 24 : 17;
+          sprite.width = personalFrames ? p.kind === "super" ? 55 : p.normal ? 35 : 43 : p.kind === "super" ? 38 : p.normal ? 25 : 30;
+          sprite.height = personalFrames ? p.kind === "super" ? 38 : p.normal ? 25 : 31 : p.kind === "super" ? 24 : 17;
           sprite.rotation = Math.atan2(p.vy, p.vx);
           const speed = Math.max(1, Math.hypot(p.vx, p.vy));
           const trail = p.kind === "super" ? 2600 : 1800;
           g.moveTo(p.x * sx, p.y * sy)
             .lineTo((p.x - p.vx * trail / speed) * sx, (p.y - p.vy * trail / speed) * sy)
-            .stroke({ color: sprite.tint, width: p.kind === "super" ? 5 : 3, alpha: 0.65 });
+            .stroke({ color: trailColor, width: p.kind === "super" ? 5 : 3, alpha: 0.55 });
         });
         const events = state.events.filter((e) => e.type === "kill");
         if (events.length > heard && !options.current.muted) {

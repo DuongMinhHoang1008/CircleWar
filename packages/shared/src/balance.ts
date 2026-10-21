@@ -1,5 +1,5 @@
 import { CATALOG_ITEMS, character, ROSTER, type CharacterId } from "./catalog";
-import { cardRarityMultiplier } from "./progression";
+import { cardEffectiveEvolution, cardRarityMultiplier } from "./progression";
 import { CHARACTER_BALANCE, ITEM_EFFECT_TEXT } from "./combat-balance";
 export const BENCH_CAPACITY = 5;
 export const ITEM_BAG_CAPACITY = 8;
@@ -221,7 +221,11 @@ export function computeStats(loadout: Loadout): Stats {
   const c = character(loadout.characterId);
   if (c) {
     Object.assign(s, CHARACTER_BALANCE[c.id].stats);
-    const rarityMultiplier = cardRarityMultiplier(c.tier, loadout.level);
+    const transformed = loadout.equipment.some((id) => CATALOG_ITEMS.find((it) => it.id === id)?.affinity === c.id && ["char_28", "char_29", "char_30"].includes(c.id));
+    const effective = cardEffectiveEvolution(c.tier, loadout.level, transformed);
+    const rarityMultiplier = transformed
+      ? Math.max(1, 1 + (effective.tierIndex - 1) * 0.18)
+      : cardRarityMultiplier(c.tier, loadout.level);
     for (const key of ["hp", "attack"] as const)
       s[key] = Math.round(s[key] * rarityMultiplier);
   }

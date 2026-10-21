@@ -89,3 +89,25 @@ v22 retains these combat budgets and introduces a smaller square default arena
 and a 20-second wall schedule. The v21 audit in `reports/balance-audit.json` uses
 its explicitly recorded rectangular fixture; it is not a measurement of the new
 default map. See `docs/REPLAY_FORMAT.md` for v22 geometry and VFX details.
+
+
+## Campaign bosses (21 October 2026)
+
+`packages/shared/src/campaign.ts` is shared by local campaigns and room campaigns.
+Every fifth stage replaces the enemy squad with a single boss. Its body radius
+is 2800 instead of 1700 (about 65% larger), including collision and rendering.
+HP scales with player squad size; attack rises modestly and movement slows 6%.
+No modifiers apply outside a campaign config. Boss effects persist in base stats.
+
+Ordinary enemies use one continuous effective-HP/DPS budget per stage. Encounter selection cycles across all 27 non-junk characters with different
+stage/slot strides, avoiding adjacent repeated lineups. The shared stat budget
+normalizes rarity/level changes while preserving each combat role. Character counters,
+synergies and equipment still affect the result; equal win rates for every team
+are not promised. Rewards are 5 packs per ordinary win and 15 per boss win.
+
+`tests/performance/campaign-audit.ts` records 240 fixed-seed battles in
+`reports/campaign-audit.json`, using level-3 common units without equipment,
+solo and three-unit teams, at stages 1/4/5/6/9/10/11/14/15/16. All battles
+finished. The report retains per-stage outcomes; later checkpoints require upgrades or
+a different composition.
+This is an offline calibration sample, not a measured live-player win rate.
