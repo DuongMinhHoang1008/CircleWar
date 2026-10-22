@@ -1,0 +1,9 @@
+{
+  "engine": "chaos-integer-v24",
+  "aura": true,
+  "territory": true,
+  "radiation": true,
+  "foodHealing": true,
+  "portraitMatchesAttachment": true,
+  "errors": []
+}

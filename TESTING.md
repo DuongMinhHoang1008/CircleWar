@@ -1,5 +1,27 @@
 # Kiểm thử
 
+## v24 — 21/10/2026: 33 nội tại riêng và 5 bộ chiêu Huyền thoại
+
+- `npm test`: 168/168 pass, gồm 33 nội tại thực, cooldown/giới hạn lượt/checkpoint, aura theo vị trí, tăng tầm vật lý, phóng xạ, vùng chiêu báo trước và đồ ăn hồi phục.
+- TypeScript + Vite production build + Worker dry-run pass. Vite vẫn có cảnh báo bundle >500 KiB; log Wrangler đặt trong `.wrangler/logs` của workspace.
+- `balance-audit.ts`: 6.864 trận kết thúc, cả 33 card trần và build hợp cạ Lv1/Lv10 đều có counter. Cao nhất: card trần 73%, nhóm thử đấu đội 67%, build hợp cạ 75%. Aura là hỗ trợ chuyên đội: 59% ở mẫu đấu đội, thấp hơn rõ trong solo. Đây là mẫu offline, không phải tỉ lệ thắng người chơi thật.
+- `campaign-audit.ts`: 4.720 trận, đủ 52 trường hợp ải thường/solo/đội ba người, kể cả 999 và 10001, đều có counter thắng ít nhất 3/4 ở cùng cấp. Sửa cách kiểm tra đổi phía: engine sắp spawn theo team id, nên phải hoán đổi id thay vì chỉ đổi thứ tự mảng. Không thay đổi chỉ số ải.
+- `boss-packs-browser.ts`: mô tả nội tại của cả 33 card trong popup (mở Chi tiết), vai trò Huyền thoại, pack/rate/pity/save, đủ ảnh mới, desktop/mobile và replay ải đều pass, không page error.
+- `legendary-browser.ts`: render replay thực của 5 bộ chiêu, xác nhận aura/territory/radiation/hồi phục, ảnh Ủn trùng hash attachment. Ảnh `reports/legendary-desktop.png`, `legendary-mobile.png`, `vertical-weapons-desktop.png` xác nhận vũ khí #31–33 cầm dọc cùng trục va chạm.
+- `reward-popups-browser.ts`: popup cập nhật, thưởng ải 1/5/10 và multiplayer căn giữa tại 1440×1000, 390×844 và 844×390. Kiểm tra Tab/Escape, kho 148→150, 1/3 Pack Boss, callback kết thúc lặp, reload không cộng thưởng trùng và không page error. Dùng fixture callback Arena và trạng thái FINISHED qua Connection; lưu hồ sơ bằng Worker local thật.
+- Production smoke sau deploy pass: health/CORS, hồ sơ SAVE/retry/restore, release .4, asset, popup căn giữa, phòng/WebSocket và mô phỏng; không page error. `reports/production-browser-v24.json`, `reports/deployment-2026-10-21.json`.
+- Release `2026.10.21.4`, engine `chaos-integer-v24`. Web local `http://127.0.0.1:5173`, Worker `http://127.0.0.1:8787`; kết quả production trong `DEPLOYMENT.md`.
+
+
+## v23 — 21/10/2026: đội hình chiến thuật, hợp cạ và Pack Boss
+
+- `npm test`: 126/126 pass, gồm 33 proc hợp cạ, giới hạn lượt/hồi, checkpoint, tỉ lệ pack và hai hạt nhân của Tất cả quỳ xuống.
+- `npm run build`: TypeScript, Vite và Worker dry-run pass. Bundle vẫn có cảnh báo kích thước sẵn có.
+- `balance-audit.ts`: 6.864 trận, không có trận chưa kết thúc. Mọi card trần và build hợp cạ cấp 1/10 có counter trong mẫu; tỉ lệ cao nhất 75% ở đấu đơn có trang bị, 72% ở card trần, 59% trong nhóm thử đấu đội. Đây là mẫu offline, không phải win rate người chơi thật.
+- `campaign-audit.ts`: 4.720 trận trên bản đồ mặc định, 52 trường hợp ải/đội solo hoặc 3 người, gồm ải 999 và 10001. Mỗi trường hợp đều tìm được counter thắng ít nhất 3/4 lượt ở cùng cấp hiển thị. Chỉ số ải thường bằng chính xác `computeStats`.
+- `boss-packs-browser.ts`: desktop/mobile, bảng tỉ lệ hai pack, asset mới, mở 3 Pack Boss, reload giữa animation, bảo toàn pack thường và pity, lưu hồ sơ 33+33 card vào Worker; không có page error. Ảnh trong `reports/boss-pack-*.png` và `reports/new-card-arena-desktop.png`.
+- Local web: `http://127.0.0.1:5173`; Worker: `http://127.0.0.1:8787`. Không deploy production trong lần cập nhật này.
+
 ## Gameplay v10 — 2026-10-19
 
 - TypeScript `npm run typecheck`: pass.

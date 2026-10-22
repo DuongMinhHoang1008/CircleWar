@@ -10,7 +10,8 @@ import {
   capacityUpgradePrice,
 } from "./balance";
 import { DEFAULT_SETTINGS, type Action, type Settings } from "./protocol";
-import { campaignEncounter, campaignPackReward } from "./campaign";
+import { campaignEncounter, campaignPackReward, campaignBossPackReward } from "./campaign";
+import { packPool, packTier } from "./packs";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "./arena";
 import { addCardXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "./progression";
 import {
@@ -68,6 +69,9 @@ export interface Player {
   cards: { characterId: CharacterId; level: number; xp: number }[];
   itemCards?: { itemId: string; level: number; xp: number }[];
   packs: number;
+  bossPacks?: number;
+  packsSinceRare?: number;
+  packsSinceHighRarity?: number;
   lastPackAt: number;
   missions: { draw: number; win: number; campaign: number };
   claimedMissions: string[];
@@ -512,18 +516,36 @@ export function applyAction(
         p.lastPackAt = now;
       } else if (action.type === "OPEN_PACK") {
         requireRule(s.phase === "LOBBY" || s.phase === "FINISHED", "Chỉ mở pack ngoài trận");
-        requireRule(p.packs > 0, "Bạn không có pack");
-        p.packs--;
-        const roll = random(s) % 100;
-        const tier = roll < 75 ? "T1" : roll < 95 ? "T2" : roll < 99 ? "T3" : "T4";
-        const pool = ROSTER.filter((c) => c.tier === tier);
-        const pulled = pool.length ? pool[random(s) % pool.length] : ROSTER[random(s) % ROSTER.length];
-        let card = p.cards.find((c) => c.characterId === pulled.id);
-        if (card && card.level < 10) Object.assign(card, addCardXp(card, DUPLICATE_CARD_XP));
-        else if (!card) { card = { characterId: pulled.id as CharacterId, level: 1, xp: 0 }; p.cards.push(card); }
+        const kind = action.kind || "normal";
+        requireRule((kind === "boss" ? p.bossPacks || 0 : p.packs) > 0, "Bạn không có pack");
+        p.itemCards ||= [];
+        const ownedCards = p.cards, ownedItems = p.itemCards;
+        const available = [
+          ...ROSTER.filter(c => (ownedCards.find(owned => owned.characterId === c.id)?.level || 0) < 10).map(c => ({ id: c.id, kind: "character" as const, tier: c.tier === "RAC" ? "T1" : c.tier })),
+          ...CATALOG_ITEMS.filter(it => (ownedItems.find(owned => owned.itemId === it.id)?.level || 0) < 10).map(it => ({ id: it.id, kind: "item" as const, tier: `T${it.rarity + 1}` })),
+        ];
+        requireRule(available.length > 0, "Tất cả thẻ đã đạt cấp tối đa");
+        const tier = packTier(kind, (random(s) % 100000) / 1000, p.packsSinceRare || 0);
+        const pool = packPool(available, tier, kind === "normal" && (p.packsSinceHighRarity || 0) >= 99);
+        const pulled = pool[random(s) % pool.length];
+        if (kind === "boss") p.bossPacks!--;
+        else {
+          p.packs--;
+          p.packsSinceRare = pulled.tier === "T1" ? Math.min(19, (p.packsSinceRare || 0) + 1) : 0;
+          p.packsSinceHighRarity = ["T3", "T4"].includes(pulled.tier) ? 0 : Math.min(99, (p.packsSinceHighRarity || 0) + 1);
+        }
+        if (pulled.kind === "character") {
+          const card = p.cards.find(c => c.characterId === pulled.id);
+          if (card) Object.assign(card, addCardXp(card, DUPLICATE_CARD_XP));
+          else p.cards.push({ characterId: pulled.id as CharacterId, level: 1, xp: 0 });
+          const active = p.loadouts.find(l => l.characterId === pulled.id);
+          if (active) active.level = p.cards.find(c => c.characterId === pulled.id)!.level;
+        } else {
+          const card = p.itemCards.find(c => c.itemId === pulled.id);
+          if (card) Object.assign(card, addCardXp(card, DUPLICATE_CARD_XP));
+          else p.itemCards.push({ itemId: pulled.id, level: 1, xp: 0 });
+        }
         p.missions.draw++;
-        const active = p.loadouts.find((l) => l.characterId === pulled.id);
-        if (active) active.level = card.level;
       } else if (action.type === "CLAIM_MISSION") {
         const goals = { draw: 3, win: 1, campaign: 1 };
         requireRule(!p.claimedMissions.includes(action.mission), "Nhiệm vụ đã nhận");
@@ -814,7 +836,7 @@ export function settle(s: RoomState, now: number) {
     const campaignWin = s.mode === "campaign" && won;
     p.packs = Math.min(PACK_CAPACITY, p.packs + (won ? (campaignWin ? campaignPackReward((p.campaignStage || 0) + 1) : 10) : 0));
     if (won && !campaignWin) p.missions.win++;
-    if (campaignWin) { p.missions.campaign++; p.campaignStage = (p.campaignStage || 0) + 1; }
+    if (campaignWin) { p.bossPacks = (p.bossPacks || 0) + campaignBossPackReward((p.campaignStage || 0) + 1); p.missions.campaign++; p.campaignStage = (p.campaignStage || 0) + 1; }
     p.totalDamage += r.damage;
   }
   s.settledRound = s.round;
@@ -902,6 +924,7 @@ export function viewRoom(s: RoomState, id: string) {
         cards: (p.cards || [{ characterId: (p.loadouts[0]?.characterId || ROSTER[0].id) as CharacterId, level: 1, xp: 0 }]).map((card) => ({ characterId: card.characterId, level: card.level, xp: "xp" in card ? card.xp : 0 })),
         itemCards: p.itemCards || [],
         packs: p.packs || 0,
+        bossPacks: p.bossPacks || 0,
         lastPackAt: p.lastPackAt || 0,
         missions: dailyIsCurrent ? p.missions || { draw: 0, win: 0, campaign: 0 } : { draw: 0, win: 0, campaign: 0 },
         claimedMissions: dailyIsCurrent ? p.claimedMissions || [] : [],

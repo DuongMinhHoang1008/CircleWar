@@ -1,6 +1,7 @@
 export const CARD_MAX_LEVEL = 10;
 export const DUPLICATE_CARD_XP = 150;
 export const PACK_CAPACITY = 150;
+export const RARITY_POWER_STEP = 0.04;
 
 /** Daily quests roll over at 00:00 UTC so clients and the room server agree. */
 export function dailyQuestDay(now = Date.now()) {
@@ -61,7 +62,7 @@ export function cardEffectiveEvolution(baseTier: string | number, level: number,
 
 /** Small rarity-based power steps; leveling and evolution use the same tier shown on the card. */
 export function cardRarityMultiplier(baseTier: string | number, level: number) {
-  // Progress within a rarity adds at most 6%; no extra lifetime-level budget.
+  // Rarity is a modest advantage; tactics remain viable across printed tiers.
   const current = Math.max(1, level);
   const tier = cardEvolution(baseTier, current).tierIndex;
   let first = current, last = current;
@@ -76,7 +77,7 @@ export function cardRarityMultiplier(baseTier: string | number, level: number) {
       : last > first
         ? (current - first) / (last - first)
         : 0;
-  return 1 + (tier - 1) * 0.18 + Math.max(0, Math.min(1, progress)) * 0.06;
+  return 1 + (tier - 1) * RARITY_POWER_STEP + Math.max(0, Math.min(1, progress)) * 0.02;
 }
 
 /** Number of tier steps this card has gained over its printed tier. */

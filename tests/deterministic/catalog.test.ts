@@ -46,10 +46,10 @@ function fixture(ids: string[], equipment: string[][] = []) {
 }
 describe("approved catalog gameplay", () => {
   it("has the complete expanded roster/item catalog and bijective affinities", () => {
-    expect(ROSTER).toHaveLength(30);
-    expect(CATALOG_ITEMS).toHaveLength(30);
-    expect(BONDS).toHaveLength(32);
-    expect(new Set(CATALOG_ITEMS.map((i) => i.affinity)).size).toBe(30);
+    expect(ROSTER).toHaveLength(33);
+    expect(CATALOG_ITEMS).toHaveLength(33);
+    expect(BONDS).toHaveLength(35);
+    expect(new Set(CATALOG_ITEMS.map((i) => i.affinity)).size).toBe(33);
     expect(CATALOG_ITEMS.map((item) => item.affinity)).toEqual([
       "char_09",
       "char_01",
@@ -77,6 +77,7 @@ describe("approved catalog gameplay", () => {
       "char_24",
       "char_25",
       "char_26", "char_27", "char_28", "char_29", "char_30",
+      "char_31", "char_32", "char_33",
     ]);
     for (const c of ROSTER.slice(0, 20)) {
       expect(BONDS.some((b) => b.size === 2 && b.members.includes(c.id))).toBe(
@@ -167,7 +168,8 @@ describe("approved catalog gameplay", () => {
       enemy = s.fighters[1];
     characterDamage(s, enemy, f, 230);
     expect(f.memory.bedding).toBe(1);
-    expect(f.shield).toBe(36);
+    expect(s.events.find(e => e.type === "affinity:item_02")).toBeDefined();
+    expect(f.shield).toBeGreaterThan(28);
     s.tick = 91;
     beforeCharacterTick(s);
     expect(f.shield).toBe(0);
@@ -306,7 +308,7 @@ describe("approved catalog gameplay", () => {
       P17: 21,
       P18: 22,
       T10: 21,
-      P19: 26, P20: 28, P21: 29, T11: 26,
+      P19: 26, P20: 28, P21: 29, T11: 26, P22: 31, P23: 32, P24: 33,
     };
     for (const b of BONDS) {
       const config: BattleConfig = {

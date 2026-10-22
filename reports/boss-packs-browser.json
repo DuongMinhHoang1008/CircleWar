@@ -1,0 +1,10 @@
+{
+  "rates": [
+    "Tỉ lệ cơ bản mỗi lần mở\nThường\n84%\nHiếm\n14%\nSử thi\n1,7%\nHuyền thoại\n0,3%\nÁp dụng chung cho nhân vật và vật phẩm, phân đều trong mỗi bậc. Card Rác nằm trong nhóm Thường; GOD chỉ nhận qua tiến hóa. Bậc hết card chưa đạt Lv.10 sẽ ưu tiên bậc cao hơn còn khả dụng, nếu không còn thì dùng bậc cao nhất còn lại.\nBảo hiểm: sau 19 pack liên tiếp chỉ ra Thường, pack thứ 20 có Hiếm 85% · Sử thi 13% · Huyền thoại 2%. Sau 99 pack chưa ra Sử thi trở lên, pack thứ 100 bảo đảm bậc cao nhất còn khả dụng. Khi cả hai cùng tới hạn, ưu tiên bảo hiểm 100 pack.",
+    "Tỉ lệ cơ bản mỗi lần mở\nThường\n66%\nHiếm\n14%\nSử thi\n17%\nHuyền thoại\n3%\nÁp dụng chung cho nhân vật và vật phẩm, phân đều trong mỗi bậc. Card Rác nằm trong nhóm Thường; GOD chỉ nhận qua tiến hóa. Bậc hết card chưa đạt Lv.10 sẽ ưu tiên bậc cao hơn còn khả dụng, nếu không còn thì dùng bậc cao nhất còn lại.\nKhông dùng bảo hiểm và không tăng hoặc xóa tiến độ bảo hiểm của pack thường."
+  ],
+  "persistedBossPacks": 1,
+  "cards": 33,
+  "items": 33,
+  "errors": []
+}

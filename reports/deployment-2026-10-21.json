@@ -1,5 +1,5 @@
 {
-  "time": "2026-10-21T05:19:04.858Z",
+  "time": "2026-10-21T16:41:27.258Z",
   "web": "https://riseon-ultimate-battle.pages.dev",
   "api": "https://circle-chaos.circle-chaos.workers.dev",
   "status": "PASS",
@@ -10,6 +10,6 @@
     "idempotent retry",
     "stale INIT preserves rewards",
     "release manifest",
-    "160 character VFX frames"
+    "256 character VFX frames"
   ]
 }

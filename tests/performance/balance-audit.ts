@@ -1,4 +1,5 @@
 import { writeFileSync } from "node:fs";
+import assert from "node:assert/strict";
 import {
   ROSTER,
   CATALOG_ITEMS,
@@ -24,8 +25,10 @@ const load = (id: string, item?: string): Loadout => ({
   equipment: item ? [item] : [],
   equipmentLevels: item ? { [item]: 10 } : {},
 });
+const pairResults: { a: string; b: string; aWins: number; matches: number }[] = [];
 let battles = 0,
   stalled = 0;
+const unresolved: { seed: number; left: Loadout[]; right: Loadout[]; tick: number }[] = [];
 function match(left: Loadout[], right: Loadout[], seed: number) {
   const state = createBattle(
     {
@@ -39,9 +42,9 @@ function match(left: Loadout[], right: Loadout[], seed: number) {
     },
     seed,
   );
-  while (!state.finished && state.tick < 6000) stepBattle(state);
+  while (!state.finished && state.tick < 18000) stepBattle(state);
   battles++;
-  if (!state.finished) stalled++;
+  if (!state.finished) { stalled++; unresolved.push({ seed, left, right, tick: state.tick }); }
   return calculateBattleResult(state)[0].id === "a";
 }
 
@@ -56,21 +59,25 @@ const rows = ROSTER.map((c) => ({
 }));
 for (let a = 0; a < rows.length; a++)
   for (let b = a + 1; b < rows.length; b++) {
+    const pair = { a: rows[a].id, b: rows[b].id, aWins: 0, matches: 0 };
     for (const seed of [73, 211]) {
       for (const reversed of [false, true]) {
         const left = reversed ? b : a,
           right = reversed ? a : b;
         const win = match([load(rows[left].id)], [load(rows[right].id)], seed);
+        pair.aWins += Number(reversed ? !win : win);
+        pair.matches++;
         rows[left].duelWins += Number(win);
         rows[right].duelWins += Number(!win);
         rows[a].duels++;
         rows[b].duels++;
       }
     }
+    pairResults.push(pair);
   }
 for (let a = 0; a < rows.length; a++)
-  for (let offset = 1; offset <= 8; offset++) {
-    const b = (a + offset * 3) % rows.length;
+  for (let offset = 1; offset <= 16; offset++) {
+    const b = (a + offset * 5) % rows.length;
     if (a === b) continue;
     // Same two teammates isolate the tested slot while preserving real synergy interactions.
     const allies = ["char_02", "char_05"].filter(
@@ -129,18 +136,40 @@ const rarityParity = [2, 3, 4, 5].map((tier) => ({
       : [];
   }),
 }));
+const equipped = process.argv.includes("--roster-only") ? [] : [1, 10].map(level => {
+  const result = ROSTER.map(c => ({ id: c.id, wins: 0, matches: 0, counters: [] as string[] }));
+  for (let a = 0; a < ROSTER.length; a++) for (let b = a + 1; b < ROSTER.length; b++) {
+    let aWins = 0;
+    const gear = (index: number) => { const id = ROSTER[index].id; const item = CATALOG_ITEMS.find(it => it.affinity === id)!.id; return { ...load(id, item), level, equipmentLevels: { [item]: level } }; };
+    for (const reversed of [false, true]) {
+      const win = match([gear(reversed ? b : a)], [gear(reversed ? a : b)], 461);
+      aWins += Number(reversed ? !win : win);
+    }
+    result[a].wins += aWins; result[b].wins += 2 - aWins;
+    result[a].matches += 2; result[b].matches += 2;
+    if (aWins === 0) result[a].counters.push(ROSTER[b].id);
+    if (aWins === 2) result[b].counters.push(ROSTER[a].id);
+  }
+  return { level, characters: result.map(r => ({ ...r, winRate: Math.round(r.wins / r.matches * 100) })) };
+});
 const report = {
   battles,
   stalled,
+  unresolved,
   conditions:
-    "GOD, no equipment in roster tests; GOD item on mirror GOD units; fixed seeds; 10s wall timer. Team tests include all eligible synergies. Offline sample, not a live-player win-rate claim.",
+    "Lv10 evolved cards, bare roster with 2 seeds and both spawn sides; 16 controlled team matchups per card on both sides; Lv10 items vs bare mirrors; own affinity equipment at Lv1 and Lv10 on both sides. Fixed seeds; 10s wall timer. All eligible synergies active. Offline sample, not a live-player win-rate claim.",
   characters: rows.map((r) => ({
     ...r,
     duelRate: Math.round((r.duelWins / r.duels) * 100),
     teamRate: Math.round((r.teamWins / r.teams) * 100),
+    counters: pairResults.flatMap(pair => {
+      const wins = pair.a === r.id ? pair.matches - pair.aWins : pair.b === r.id ? pair.aWins : -1;
+      return wins >= pair.matches * .75 ? [{ id: pair.a === r.id ? pair.b : pair.a, wins, matches: pair.matches }] : [];
+    }),
   })),
   items,
   rarityParity,
+  equipped,
 };
 writeFileSync("reports/balance-audit.json", JSON.stringify(report, null, 2));
 console.table(
@@ -152,4 +181,9 @@ console.table(
   })),
 );
 console.table(items.map(({ id, winRate }) => ({ id, winRate })));
+for (const phase of equipped) console.table(phase.characters.map(({ id, winRate, counters }) => ({ level: phase.level, id, winRate, counters: counters.length })));
 console.log({ battles, stalled });
+assert.equal(stalled, 0, "Audit battles must finish");
+assert.ok(report.characters.every(c => c.counters.length > 0), "Every bare card needs a measured counter");
+assert.ok(report.characters.every(c => c.duelRate <= 78 && c.teamRate <= 75), "Review overperforming roster cards");
+assert.ok(equipped.every(phase => phase.characters.every(c => c.counters.length > 0 && c.winRate <= 78)), "Every affinity build needs a counter and a bounded observed win rate");

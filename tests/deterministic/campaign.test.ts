@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { campaignEncounter, campaignPackReward, campaignStats, campaignThreat } from "../../packages/shared/src/campaign";
+import { campaignEncounter, campaignPackReward, campaignBossPackReward, campaignStats } from "../../packages/shared/src/campaign";
 import { computeStats, type Loadout } from "../../packages/shared/src/balance";
 import { createBattle, debugConfig, stepBattle, calculateStateHash } from "../../packages/battle-engine/src/index";
 
@@ -19,17 +19,16 @@ describe("campaign encounters", () => {
     }
     expect(seen.size).toBeGreaterThanOrEqual(20);
   });
-  it("keeps normal-stage power on a smooth curve despite character and level changes", () => {
-    let previous = 0;
-    for (let stage = 1; stage <= 60; stage++) {
+  it("uses exactly the displayed card level and gear stats at every normal stage, even after the cap", () => {
+    for (const stage of [...Array.from({ length: 120 }, (_, i) => i + 1), 999, 10001]) {
       if (stage % 5 === 0) continue;
       const encounter = campaignEncounter(stage, 3);
-      const powers = encounter.loadouts.map(l => campaignThreat(campaignStats(l, stage, 3)));
-      const mean = powers.reduce((sum, power) => sum + power, 0) / powers.length;
-      expect(Math.max(...powers) / Math.min(...powers)).toBeLessThan(1.06);
-      expect(mean).toBeGreaterThan(previous * .98);
-      if (previous) expect(mean / previous).toBeLessThan(1.1);
-      previous = mean;
+      for (const loadout of encounter.loadouts) {
+        expect(campaignStats(loadout, stage, 3)).toEqual(computeStats(loadout));
+        expect(loadout.level).toBeLessThanOrEqual(10);
+        expect(loadout.equipment.length).toBeLessThanOrEqual(1);
+      }
+      expect(encounter.counter.length).toBeGreaterThan(10);
     }
   });
   it("creates one enlarged boss with stronger persistent stats and scales it for 1–3 opponents", () => {
@@ -66,5 +65,8 @@ describe("campaign encounters", () => {
     expect(calculateStateHash(a)).toBe(calculateStateHash(b));
     expect(campaignPackReward(4)).toBe(5);
     expect(campaignPackReward(5)).toBe(15);
+    expect(campaignBossPackReward(4)).toBe(0);
+    expect(campaignBossPackReward(5)).toBe(1);
+    expect(campaignBossPackReward(10)).toBe(3);
   });
 });

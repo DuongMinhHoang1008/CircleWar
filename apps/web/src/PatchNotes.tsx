@@ -1,6 +1,28 @@
 import React from "react";
 
 export const PATCH_NOTES = [{
+  version: "2026.10.21.4",
+  date: "2026-10-21",
+  title: "Nội tại riêng, Huyền thoại đúng vai trò",
+  summary: "Làm lại nội tại của toàn bộ 33 nhân vật, bộ chiêu của 5 Huyền thoại và popup nhận thưởng.",
+  sections: [
+    { title: "Popup và phần thưởng", entries: ["Căn giữa popup cập nhật, quà tân thủ và thưởng trận trên desktop, điện thoại và màn hình ngang; dùng animation riêng để giữ đúng tâm màn hình.", "Thắng đi ải hoặc multiplayer hiện popup số pack thường và Pack Boss thực nhận. Báo rõ phần vượt kho đầy; lưu thưởng trước khi hiển thị, đóng popup hoặc tải lại không nhận trùng."] },
+    { title: "33 nội tại khác nhau", entries: ["Mỗi nhân vật cũ và mới có cơ chế riêng: đánh dấu, combo cùng mục tiêu, bẫy, nảy tường, giải chậm, hỗ trợ theo vị trí hoặc tiếp tế. Cùng class vẫn có cách build và vai trò khác nhau.", "Hiệu ứng chạy trong chiến đấu, có điều kiện, thời gian và giới hạn rõ ràng; mô tả trong kho đồ khớp cơ chế thực tế."] },
+    { title: "Năm Huyền thoại", entries: ["Đẳng Cấp Aura là hỗ trợ phát aura cho đồng đội; rời tầm hoặc hạ nguồn thì mất buff. King Of RiseOn là đấu sĩ nối dài tầm vũ khí bằng aura trong thời gian ngắn.", "Ủn Đại Ca là xạ thủ phóng xạ, tối đa 3 tầng và giảm hồi máu tối đa 24%; đạn cần trúng và vẫn bị khiên, giáp, chặn đạn khắc chế.", "Bang Chủ Cái Bang đặt đại trận rộng, cố định, báo trước 0,5 giây và chỉ giữ một vùng chiêu. Sóc Jake là hộ vệ ném đồ ăn tấn công, đồng thời chia phần hồi phục."] },
+    { title: "Hình ảnh và cân bằng", entries: ["Cập nhật ảnh Ủn Đại Ca mới; xoay vũ khí của Ủn, Bang Chủ và Jake sang chiều dọc, đầu vũ khí khớp hướng đánh.", "Thêm VFX aura, kiếm vươn xa, phóng xạ, đại trận và đồ ăn. Điều chỉnh chỉ số và proc qua đấu đơn, đấu đội, build hợp cạ và các ải thường; mỗi card đều có counter trong mẫu mô phỏng."] },
+  ],
+}, {
+  version: "2026.10.21.3",
+  date: "2026-10-21",
+  title: "Đi ải chiến thuật, hợp cạ có bản sắc",
+  summary: "33 nhân vật, 33 vật phẩm; Pack Boss và đội hình địch có chiến thuật rõ ràng.",
+  sections: [
+    { title: "Đi ải", entries: ["Bỏ scale HP/ATK ẩn ở ải thường. Địch dùng đúng level và trang bị hiển thị, tối đa Lv.10; 12 đội hình có hội bạn, liên kết và gợi ý khắc chế.", "Boss mỗi 5 ải nhận 1 Pack Boss; boss khó mỗi 10 ải nhận 3 Pack Boss, ngoài phần thưởng pack thường."] },
+    { title: "Card và hội bạn", entries: ["Thêm Ủn Đại Ca, Bang Chủ Cái Bang và Sóc Jake (Huyền thoại), cùng Bút Chì Bạc, Dép Tổ Ong và Huy Hiệu HB; thêm vũ khí, VFX, mô tả và liên kết.", "Tất cả quỳ xuống hoạt động khi có Sếp Chốt Đơn hoặc Đẳng Cấp Aura; hai hạt nhân dùng chung giới hạn lượt và hồi chiêu.", "Bổ sung hội cho các nhân vật #26–30 và ba nhân vật mới. Điều chỉnh card cũ và mới qua mô phỏng đấu đơn và đấu đội.", "Rarity chỉ tăng 4% sức mạnh mỗi bậc và tối đa 2% trong bậc, giảm chênh lệch chỉ số để chiến thuật counter có tác dụng."] },
+    { title: "Hợp cạ", entries: ["Cả 33 vật phẩm đều có hiệu ứng bổ sung khi gắn đúng người: giải chậm, khiên, hồi máu, năng lượng hoặc cường hóa đòn đánh. Hiệu ứng có hồi chiêu và giới hạn lượt, tăng theo cấp vật phẩm.", "Giữ biến hình Fu Di, Wacom và Skyrocket Dog; mô tả hợp cạ hiển thị giá trị đúng cấp vật phẩm."] },
+    { title: "Pack và tỉ lệ", entries: ["Pack Boss dùng hình Sóc Jake, nằm dưới pack thường; chỉ nhận từ boss, không tự hồi.", "Hiển thị bảng tỉ lệ theo rarity cho cả hai loại: thường 84% / 14% / 1,7% / 0,3%; Boss 66% / 14% / 17% / 3% (Thường / Hiếm / Sử thi / Huyền thoại).", "Pack Boss không ảnh hưởng bảo hiểm pack thường. Lưu số lượng và kết quả trước animation; card đạt tối đa không tiếp tục rơi."] },
+  ],
+}, {
   version: "2026.10.21.2",
   date: "2026-10-21",
   title: "Mở pack sống động, chiến đấu rõ nét",

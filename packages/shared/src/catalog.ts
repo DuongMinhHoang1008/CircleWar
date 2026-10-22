@@ -1,5 +1,7 @@
 import data from "./catalog-data.json";
 import { cardRarityMultiplier } from "./progression";
+import { affinityDescription } from "./affinity";
+import { CHARACTER_PASSIVES, passiveDescription, LEGENDARY_TEXT, LEGENDARY_IDENTITIES } from "./character-abilities";
 import {
   CHARACTER_BALANCE,
   ITEM_BALANCE,
@@ -37,21 +39,27 @@ export const CHARACTER_IDS = [
   "char_28",
   "char_29",
   "char_30",
+  "char_31",
+  "char_32",
+  "char_33",
 ] as const;
 export type CharacterId = (typeof CHARACTER_IDS)[number];
 export const ROSTER = data.characters.map((c) => {
   const profile = CHARACTER_BALANCE[c.id];
   const text = ROLE_TEXT[profile.role];
+  const passive = CHARACTER_PASSIVES[c.id];
   const { hp, attack, defense, speed } = profile.stats;
   return {
     ...c,
+    ...LEGENDARY_IDENTITIES[c.id],
+    role: passive.niche,
     stats: [hp!, attack!, defense!, speed!],
     passive: [
-      c.passive[0],
-      `${text.passive} Giá trị gốc: ${profile.passive}${["fighter", "assassin", "controller"].includes(profile.role) ? "%" : ""}.`,
+      passive.name,
+      passiveDescription(c.id),
     ],
-    skill: [c.skill[0], text.skill],
-    super: [c.super[0], text.super],
+    skill: [c.skill[0], LEGENDARY_TEXT[c.id]?.skill || text.skill],
+    super: [c.super[0], LEGENDARY_TEXT[c.id]?.super || text.super],
     upgrade: "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
   };
 });
@@ -96,8 +104,7 @@ export const CATALOG_ITEMS = data.items.map((it) => ({
   modifiers: ITEM_BALANCE[it.id],
   description: ITEM_EFFECT_TEXT[it.id].replace(/\{(\d+)\}/g,
     (_, value: string) => String(Math.round(Number(value) * cardRarityMultiplier(it.rarity, 1)))),
-  affinityDescription:
-    "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm.",
+  affinityDescription: affinityDescription(it.id, cardRarityMultiplier(it.rarity, 1) * 1.08),
 }));
 export const TRANSFORMED_FORMS: Record<string, { itemId: string; name: string }> = {
   char_28: { itemId: "item_28", name: "Người Máy Đỉnh Cao Fu Di" },

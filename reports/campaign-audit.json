@@ -1,182 +1,6955 @@
-[
-  {
-    "size": 1,
-    "stage": 1,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 11,
-    "matches": 12,
-    "maxTicks": 2042
-  },
-  {
-    "size": 1,
-    "stage": 4,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 6,
-    "matches": 12,
-    "maxTicks": 1347
-  },
-  {
-    "size": 1,
-    "stage": 5,
-    "boss": true,
-    "playerLevel": 3,
-    "wins": 5,
-    "matches": 12,
-    "maxTicks": 1065
-  },
-  {
-    "size": 1,
-    "stage": 6,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 6,
-    "matches": 12,
-    "maxTicks": 1021
-  },
-  {
-    "size": 1,
-    "stage": 9,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 3,
-    "matches": 12,
-    "maxTicks": 979
-  },
-  {
-    "size": 1,
-    "stage": 10,
-    "boss": true,
-    "playerLevel": 3,
-    "wins": 6,
-    "matches": 12,
-    "maxTicks": 1541
-  },
-  {
-    "size": 1,
-    "stage": 11,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 9,
-    "matches": 12,
-    "maxTicks": 1104
-  },
-  {
-    "size": 1,
-    "stage": 14,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 3,
-    "matches": 12,
-    "maxTicks": 1299
-  },
-  {
-    "size": 1,
-    "stage": 15,
-    "boss": true,
-    "playerLevel": 3,
-    "wins": 0,
-    "matches": 12,
-    "maxTicks": 1047
-  },
-  {
-    "size": 1,
-    "stage": 16,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 0,
-    "matches": 12,
-    "maxTicks": 1467
-  },
-  {
-    "size": 3,
-    "stage": 1,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 12,
-    "matches": 12,
-    "maxTicks": 1125
-  },
-  {
-    "size": 3,
-    "stage": 4,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 9,
-    "matches": 12,
-    "maxTicks": 1076
-  },
-  {
-    "size": 3,
-    "stage": 5,
-    "boss": true,
-    "playerLevel": 3,
-    "wins": 6,
-    "matches": 12,
-    "maxTicks": 1431
-  },
-  {
-    "size": 3,
-    "stage": 6,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 11,
-    "matches": 12,
-    "maxTicks": 1181
-  },
-  {
-    "size": 3,
-    "stage": 9,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 1,
-    "matches": 12,
-    "maxTicks": 1229
-  },
-  {
-    "size": 3,
-    "stage": 10,
-    "boss": true,
-    "playerLevel": 3,
-    "wins": 3,
-    "matches": 12,
-    "maxTicks": 1436
-  },
-  {
-    "size": 3,
-    "stage": 11,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 5,
-    "matches": 12,
-    "maxTicks": 1183
-  },
-  {
-    "size": 3,
-    "stage": 14,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 1,
-    "matches": 12,
-    "maxTicks": 1637
-  },
-  {
-    "size": 3,
-    "stage": 15,
-    "boss": true,
-    "playerLevel": 3,
-    "wins": 1,
-    "matches": 12,
-    "maxTicks": 1315
-  },
-  {
-    "size": 3,
-    "stage": 16,
-    "boss": false,
-    "playerLevel": 3,
-    "wins": 0,
-    "matches": 12,
-    "maxTicks": 1609
-  }
-]
+{
+  "conditions": "Equal displayed levels and one affinity item per unit from stage 6; two seeds, mirrored spawn sides; all 33 solo cards and all 12 team strategies early and capped plus stages 999 and 10001; if necessary, up to 64 deterministic counter mixes using affinity or anti-control/tank gear. Counter means at least 3/4 wins in this offline sample.",
+  "battles": 4720,
+  "rows": [
+    {
+      "stage": 1,
+      "size": 1,
+      "strategy": "Ôm và húc",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "size": 1,
+      "strategy": "Vitamin băng giá",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tết Ship Nhanh",
+          "ids": [
+            "char_17"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Anh Fam De Phonk",
+          "ids": [
+            "char_26"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "size": 1,
+      "strategy": "Phá tuyến giao hàng",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "size": 1,
+      "strategy": "Soi và sửa",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 6,
+      "size": 1,
+      "strategy": "Cổ vũ có tổ chức",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đội Trưởng Sắc Màu",
+          "ids": [
+            "char_06"
+          ],
+          "equipment": [
+            [
+              "item_12"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hoàng Tử Ngậm Hoa",
+          "ids": [
+            "char_20"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đẳng Cấp Aura",
+          "ids": [
+            "char_22"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 7,
+      "size": 1,
+      "strategy": "Nồi lẩu phản công",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 8,
+      "size": 1,
+      "strategy": "Vườn hồng phú quý",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Đùi Gió Lốc",
+          "ids": [
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tết Ship Nhanh",
+          "ids": [
+            "char_17"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 9,
+      "size": 1,
+      "strategy": "Aura chốt đơn",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Đùi Gió Lốc",
+          "ids": [
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Đội Trưởng Sắc Màu",
+          "ids": [
+            "char_06"
+          ],
+          "equipment": [
+            [
+              "item_12"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tết Ship Nhanh",
+          "ids": [
+            "char_17"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hoàng Tử Ngậm Hoa",
+          "ids": [
+            "char_20"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bang Chủ Cái Bang",
+          "ids": [
+            "char_32"
+          ],
+          "equipment": [
+            [
+              "item_32"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 11,
+      "size": 1,
+      "strategy": "Nhịp phonk lõi đỏ",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Hổ Hướng Nội",
+          "ids": [
+            "char_01"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 12,
+      "size": 1,
+      "strategy": "Tái chế thức tỉnh",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 13,
+      "size": 1,
+      "strategy": "Đại ca giữ phố",
+      "level": 3,
+      "counters": [
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bang Chủ Cái Bang",
+          "ids": [
+            "char_32"
+          ],
+          "equipment": [
+            [
+              "item_32"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 14,
+      "size": 1,
+      "strategy": "Bếp trưởng tiếp sức",
+      "level": 3,
+      "counters": [
+        {
+          "name": "Đội Trưởng Sắc Màu",
+          "ids": [
+            "char_06"
+          ],
+          "equipment": [
+            [
+              "item_12"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 61,
+      "size": 1,
+      "strategy": "Ôm và húc",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 62,
+      "size": 1,
+      "strategy": "Vitamin băng giá",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 63,
+      "size": 1,
+      "strategy": "Phá tuyến giao hàng",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 64,
+      "size": 1,
+      "strategy": "Soi và sửa",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 66,
+      "size": 1,
+      "strategy": "Cổ vũ có tổ chức",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Đội Trưởng Sắc Màu",
+          "ids": [
+            "char_06"
+          ],
+          "equipment": [
+            [
+              "item_12"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 67,
+      "size": 1,
+      "strategy": "Nồi lẩu phản công",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 68,
+      "size": 1,
+      "strategy": "Vườn hồng phú quý",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Hổ Hướng Nội",
+          "ids": [
+            "char_01"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đùi Gió Lốc",
+          "ids": [
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tết Ship Nhanh",
+          "ids": [
+            "char_17"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Fam De Phonk",
+          "ids": [
+            "char_26"
+          ],
+          "equipment": [
+            [
+              "item_26"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 69,
+      "size": 1,
+      "strategy": "Aura chốt đơn",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Hổ Hướng Nội",
+          "ids": [
+            "char_01"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đùi Gió Lốc",
+          "ids": [
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đội Trưởng Sắc Màu",
+          "ids": [
+            "char_06"
+          ],
+          "equipment": [
+            [
+              "item_12"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tết Ship Nhanh",
+          "ids": [
+            "char_17"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hoàng Tử Ngậm Hoa",
+          "ids": [
+            "char_20"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Fam De Phonk",
+          "ids": [
+            "char_26"
+          ],
+          "equipment": [
+            [
+              "item_26"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Bang Chủ Cái Bang",
+          "ids": [
+            "char_32"
+          ],
+          "equipment": [
+            [
+              "item_32"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 71,
+      "size": 1,
+      "strategy": "Nhịp phonk lõi đỏ",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Hổ Hướng Nội",
+          "ids": [
+            "char_01"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đùi Gió Lốc",
+          "ids": [
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 72,
+      "size": 1,
+      "strategy": "Tái chế thức tỉnh",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 73,
+      "size": 1,
+      "strategy": "Đại ca giữ phố",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 74,
+      "size": 1,
+      "strategy": "Bếp trưởng tiếp sức",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tết Ship Nhanh",
+          "ids": [
+            "char_17"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 999,
+      "size": 1,
+      "strategy": "Aura chốt đơn",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Hổ Hướng Nội",
+          "ids": [
+            "char_01"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đùi Gió Lốc",
+          "ids": [
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Kính Cận Bắt Bài",
+          "ids": [
+            "char_05"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đội Trưởng Sắc Màu",
+          "ids": [
+            "char_06"
+          ],
+          "equipment": [
+            [
+              "item_12"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sếp Chốt Đơn",
+          "ids": [
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Mâm Quả Chủ Tịch",
+          "ids": [
+            "char_13"
+          ],
+          "equipment": [
+            [
+              "item_10"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Họa Sĩ Chạy Deadline",
+          "ids": [
+            "char_16"
+          ],
+          "equipment": [
+            [
+              "item_09"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tết Ship Nhanh",
+          "ids": [
+            "char_17"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cô Nàng Khui Tết",
+          "ids": [
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hoàng Tử Ngậm Hoa",
+          "ids": [
+            "char_20"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "King Of RiseOn",
+          "ids": [
+            "char_23"
+          ],
+          "equipment": [
+            [
+              "item_23"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Fam De Phonk",
+          "ids": [
+            "char_26"
+          ],
+          "equipment": [
+            [
+              "item_26"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Ủn Đại Ca",
+          "ids": [
+            "char_31"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Bang Chủ Cái Bang",
+          "ids": [
+            "char_32"
+          ],
+          "equipment": [
+            [
+              "item_32"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 10001,
+      "size": 1,
+      "strategy": "Nhịp phonk lõi đỏ",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Hổ Hướng Nội",
+          "ids": [
+            "char_01"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bé Ôm Bão",
+          "ids": [
+            "char_02"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Anh Tím Mọng",
+          "ids": [
+            "char_03"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đùi Gió Lốc",
+          "ids": [
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Courage Nhút Nhát",
+          "ids": [
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Sói Suy Tư",
+          "ids": [
+            "char_08"
+          ],
+          "equipment": [
+            [
+              "item_14"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Lốp Lăn Ăn Vặt",
+          "ids": [
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cờ Con Cổ Vũ",
+          "ids": [
+            "char_11"
+          ],
+          "equipment": [
+            [
+              "item_15"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Kiếm Khách Mượn Vai",
+          "ids": [
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Hộp Quà Nghiêm Túc",
+          "ids": [
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Hiệp Sĩ Gâu Gâu",
+          "ids": [
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Ông Hoàng Nồi Lẩu",
+          "ids": [
+            "char_18"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Độ Duy Môn",
+          "ids": [
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Thi Thánh Họ Mai",
+          "ids": [
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Công Tử Phú Thọ",
+          "ids": [
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Robot Da Đỏ",
+          "ids": [
+            "char_27"
+          ],
+          "equipment": [
+            [
+              "item_27"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Người Máy Sịp Đỏ Phế Thải",
+          "ids": [
+            "char_28"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Wacom Hỏng Hóc",
+          "ids": [
+            "char_29"
+          ],
+          "equipment": [
+            [
+              "item_29"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Chó Bóng Bay",
+          "ids": [
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Sóc Jake",
+          "ids": [
+            "char_33"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 1,
+      "size": 3,
+      "strategy": "Ôm và húc",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Nồi lẩu phản công",
+          "ids": [
+            "char_18",
+            "char_08",
+            "char_15"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Nhịp phonk lõi đỏ",
+          "ids": [
+            "char_26",
+            "char_27",
+            "char_12"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Đại ca giữ phố",
+          "ids": [
+            "char_31",
+            "char_32",
+            "char_10"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 2,
+      "size": 3,
+      "strategy": "Vitamin băng giá",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 3,
+      "size": 3,
+      "strategy": "Phá tuyến giao hàng",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 4,
+      "size": 3,
+      "strategy": "Soi và sửa",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Counter mix 10",
+          "ids": [
+            "char_31",
+            "char_08",
+            "char_03"
+          ],
+          "equipment": [
+            [],
+            [],
+            []
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 6,
+      "size": 3,
+      "strategy": "Cổ vũ có tổ chức",
+      "level": 1,
+      "counters": [
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Nồi lẩu phản công",
+          "ids": [
+            "char_18",
+            "char_08",
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ],
+            [
+              "item_14"
+            ],
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Đại ca giữ phố",
+          "ids": [
+            "char_31",
+            "char_32",
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ],
+            [
+              "item_32"
+            ],
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 7,
+      "size": 3,
+      "strategy": "Nồi lẩu phản công",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 8,
+      "size": 3,
+      "strategy": "Vườn hồng phú quý",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cổ vũ có tổ chức",
+          "ids": [
+            "char_01",
+            "char_11",
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ],
+            [
+              "item_15"
+            ],
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 9,
+      "size": 3,
+      "strategy": "Aura chốt đơn",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 11,
+      "size": 3,
+      "strategy": "Nhịp phonk lõi đỏ",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Nồi lẩu phản công",
+          "ids": [
+            "char_18",
+            "char_08",
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ],
+            [
+              "item_14"
+            ],
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ],
+            [
+              "item_24"
+            ],
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 12,
+      "size": 3,
+      "strategy": "Tái chế thức tỉnh",
+      "level": 2,
+      "counters": [
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 13,
+      "size": 3,
+      "strategy": "Đại ca giữ phố",
+      "level": 3,
+      "counters": [
+        {
+          "name": "Ôm và húc",
+          "ids": [
+            "char_02",
+            "char_10",
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ],
+            [
+              "item_13"
+            ],
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cổ vũ có tổ chức",
+          "ids": [
+            "char_01",
+            "char_11",
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ],
+            [
+              "item_15"
+            ],
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Nồi lẩu phản công",
+          "ids": [
+            "char_18",
+            "char_08",
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ],
+            [
+              "item_14"
+            ],
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ],
+            [
+              "item_24"
+            ],
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Nhịp phonk lõi đỏ",
+          "ids": [
+            "char_26",
+            "char_27",
+            "char_12"
+          ],
+          "equipment": [
+            [
+              "item_26"
+            ],
+            [
+              "item_27"
+            ],
+            [
+              "item_03"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 14,
+      "size": 3,
+      "strategy": "Bếp trưởng tiếp sức",
+      "level": 3,
+      "counters": [
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ],
+            [
+              "item_24"
+            ],
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 61,
+      "size": 3,
+      "strategy": "Ôm và húc",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 62,
+      "size": 3,
+      "strategy": "Vitamin băng giá",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Cổ vũ có tổ chức",
+          "ids": [
+            "char_01",
+            "char_11",
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ],
+            [
+              "item_15"
+            ],
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ],
+            [
+              "item_24"
+            ],
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Đại ca giữ phố",
+          "ids": [
+            "char_31",
+            "char_32",
+            "char_10"
+          ],
+          "equipment": [
+            [
+              "item_31"
+            ],
+            [
+              "item_32"
+            ],
+            [
+              "item_13"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 63,
+      "size": 3,
+      "strategy": "Phá tuyến giao hàng",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Ôm và húc",
+          "ids": [
+            "char_02",
+            "char_10",
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ],
+            [
+              "item_13"
+            ],
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 64,
+      "size": 3,
+      "strategy": "Soi và sửa",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 66,
+      "size": 3,
+      "strategy": "Cổ vũ có tổ chức",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 67,
+      "size": 3,
+      "strategy": "Nồi lẩu phản công",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 68,
+      "size": 3,
+      "strategy": "Vườn hồng phú quý",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Ôm và húc",
+          "ids": [
+            "char_02",
+            "char_10",
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ],
+            [
+              "item_13"
+            ],
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cổ vũ có tổ chức",
+          "ids": [
+            "char_01",
+            "char_11",
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ],
+            [
+              "item_15"
+            ],
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 69,
+      "size": 3,
+      "strategy": "Aura chốt đơn",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 71,
+      "size": 3,
+      "strategy": "Nhịp phonk lõi đỏ",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Ôm và húc",
+          "ids": [
+            "char_02",
+            "char_10",
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ],
+            [
+              "item_13"
+            ],
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Nồi lẩu phản công",
+          "ids": [
+            "char_18",
+            "char_08",
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ],
+            [
+              "item_14"
+            ],
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ],
+            [
+              "item_24"
+            ],
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 72,
+      "size": 3,
+      "strategy": "Tái chế thức tỉnh",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 73,
+      "size": 3,
+      "strategy": "Đại ca giữ phố",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Cổ vũ có tổ chức",
+          "ids": [
+            "char_01",
+            "char_11",
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ],
+            [
+              "item_15"
+            ],
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ],
+            [
+              "item_24"
+            ],
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 74,
+      "size": 3,
+      "strategy": "Bếp trưởng tiếp sức",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Cổ vũ có tổ chức",
+          "ids": [
+            "char_01",
+            "char_11",
+            "char_19"
+          ],
+          "equipment": [
+            [
+              "item_02"
+            ],
+            [
+              "item_15"
+            ],
+            [
+              "item_07"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 999,
+      "size": 3,
+      "strategy": "Aura chốt đơn",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Phá tuyến giao hàng",
+          "ids": [
+            "char_17",
+            "char_06",
+            "char_21"
+          ],
+          "equipment": [
+            [
+              "item_04"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_21"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "stage": 10001,
+      "size": 3,
+      "strategy": "Nhịp phonk lõi đỏ",
+      "level": 10,
+      "counters": [
+        {
+          "name": "Ôm và húc",
+          "ids": [
+            "char_02",
+            "char_10",
+            "char_04"
+          ],
+          "equipment": [
+            [
+              "item_05"
+            ],
+            [
+              "item_13"
+            ],
+            [
+              "item_11"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Vitamin băng giá",
+          "ids": [
+            "char_03",
+            "char_13",
+            "char_07"
+          ],
+          "equipment": [
+            [
+              "item_08"
+            ],
+            [
+              "item_10"
+            ],
+            [
+              "item_17"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Soi và sửa",
+          "ids": [
+            "char_05",
+            "char_16",
+            "char_09"
+          ],
+          "equipment": [
+            [
+              "item_19"
+            ],
+            [
+              "item_09"
+            ],
+            [
+              "item_01"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Nồi lẩu phản công",
+          "ids": [
+            "char_18",
+            "char_08",
+            "char_15"
+          ],
+          "equipment": [
+            [
+              "item_16"
+            ],
+            [
+              "item_14"
+            ],
+            [
+              "item_18"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Vườn hồng phú quý",
+          "ids": [
+            "char_20",
+            "char_24",
+            "char_25"
+          ],
+          "equipment": [
+            [
+              "item_20"
+            ],
+            [
+              "item_24"
+            ],
+            [
+              "item_25"
+            ]
+          ],
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "name": "Aura chốt đơn",
+          "ids": [
+            "char_22",
+            "char_23",
+            "char_14"
+          ],
+          "equipment": [
+            [
+              "item_22"
+            ],
+            [
+              "item_23"
+            ],
+            [
+              "item_06"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Tái chế thức tỉnh",
+          "ids": [
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "equipment": [
+            [
+              "item_28"
+            ],
+            [
+              "item_29"
+            ],
+            [
+              "item_30"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "name": "Bếp trưởng tiếp sức",
+          "ids": [
+            "char_33",
+            "char_06",
+            "char_24"
+          ],
+          "equipment": [
+            [
+              "item_33"
+            ],
+            [
+              "item_12"
+            ],
+            [
+              "item_24"
+            ]
+          ],
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    }
+  ]
+}

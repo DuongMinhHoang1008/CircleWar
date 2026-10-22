@@ -29,7 +29,9 @@ import { Connection, defaultApi } from "./networking";
 import { PackArtwork, PackOpeningScene, PackAnimationBoundary, unpackStepMs } from "./PackOpeningScene";
 import { PROFILE_KEY, acknowledgeProfile, commitLocalProfile, readLocalProfile, readProfileJournal } from "./profileStorage";
 import { CURRENT_RELEASE_VERSION, PatchNotesPage } from "./PatchNotes";
-import { campaignEncounter, campaignPackReward, isCampaignBoss } from "../../../packages/shared/src/campaign";
+import { CenteredModal, MatchRewardPopup, type MatchReward } from "./CenteredModal";
+import { campaignEncounter, campaignPackReward, campaignBossPackReward, isCampaignBoss, isHardCampaignBoss } from "../../../packages/shared/src/campaign";
+import { PACK_ODDS, packPool, packTier, type PackKind } from "../../../packages/shared/src/packs";
 import { Arena } from "./rendering/Arena";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "../../../packages/shared/src/arena";
 import "./styles.css";
@@ -52,6 +54,7 @@ interface GlobalProfile {
   team: CharacterId[];
   equipment: Record<string, string[]>;
   packs: number;
+  bossPacks: number;
   lastPackAt: number;
   missions: { draw: number; win: number; campaign: number };
   claimedMissions: string[];
@@ -61,7 +64,7 @@ interface GlobalProfile {
   packsSinceRare: number;
   packsSinceHighRarity: number;
   updateRewardVersion?: string;
-  lastPull?: { kind: "character" | "item"; id: string; tier: string; rarity: string; duplicate?: boolean; xpGained?: number; oldXp?: number; experience?: number; oldLevel?: number; level?: number; leveledUp?: boolean; batchCount?: number; evolved?: boolean; oldTier?: string };
+  lastPull?: { kind: "character" | "item"; id: string; tier: string; rarity: string; duplicate?: boolean; xpGained?: number; oldXp?: number; experience?: number; oldLevel?: number; level?: number; leveledUp?: boolean; batchCount?: number; evolved?: boolean; oldTier?: string; packKind?: PackKind };
 }
 interface TradeView {
   code: string;
@@ -111,6 +114,7 @@ function newProfile(): GlobalProfile {
     team: ["char_01"],
     equipment: {},
     packs: 50,
+    bossPacks: 0,
     lastPackAt: now,
     missions: { draw: 0, win: 0, campaign: 0 },
     claimedMissions: [],
@@ -127,10 +131,13 @@ function newProfile(): GlobalProfile {
 function newProfileDefaults(): GlobalProfile {
   return {
     cards: [{ characterId: "char_01", level: 1, xp: 0 }],
-    itemCards: [], team: ["char_01"], equipment: {}, packs: 50, lastPackAt: Date.now(),
+    itemCards: [], team: ["char_01"], equipment: {}, packs: 50, bossPacks: 0, lastPackAt: Date.now(),
     missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], missionDay: dailyQuestDay(),
     campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0,
   };
+}
+function PackRates({ kind }: { kind: PackKind }) {
+  return <div className="pack-rates" aria-label={kind === "boss" ? "Tỉ lệ Pack Boss" : "Tỉ lệ pack thường"}><b>Tỉ lệ cơ bản mỗi lần mở</b><dl>{Object.entries(PACK_ODDS[kind]).map(([tier, chance]) => <div key={tier}><dt>{tierRarity(tier)}</dt><dd>{chance.toLocaleString("vi-VN")}%</dd></div>)}</dl><small>Áp dụng chung cho nhân vật và vật phẩm, phân đều trong mỗi bậc. Card Rác nằm trong nhóm Thường; GOD chỉ nhận qua tiến hóa. Bậc hết card chưa đạt Lv.10 sẽ ưu tiên bậc cao hơn còn khả dụng, nếu không còn thì dùng bậc cao nhất còn lại.</small>{kind === "normal" && <small>Bảo hiểm: sau 19 pack liên tiếp chỉ ra Thường, pack thứ 20 có Hiếm 85% · Sử thi 13% · Huyền thoại 2%. Sau 99 pack chưa ra Sử thi trở lên, pack thứ 100 bảo đảm bậc cao nhất còn khả dụng. Khi cả hai cùng tới hạn, ưu tiên bảo hiểm 100 pack.</small>}{kind === "boss" && <small>Không dùng bảo hiểm và không tăng hoặc xóa tiến độ bảo hiểm của pack thường.</small>}</div>;
 }
 function ExperienceBar({ level, xp }: { level: number; xp: number }) {
   const required = xpForNextLevel(level);
@@ -184,6 +191,9 @@ function App() {
   const [profileReady, setProfileReady] = useState(false);
   const [welcomeGiftOpen, setWelcomeGiftOpen] = useState(() => sessionStorage.getItem("circlewar-welcome-gift") === "1");
   const [updateGiftOpen, setUpdateGiftOpen] = useState(false);
+  const [matchRewards, setMatchRewards] = useState<MatchReward[]>([]);
+  const handledMatches = useRef(new Set<string>());
+  const settledCampaign = useRef<number | null>(null);
   const [availableUpdate, setAvailableUpdate] = useState("");
   useEffect(() => {
     if (import.meta.env.DEV) return;
@@ -543,8 +553,8 @@ function App() {
     localStorage.setItem(UPDATE_REWARD_KEY, UPDATE_REWARD.version);
     setUpdateGiftOpen(true);
   }, [profileReady]);
-  function openPack(count = 1) {
-    const amount = Math.min(count, queuedPacks);
+  function openPack(count = 1, packKind: PackKind = "normal") {
+    const amount = Math.min(count, packKind === "boss" ? profile.bossPacks || 0 : queuedPacks);
     if (amount <= 0 || openingPack || eligiblePackCards <= 0) return;
     revealTimers.current.forEach((timer) => window.clearTimeout(timer));
     const cards = profile.cards.map((card) => ({ ...card }));
@@ -567,19 +577,15 @@ function App() {
       ];
       if (!allAvailable.length) break;
       const roll = Math.random() * 100;
-      const tier = packsSinceRare >= 19
-        ? roll < 85 ? "T2" : roll < 98 ? "T3" : "T4"
-        : roll < 84 ? "T1" : roll < 98 ? "T2" : roll < 99.7 ? "T3" : "T4";
-      const guaranteedHigh = packsSinceHighRarity >= 99;
-      const preferredPool = allAvailable.filter((entry) => cardTier(entry.tier) === tier);
-      const bestAvailableRank = Math.max(0, ...allAvailable.map((entry) => rarityRank(entry.tier)));
-      const fallbackPool = guaranteedHigh
-        ? allAvailable.filter((entry) => rarityRank(entry.tier) === bestAvailableRank)
-        : preferredPool.length ? preferredPool : allAvailable;
+      const tier = packTier(packKind, roll, packsSinceRare);
+      const guaranteedHigh = packKind === "normal" && packsSinceHighRarity >= 99;
+      const fallbackPool = packPool(allAvailable, tier, guaranteedHigh);
       const pulled = fallbackPool[Math.floor(Math.random() * fallbackPool.length)] || allAvailable[0];
       const actualTier = cardTier(pulled.tier);
-      packsSinceRare = actualTier === "T1" ? Math.min(19, packsSinceRare + 1) : 0;
-      packsSinceHighRarity = rarityRank(actualTier) >= 3 ? 0 : Math.min(99, packsSinceHighRarity + 1);
+      if (packKind === "normal") {
+        packsSinceRare = actualTier === "T1" ? Math.min(19, packsSinceRare + 1) : 0;
+        packsSinceHighRarity = rarityRank(actualTier) >= 3 ? 0 : Math.min(99, packsSinceHighRarity + 1);
+      }
       let isDuplicate = false, xpGained = 0, oldXp = 0, experience = 0, oldLevel = 1, level = 1, leveledUp = false, evolved = false;
       if (pulled.kind === "character") {
         const existing = cards.find((card) => card.characterId === pulled.id);
@@ -599,7 +605,7 @@ function App() {
         } else itemCards.push({ itemId: pulled.id, level: 1, xp: 0 });
       }
       const displayTier = isDuplicate ? cardEvolution(pulled.tier, level).tier : pulled.tier;
-      pulledResult = { ...pulled, tier: displayTier, rarity: tierRarity(displayTier), duplicate: isDuplicate, xpGained, oldXp, experience, oldLevel, level, leveledUp, evolved, oldTier: cardEvolution(pulled.tier, oldLevel).tier };
+      pulledResult = { ...pulled, packKind, tier: displayTier, rarity: tierRarity(displayTier), duplicate: isDuplicate, xpGained, oldXp, experience, oldLevel, level, leveledUp, evolved, oldTier: cardEvolution(pulled.tier, oldLevel).tier };
       pulledCards.push({ ...pulledResult });
       if (evolved) evolvedPull = pulledResult;
     }
@@ -622,13 +628,14 @@ function App() {
       return;
     }
     const displayPulls = [...uniquePulls.values()].sort((a, b) => rarityRank(b.tier) - rarityRank(a.tier) || a.id.localeCompare(b.id));
-    const remainingPacks = queuedPacks - openedCount;
+    const remainingPacks = queuedPacks - (packKind === "normal" ? openedCount : 0);
     const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
     const next: GlobalProfile = {
       ...profile,
       cards,
       itemCards,
       packs: remainingPacks,
+      bossPacks: (profile.bossPacks || 0) - (packKind === "boss" ? openedCount : 0),
       lastPackAt: accruedAt,
       packsSinceRare,
       packsSinceHighRarity,
@@ -802,10 +809,12 @@ function App() {
       { id: "team-rival", name: encounter.boss ? `BOSS · ẢI ${encounter.stage}` : `Đối thủ ải ${encounter.stage}`, loadouts: encounter.loadouts },
     ];
     setCampaignWon(null);
+    settledCampaign.current = null;
     setCampaignBattle({ config: base, seed: 51000 + profile.campaignStage * 97 + Math.floor(Math.random() * 97) });
   }
   function finishCampaign(winningTeam: string) {
-    if (!campaignBattle || campaignWon !== null) return;
+    if (!campaignBattle || campaignWon !== null || settledCampaign.current === campaignBattle.seed) return;
+    settledCampaign.current = campaignBattle.seed;
     const won = winningTeam === "team-player";
     setCampaignWon(won);
     if (!won) return;
@@ -817,10 +826,21 @@ function App() {
     saveProfile({
       ...profile,
       packs,
+      bossPacks: (profile.bossPacks || 0) + campaignBossPackReward(campaignBattle.config.campaign!.stage),
       lastPackAt: packs >= PACK_CAPACITY ? now : accruedAt,
       campaignStage: profile.campaignStage + 1,
       missions: { ...profile.missions, campaign: profile.missions.campaign + 1 },
     });
+    setInfo(null);
+    setNavOpen(false);
+    setMatchRewards(current => [...current, {
+      id: `campaign:${campaignBattle.seed}`,
+      mode: "campaign",
+      stage: campaignBattle.config.campaign!.stage,
+      packs: packs - queuedPacks,
+      bossPacks: campaignBossPackReward(campaignBattle.config.campaign!.stage),
+      overflow: reward - (packs - queuedPacks),
+    }]);
   }
   const me = room?.players.find((p) => p.id === id),
     host = room?.host === id;
@@ -847,23 +867,37 @@ function App() {
     } else setProfileRoomSynced(true);
   }, [offline, room?.phase, room?.round, me?.id, me?.ready, me?.cards, me?.itemCards, me?.loadouts, me?.campaignStage, profileReady, profile]);
   useEffect(() => {
-    if (!room || room.phase !== "FINISHED" || !me) return;
+    if (!profileReady || !room || room.phase !== "FINISHED" || !me || me.spectator) return;
     const matchKey = `${room.code}:${room.game}:${room.round}`;
-    if (profile.processedMatches.includes(matchKey)) return;
+    if (profile.processedMatches.includes(matchKey) || handledMatches.current.has(matchKey)) return;
+    handledMatches.current.add(matchKey);
     const won = room.champion === id;
     const next = { ...profile, processedMatches: [...profile.processedMatches, matchKey] };
     if (won) {
       const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
-      next.packs = Math.min(PACK_CAPACITY, queuedPacks + (room.mode === "campaign" ? 3 : 5));
+      const stage = profile.campaignStage + 1;
+      next.packs = Math.min(PACK_CAPACITY, queuedPacks + (room.mode === "campaign" ? campaignPackReward(stage) : 10));
+      if (room.mode === "campaign") next.bossPacks = (profile.bossPacks || 0) + campaignBossPackReward(stage);
       next.lastPackAt = next.packs >= PACK_CAPACITY ? now : accruedAt;
       next.missions = { ...profile.missions };
       if (room.mode === "campaign") {
         next.campaignStage = profile.campaignStage + 1;
         next.missions.campaign++;
       } else next.missions.win++;
+      setInfo(null);
+      setNavOpen(false);
+      const reward = room.mode === "campaign" ? campaignPackReward(stage) : 10;
+      setMatchRewards(current => [...current, {
+        id: matchKey,
+        mode: room.mode,
+        stage: room.mode === "campaign" ? stage : undefined,
+        packs: next.packs - queuedPacks,
+        bossPacks: room.mode === "campaign" ? campaignBossPackReward(stage) : 0,
+        overflow: reward - (next.packs - queuedPacks),
+      }]);
     }
     saveProfile(next);
-  }, [room?.phase, room?.game, room?.round, room?.champion, room?.code, id, profile, now]);
+  }, [profileReady, room?.phase, room?.game, room?.round, room?.champion, room?.code, id, profile, now]);
   const debug = useMemo(() => {
     if (simulationMode) {
       const loadout = (characterId: CharacterId): Loadout => ({
@@ -1214,8 +1248,8 @@ function App() {
                 <div className="pack-queue-card"><span>PACK ĐANG CHỜ</span><strong>{queuedPacks}<small> / {PACK_CAPACITY}</small></strong><i><b style={{ width: `${queuedPacks / PACK_CAPACITY * 100}%` }} /></i></div>
                 <div className="pack-open-options">{[1, 3, 5, 10, 20, 50, 100].map((count) => <button key={count} className={count === 1 ? "primary" : ""} disabled={!profileReady || queuedPacks < count || openingPack || eligiblePackCards <= 0} onClick={() => openPack(count)}>Mở x{count}</button>)}</div>
                 {batchPulls.length > 0 && lastPull && <button className="pack-last-result" onClick={() => setRevealPhase("details")}>Xem kết quả lần mở gần nhất · {lastPull.batchCount || 1} pack</button>}
-                <div className="pack-promise"><span>✦ 1 thẻ mỗi pack</span><span>✦ Nhân vật & vật phẩm</span><span>✦ 5 bậc hiếm · bảo đảm Hiếm mỗi 20 pack</span></div>
-                <div className="pack-pity-card"><div><span>THẺ BẬC CAO NHẤT CÒN LẠI</span><strong>{profile.packsSinceHighRarity || 0}<small> / 100 pack</small></strong></div><i><b style={{ width: `${Math.min(100, (profile.packsSinceHighRarity || 0) / 100 * 100)}%` }} /></i><p>Mở đủ 100 pack mà chưa có thẻ Sử thi trở lên: pack tiếp theo bảo đảm thẻ bậc cao nhất còn khả dụng.</p></div>
+                <PackRates kind="normal" /><div className="pack-promise"><span>✦ 1 thẻ mỗi pack</span><span>✦ Nhân vật & vật phẩm</span><span>✦ 5 bậc hiếm · bảo đảm Hiếm mỗi 20 pack</span></div>
+                <div className="pack-pity-card"><div><span>THẺ BẬC CAO NHẤT CÒN LẠI</span><strong>{profile.packsSinceHighRarity || 0}<small> / 100 pack</small></strong></div><i><b style={{ width: `${Math.min(100, (profile.packsSinceHighRarity || 0) / 100 * 100)}%` }} /></i><p>Sau 99 pack chưa có Sử thi trở lên, pack thứ 100 bảo đảm thẻ bậc cao nhất còn khả dụng.</p></div>
                 {eligiblePackCards <= 0 && <p className="pack-no-cards">Tất cả thẻ đã đạt Lv.10, không còn thẻ đủ điều kiện để mở. Pack của bạn vẫn được giữ nguyên.</p>}
               </div>
               <div className="pack-hero-art">
@@ -1225,6 +1259,10 @@ function App() {
               </div>
             </section>
             <div className="pack-recharge">{queuedPacks >= PACK_CAPACITY ? "Hàng chờ đã đầy · pack tự hồi khi còn chỗ" : `Pack tiếp theo sau ${Math.floor(packWait / 60000)}:${String(Math.floor(packWait / 1000) % 60).padStart(2, "0")} · tự hồi mỗi phút, tối đa ${PACK_CAPACITY}`}</div>
+            <section className="pack-hero boss-pack-hero" aria-label="Pack Boss">
+              <div className="pack-hero-copy"><span className="pack-eyebrow">PHẦN THƯỞNG CHINH PHỤC BOSS</span><h2>Pack Boss<br /><em>Nah, I'd drop.</em></h2><p>Tỉ lệ cơ bản: Sử thi 17% · Huyền thoại 3%, gấp 10 lần pack thường (1,7% · 0,3%). Thường 66% · Hiếm 14%.</p><div className="pack-queue-card"><span>PACK BOSS ĐANG CÓ</span><strong>{profile.bossPacks || 0}</strong></div><div className="pack-open-options">{[1, 3, 5, 10].map(count => <button key={count} disabled={!profileReady || (profile.bossPacks || 0) < count || openingPack || eligiblePackCards <= 0} onClick={() => openPack(count, "boss")}>Mở Boss x{count}</button>)}</div><p>Chỉ nhận khi thắng boss: mỗi ải thứ 5 thưởng 1 pack, mỗi ải thứ 10 là boss khó thưởng 3 pack. Pack Boss không tự hồi.</p><PackRates kind="boss" /></div>
+              <div className="pack-hero-art"><PackArtwork kind="boss" /><span className="pack-total-badge">{profile.bossPacks || 0} PACK BOSS</span></div>
+            </section>
             <h3>Nhiệm Vụ Hằng Ngày · tiến độ làm mới mỗi ngày · mỗi nhiệm vụ nhận 1 pack</h3>
             {([ ["draw", "Bóc 3 thẻ"], ["win", "Thắng một trận PvP"], ["campaign", "Thắng một ải"] ] as const).map(([mission, label]) => { const goal = mission === "draw" ? 3 : 1; const progress = Math.min(goal, profile.missions[mission]); const claimed = profile.claimedMissions.includes(mission); return <div className="mission-row" key={mission}><span>{label} · {progress}/{goal}</span><button disabled={!profileReady || claimed || progress < goal || queuedPacks >= PACK_CAPACITY} onClick={() => claimMission(mission)}>{claimed ? "Đã nhận" : "Nhận pack"}</button></div>; })}
           </>}
@@ -1257,7 +1295,7 @@ function App() {
             </section>
             <section className="training-card-pool"><div className="training-section-heading"><span>02 · THẺ CỦA BẠN</span><strong>Kéo thả để chọn</strong></div><p>Kéo thẻ vào lò để nhận EXP hoặc vào khung hy sinh. Nhân vật trong đội và vật phẩm đang gắn chỉ có thể làm thẻ nhận EXP.</p><div className="training-pool-grid">{profile.cards.map((card) => { const key = `character:${card.characterId}`; const c = character(card.characterId); const disabled = profile.team.includes(card.characterId); const selected = trainingSacrifice.includes(key); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${disabled ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => disabled ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><Portrait id={card.characterId} /><b>{c?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{disabled ? "ĐANG TRONG ĐỘI · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{profile.itemCards.map((card) => { const key = `item:${card.itemId}`; const it = itemInfo(card.itemId); const selected = trainingSacrifice.includes(key); const equipped = Object.values(profile.equipment).some((ids) => ids.includes(card.itemId)); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${equipped ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => equipped ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><ItemSprite id={card.itemId} /><b>{it?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{equipped ? "ĐANG GẮN · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{!profile.cards.length && !profile.itemCards.length && <div className="training-pool-empty">Mở pack để nhận thẻ có thể luyện.</div>}</div></section>
           </div>}
-          {screen === "campaign" && <><div className="panel-title"><h2>Đi ải · ải {profile.campaignStage + 1}</h2><b>Đã vượt {profile.campaignStage}</b></div><p className="muted">Trận chạy cục bộ, tách khỏi phòng Multiplayer. Thắng nhận 5 pack; mỗi ải thứ 5 là boss và thưởng 15 pack.</p>{!campaignBattle && <div className="campaign-enemy-preview"><b>Đối thủ sắp tới{isCampaignBoss(profile.campaignStage + 1) ? " · BOSS" : ""}</b><div>{campaignEncounter(profile.campaignStage + 1, profile.team.length).loadouts.map(unit => <span key={unit.characterId}><Portrait id={unit.characterId!} /><span>{character(unit.characterId)?.name}<small>Lv.{unit.level}</small></span></span>)}</div></div>}{!campaignBattle && <button className="primary wide" disabled={!profileReady} onClick={launchCampaign}>Bắt đầu ải {profile.campaignStage + 1}</button>}{campaignBattle && <>{campaignWon === null && <Arena key={`campaign-${campaignBattle.seed}`} config={campaignBattle.config} seed={campaignBattle.seed} replay={null} loadReplayChunk={async () => []} muted={muted} low={low} label={isCampaignBoss(campaignBattle.config.campaign!.stage) ? `BOSS · ẢI ${campaignBattle.config.campaign!.stage}` : `ĐI ẢI · ${campaignBattle.config.campaign!.stage}`} highlightTeamId="team-player" onError={report} onFinished={finishCampaign} />}<div className="campaign-result">{campaignWon === null ? "Trận đang diễn ra…" : campaignWon ? `🏆 ${isCampaignBoss(campaignBattle.config.campaign!.stage) ? "Hạ boss" : "Vượt ải"} thành công · nhận ${campaignPackReward(campaignBattle.config.campaign!.stage)} pack` : "💥 Ải thất bại · hãy chỉnh team rồi thử lại"}</div>{campaignWon !== null && <button className="primary wide" onClick={() => setCampaignBattle(null)}>{campaignWon ? `Đi tiếp · ải ${profile.campaignStage + 1}` : "Thử lại"}</button>}</>}</>}
+          {screen === "campaign" && <><div className="panel-title"><h2>Đi ải · ải {profile.campaignStage + 1}</h2><b>Đã vượt {profile.campaignStage}</b></div><p className="muted">Ải thường dùng đúng chỉ số card và trang bị ở level hiển thị, tối đa Lv.10. Thắng nhận 5 pack thường. Mỗi 5 ải có boss: thêm 15 pack thường + 1 Pack Boss; mỗi 10 ải là boss khó: 15 pack thường + 3 Pack Boss.</p>{!campaignBattle && <div className="campaign-enemy-preview"><p>{campaignEncounter(profile.campaignStage + 1, profile.team.length).strategy} · {campaignEncounter(profile.campaignStage + 1, profile.team.length).counter}</p><b>Đối thủ sắp tới{isHardCampaignBoss(profile.campaignStage + 1) ? " · BOSS KHÓ" : isCampaignBoss(profile.campaignStage + 1) ? " · BOSS" : ""}</b><div>{campaignEncounter(profile.campaignStage + 1, profile.team.length).loadouts.map(unit => <span key={unit.characterId}><Portrait id={unit.characterId!} /><span>{character(unit.characterId)?.name}<small>Lv.{unit.level}{unit.equipment.length ? ` · ${unit.equipment.map(id => itemInfo(id)?.name).join(", ")}` : ""}</small></span></span>)}</div></div>}{!campaignBattle && <button className="primary wide" disabled={!profileReady} onClick={launchCampaign}>Bắt đầu ải {profile.campaignStage + 1}</button>}{campaignBattle && <>{campaignWon === null && <Arena key={`campaign-${campaignBattle.seed}`} config={campaignBattle.config} seed={campaignBattle.seed} replay={null} loadReplayChunk={async () => []} muted={muted} low={low} label={isCampaignBoss(campaignBattle.config.campaign!.stage) ? `BOSS · ẢI ${campaignBattle.config.campaign!.stage}` : `ĐI ẢI · ${campaignBattle.config.campaign!.stage}`} highlightTeamId="team-player" onError={report} onFinished={finishCampaign} />}<div className="campaign-result">{campaignWon === null ? "Trận đang diễn ra…" : campaignWon ? `🏆 ${isCampaignBoss(campaignBattle.config.campaign!.stage) ? "Hạ boss" : "Vượt ải"} thành công · nhận ${campaignPackReward(campaignBattle.config.campaign!.stage)} pack thường${campaignBossPackReward(campaignBattle.config.campaign!.stage) ? ` + ${campaignBossPackReward(campaignBattle.config.campaign!.stage)} Pack Boss` : ""}` : "💥 Ải thất bại · hãy chỉnh team rồi thử lại"}</div>{campaignWon !== null && <button className="primary wide" onClick={() => setCampaignBattle(null)}>{campaignWon ? `Đi tiếp · ải ${profile.campaignStage + 1}` : "Thử lại"}</button>}</>}</>}
         </section> : <div className="layout">
           <aside className="panel">
             <div className="panel-title">
@@ -2213,7 +2251,7 @@ function App() {
             <p>Camera tiến xuyên qua chồng pack; từng lớp vào tâm khung hình rồi mở với luồng sáng rarity.</p>
           </section> : <section className="reveal-batch"><header><span>ĐÃ MỞ {lastPull.batchCount} PACK</span><strong>{batchPulls.length} THẺ KHÁC NHAU</strong></header><div className="reveal-batch-grid">{batchPulls.map((pull, index) => { const c = pull.kind === "character" ? character(pull.id) : undefined; const it = pull.kind === "item" ? itemInfo(pull.id) : undefined; return <article className={`reveal-batch-card tier-${pull.tier.toLowerCase()} ${pull.evolved ? "evolved" : ""}`} key={`${pull.kind}-${pull.id}-${index}`} style={{ "--batch-delay": `${index * 55}ms` } as React.CSSProperties}><span className="reveal-batch-tier">{pull.evolved ? `${tierRarity(pull.oldTier || "")} → ` : ""}{tierRarity(pull.tier)}</span><div className="reveal-batch-art">{pull.kind === "character" ? <Portrait id={pull.id as CharacterId} /> : <ItemSprite id={pull.id} />}</div><b>{c?.name || it?.name}</b><small>{pull.rarity} · {pull.kind === "character" ? "Nhân vật" : "Vật phẩm"}</small>{pull.duplicate && <em>{pull.leveledUp ? `Lv.${pull.oldLevel} → Lv.${pull.level}` : `+${pull.xpGained || 0} EXP`}</em>}</article>; })}</div><button className="primary" onClick={closeReveal}>Tiếp tục</button></section> : <div className={`reveal-stage ${revealPhase === "pack" ? "opening-single" : ""}`}>
             <div className="reveal-impact" aria-hidden="true" />
-            <PackArtwork className="reveal-booster" />
+            <PackArtwork className="reveal-booster" kind={lastPull.packKind} />
             <article key={pullSequence} className={`reveal-card tier-${lastPull.tier.toLowerCase()} ${lastPull.evolved ? "evolved" : ""}`}>
               <div className="reveal-card-top"><span>{lastPull.evolved ? `TIẾN HÓA ${tierRarity(lastPull.oldTier || "")} → ${lastPull.rarity}` : lastPull.batchCount && lastPull.batchCount > 1 ? `ĐÃ MỞ ${lastPull.batchCount} PACK · KẾT QUẢ CUỐI` : "RISEON · CARD COLLECTION"}</span><b>{lastPull.rarity}</b></div>
               {lastPull.evolved && <strong className="evolution-banner">TIẾN HÓA!</strong>}
@@ -2239,8 +2277,9 @@ function App() {
           <span>Made for the chaos.</span>
         </footer>
       </main>
-      {welcomeGiftOpen && <div className="gift-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="gift-title"><section className="gift-modal"><span className="eyebrow">WELCOME · RISEON TCG</span><h2 id="gift-title">Quà tân thủ của bạn</h2><p>Chào mừng đến với RiseOn! Bạn đã nhận <strong>50 pack tân thủ</strong> để bắt đầu bộ sưu tập.</p><button className="primary" onClick={dismissWelcomeGift}>Bắt đầu sưu tầm</button></section></div>}
-      {updateGiftOpen && !welcomeGiftOpen && <div className="gift-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="update-gift-title"><section className="gift-modal"><span className="eyebrow">RISEON · CẬP NHẬT MỚI</span><h2 id="update-gift-title">Cập nhật v{CURRENT_RELEASE_VERSION}</h2><p>Hệ thống vừa cập nhật. Vui lòng refresh page để áp dụng đầy đủ phiên bản mới. Bạn đã nhận <strong>{UPDATE_REWARD.packs} pack</strong> quà cập nhật.</p><button className="primary" onClick={async () => { await profileSaveQueue.current.catch(() => {}); window.location.reload(); }}>Refresh trang</button><button onClick={() => { setUpdateGiftOpen(false); setScreen("patchNotes"); }}>Xem patch notes</button></section></div>}
+      {welcomeGiftOpen && <CenteredModal titleId="gift-title" onClose={dismissWelcomeGift}><span className="eyebrow">WELCOME · RISEON TCG</span><h2 id="gift-title">Quà tân thủ của bạn</h2><p>Chào mừng đến với RiseOn! Bạn đã nhận <strong>50 pack tân thủ</strong> để bắt đầu bộ sưu tập.</p><button className="primary" onClick={dismissWelcomeGift}>Bắt đầu sưu tầm</button></CenteredModal>}
+      {updateGiftOpen && !welcomeGiftOpen && <CenteredModal titleId="update-gift-title" onClose={() => setUpdateGiftOpen(false)}><span className="eyebrow">RISEON · CẬP NHẬT MỚI</span><h2 id="update-gift-title">Cập nhật v{CURRENT_RELEASE_VERSION}</h2><p>Hệ thống vừa cập nhật. Vui lòng refresh page để áp dụng đầy đủ phiên bản mới. Bạn đã nhận <strong>{UPDATE_REWARD.packs} pack</strong> quà cập nhật.</p><button className="primary" onClick={async () => { await profileSaveQueue.current.catch(() => {}); window.location.reload(); }}>Refresh trang</button><button onClick={() => { setUpdateGiftOpen(false); setScreen("patchNotes"); }}>Xem patch notes</button></CenteredModal>}
+      {matchRewards[0] && !welcomeGiftOpen && !updateGiftOpen && !openingPack && <MatchRewardPopup key={matchRewards[0].id} reward={matchRewards[0]} onClose={() => setMatchRewards(current => current.slice(1))} />}
       <InfoPopup info={info?.kind === "item" ? { ...info, itemLevel: info.itemLevel ?? info.loadout?.equipmentLevels?.[info.id] ?? profile.itemCards.find(card => card.itemId === info.id)?.level ?? 1 } : info} close={() => setInfo(null)} inspect={setInfo} />
     </div>
   );

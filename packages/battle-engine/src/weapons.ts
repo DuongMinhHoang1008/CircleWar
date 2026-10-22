@@ -1,7 +1,10 @@
 import type { BattleState, Fighter } from "./types";
+import { LEGENDARY_IDENTITIES } from "../../shared/src/character-abilities";
 
-export const isRanged = (f: Fighter) =>
-  f.classId === "ranger" || f.classId === "frost";
+export const isRanged = (f: Fighter) => {
+  const style = LEGENDARY_IDENTITIES[f.characterId || ""]?.base || f.classId;
+  return style === "ranger" || style === "frost";
+};
 
 // Rendering, clashes and damage must agree on the same physical weapon.
 export function weaponCount(f: Fighter) {

@@ -166,6 +166,7 @@ interface GlobalProfile {
   team: CharacterId[];
   equipment: Record<string, string[]>;
   packs: number;
+  bossPacks: number;
   lastPackAt: number;
   missions: { draw: number; win: number; campaign: number };
   claimedMissions: string[];
@@ -205,7 +206,7 @@ function validProfile(raw: unknown): raw is GlobalProfile {
     p.cards.every((c) => ids.has(c.characterId) && Number.isInteger(c.level) && c.level >= 1 && c.level <= 10 && Number.isInteger(c.xp) && c.xp >= 0 && (c.level === 10 ? c.xp === 0 : c.xp < xpForNextLevel(c.level))) &&
     Array.isArray(p.itemCards) && p.itemCards.length <= CATALOG_ITEMS.length && new Set(p.itemCards.map((item) => item.itemId)).size === p.itemCards.length && p.itemCards.every((item) => items.has(item.itemId) && Number.isInteger(item.level) && item.level >= 1 && item.level <= 10 && Number.isInteger(item.xp) && item.xp >= 0 && (item.level === 10 ? item.xp === 0 : item.xp < xpForNextLevel(item.level))) && equipmentValid &&
     Array.isArray(p.team) && p.team.length >= 1 && p.team.length <= 3 && new Set(p.team).size === p.team.length && p.team.every((id) => ids.has(id) && p.cards!.some((card) => card.characterId === id)) &&
-    Number.isInteger(p.packs) && p.packs! >= 0 && p.packs! <= PACK_CAPACITY && Number.isFinite(p.lastPackAt) &&
+    Number.isInteger(p.packs) && p.packs! >= 0 && p.packs! <= PACK_CAPACITY && (p.bossPacks === undefined || Number.isSafeInteger(p.bossPacks) && p.bossPacks >= 0) && Number.isFinite(p.lastPackAt) &&
     !!p.missions && [p.missions.draw, p.missions.win, p.missions.campaign].every((n) => Number.isInteger(n) && n >= 0) &&
     Array.isArray(p.claimedMissions) && p.claimedMissions.every((m) => ["draw", "win", "campaign"].includes(m)) &&
     Number.isInteger(p.campaignStage) && p.campaignStage! >= 0 && Array.isArray(p.processedMatches) && p.processedMatches.length <= 5000 && p.processedMatches.every((key) => typeof key === "string" && key.length <= 128) &&
@@ -214,7 +215,7 @@ function validProfile(raw: unknown): raw is GlobalProfile {
     (p.lastPull === undefined || (typeof p.lastPull.id === "string" && (p.lastPull.tier.startsWith("T") || p.lastPull.tier === "RAC" || p.lastPull.tier === "GOD")));
 }
 function starterProfile(): GlobalProfile {
-  return { cards: [{ characterId: "char_01", level: 1, xp: 0 }], itemCards: [], equipment: {}, team: ["char_01"], packs: 50, lastPackAt: Date.now(), missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0 };
+  return { cards: [{ characterId: "char_01", level: 1, xp: 0 }], itemCards: [], equipment: {}, team: ["char_01"], packs: 50, bossPacks: 0, lastPackAt: Date.now(), missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0 };
 }
 function accrue(profile: GlobalProfile, now = Date.now()) {
   const elapsed = Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000);

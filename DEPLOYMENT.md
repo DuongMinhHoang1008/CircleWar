@@ -6,11 +6,14 @@ Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không 
 
 - Website: https://riseon-ultimate-battle.pages.dev
 - API: https://circle-chaos.circle-chaos.workers.dev
-- Engine: `chaos-integer-v22`, giao diện v`2026.10.21.2`, triển khai ngày 21/10/2026.
-- Worker version: `a18c1278-6fd0-4415-9b89-75262d11ef9e`.
-- Pages deployment: https://1d431dad.riseon-ultimate-battle.pages.dev.
-- Kiểm tra bản này: 41 kiểm tra catalog/cân bằng/hội/campaign/VFX/khôi phục pack đều qua; typecheck, build frontend và Worker dry-run qua. Hồ sơ thử riêng mở đủ 100 pack và reload giữa animation vẫn giữ thẻ/EXP, xem lại kết quả được. Không dùng pack của người chơi để thử.
-- Production API smoke: `npx tsx tests/integration/profile-sync-smoke.ts` với `TEST_WEB`/`TEST_API` như bên dưới; kết quả ở `reports/deployment-2026-10-21.json`. Đã kiểm tra health/CORS, SAVE kết quả 100 pack, retry idempotent, INIT cũ không ghi đè thẻ, release manifest và atlas mới 160 frame. Browser production không có lỗi console trong lượt kiểm tra menu/patch notes. Không chạy lại bài kiểm tra tải nhiều phòng trong bản này.
+- Engine: `chaos-integer-v24`, giao diện v`2026.10.21.4`, triển khai ngày 21/10/2026.
+- Worker version: `9d0ed1c9-007e-48d0-a019-2e8aff398bcb`.
+- Pages deployment: https://04fcc027.riseon-ultimate-battle.pages.dev.
+- Bản này gồm 33 nội tại riêng, bộ chiêu của 5 Huyền thoại, ảnh Ủn mới, vũ khí #31–33 cầm dọc, Pack Boss/tỉ lệ, hợp cạ và ải không scale chỉ số ẩn. Popup cập nhật và thưởng đi ải/multiplayer dùng cùng modal căn giữa viewport.
+- Trước deploy: 168/168 test pass; typecheck, frontend build và Worker dry-run pass. Audit offline 6.864 trận cân bằng và 4.720 trận campaign đều qua giới hạn/counter; 52 trường hợp ải thường đều có counter cùng cấp. Đây không phải win rate người chơi thật.
+- UI local: `reward-popups-browser.ts` kiểm tra popup cập nhật/thưởng trên desktop, mobile, landscape; ải thường, boss 1/3 pack, kho đầy, focus/Escape và không cộng thưởng trùng. Callback Arena và trạng thái FINISHED là fixture; profile được lưu bằng Worker local thật.
+- Production smoke sau deploy: `profile-sync-smoke.ts` pass health/CORS, SAVE kết quả 100 pack trên hồ sơ thử riêng, retry idempotent, INIT cũ không ghi đè thưởng, release .4 và atlas 256 frame. Báo cáo `reports/deployment-2026-10-21.json`.
+- `deployment-smoke.ts` pass trên origin production: popup căn giữa desktop/mobile, khôi phục hồ sơ, SVG vũ khí đúng trục, mô phỏng sân vuông/20 giây, màu đội và phòng/WebSocket thực; không page error. Phòng thử được rời sau kiểm tra. Báo cáo `reports/production-browser-v24.json`; không chạy load test production.
 
 Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:
 

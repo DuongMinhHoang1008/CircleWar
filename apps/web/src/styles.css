@@ -699,7 +699,18 @@ header nav button small { display: inline-grid; min-width: 18px; height: 18px; p
 .feedback-screen input,.feedback-screen select,.feedback-screen textarea { width: 100%; padding: 11px 12px; border: 1px solid #ffffff26; border-radius: 8px; color: #f5f2eb; background: #15161c; font: inherit; }
 .feedback-screen textarea { resize: vertical; line-height: 1.5; }
 .gift-modal-backdrop { position: fixed; z-index: 1200; inset: 0; display: grid; place-items: center; padding: 20px; background: #07080de8; backdrop-filter: blur(9px); }
-.gift-modal { width: min(440px,100%); padding: 30px; border: 1px solid #f4d27166; border-radius: 18px; text-align: center; background: radial-gradient(ellipse at top,#67512655,#19191f 62%); box-shadow: 0 28px 100px #000c,0 0 48px #ffc24f22; animation: card-pop .6s cubic-bezier(.17,.89,.32,1.2) both; }
+.gift-modal { position: relative; width: min(440px,100%); max-height: calc(100dvh - 40px); overflow-y: auto; padding: 30px; border: 1px solid #f4d27166; border-radius: 18px; text-align: center; background: radial-gradient(ellipse at top,#67512655,#19191f 62%); box-shadow: 0 28px 100px #000c,0 0 48px #ffc24f22; animation: gift-appear .25s ease-out both; }
+@keyframes gift-appear { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+.gift-modal .gift-modal-close { position: absolute; right: 8px; top: 8px; width: 36px; height: 36px; margin: 0; padding: 0; border: 0; background: transparent; font-size: 24px; color: #c8c4bd; }
+.reward-trophy { margin: 12px 0 4px; font-size: 40px; }
+.match-reward-items { display: flex; justify-content: center; gap: 14px; margin: 24px 0; }
+.match-reward-items > div { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 7px; padding: 18px 12px; border: 1px solid #dfbf6e55; border-radius: 12px; background: #efc9600a; }
+.match-reward-items > div > span:first-child { font-size: 32px; line-height: 44px; }
+.match-reward-items img { width: 52px; height: 44px; object-fit: contain; border-radius: 5px; }
+.match-reward-items strong { font-size: 30px; color: #ffe3a0; }
+.match-reward-items > div > span:last-child { font-size: 12px; color: #d5d1c9; }
+.gift-modal .reward-cap-note { font-size: 12px; color: #d7b584; }
+@media (prefers-reduced-motion: reduce) { .gift-modal { animation: none; } }
 .gift-modal .eyebrow { color: #ffc24f; font-size: 10px; letter-spacing: .16em; }
 .gift-modal h2 { margin: 12px 0; font-size: 28px; }
 .gift-modal p { color: #d6d3ce; line-height: 1.7; }
@@ -1539,3 +1550,15 @@ input[type="checkbox"] {
 @media (max-width: 380px) { .navigation-toggle > b { font-size: 11px; }.app > header { gap: 8px; }.app > header > .icon { font-size: 9px; } }
 
 .campaign-enemy-preview { margin: 20px 0; padding: 15px; border: 1px solid #ffffff1c; border-radius: 10px; background: #11141b; }.campaign-enemy-preview > b { display: block; color: #e6c778; font-size: 11px; margin-bottom: 12px; }.campaign-enemy-preview > div { display: flex; flex-wrap: wrap; gap: 16px; }.campaign-enemy-preview > div > span { display: flex; align-items: center; gap: 9px; font-size: 12px; }.campaign-enemy-preview .portrait { width: 42px; height: 42px; object-fit: contain; }.campaign-enemy-preview small { display: block; margin-top: 4px; color: #919aac; }
+.boss-pack-hero { margin-top: 28px; border-top: 1px solid #c1a26b; padding-top: 28px; }
+.boss-booster { background: linear-gradient(145deg, #14141a, #615641); border-color: #eee0ad; }
+.boss-pack-art { position: absolute; left: 6%; top: 22%; width: 88%; height: 43%; object-fit: contain; background: #f8f8f4; border-radius: 8px; }
+.pack-booster.boss-booster > strong { top: 69%; font-size: 1.8em; }
+.boss-booster > .booster-ribbon { top: 88%; }
+.pack-rates { margin: 18px 0; padding: 15px; border: 1px solid #716044; border-radius: 12px; background: #171b23; color: #e9e4da; }
+.pack-rates dl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 12px 0; }
+.pack-rates dl div { background: #262b35; border-radius: 8px; padding: 10px 4px; text-align: center; }
+.pack-rates dt { font-size: 12px; }
+.pack-rates dd { margin: 5px 0 0; font-weight: 700; color: #ffe5a2; }
+.pack-rates small { display: block; line-height: 1.6; margin-top: 8px; color: #c7c9d1; }
+@media (max-width: 440px) { .pack-rates dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

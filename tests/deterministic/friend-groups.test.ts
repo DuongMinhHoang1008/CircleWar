@@ -89,9 +89,12 @@ it("preserves the expanded groups, exclusions and required anchors", () => {
     "Tất cả quỳ xuống",
     "Anh có ý tưởng",
     "Tái Chế Thành Huyền Thoại",
+    "Nhịp Phonk Lõi Đỏ",
+    "Giang Hồ Có Bữa Nóng",
+    "Bếp Trưởng Và Nồi Lẩu",
   ]);
   expect(FRIEND_GROUPS.map((g) => g.members.length)).toEqual([
-    12, 3, 2, 3, 4, 5, 3, 4, 2, 20, 24, 23, 25, 3,
+    12, 3, 2, 3, 4, 5, 3, 4, 2, 28, 32, 31, 33, 3, 3, 3, 3,
   ]);
   expect(FRIEND_GROUPS[6].members).not.toContain("char_20");
   expect(FRIEND_GROUPS[6].members).not.toContain("char_04");
@@ -131,7 +134,7 @@ it("preserves the expanded groups, exclusions and required anchors", () => {
     validChoice([{ characterId: "char_09" }, { characterId: "char_01" }], {
       group: "G12",
     }),
-  ).toBe(false);
+  ).toBe(true);
   for (const id of ["char_21", "char_23", "char_24", "char_25"])
     expect(FRIEND_GROUPS.find((g) => g.id === "G12")?.members).toContain(id);
   expect(character("char_07")?.look).toContain("Courage");
@@ -309,7 +312,7 @@ it("anchors must cast themselves, remain alive, and stay in group range", () => 
   ]) {
     const ids =
       group === "G12"
-        ? [anchor, "char_22", "char_01"]
+        ? [anchor, "char_04", "char_01"]
         : [anchor, "char_01", "char_02"];
     const s = team(group, ids);
     if (group === "G12") s.fighters.at(-1)!.x = 75000;
@@ -332,6 +335,29 @@ it("anchors must cast themselves, remain alive, and stay in group range", () => 
     characterCombat(s);
     expect(s.groups[`a:${group}`]).toBeUndefined();
   }
+});
+it("kneel activates from either living anchor and shares its cooldown between both", () => {
+  for (const anchor of ["char_09", "char_22"]) {
+    expect(validChoice([{ characterId: anchor }, { characterId: "char_04" }], { group: "G12" })).toBe(true);
+    const s = team("G12", [anchor, "char_04"]);
+    s.tick = 1;
+    beforeCharacterTick(s);
+    s.fighters[0].energy = 100;
+    characterCombat(s);
+    expect(s.groups["a:G12"].uses).toBe(1);
+    expect(s.fighters[1].buffs.some(b => b.kind === "attack" && b.value === 8)).toBe(true);
+    expect(s.fighters[0].buffs.some(b => b.source === -1012)).toBe(false);
+    s.fighters[0].hp = 0;
+    s.tick = 400;
+    beforeCharacterTick(s);
+    s.fighters[1].energy = 100;
+    characterCombat(s);
+    expect(s.groups["a:G12"].uses).toBe(1);
+  }
+  const s = team("G12", ["char_09", "char_22", "char_04"]);
+  s.tick = 1; beforeCharacterTick(s); s.fighters[0].energy = 100; characterCombat(s);
+  s.tick = 2; beforeCharacterTick(s); s.fighters[1].energy = 100; characterCombat(s);
+  expect(s.groups["a:G12"].uses).toBe(1);
 });
 it("Full Combo requires one living member of each branch, with separate pair effects", () => {
   const group = FRIEND_GROUPS.find((g) => g.id === "G11")!;

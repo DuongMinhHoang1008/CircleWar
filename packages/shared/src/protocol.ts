@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { CLASSES } from "./balance";
-import { CHARACTER_IDS } from "./catalog";
+import { CHARACTER_IDS, CATALOG_ITEMS } from "./catalog";
 import { xpForNextLevel } from "./progression";
 import { DEFAULT_SHRINK_SECONDS } from "./arena";
 export const PROTOCOL = 4;
@@ -75,14 +75,14 @@ export const actionSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("SET_TEAM"), characters: z.array(z.enum(CHARACTER_IDS)).min(1).max(3) }).strict(),
   z.object({
     type: z.literal("SYNC_PROFILE"),
-    cards: z.array(z.object({ characterId: z.enum(CHARACTER_IDS), level: z.number().int().min(1).max(10), xp: z.number().int().min(0).max(xpForNextLevel(9) - 1) }).strict()).max(30),
-    itemCards: z.array(z.object({ itemId: z.string().regex(/^item_[0-9]+$/), level: z.number().int().min(1).max(10), xp: z.number().int().min(0).max(xpForNextLevel(9) - 1) }).strict()).max(30),
+    cards: z.array(z.object({ characterId: z.enum(CHARACTER_IDS), level: z.number().int().min(1).max(10), xp: z.number().int().min(0).max(xpForNextLevel(9) - 1) }).strict()).max(CHARACTER_IDS.length),
+    itemCards: z.array(z.object({ itemId: z.string().regex(/^item_[0-9]+$/), level: z.number().int().min(1).max(10), xp: z.number().int().min(0).max(xpForNextLevel(9) - 1) }).strict()).max(CATALOG_ITEMS.length),
     team: z.array(z.enum(CHARACTER_IDS)).min(1).max(3),
     equipment: z.array(z.object({ characterId: z.enum(CHARACTER_IDS), items: z.array(z.string().regex(/^item_[0-9]+$/)).max(3) }).strict()).max(3),
     campaignStage: z.number().int().min(0),
   }).strict(),
   z.object({ type: z.literal("CLAIM_PACK") }).strict(),
-  z.object({ type: z.literal("OPEN_PACK") }).strict(),
+  z.object({ type: z.literal("OPEN_PACK"), kind: z.enum(["normal", "boss"]).optional() }).strict(),
   z.object({ type: z.literal("CLAIM_MISSION"), mission: z.enum(["draw", "win", "campaign"]) }).strict(),
   z
     .object({ type: z.literal("BUY"), offer: z.number().int().min(0).max(4) })

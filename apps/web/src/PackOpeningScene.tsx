@@ -1,10 +1,11 @@
 import React, { Component, memo, useState, type CSSProperties, type ReactNode } from "react";
 
-type PackPull = { id: string; kind: string; tier: string; rarity: string };
+type PackPull = { id: string; kind: string; tier: string; rarity: string; packKind?: "normal" | "boss" };
 
 export const unpackStepMs = (count: number) => count <= 5 ? 360 : count <= 10 ? 240 : count <= 25 ? 140 : 75;
 
-export function PackArtwork({ className = "", assetBase = import.meta.env?.BASE_URL || "/" }: { className?: string; assetBase?: string }) {
+export function PackArtwork({ className = "", assetBase = import.meta.env?.BASE_URL || "/", kind = "normal" }: { className?: string; assetBase?: string; kind?: "normal" | "boss" }) {
+  if (kind === "boss") return <div className={`pack-booster boss-booster ${className}`.trim()} aria-label="Pack Boss Sóc Jake"><i className="booster-crimp" /><span className="booster-edition">RISEON · BOSS REWARD</span><img className="boss-pack-art" src={`${assetBase}packs/boss-jake.png`} alt="Sóc Jake · Nah, I'd drop." /><strong>BOSS<br />PACK</strong><span className="booster-ribbon">SỬ THI 17% · HUYỀN THOẠI 3%</span><i className="booster-crimp bottom" /></div>;
   return <div className={`pack-booster ${className}`.trim()} aria-label="Gói thẻ RiseOn Collector Series">
     <i className="booster-crimp" />
     <i className="booster-inner-light" aria-hidden="true" />
@@ -34,7 +35,7 @@ const PackLayer = memo(function PackLayer({ pull, order, count, startedAt, asset
     "--glow-at": `${glowAt}ms`, "--strip-duration": `${Math.max(260, step * 0.95)}ms`, zIndex: count - order,
   } as CSSProperties;
   return <article className={`reveal-unpack-pack tier-${pull.tier.toLowerCase()}`} style={style} aria-label={`Pack lớp ${order + 1}, rarity ${pull.rarity}`}>
-    <PackArtwork className="reveal-booster" assetBase={assetBase} />
+    <PackArtwork className="reveal-booster" assetBase={assetBase} kind={pull.packKind} />
     <i className="pack-open-rim" aria-hidden="true" />
     <div className="pack-mouth-glow" aria-hidden="true">
       <i className="pack-light-haze" /><i className="pack-light-volume" /><i className="pack-light-core" />

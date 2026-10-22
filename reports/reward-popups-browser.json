@@ -1,0 +1,63 @@
+{
+  "version": "2026.10.21.4",
+  "checks": [
+    {
+      "name": "update-popup",
+      "centeredAt": [
+        "desktop",
+        "mobile",
+        "landscape"
+      ]
+    },
+    {
+      "mode": "campaign",
+      "stage": 1,
+      "packs": 5,
+      "bossPacks": 0,
+      "duplicateCompletionIgnored": true
+    },
+    {
+      "mode": "campaign",
+      "stage": 5,
+      "packs": 15,
+      "bossPacks": 1,
+      "duplicateCompletionIgnored": true
+    },
+    {
+      "name": "boss-reward-popup",
+      "centeredAt": [
+        "desktop",
+        "mobile",
+        "landscape"
+      ]
+    },
+    {
+      "mode": "campaign",
+      "stage": 10,
+      "packs": 15,
+      "bossPacks": 3,
+      "duplicateCompletionIgnored": true
+    },
+    {
+      "mode": "campaign",
+      "stage": 10,
+      "packs": 2,
+      "bossPacks": 3,
+      "duplicateCompletionIgnored": true
+    },
+    {
+      "name": "multiplayer-reward-popup",
+      "centeredAt": [
+        "desktop",
+        "mobile",
+        "landscape"
+      ]
+    },
+    {
+      "mode": "pvp",
+      "packs": 10,
+      "duplicateFinishedStateIgnoredAfterReload": true
+    }
+  ],
+  "errors": []
+}

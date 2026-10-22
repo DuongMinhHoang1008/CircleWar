@@ -1,0 +1,10 @@
+{
+  "version": "2026.10.21.4",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "centeredPopup": true,
+  "verticalWeapons": true,
+  "profileRestored": true,
+  "websocket": true,
+  "errors": []
+}

@@ -1,6 +1,6 @@
 import type { Loadout, Stats } from "../../shared/src/balance";
 import type { TeamChoice } from "../../shared/src/catalog";
-export const ENGINE_VERSION = "chaos-integer-v22";
+export const ENGINE_VERSION = "chaos-integer-v24";
 export const TICK_RATE = 30;
 export interface BattleConfig {
   campaign?: { stage: number; enemyTeamId: string };
@@ -64,6 +64,9 @@ export interface Projectile {
   secondary?: number;
   kind?: "skill" | "super";
   slow?: number;
+  radiation?: number;
+  splash?: number;
+  splashPower?: number;
 }
 export interface Zone {
   owner: number;
@@ -78,6 +81,9 @@ export interface Zone {
   follow?: boolean;
   heal?: number;
   attack?: number;
+  auraAttack?: number;
+  auraHaste?: number;
+  territory?: boolean;
   push?: number;
   trap?: boolean;
   group?: number;

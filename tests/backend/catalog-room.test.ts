@@ -110,5 +110,5 @@ it("locks character, item and selected bond into the simulation snapshot", () =>
   expect(s.simulation?.fighters[0].equipment).toEqual(["item_02", "item_03"]);
   s.players[0].loadouts[0].equipment = [];
   expect(s.simulation?.fighters[0].equipment).toHaveLength(2);
-  expect(CATALOG_ITEMS.filter((i) => i.slot === "accessory")).toHaveLength(25);
+  expect(CATALOG_ITEMS.filter((i) => i.slot === "accessory")).toHaveLength(33);
 });

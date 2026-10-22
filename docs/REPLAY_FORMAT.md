@@ -92,3 +92,8 @@ The 64-frame vector atlas in `apps/web/public/effects/combat-fx.svg` adds visual
 impact, cast, status, recovery and projectile animation. It does not enlarge damage
 areas. Regenerate it with `npm run build:fx`. Sprite frames are shared and effect
 instances/data are pooled. Existing replay fields suffice for these effects.
+
+
+## Individual abilities update (v24)
+
+`chaos-integer-v24` replaces every roster passive and specializes five legendary kits. Checkpoints persist proc counters, cooldowns and reach/radiation buffs in fighter memory/buffs. Projectiles retain radiation stacks and splash settings until contact. Zone records include `auraAttack`, `auraHaste` and `territory`; existing recorded zone samples carry these fields without changing replay format 1. New radiation events drive status and impact VFX. Older engine checkpoints remain rejected by the version gate.

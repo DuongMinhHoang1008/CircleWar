@@ -2,7 +2,7 @@
   "characters": [
     {
       "name": "Hổ Hướng Nội",
-      "role": "Đỡ đòn / phản công",
+      "role": "Hộ vệ / hấp thụ áp lực",
       "base": "guardian",
       "look": "Hổ ngồi xổm, mặt lim dim",
       "stats": [
@@ -15,7 +15,7 @@
       "weapon": "Đệm chân mèo khổng lồ xoay quanh người.",
       "passive": [
         "Đừng Đụng Tui",
-        "Mỗi 4 đòn trúng nhận khiên cá nhân; hồi nội tại 3 giây. Giá trị gốc: 5."
+        "Sau mỗi 3 đòn thường nhận phải mà còn sống, tạo khiên bằng 3% HP tối đa trong 2 giây; hồi 6 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Gầm Nhỏ Thôi",
@@ -38,11 +38,11 @@
     },
     {
       "name": "Bé Ôm Bão",
-      "role": "Đấu sĩ / áp sát",
+      "role": "Đấu sĩ / bảo kê cận chiến",
       "base": "swordsman",
       "look": "Đầu tóc bát úp trên thân trắng đang ôm mình",
       "stats": [
-        250,
+        245,
         18,
         7,
         445
@@ -50,8 +50,8 @@
       "quote": "Cho ôm cái… ủa sao văng rồi?",
       "weapon": "Hai cánh tay gối bông, tính như một vũ khí.",
       "passive": [
-        "Càng Đông Càng Ấm",
-        "Mỗi 4 đòn trúng tăng sát thương đòn kế tiếp; hồi nội tại 3 giây. Giá trị gốc: 18%."
+        "Ôm Đồng Đội",
+        "Mỗi 4 đòn thường trúng cấp khiên bằng 3% HP của Bé cho đồng minh yếu nhất trong 140, tồn tại 2 giây; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Ôm Một Miếng",
@@ -74,7 +74,7 @@
     },
     {
       "name": "Anh Tím Mọng",
-      "role": "Cấu rỉa / vùng chậm",
+      "role": "Kiểm soát / duy trì kỹ năng",
       "base": "frost",
       "look": "Nhân vật ghép trái cây, tóc tím và áo trái mọng",
       "stats": [
@@ -86,8 +86,8 @@
       "quote": "Đừng căng, làm ly vitamin đã.",
       "weapon": "Xiên nho xoay; đòn thường cận chiến.",
       "passive": [
-        "Vitamin Vui Vẻ",
-        "Mỗi 4 đòn trúng làm chậm mục tiêu 1 giây; hồi nội tại 3 giây. Giá trị gốc: 12%."
+        "Vitamin Bắt Nhịp",
+        "Mỗi 3 đòn thường trúng mục tiêu đang chậm rút ngắn hồi kỹ năng 24 tick (30 tick = 1 giây); hồi 6 giây, tối đa 4 lần/trận."
       ],
       "skill": [
         "Mứt Dính Dép",
@@ -110,7 +110,7 @@
     },
     {
       "name": "Đùi Gió Lốc",
-      "role": "Đấu sĩ / va chạm",
+      "role": "Đấu sĩ / truy đuổi",
       "base": "berserker",
       "look": "Áo SUGOI, chân lực sĩ, giày thể thao",
       "stats": [
@@ -122,8 +122,8 @@
       "quote": "Ngày nào cũng là leg day!",
       "weapon": "Đôi giày xoay quanh thân như hai đầu của một vũ khí.",
       "passive": [
-        "Chân Không Biết Mỏi",
-        "Mỗi 4 đòn trúng tăng sát thương đòn kế tiếp; hồi nội tại 3 giây. Giá trị gốc: 16%."
+        "Đạp Tường Lấy Đà",
+        "Nảy tường tăng 10% tốc độ trong 2 giây; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Đá Bay Dép",
@@ -146,20 +146,20 @@
     },
     {
       "name": "Kính Cận Bắt Bài",
-      "role": "Xạ thủ / đánh dấu",
+      "role": "Xạ thủ / đánh dấu cho đội",
       "base": "ranger",
       "look": "Tóc ngắn, kính tròn, áo đen",
       "stats": [
-        210,
-        17,
+        205,
+        16,
         4,
         455
       ],
       "quote": "Đứng yên… để tui nhìn rõ đã!",
       "weapon": "Bút laser bắn đạn thường theo nhịp xạ thủ.",
       "passive": [
-        "Soi Rất Kỹ",
-        "Mỗi 4 đòn trúng nhận thêm năng lượng; hồi nội tại 3 giây. Giá trị gốc: 3."
+        "Soi Điểm Yếu",
+        "Mỗi 3 đòn thường trúng đánh dấu mục tiêu 3 giây: đòn thường kế tiếp của một đồng minh thêm 12% sát thương rồi xóa dấu. Các dấu không cộng dồn; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Khoanh Đáp Án C",
@@ -182,7 +182,7 @@
     },
     {
       "name": "Đội Trưởng Sắc Màu",
-      "role": "Hỗ trợ / tăng tốc",
+      "role": "Hỗ trợ / tăng nhịp đánh",
       "base": "swordsman",
       "look": "Tóc xoăn, khoác cờ nhiều màu",
       "stats": [
@@ -194,8 +194,8 @@
       "quote": "Lên màu nào, cả nhà ơi!",
       "weapon": "Ruy băng nhiều màu xoay quanh người.",
       "passive": [
-        "Có Hội Có Hè",
-        "Mỗi 4 đòn trúng hồi máu cho đồng minh yếu nhất trong 160; hồi nội tại 3 giây. Giá trị gốc: 5."
+        "Quẩy Đúng Nhịp",
+        "Sau kỹ năng, đồng minh khác yếu nhất trong 180 tăng 8% tốc độ đánh trong 3 giây; tối đa 4 lần/trận. Không tự nhận."
       ],
       "skill": [
         "Quẩy Đúng Nhịp",
@@ -218,20 +218,20 @@
     },
     {
       "name": "Courage Nhút Nhát",
-      "role": "Khống chế / quấy rối",
+      "role": "Kiểm soát / thoát hiểm",
       "base": "frost",
       "look": "Chú chó hồng nhút nhát lấy cảm hứng từ Courage — Chú chó nhút nhát; tai đen dài, thân hồng có đốm đen, mặt đang hét",
       "stats": [
-        225,
-        15,
+        215,
+        14,
         6,
         445
       ],
       "quote": "Sợ thì sợ, chứ bạn là phải cứu!",
       "weapon": "Găng chân chó hồng Run Rẩy, hai đầu quét dùng chung hồi đánh trên mỗi mục tiêu; không phải râu côn trùng.",
       "passive": [
-        "Sợ Nhưng Vẫn Cứu Bạn",
-        "Mỗi 4 đòn trúng làm chậm mục tiêu 1 giây; hồi nội tại 3 giây. Giá trị gốc: 14%."
+        "Nhát Nhưng Biết Chạy",
+        "Một lần/trận khi còn sống dưới 40% HP: xóa chậm, miễn chậm 1 giây và tăng 10% tốc độ trong 2 giây. Không cứu đòn kết liễu."
       ],
       "skill": [
         "Hét Vỡ Mood",
@@ -254,7 +254,7 @@
     },
     {
       "name": "Sói Suy Tư",
-      "role": "Đấu sĩ / kết liễu",
+      "role": "Đấu sĩ / hút máu theo nhịp",
       "base": "berserker",
       "look": "Sói ngồi trầm ngâm, ánh tím dưới chân",
       "stats": [
@@ -266,8 +266,8 @@
       "quote": "Trăng chưa lên, tâm sự đã đầy.",
       "weapon": "Vuốt sói có vệt trăng tím.",
       "passive": [
-        "Càng Nghĩ Càng Đau",
-        "Mỗi 4 đòn trúng tăng sát thương đòn kế tiếp; hồi nội tại 3 giây. Giá trị gốc: 20%."
+        "Sói Tự Chữa Lành",
+        "Mỗi 4 đòn thường trúng hồi 25% lượng HP thực vừa gây mất; hồi 5 giây, tối đa 5 lần/trận. Đánh khiên không hồi máu."
       ],
       "skill": [
         "Vồ Nỗi Buồn",
@@ -290,7 +290,7 @@
     },
     {
       "name": "Sếp Chốt Đơn",
-      "role": "Kiểm soát / dồn sát thương",
+      "role": "Kiểm soát / điều phối Super",
       "base": "frost",
       "look": "Áo vest trắng, chống cằm",
       "stats": [
@@ -302,8 +302,8 @@
       "quote": "Chốt nha. Không hoàn mood!",
       "weapon": "Tập hồ sơ xoay; đòn thường cận chiến.",
       "passive": [
-        "Đọc Kỹ Điều Khoản",
-        "Mỗi 4 đòn trúng làm chậm mục tiêu 1 giây; hồi nội tại 3 giây. Giá trị gốc: 13%."
+        "Chốt Đơn Tiếp Sức",
+        "Sau Super cấp 5 năng lượng cho tối đa 2 đồng minh khác trong 180; hồi 10 giây, tối đa 3 lần/trận. Không tự kích hoạt chuỗi Super."
       ],
       "skill": [
         "Mời Vào Họp",
@@ -326,7 +326,7 @@
     },
     {
       "name": "Lốp Lăn Ăn Vặt",
-      "role": "Đỡ đòn / tông đẩy",
+      "role": "Hộ vệ / cản đường",
       "base": "guardian",
       "look": "Thân lốp xe đang cầm đồ ăn",
       "stats": [
@@ -338,8 +338,8 @@
       "quote": "Ăn miếng rồi lăn tiếp.",
       "weapon": "Hộp snack xoay quanh lốp.",
       "passive": [
-        "Cao Su Có Số",
-        "Mỗi 4 đòn trúng nhận khiên cá nhân; hồi nội tại 3 giây. Giá trị gốc: 6."
+        "Lốp Có Giảm Xóc",
+        "Va chạm thân địch tạo khiên bằng 3% HP tối đa trong 2 giây và đẩy địch nhẹ; hồi 6 giây, tối đa 4 lần/trận."
       ],
       "skill": [
         "Cán Qua Drama",
@@ -362,7 +362,7 @@
     },
     {
       "name": "Cờ Con Cổ Vũ",
-      "role": "Hỗ trợ / bảo kê",
+      "role": "Hỗ trợ / giải khống chế",
       "base": "guardian",
       "look": "Hoodie xanh, cầm lá cờ nhiều màu",
       "stats": [
@@ -374,8 +374,8 @@
       "quote": "Bạn cứ đánh, tui giơ cờ!",
       "weapon": "Cán cờ bọc bông, màu đội hiển thị ở viền riêng.",
       "passive": [
-        "Hội Cổ Vũ Một Người",
-        "Mỗi 4 đòn trúng hồi máu cho đồng minh yếu nhất trong 160; hồi nội tại 3 giây. Giá trị gốc: 6."
+        "Cờ Giải Vây",
+        "Sau kỹ năng, đồng minh yếu nhất trong 180 được xóa chậm và thêm 6 khiên trong 2 giây; tối đa 4 lần/trận. Không cấp miễn chậm."
       ],
       "skill": [
         "Phất Cờ Cứu Bồ",
@@ -398,20 +398,20 @@
     },
     {
       "name": "Kiếm Khách Mượn Vai",
-      "role": "Cận chiến / đánh mạnh theo nhịp",
+      "role": "Đấu sĩ / đấu một mục tiêu",
       "base": "swordsman",
       "look": "Áo đỏ, đại kiếm vác trên vai",
       "stats": [
         240,
-        18,
+        17,
         6,
         455
       ],
       "quote": "Kiếm hơi nặng, cho mượn vai tí.",
       "weapon": "Đại kiếm xoay chậm, tầm nhỉnh hơn kiếm cơ bản.",
       "passive": [
-        "Chém Có Bài",
-        "Mỗi 4 đòn trúng tăng sát thương đòn kế tiếp; hồi nội tại 3 giây. Giá trị gốc: 16%."
+        "Ba Nhát Một Nhịp",
+        "Trúng cùng một mục tiêu 3 đòn thường liên tiếp: đòn kế tiếp thêm 16% ATK trong 3 giây. Đổi mục tiêu xóa bộ đếm; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Bổ Dưa Hấu",
@@ -434,20 +434,20 @@
     },
     {
       "name": "Mâm Quả Chủ Tịch",
-      "role": "Hỗ trợ / hồi phục",
+      "role": "Hỗ trợ / hồi phục định kỳ",
       "base": "ranger",
       "look": "Áo đen, cầm mâm trái cây nhiều màu",
       "stats": [
-        210,
-        12,
+        215,
+        13,
         5,
-        430
+        435
       ],
       "quote": "Combat gì cũng phải có trái cây.",
       "weapon": "Ném quả nho như đạn thường.",
       "passive": [
-        "Ăn Miếng Lấy Thảo",
-        "Mỗi 4 đòn trúng hồi máu cho đồng minh yếu nhất trong 160; hồi nội tại 3 giây. Giá trị gốc: 5."
+        "Vitamin Theo Giờ",
+        "Mỗi 6 giây hồi 6 HP cho đồng minh yếu nhất trong 180, tối đa 4 lần/trận. Không hồi vượt HP tối đa."
       ],
       "skill": [
         "Táo Đến Công Chuyện",
@@ -470,20 +470,20 @@
     },
     {
       "name": "Hộp Quà Nghiêm Túc",
-      "role": "Đặt bẫy / chặn đường",
+      "role": "Kiểm soát / bẫy áp sát",
       "base": "frost",
       "look": "Kính chữ nhật, áo đen, cầm hộp quà đỏ",
       "stats": [
-        230,
-        17,
+        220,
+        16,
         4,
         395
       ],
       "quote": "Quà nhỏ thôi. Mở ra hơi bất ngờ.",
       "weapon": "Nơ giấy quét quanh thân.",
       "passive": [
-        "Đóng Gói Cẩn Thận",
-        "Mỗi 4 đòn trúng làm chậm mục tiêu 1 giây; hồi nội tại 3 giây. Giá trị gốc: 12%."
+        "Quà Có Bẫy",
+        "Sau kỹ năng đặt bẫy dưới mục tiêu trong 3 giây, bán kính 55; bẫy nổ một lần gây 25% ATK và chậm 12% trong 1 giây. Tối đa 3 bẫy/trận."
       ],
       "skill": [
         "Mở Ra Biết Liền",
@@ -506,20 +506,20 @@
     },
     {
       "name": "Hiệp Sĩ Gâu Gâu",
-      "role": "Đỡ đòn / che chắn",
+      "role": "Hộ vệ / cứu đồng đội",
       "base": "guardian",
       "look": "Trang phục hiệp sĩ xanh, tai chó, khiên dấu chân",
       "stats": [
-        280,
-        15,
+        290,
+        16,
         13,
         395
       ],
       "quote": "Gâu một tiếng, yên tâm một trận.",
       "weapon": "Kiếm xương và khiên trang trí trên thân.",
       "passive": [
-        "Trung Thành Có Khiên",
-        "Mỗi 4 đòn trúng nhận khiên cá nhân; hồi nội tại 3 giây. Giá trị gốc: 5."
+        "Gâu Là Có Mặt",
+        "Đồng minh khác trong 180 còn sống dưới 40% HP sau đòn địch: cấp 10 khiên trong 3 giây; hồi 8 giây, tối đa 3 lần/trận. Không cứu đòn chết người."
       ],
       "skill": [
         "Gâu Là Có Mặt",
@@ -542,11 +542,11 @@
     },
     {
       "name": "Họa Sĩ Chạy Deadline",
-      "role": "Kiểm soát vùng / dựng đường đánh",
+      "role": "Kiểm soát / phối hợp hiệu ứng",
       "base": "frost",
       "look": "Ngồi bàn vẽ điện tử, cầm bút",
       "stats": [
-        210,
+        200,
         16,
         4,
         465
@@ -554,8 +554,8 @@
       "quote": "Để tui sửa nốt một nét… xong rồi!",
       "weapon": "Bút cảm ứng xoay; cả bàn chỉ là ảnh trang trí.",
       "passive": [
-        "Ctrl Z Một Chút",
-        "Mỗi 4 đòn trúng làm chậm mục tiêu 1 giây; hồi nội tại 3 giây. Giá trị gốc: 11%."
+        "Tô Đậm Hiệu Ứng",
+        "Mỗi 2 đòn thường trúng địch đang chậm, đốt hoặc phóng xạ: đòn kế tiếp thêm 14% ATK trong 3 giây; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Vẽ Bừa Trúng Thiệt",
@@ -578,20 +578,20 @@
     },
     {
       "name": "Anh Tết Ship Nhanh",
-      "role": "Cơ động / tăng nhịp đánh",
+      "role": "Sát thủ / kết liễu",
       "base": "assassin",
       "look": "Sơ mi trắng, cầm túi quà đan có chữ Tết",
       "stats": [
         215,
-        20,
+        19,
         4,
         570
       ],
       "quote": "Đơn Tết tới rồi, né ra cho ship!",
       "weapon": "Quai túi quà xoay tầm ngắn.",
       "passive": [
-        "Đơn Hàng Đang Tới",
-        "Mỗi 4 đòn trúng cường hóa đòn kế tiếp; hồi nội tại 3 giây. Giá trị gốc: 22%."
+        "Giao Đòn Kết",
+        "Mỗi 2 đòn thường trúng địch còn dưới 40% HP: cường hóa đòn kế tiếp thêm 18% ATK trong 2 giây; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Giao Hỏa Tốc",
@@ -614,20 +614,20 @@
     },
     {
       "name": "Ông Hoàng Nồi Lẩu",
-      "role": "Đấu sĩ / sát thương vùng",
+      "role": "Đấu sĩ / tiếp tế và đốt",
       "base": "berserker",
       "look": "Áo cổ lọ, cầm lì xì và hộp nồi lẩu",
       "stats": [
-        260,
-        19,
+        250,
+        18,
         7,
         390
       ],
       "quote": "Bo có nhỏ, nồi lẩu vẫn đủ chỗ.",
       "weapon": "Muôi lẩu xoay quanh thân.",
       "passive": [
-        "Càng Đông Càng Sôi",
-        "Mỗi 4 đòn trúng tăng sát thương đòn kế tiếp; hồi nội tại 3 giây. Giá trị gốc: 18%."
+        "Nồi Lẩu Hai Ngăn",
+        "Mỗi 4 đòn thường trúng: đốt mục tiêu 12% ATK/giây trong 2 giây và hồi 4 HP cho đồng minh yếu nhất trong 140; hồi 6 giây, tối đa 4 lần/trận."
       ],
       "skill": [
         "Chan Nước Nóng",
@@ -650,7 +650,7 @@
     },
     {
       "name": "Cô Nàng Khui Tết",
-      "role": "Hỗ trợ / nhịp khiên",
+      "role": "Hỗ trợ / thưởng hạ gục",
       "base": "swordsman",
       "look": "Áo đen, kính, cầm hộp quà đỏ trước người",
       "stats": [
@@ -662,8 +662,8 @@
       "quote": "Khui nhẹ tay thôi, vui cả năm đó!",
       "weapon": "Dải nơ quà xoay.",
       "passive": [
-        "Lộc Nhỏ Mỗi Ngày",
-        "Mỗi 4 đòn trúng hồi máu cho đồng minh yếu nhất trong 160; hồi nội tại 3 giây. Giá trị gốc: 4."
+        "Lì Xì Chiến Thắng",
+        "Hạ gục địch cấp đồng minh khác yếu nhất trong 180 12 khiên trong 3 giây và 4 năng lượng; hồi 6 giây, tối đa 3 lần/trận."
       ],
       "skill": [
         "Lì Xì Lấy Hên",
@@ -687,7 +687,7 @@
     {
       "id": "char_20",
       "name": "Hoàng Tử Ngậm Hoa",
-      "role": "Hỗ trợ / kiểm soát vùng",
+      "role": "Hỗ trợ / cường hóa chủ lực",
       "base": "swordsman",
       "look": "Tóc xoăn, kính vuông, nháy mắt và ngậm một bông hồng đỏ",
       "stats": [
@@ -699,8 +699,8 @@
       "quote": "Hoa này tặng bạn, gai này tặng đội bên kia.",
       "weapon": "Kiếm hoa hồng: thân cành có gai quét cận chiến, không thay hitbox thân.",
       "passive": [
-        "Nháy Mắt Lấy Đà",
-        "Mỗi 4 đòn trúng hồi máu cho đồng minh yếu nhất trong 160; hồi nội tại 3 giây. Giá trị gốc: 4."
+        "Hoa Trao Đúng Người",
+        "Mỗi 7 giây, đồng minh khác yếu nhất trong 180 nhận đòn thường kế tiếp thêm 18% ATK trong 3 giây; tối đa 4 lần/trận. Không tự nhận."
       ],
       "skill": [
         "Hoa Gửi Đúng Người",
@@ -723,7 +723,7 @@
     {
       "id": "char_21",
       "name": "Độ Duy Môn",
-      "role": "Đỡ đòn / hỗ trợ",
+      "role": "Hộ vệ / chống xạ thủ",
       "base": "guardian",
       "look": "Bộ đồ xanh trắng, kính tròn và chuông vàng; ảnh chân dung người dùng cung cấp",
       "stats": [
@@ -735,8 +735,8 @@
       "quote": "Môn đến, cả đội vững vàng.",
       "weapon": "Chuông Môn Giới ngân lên, mở một cánh cổng hồng và phóng xung lực xanh.",
       "passive": [
-        "Chuông Trấn Tâm",
-        "Mỗi 4 đòn trúng nhận khiên cá nhân; hồi nội tại 3 giây. Giá trị gốc: 6."
+        "Cửa Hứng Đạn",
+        "Sau 3 đòn thường từ địch đánh xa mà còn sống, nhận 5 năng lượng và cường hóa đòn kế tiếp 10% ATK trong 3 giây; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Lời Gọi Môn",
@@ -759,33 +759,33 @@
     {
       "id": "char_22",
       "name": "Đẳng Cấp Aura",
-      "role": "Pháp sư / kiểm soát",
-      "base": "frost",
+      "role": "Hỗ trợ / phát aura theo vị trí",
+      "base": "guardian",
       "look": "Pháp sư giữa long ảnh và đôi cánh ánh sáng; ảnh người dùng cung cấp",
       "stats": [
-        220,
-        16,
-        6,
-        435
+        265,
+        19,
+        8,
+        415
       ],
       "quote": "Một luồng Aura, một đòn quyết định.",
-      "weapon": "Trượng Long Quang dẫn ánh sáng chạy dọc đôi cánh, kết thành mũi nhọn thiên quang.",
+      "weapon": "Cánh Aura xoay phòng thân; phát aura hỗ trợ đồng minh trong tầm, không tự gây sát thương toàn sân.",
       "passive": [
-        "Tĩnh Tâm",
-        "Mỗi 4 đòn trúng làm chậm mục tiêu 1 giây; hồi nội tại 3 giây. Giá trị gốc: 12%."
+        "Đồng Đội Có Aura",
+        "Đồng minh khác trong 160 nhận +4% ATK và +4% tốc độ khi Aura còn sống. ATK làm tròn gần nhất, ít nhất +1. Rời tầm hoặc Aura bị hạ thì mất buff; nhiều Aura chỉ dùng mức cao nhất."
       ],
       "skill": [
-        "Aura Chấn Động",
-        "Mỗi 7 giây bắn đạn 120% ATK, tầm 260; đạn chạm làm chậm 15% trong 1 giây."
+        "Vòng Cánh Đồng Hành",
+        "Mỗi 7 giây tạo aura đi theo trong 3 giây, bán kính 160: +6% ATK cho đồng minh bên trong, gồm bản thân; tạo khiên 80% ATK cho người yếu nhất trong 180 và đánh 70% ATK nếu địch trong tầm vũ khí. Nhiều aura dùng mức cao nhất."
       ],
       "super": [
-        "Thiên Quang",
-        "Bắn đạn 240% ATK, tầm 300; làm chậm 20% trong 1,5 giây khi chạm."
+        "Thiên Quang Cộng Hưởng",
+        "Aura đi theo trong 4 giây, bán kính 200: +10% ATK và +8% tốc độ đánh cho đồng minh bên trong; cấp khiên 60% ATK cho người yếu nhất trong 180 và đánh 140% ATK nếu địch trong tầm vũ khí. Aura biến mất khi chủ bị hạ."
       ],
-      "weakness": "Cần giữ khoảng cách để tránh bị áp sát.",
+      "weakness": "Aura cần giữ khoảng cách với đồng đội; tách đội hình hoặc hạ nguồn aura để ngắt buff. Sát thương cá nhân thấp.",
       "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
       "vfx": "Long ảnh ánh bạc và cánh sáng xanh tím.",
-      "roleClass": "Kiểm soát",
+      "roleClass": "Hỗ trợ",
       "race": "Thực Linh",
       "tier": "T4",
       "weaponName": "Trượng Long Quang",
@@ -795,30 +795,30 @@
     {
       "id": "char_23",
       "name": "King Of RiseOn",
-      "role": "Đấu sĩ / cân bằng",
+      "role": "Đấu sĩ / kiểm soát tầm đánh",
       "base": "swordsman",
       "look": "Nhà vua hoạt hình đội vương miện RiseOn; ảnh người dùng cung cấp",
       "stats": [
         245,
-        18,
+        17,
         7,
         435
       ],
       "quote": "Cùng nhau đưa RiseOn lên đỉnh.",
-      "weapon": "Vương Kiếm RiseOn lướt qua chiến trường cùng một vệt sáng vàng và dấu ấn vương miện.",
+      "weapon": "Kiếm vương quyền nối dài bằng aura khi tung chiêu; tầm hình ảnh, va chạm và sát thương luôn khớp nhau.",
       "passive": [
-        "Khí Chất Nhà Vua",
-        "Mỗi 4 đòn trúng tăng sát thương đòn kế tiếp; hồi nội tại 3 giây. Giá trị gốc: 18%."
+        "Vương Quyền Vươn Xa",
+        "Mỗi 3 đòn thường trúng tăng 8 đơn vị tầm vũ khí trong 2 giây; hồi 5 giây, tối đa 5 lần/trận. Aura vũ khí có va chạm thật, không đánh toàn sân."
       ],
       "skill": [
-        "Vương Lệnh",
-        "Mỗi 7 giây đánh 130% ATK trong tầm vũ khí."
+        "Vương Kiếm Nối Dài",
+        "Mỗi 7 giây mở rộng tầm vũ khí thêm 12 đơn vị trong 3 giây và chém 110% ATK nếu địch nằm trong tầm mở rộng. Hết buff trở lại tầm cũ."
       ],
       "super": [
-        "RiseOn Tối Thượng",
-        "Đánh 280% ATK trong tầm vũ khí. Sức mạnh Super tăng sát thương."
+        "Lãnh Địa Vương Quyền",
+        "Mở rộng tầm vũ khí thêm 18 đơn vị trong 4 giây và chém 210% ATK. Vẫn cần địch trong tầm và có thể va chạm vũ khí; không xuyên khiên."
       ],
-      "weakness": "Không chuyên hóa vào chống chịu hay tầm xa.",
+      "weakness": "Tầm vũ khí chỉ tăng trong thời gian ngắn; né nhịp aura, đợi buff hết và cấu rỉa từ ngoài tầm. Khiên và va chạm vũ khí vẫn có tác dụng.",
       "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
       "vfx": "Vương miện vàng và vòng sáng cam.",
       "roleClass": "Đấu sĩ",
@@ -831,20 +831,20 @@
     {
       "id": "char_24",
       "name": "Thi Thánh Họ Mai",
-      "role": "Xạ thủ / hỗ trợ",
+      "role": "Xạ thủ / tích lực từ xa",
       "base": "ranger",
       "look": "Thi nhân áo trắng phong cách thủy mặc, cầm bút lông; ảnh người dùng cung cấp",
       "stats": [
-        215,
-        18,
+        205,
+        16,
         4,
         430
       ],
       "quote": "Một nét mực, một vần thơ.",
       "weapon": "Bút lông chiến đấu vẽ nét mực thành lưỡi cắt gọn, rồi viết đại tự khi tung Super.",
       "passive": [
-        "Thi Tứ",
-        "Mỗi 4 đòn trúng nhận thêm năng lượng; hồi nội tại 3 giây. Giá trị gốc: 3."
+        "Vần Thơ Giữ Khoảng",
+        "Mỗi 4 đòn thường trúng từ khoảng cách ít nhất 140 nhận 4 năng lượng; hồi 5 giây, tối đa 5 lần/trận."
       ],
       "skill": [
         "Mực Bay",
@@ -867,20 +867,20 @@
     {
       "id": "char_25",
       "name": "Công Tử Phú Thọ",
-      "role": "Đỡ đòn / đấu sĩ",
+      "role": "Hộ vệ / chuyển phòng thủ",
       "base": "guardian",
       "look": "Công tử áo khoác tối màu, sơ mi trắng và cà vạt; ảnh người dùng cung cấp",
       "stats": [
         295,
-        16,
+        15,
         11,
         385
       ],
       "quote": "Phong thái ung dung, ra đòn dứt khoát.",
       "weapon": "Trượng Gia Phong phát sáng vàng khi Công Tử ra đòn, như ấn tín của một gia tộc thịnh vượng.",
       "passive": [
-        "Gia Phong",
-        "Mỗi 4 đòn trúng nhận khiên cá nhân; hồi nội tại 3 giây. Giá trị gốc: 5."
+        "Chia Vốn Cứu Nguy",
+        "Một lần/trận dưới 40% HP mà còn sống: đồng minh khác yếu nhất trong 180 nhận 16 khiên trong 3 giây; nếu không có, tự nhận một nửa."
       ],
       "skill": [
         "Gia Trượng Khai Lộ",
@@ -903,31 +903,31 @@
     {
       "id": "char_26",
       "name": "Anh Fam De Phonk",
-      "role": "Nhạc sĩ hệ Phonk · Đấu sĩ hệ Gió tốc độ cao",
+      "role": "Sát thủ / tự giải chậm",
       "base": "assassin",
       "look": "Nghệ sĩ tăng tốc theo nhịp Phonk",
       "stats": [
-        220,
-        16,
-        5,
-        430
+        215,
+        18,
+        4,
+        570
       ],
       "quote": "Vào beat là không ai bắt kịp.",
       "weapon": "Bass Phonk",
       "passive": [
-        "Nhịp Gió",
-        "Nội tại chiến đấu cân bằng theo vai trò."
+        "Phonk Phá Trói",
+        "Mỗi 3 đòn thường trúng xóa chậm và tăng 8% tốc độ trong 2 giây; hồi 5 giây, tối đa 4 lần/trận. Không miễn khống chế."
       ],
       "skill": [
         "Drop Phonk",
-        "Kỹ năng tự động theo vai trò, hồi chiêu 7 giây."
+        "Mỗi 7 giây đánh 150% ATK trong tầm vũ khí."
       ],
       "super": [
         "Gió Xé Beat",
-        "Super theo vai trò, sát thương theo cấp rarity hiện tại."
+        "Đánh 320% ATK trong tầm vũ khí. Đổi độ bền lấy tốc độ và chí mạng."
       ],
       "weakness": "Sinh lực vừa phải, cần chọn vị trí giao tranh.",
-      "upgrade": "Tiến hóa ở cấp 3, 7 và 10; thẻ Rác tối đa Huyền thoại nếu chưa biến đổi.",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
       "vfx": "Hiệu ứng riêng theo chủ đề nhân vật.",
       "roleClass": "Đấu sĩ",
       "race": "Người Phố Hội",
@@ -939,31 +939,31 @@
     {
       "id": "char_27",
       "name": "Robot Da Đỏ",
-      "role": "Người máy hệ Hỏa · Đấu sĩ",
+      "role": "Đấu sĩ / chống vây cận chiến",
       "base": "berserker",
       "look": "Đấu sĩ người máy bọc giáp đỏ",
       "stats": [
-        220,
-        16,
-        5,
-        430
+        250,
+        18,
+        7,
+        420
       ],
       "quote": "Lõi nhiệt đã ổn định.",
       "weapon": "Nắm Đấm Lò Nhiệt",
       "passive": [
-        "Lõi Hỏa",
-        "Nội tại chiến đấu cân bằng theo vai trò."
+        "Lõi Nóng Phản Công",
+        "Sau 4 đòn thường nhận phải mà còn sống, để vùng lửa cố định bán kính 85 trong 2 giây, gây 20% ATK/giây; hồi 7 giây, tối đa 3 lần/trận."
       ],
       "skill": [
         "Phun Nhiệt",
-        "Kỹ năng tự động theo vai trò, hồi chiêu 7 giây."
+        "Mỗi 7 giây đánh 130% ATK trong tầm vũ khí."
       ],
       "super": [
         "Quá Tải Đỏ",
-        "Super theo vai trò, sát thương theo cấp rarity hiện tại."
+        "Đánh 280% ATK trong tầm vũ khí. Sức mạnh Super tăng sát thương."
       ],
       "weakness": "Sinh lực vừa phải, cần chọn vị trí giao tranh.",
-      "upgrade": "Tiến hóa ở cấp 3, 7 và 10; thẻ Rác tối đa Huyền thoại nếu chưa biến đổi.",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
       "vfx": "Hiệu ứng riêng theo chủ đề nhân vật.",
       "roleClass": "Đấu sĩ",
       "race": "Người Máy",
@@ -975,31 +975,31 @@
     {
       "id": "char_28",
       "name": "Người Máy Sịp Đỏ Phế Thải",
-      "role": "Người máy lỗi · Rác",
+      "role": "Hộ vệ / chống dồn đầu trận",
       "base": "guardian",
       "look": "Robot trắng hỏng với đầu trọc",
       "stats": [
-        220,
+        290,
         16,
-        5,
-        430
+        11,
+        375
       ],
       "quote": "Xin đừng tái chế tôi.",
       "weapon": "Cánh Tay Rơ Lỏng",
       "passive": [
-        "Lỏng Ốc",
-        "Nội tại chiến đấu cân bằng theo vai trò."
+        "Khởi Động Phế Liệu",
+        "Đầu trận nhận 12 khiên trong 6 giây; nếu có Tai Mèo biến hình thì khiên tăng 50%. Chỉ một lần/trận."
       ],
       "skill": [
         "Khởi Động Lỗi",
-        "Kỹ năng tự động theo vai trò, hồi chiêu 7 giây."
+        "Mỗi 7 giây đánh 110% ATK trong tầm vũ khí và tạo khiên bằng 3% máu tối đa."
       ],
       "super": [
         "Tắt Mở Khẩn Cấp",
-        "Super theo vai trò, sát thương theo cấp rarity hiện tại."
+        "Đánh 150% ATK trong tầm vũ khí và nhận khiên bằng 12% máu tối đa."
       ],
       "weakness": "Chỉ số khởi đầu thấp; tối đa Huyền thoại nếu chưa gắn vật phẩm hợp cạ.",
-      "upgrade": "Tiến hóa ở cấp 3, 7 và 10; thẻ Rác tối đa Huyền thoại nếu chưa biến đổi.",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
       "vfx": "Hiệu ứng riêng theo chủ đề nhân vật.",
       "roleClass": "Hộ vệ",
       "race": "Người Máy",
@@ -1011,31 +1011,31 @@
     {
       "id": "char_29",
       "name": "Wacom Hỏng Hóc",
-      "role": "Người máy bảng vẽ · Rác",
+      "role": "Xạ thủ / đổi nhịp kỹ năng",
       "base": "ranger",
       "look": "Bảng vẽ Wacom nứt vỡ",
       "stats": [
-        220,
+        205,
         16,
-        5,
-        430
+        4,
+        440
       ],
       "quote": "Nét cuối bị mất tín hiệu.",
       "weapon": "Bút Cảm Ứng Chập Mạch",
       "passive": [
-        "Nứt Màn Hình",
-        "Nội tại chiến đấu cân bằng theo vai trò."
+        "Nét Vẽ Nạp Lại",
+        "Sau kỹ năng, rút ngắn thời gian chờ đòn thường 12 tick và nhận 3 năng lượng; tối đa 4 lần/trận. Không bắn nhiều đòn trong một tick."
       ],
       "skill": [
         "Nét Vẽ Lệch",
-        "Kỹ năng tự động theo vai trò, hồi chiêu 7 giây."
+        "Mỗi 7 giây bắn đạn 140% ATK, tầm 260. Có thể né hoặc chặn đạn."
       ],
       "super": [
         "Tia Bút Cuối",
-        "Super theo vai trò, sát thương theo cấp rarity hiện tại."
+        "Bắn đạn 300% ATK, tầm 300. Sức mạnh Super tăng sát thương."
       ],
       "weakness": "Chỉ số khởi đầu thấp; tối đa Huyền thoại nếu chưa gắn vật phẩm hợp cạ.",
-      "upgrade": "Tiến hóa ở cấp 3, 7 và 10; thẻ Rác tối đa Huyền thoại nếu chưa biến đổi.",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
       "vfx": "Hiệu ứng riêng theo chủ đề nhân vật.",
       "roleClass": "Xạ thủ",
       "race": "Người Máy",
@@ -1047,31 +1047,31 @@
     {
       "id": "char_30",
       "name": "Chó Bóng Bay",
-      "role": "Linh vật bay · Rác",
+      "role": "Đấu sĩ / tận dụng nảy tường",
       "base": "guardian",
       "look": "Chó kết từ bóng bay vàng",
       "stats": [
-        220,
-        16,
-        5,
-        430
+        245,
+        18,
+        7,
+        440
       ],
       "quote": "Tôi bay được… nhưng hơi chóng mặt.",
       "weapon": "Đuôi Bóng Bay",
       "passive": [
-        "Bơm Hơi",
-        "Nội tại chiến đấu cân bằng theo vai trò."
+        "Bóng Nảy Lấy Hên",
+        "Nảy tường nhận 4 khiên trong 3 giây và cường hóa đòn thường kế tiếp thêm 12% ATK; hồi 6 giây, tối đa 4 lần/trận."
       ],
       "skill": [
         "Nảy Bóng",
-        "Kỹ năng tự động theo vai trò, hồi chiêu 7 giây."
+        "Mỗi 7 giây đánh 130% ATK trong tầm vũ khí."
       ],
       "super": [
         "Bóng Bay Bùng Nổ",
-        "Super theo vai trò, sát thương theo cấp rarity hiện tại."
+        "Đánh 280% ATK trong tầm vũ khí. Sức mạnh Super tăng sát thương."
       ],
       "weakness": "Chỉ số khởi đầu thấp; tối đa Huyền thoại nếu chưa gắn vật phẩm hợp cạ.",
-      "upgrade": "Tiến hóa ở cấp 3, 7 và 10; thẻ Rác tối đa Huyền thoại nếu chưa biến đổi.",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
       "vfx": "Hiệu ứng riêng theo chủ đề nhân vật.",
       "roleClass": "Hộ vệ",
       "race": "Linh Vật",
@@ -1079,6 +1079,114 @@
       "weaponName": "Đuôi Bóng Bay",
       "weaponCategory": "Vũ khí đặc trưng",
       "weaponTier": "T1"
+    },
+    {
+      "id": "char_31",
+      "name": "Ủn Đại Ca",
+      "role": "Xạ thủ / phóng xạ chống hồi phục",
+      "base": "ranger",
+      "look": "Đại ca áo đen giữa hào quang đỏ, tay đặt trên nút lệnh.",
+      "stats": [
+        210,
+        15,
+        4,
+        420
+      ],
+      "quote": "Một nét chì bạc, cả sân nhớ tên.",
+      "weapon": "Bút Chì Bạc bắn đầu đạn phóng xạ; đòn thường, kỹ năng và Super có đạn thật, có thể né và chặn.",
+      "passive": [
+        "Dư Chấn Phóng Xạ",
+        "Đòn thường trúng gắn 1 tầng phóng xạ trong 2 giây, tối đa 3 tầng từ mọi nguồn. Mỗi tầng gây 6% ATK/giây và giảm 8% hồi máu (tối đa 24%). Khiên và giáp chặn sát thương; không tự lan, nguồn chết thì ngừng gây sát thương."
+      ],
+      "skill": [
+        "Đạn Chì Nhiễm Xạ",
+        "Mỗi 7 giây bắn đạn phóng xạ 135% ATK, tầm 260; chỉ khi đạn trúng mới gắn thêm 1 tầng. Có thể né hoặc chặn."
+      ],
+      "super": [
+        "Mưa Phóng Xạ",
+        "Bắn đầu đạn 200% ATK, tầm 300. Khi trúng, nổ bán kính 100: địch khác chịu 45% ATK; các mục tiêu trúng nhận 2 tầng phóng xạ, tối đa 3 tầng. Không trúng thì không nổ."
+      ],
+      "weakness": "Mỏng, cần đạn trúng để tích phóng xạ. Chặn đạn, dùng khiên hoặc áp sát; rời vùng nổ để tránh lây tầng từ Super.",
+      "vfx": "Vòng mực đỏ, nét chì bạc và con dấu lệnh; đạn đỏ báo hướng rõ ràng.",
+      "roleClass": "Xạ thủ",
+      "race": "Người Phố Hội",
+      "tier": "T4",
+      "weaponName": "Bút Lệnh Bạc",
+      "weaponCategory": "Bút phép",
+      "weaponTier": "T4",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc."
+    },
+    {
+      "id": "char_32",
+      "name": "Bang Chủ Cái Bang",
+      "role": "Kiểm soát / chiếm vùng",
+      "base": "frost",
+      "look": "Bang chủ mũ đỏ, áo tím vàng, lá xanh và khí vàng xoay quanh.",
+      "stats": [
+        225,
+        14,
+        5,
+        425
+      ],
+      "quote": "Dép tổ ong, bước chân không ngán đường xa.",
+      "weapon": "Trúc Bổng Tổ Ong phóng sóng lá; chiêu đặt đại trận có vùng ảnh hưởng lớn để kiểm soát sân.",
+      "passive": [
+        "Giữ Đất Cái Bang",
+        "Đứng trong vùng chiêu đã kích hoạt của chính mình nhận 8 khiên trong 2 giây; hồi 6 giây, tối đa 4 lần/trận."
+      ],
+      "skill": [
+        "Trận Địa Tổ Ong",
+        "Mỗi 7 giây đặt vùng cố định tại địch trong 260, báo trước 0,5 giây; bán kính 120, tồn tại 3 giây, gây 30% ATK mỗi giây và làm chậm 12%. Rời vùng sẽ tránh các nhịp sau."
+      ],
+      "super": [
+        "Thiên Hạ Cái Bang",
+        "Đặt đại trận cố định trong tầm 300, báo trước 0,5 giây; bán kính 175, tồn tại 4 giây, gây 40% ATK mỗi giây và làm chậm 18%. Khiên, giải chậm và di chuyển ra khỏi vùng là counter."
+      ],
+      "weakness": "Đại trận đứng yên và báo trước 0,5 giây; di chuyển ra khỏi vùng, giải chậm hoặc dùng khiên. Mỗi Bang Chủ chỉ giữ được một vùng chiêu.",
+      "vfx": "Gậy trúc xanh, vòng lá vàng, dấu dép tổ ong lóe lên khi va chạm.",
+      "roleClass": "Kiểm soát",
+      "race": "Người Phố Hội",
+      "tier": "T4",
+      "weaponName": "Trúc Bổng Tổ Ong",
+      "weaponCategory": "Gậy",
+      "weaponTier": "T4",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc."
+    },
+    {
+      "id": "char_33",
+      "name": "Sóc Jake",
+      "role": "Hộ vệ / tự hồi và tiếp tế",
+      "base": "guardian",
+      "look": "Sóc đầu bếp lông cam, khăn đỏ, cầm nĩa và đùi gà giữa hào quang vàng.",
+      "stats": [
+        300,
+        15,
+        12,
+        370
+      ],
+      "quote": "Ăn đủ bữa rồi mới ra trận!",
+      "weapon": "Nĩa Bếp HB đánh cận chiến; kỹ năng và Super ném đồ ăn gây sát thương, đồng thời chia phần hồi phục trong tầm.",
+      "passive": [
+        "Chia Phần Ăn",
+        "Mỗi 4 đòn thường trúng hồi 1% HP tối đa của Jake cho bản thân và một đồng minh khác yếu nhất trong 160; hồi 6 giây, tối đa 5 lần/trận. Không có đồng đội thì chỉ hồi cho bản thân."
+      ],
+      "skill": [
+        "Ném Phần Ăn",
+        "Mỗi 7 giây ném đồ ăn 100% ATK vào địch trong 180 và hồi 3% HP tối đa của Jake cho đồng minh yếu nhất trong 180. Phần tấn công cần đạn trúng; không có địch vẫn có thể cứu người bị thương."
+      ],
+      "super": [
+        "Đại Tiệc Hộ Vệ",
+        "Ném đại tiệc 160% ATK vào địch trong 180; hồi 6% HP tối đa của Jake cho đồng minh yếu nhất trong 180 và tự tạo khiên bằng 8% HP trong 3 giây. Không hồi sinh hay hồi vượt mức; phóng xạ giảm hồi phục."
+      ],
+      "weakness": "Di chuyển chậm; cần đồng minh trong 180 để tiếp tế. Phóng xạ giảm hồi máu, còn đạn đồ ăn có thể né và chặn.",
+      "vfx": "Huy hiệu xanh HB, vòng lửa bếp vàng và hạt sáng món ăn.",
+      "roleClass": "Hộ vệ",
+      "race": "Thú Nhân",
+      "tier": "T4",
+      "weaponName": "Nĩa Bếp HB",
+      "weaponCategory": "Nĩa",
+      "weaponTier": "T4",
+      "upgrade": "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc."
     }
   ],
   "items": [
@@ -1089,7 +1197,7 @@
       "rarity": 1,
       "price": 10,
       "effectName": "Đúng Giờ Có Thưởng",
-      "description": "Mỗi 10 giây nhận 6 năng lượng, tối đa 6 lần mỗi trận.",
+      "description": "Mỗi 10 giây nhận 5 năng lượng, tối đa 6 lần mỗi trận.",
       "quote": "“Không quên chấm công, chỉ quên né chiêu.”",
       "icon": "⏱",
       "modifiers": {
@@ -1097,7 +1205,7 @@
       },
       "affinity": "char_09",
       "affinityName": "Sếp Cũng Phải Quẹt",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng nhận 6 năng lượng; hồi 7 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_02",
@@ -1106,7 +1214,7 @@
       "rarity": 1,
       "price": 10,
       "effectName": "Tản Nhiệt Gánh Team",
-      "description": "Một lần mỗi trận, còn sống dưới 40% HP: nhận 33 khiên trong 3 giây.",
+      "description": "Một lần mỗi trận, còn sống dưới 40% HP: nhận 29 khiên trong 3 giây.",
       "quote": "“Nhiệt độ ổn định, đội hình cũng đứng vững.”",
       "icon": "🖥",
       "modifiers": {
@@ -1114,7 +1222,7 @@
       },
       "affinity": "char_01",
       "affinityName": "RTX Hạ Nhiệt Tới 45",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Còn sống dưới 40% HP: thêm 18 khiên trong 3 giây, một lần/trận."
     },
     {
       "id": "item_03",
@@ -1131,7 +1239,7 @@
       },
       "affinity": "char_12",
       "affinityName": "Mượn Vai Vẫn Chắc Bụng",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 15% ATK trong 3 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_04",
@@ -1149,7 +1257,7 @@
       },
       "affinity": "char_17",
       "affinityName": "Vừa Ship Vừa Gặm",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng tăng 9% tốc độ trong 2 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_05",
@@ -1168,7 +1276,7 @@
       },
       "affinity": "char_02",
       "affinityName": "Bê Tông Hết Chậm",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng nhận 11 khiên trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_06",
@@ -1187,7 +1295,7 @@
       },
       "affinity": "char_14",
       "affinityName": "Kiếm Kim Cương Gia Hộ",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super, đòn thường kế tiếp thêm 18% ATK trong 3 giây; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_07",
@@ -1196,7 +1304,7 @@
       "rarity": 1,
       "price": 10,
       "effectName": "Mát Lạnh Tới Công Chuyện",
-      "description": "Mỗi 4 đòn trúng làm chậm 18% trong 1 giây; hồi 3 giây.",
+      "description": "Mỗi 4 đòn trúng làm chậm 16% trong 1 giây; hồi 3 giây.",
       "quote": "“Một miếng mát lòng, một đòn mát chân.”",
       "icon": "🍦",
       "modifiers": {
@@ -1204,7 +1312,7 @@
       },
       "affinity": "char_19",
       "affinityName": "Mát Lạnh Đúng Dịp Tết",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Kỹ năng làm chậm địch gần nhất 11% trong 1 giây, tầm 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_08",
@@ -1213,7 +1321,7 @@
       "rarity": 2,
       "price": 16,
       "effectName": "Claude Dự Báo Điện",
-      "description": "Sau Super, đòn thường kế tiếp thêm 34% ATK trong tối đa 4 giây.",
+      "description": "Sau Super, đòn thường kế tiếp thêm 27% ATK trong tối đa 4 giây.",
       "quote": "“Claude phân tích xong: mục tiêu sắp bị giật điện.”",
       "icon": "🤖",
       "modifiers": {
@@ -1221,7 +1329,7 @@
       },
       "affinity": "char_03",
       "affinityName": "AI Dự Báo Điện",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super hoàn 6 năng lượng; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_09",
@@ -1230,7 +1338,7 @@
       "rarity": 3,
       "price": 24,
       "effectName": "FPS Cao, Tay Vẫn Auto",
-      "description": "Sau Super, tăng 12% ATK trong 3 giây. Các nguồn khác nhau cộng dồn.",
+      "description": "Sau Super, tăng 9% ATK trong 3 giây. Các nguồn khác nhau cộng dồn.",
       "quote": "“Máy gánh đồ họa, bạn gánh niềm tin.”",
       "icon": "🖥",
       "modifiers": {
@@ -1239,7 +1347,7 @@
       },
       "affinity": "char_16",
       "affinityName": "Render Xong Trước Deadline",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 17% ATK trong 3 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_10",
@@ -1257,7 +1365,7 @@
       },
       "affinity": "char_13",
       "affinityName": "Mâm Quả Thức Tỉnh",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng hồi thêm 8 HP cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_11",
@@ -1266,7 +1374,7 @@
       "rarity": 2,
       "price": 16,
       "effectName": "Trang Bìa Mát Mắt",
-      "description": "Va chạm thân làm chậm 16% trong 1 giây; hồi 4 giây.",
+      "description": "Va chạm thân làm chậm 13% trong 1 giây; hồi 4 giây.",
       "quote": "“Lật một trang, đối thủ chậm lại một nhịp.”",
       "icon": "📖",
       "modifiers": {
@@ -1275,7 +1383,7 @@
       },
       "affinity": "char_04",
       "affinityName": "Trang Bìa Đón Lộc",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng làm chậm 14% trong 1 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_12",
@@ -1292,7 +1400,7 @@
       },
       "affinity": "char_06",
       "affinityName": "Bánh Khảo Nâng Khiên",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng thêm 11 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_13",
@@ -1301,7 +1409,7 @@
       "rarity": 1,
       "price": 10,
       "effectName": "Nến Sáng, Húc Mạnh",
-      "description": "Hạ gục đối thủ hồi 14 HP; không vượt máu tối đa.",
+      "description": "Hạ gục đối thủ hồi 12 HP; không vượt máu tối đa.",
       "quote": "“Thổi nến xong, cả sân nghe tiếng va chạm.”",
       "icon": "🎂",
       "modifiers": {
@@ -1309,7 +1417,7 @@
       },
       "affinity": "char_10",
       "affinityName": "Bánh Kem Húc Mạnh",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng tăng 9% tốc độ trong 2 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_14",
@@ -1326,7 +1434,7 @@
       },
       "affinity": "char_08",
       "affinityName": "Nem Chua Tăng Độc",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng đốt thêm 2 HP/giây trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_15",
@@ -1343,7 +1451,7 @@
       },
       "affinity": "char_11",
       "affinityName": "Cờ Cổ Vũ Giải Chậm",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng xóa chậm và miễn chậm 32 tick; 30 tick = 1 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_16",
@@ -1352,7 +1460,7 @@
       "rarity": 2,
       "price": 16,
       "effectName": "Da Giòn Combo Giòn",
-      "description": "Mỗi 4 đòn trúng, đòn kế tiếp thêm 24% ATK.",
+      "description": "Mỗi 4 đòn trúng, đòn kế tiếp thêm 19% ATK.",
       "quote": "“Da giòn rụm, nhịp đánh rôm rả.”",
       "icon": "🦆",
       "modifiers": {
@@ -1361,7 +1469,7 @@
       },
       "affinity": "char_18",
       "affinityName": "Thực Đơn Có Món Quay",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 19% ATK trong 3 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_17",
@@ -1370,7 +1478,7 @@
       "rarity": 2,
       "price": 16,
       "effectName": "Nằm Khâu Nhục, Đứng Khó Gục",
-      "description": "Một lần mỗi trận, còn sống dưới 30% HP: hồi 22 HP.",
+      "description": "Một lần mỗi trận, còn sống dưới 30% HP: hồi 17 HP.",
       "quote": "“Mềm ở miếng thịt, cứng ở tinh thần.”",
       "icon": "🥘",
       "modifiers": {
@@ -1379,7 +1487,7 @@
       },
       "affinity": "char_07",
       "affinityName": "Courage Khó Gục",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Còn sống dưới 40% HP: xóa chậm và miễn chậm 52 tick, một lần/trận."
     },
     {
       "id": "item_18",
@@ -1388,7 +1496,7 @@
       "rarity": 2,
       "price": 16,
       "effectName": "Ý Tưởng Cứu Nguy",
-      "description": "Một lần mỗi trận, còn sống dưới 25% HP: nhận 38 khiên và 11% tốc độ trong 2 giây.",
+      "description": "Một lần mỗi trận, còn sống dưới 25% HP: nhận 30 khiên và 9% tốc độ trong 2 giây.",
       "quote": "“Một ý tưởng lóe lên đúng lúc hiểm nghèo.”",
       "icon": "💡",
       "modifiers": {
@@ -1396,7 +1504,7 @@
       },
       "affinity": "char_15",
       "affinityName": "Ý Tưởng Cứu Nguy",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Còn sống dưới 40% HP: đồng minh yếu nhất trong 180 nhận 19 khiên trong 3 giây, một lần/trận."
     },
     {
       "id": "item_19",
@@ -1413,7 +1521,7 @@
       },
       "affinity": "char_05",
       "affinityName": "Proby Bắt Bài Bổ Sung",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng hồi 8 HP cho bản thân; tối đa 3 lần/trận."
     },
     {
       "id": "item_20",
@@ -1422,7 +1530,7 @@
       "rarity": 2,
       "price": 16,
       "effectName": "Thế Cờ Vườn Hồng",
-      "description": "Sau Super, đồng minh yếu nhất trong 180 nhận 11 khiên trong 3 giây.",
+      "description": "Sau Super, đồng minh yếu nhất trong 180 nhận 9 khiên trong 3 giây.",
       "quote": "“Tướng đi một nước, hoa nở cả bàn.”",
       "icon": "♟",
       "modifiers": {
@@ -1430,7 +1538,7 @@
       },
       "affinity": "char_20",
       "affinityName": "Khai Cuộc Vườn Hồng",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super hồi thêm 12 HP cho đồng minh yếu nhất trong 180; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_21",
@@ -1439,7 +1547,7 @@
       "rarity": 2,
       "price": 14,
       "effectName": "Mở Lối Thần Kì",
-      "description": "Mỗi lần tung Super hoàn lại 8 năng lượng. Không tự kích hoạt Super liên tiếp.",
+      "description": "Mỗi lần tung Super hoàn lại 6 năng lượng. Không tự kích hoạt Super liên tiếp.",
       "quote": "“Mở cửa đúng lúc, xoay chuyển thế trận.”",
       "icon": "🚪",
       "modifiers": {
@@ -1448,7 +1556,7 @@
       },
       "affinity": "char_21",
       "affinityName": "Môn Mở Đúng Lối",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng cấp 12 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_22",
@@ -1468,7 +1576,7 @@
       },
       "affinity": "char_22",
       "affinityName": "Aura Đồng Điệu",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super xóa chậm và miễn chậm 54 tick; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_23",
@@ -1477,7 +1585,7 @@
       "rarity": 3,
       "price": 18,
       "effectName": "Chính Danh Vương Miện",
-      "description": "Sau Super, nhận 12 khiên trong 3 giây.",
+      "description": "Sau Super, nhận 9 khiên trong 3 giây.",
       "quote": "“Vương miện nặng, lời thề còn nặng hơn.”",
       "icon": "👑",
       "modifiers": {
@@ -1486,7 +1594,7 @@
       },
       "affinity": "char_23",
       "affinityName": "Ngai Vàng RiseOn",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super, đòn thường kế tiếp thêm 19% ATK trong 3 giây; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_24",
@@ -1504,7 +1612,7 @@
       },
       "affinity": "char_24",
       "affinityName": "Thi Vị Bổ Dưỡng",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng nhận 9 khiên trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_25",
@@ -1523,7 +1631,7 @@
       },
       "affinity": "char_25",
       "affinityName": "Gia Tài Phú Quý",
-      "affinityDescription": "Đúng người hợp cạ: +8% hiệu lực chỉ số và hiệu ứng. Bonus tính theo cấp vật phẩm."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng thêm 12 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_26",
@@ -1540,7 +1648,7 @@
       },
       "affinity": "char_26",
       "affinityName": "Gió Của Nhạc Sư",
-      "affinityDescription": "Khi gắn đúng nhân vật, hiệu lực được tăng."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng tăng 12% tốc độ trong 2 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_27",
@@ -1553,11 +1661,12 @@
       "quote": "Đổ đúng bình, lõi nóng lên ngay lập tức.",
       "icon": "✦",
       "modifiers": {
-        "burn": 2
+        "burn": 2,
+        "attack": 1
       },
       "affinity": "char_27",
       "affinityName": "Nhiên Liệu Lõi Đỏ",
-      "affinityDescription": "Khi gắn đúng nhân vật, hiệu lực được tăng."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 16% ATK trong 3 giây; tối đa 3 lần/trận. Kỹ năng và Super còn gây đốt."
     },
     {
       "id": "item_28",
@@ -1566,7 +1675,7 @@
       "rarity": 1,
       "price": 10,
       "effectName": "Fu Di Thức Tỉnh",
-      "description": "Tăng 24 tốc độ di chuyển.",
+      "description": "Tăng 25 tốc độ di chuyển.",
       "quote": "Tai mèo bắt sóng, bản lĩnh mới thức tỉnh.",
       "icon": "✦",
       "modifiers": {
@@ -1574,7 +1683,7 @@
       },
       "affinity": "char_28",
       "affinityName": "Fu Di Thức Tỉnh",
-      "affinityDescription": "Khi gắn đúng nhân vật, hiệu lực được tăng."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Biến hình Fu Di, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau kỹ năng nhận 9 khiên trong 2 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_29",
@@ -1591,7 +1700,7 @@
       },
       "affinity": "char_29",
       "affinityName": "Siêu Chiến Binh Wacom",
-      "affinityDescription": "Khi gắn đúng nhân vật, hiệu lực được tăng."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Biến hình Wacom, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau Super, đòn kế tiếp thêm 13% ATK; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_30",
@@ -1600,7 +1709,7 @@
       "rarity": 1,
       "price": 10,
       "effectName": "Skyrocket Dog",
-      "description": "Tăng 28 tốc độ di chuyển.",
+      "description": "Tăng 29 tốc độ di chuyển.",
       "quote": "Châm ngòi một cái, cún bay vút lên trời.",
       "icon": "✦",
       "modifiers": {
@@ -1608,7 +1717,61 @@
       },
       "affinity": "char_30",
       "affinityName": "Skyrocket Dog",
-      "affinityDescription": "Khi gắn đúng nhân vật, hiệu lực được tăng."
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Biến hình Skyrocket Dog, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau kỹ năng xóa chậm và miễn chậm 34 tick, tối đa 2 lần/trận."
+    },
+    {
+      "id": "item_31",
+      "name": "Bút Chì Bạc",
+      "slot": "accessory",
+      "rarity": 2,
+      "price": 16,
+      "effectName": "Chữ Ký Đại Ca",
+      "description": "Tăng sát thương và tốc độ nạp Super; Bút Chì Bạc không xuyên khiên hay đạn chặn.",
+      "quote": "Nét nhỏ thôi, uy lực vừa đủ.",
+      "icon": "✎",
+      "modifiers": {
+        "attack": 2,
+        "charge": 10
+      },
+      "affinity": "char_31",
+      "affinityName": "Chữ Ký Đại Ca",
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 19% ATK trong 3 giây; tối đa 3 lần/trận. Chặn đạn để phá nhịp Đại Ca."
+    },
+    {
+      "id": "item_32",
+      "name": "Dép Tổ Ong",
+      "slot": "accessory",
+      "rarity": 2,
+      "price": 16,
+      "effectName": "Bước Chân Bang Chủ",
+      "description": "Tăng tốc độ và máu; cần áp sát để phát huy hiệu quả.",
+      "quote": "Đi muôn nơi, vẫn nhớ đôi dép này.",
+      "icon": "♧",
+      "modifiers": {
+        "speed": 25,
+        "hp": 18
+      },
+      "affinity": "char_32",
+      "affinityName": "Bước Chân Bang Chủ",
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng xóa chậm và miễn chậm 52 tick; tối đa 3 lần/trận. Khiên và giữ khoảng cách khắc chế áp sát."
+    },
+    {
+      "id": "item_33",
+      "name": "Huy Hiệu HB",
+      "slot": "accessory",
+      "rarity": 2,
+      "price": 16,
+      "effectName": "Bếp Trưởng Danh Dự",
+      "description": "Tăng máu và sức mạnh Super; hồi phục vẫn bị giới hạn bởi máu tối đa.",
+      "quote": "Huy hiệu sáng lên khi đồng đội cần một bữa nóng.",
+      "icon": "✦",
+      "modifiers": {
+        "hp": 18,
+        "superPower": 10
+      },
+      "affinity": "char_33",
+      "affinityName": "Bếp Trưởng Danh Dự",
+      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super cấp thêm 16 khiên trong 3 giây cho đồng minh yếu nhất trong 180; hồi 12 giây, tối đa 2 lần/trận."
     }
   ],
   "bonds": [
@@ -1942,6 +2105,36 @@
       "name": "Đội Hình Bùng Nhịp",
       "description": "Anh Fam De Phonk tung Super → cả ba nhận 8 khiên trong 3 giây.",
       "size": 3
+    },
+    {
+      "id": "P22",
+      "members": [
+        "char_31",
+        "char_09"
+      ],
+      "name": "Đại Ca Chốt Lệnh",
+      "description": "Một người tung Super: người còn lại nhận 10 khiên trong 3 giây. Tối đa 3 lần/trận, hồi chung 8 giây, cả hai sống và cách nhau ≤240.",
+      "size": 2
+    },
+    {
+      "id": "P23",
+      "members": [
+        "char_32",
+        "char_12"
+      ],
+      "name": "Bổng Kiếm Giang Hồ",
+      "description": "Một người tung Super: người còn lại nhận đòn thường kế tiếp thêm 16% ATK trong 3 giây. Tối đa 3 lần/trận, hồi chung 8 giây, cả hai sống và cách nhau ≤240.",
+      "size": 2
+    },
+    {
+      "id": "P24",
+      "members": [
+        "char_33",
+        "char_18"
+      ],
+      "name": "Bếp Trưởng Lẩu Nóng",
+      "description": "Một người tung Super: người còn lại hồi 8 HP. Tối đa 3 lần/trận, hồi chung 8 giây, cả hai sống và cách nhau ≤240.",
+      "size": 2
     }
   ],
   "groups": [
@@ -2087,7 +2280,15 @@
         "char_21",
         "char_23",
         "char_24",
-        "char_25"
+        "char_25",
+        "char_31",
+        "char_32",
+        "char_33",
+        "char_26",
+        "char_27",
+        "char_28",
+        "char_29",
+        "char_30"
       ],
       "two": "Code Chạy Rồi: ở giây 10 và 20, mỗi thành viên đang sống nhận 3 năng lượng.",
       "three": "Năng lượng ở mỗi mốc tăng thành 5/người.",
@@ -2120,7 +2321,15 @@
         "char_22",
         "char_23",
         "char_24",
-        "char_25"
+        "char_25",
+        "char_31",
+        "char_32",
+        "char_33",
+        "char_26",
+        "char_27",
+        "char_28",
+        "char_29",
+        "char_30"
       ],
       "required": [
         "char_14"
@@ -2159,15 +2368,23 @@
         "char_22",
         "char_23",
         "char_24",
-        "char_25"
+        "char_25",
+        "char_31",
+        "char_32",
+        "char_33",
+        "char_26",
+        "char_27",
+        "char_28",
+        "char_29",
+        "char_30"
       ],
-      "required": [
+      "two": "Sếp Chốt Đơn hoặc Đẳng Cấp Aura tung Super: đồng đội khác nhận +8% ATK và +10% tốc độ đánh trong 3 giây.",
+      "three": "Có 3 thành viên sống: đồng đội khác nhận +12% ATK và +15% tốc độ đánh trong 3 giây.",
+      "limit": "Cần ít nhất một Sếp Chốt Đơn hoặc Đẳng Cấp Aura còn sống và một thành viên khác nhau. Hai hạt nhân cùng dùng chung 2 lượt/trận, hồi 12 giây, cách nhau ≤280; người tung không tự nhận.",
+      "requiredAny": [
         "char_09",
         "char_22"
-      ],
-      "two": "Sếp Chốt Đơn và Đẳng Cấp Aura là hai hạt nhân bắt buộc. Khi Sếp đánh trúng bằng Mời Vào Họp hoặc tung Super, hai đồng đội còn lại được +8% ATK và +10% tốc độ đánh trong 3 giây.",
-      "three": "Hai đồng đội còn lại được +12% ATK và +15% tốc độ đánh trong 3 giây.",
-      "limit": "Bắt buộc Sếp Chốt Đơn và Đẳng Cấp Aura cùng còn sống với ít nhất một thành viên khác. 2 lần/round, hồi chung 12 giây; các thành viên sống cách nhau ≤280. Hai hạt nhân không tự nhận hiệu ứng."
+      ]
     },
     {
       "id": "G13",
@@ -2197,7 +2414,15 @@
         "char_22",
         "char_23",
         "char_24",
-        "char_25"
+        "char_25",
+        "char_31",
+        "char_32",
+        "char_33",
+        "char_26",
+        "char_27",
+        "char_28",
+        "char_29",
+        "char_30"
       ],
       "requiredAny": [
         "char_03",
@@ -2215,9 +2440,45 @@
         "char_29",
         "char_30"
       ],
-      "two": "Các thành viên nhận +4% tốc độ.",
-      "three": "Khi một thành viên tung Super, cả nhóm nhận 8 khiên.",
-      "limit": "Tối đa 1 lần mỗi 10 giây."
+      "two": "Thành viên sống +4% tốc độ; khi một người tung Super, cả hội nhận 8 khiên trong 3 giây.",
+      "three": "Thành viên sống +6% tốc độ; khiên sau Super tăng thành 12/người trong 3 giây.",
+      "limit": "2 lần/trận, hồi chung 12 giây, thành viên sống cách nhau ≤280."
+    },
+    {
+      "id": "G15",
+      "name": "Nhịp Phonk Lõi Đỏ",
+      "members": [
+        "char_26",
+        "char_27",
+        "char_16"
+      ],
+      "two": "Sau Super, đồng đội khác nhận 4 năng lượng.",
+      "three": "Năng lượng tăng thành 6/người.",
+      "limit": "2 lần/trận, hồi chung 12 giây; các thành viên sống cách nhau ≤280."
+    },
+    {
+      "id": "G16",
+      "name": "Giang Hồ Có Bữa Nóng",
+      "members": [
+        "char_31",
+        "char_32",
+        "char_33"
+      ],
+      "two": "Sau Super, đồng đội khác nhận 10 khiên trong 3 giây.",
+      "three": "Khiên tăng thành 14/người trong 3 giây.",
+      "limit": "2 lần/trận, hồi chung 12 giây; các thành viên sống cách nhau ≤280."
+    },
+    {
+      "id": "G17",
+      "name": "Bếp Trưởng Và Nồi Lẩu",
+      "members": [
+        "char_33",
+        "char_18",
+        "char_13"
+      ],
+      "two": "Sau Super, đồng đội khác hồi 6 HP.",
+      "three": "Lượng hồi tăng thành 8 HP/người.",
+      "limit": "2 lần/trận, hồi chung 12 giây; cách nhau ≤280, không cứu đòn chết người."
     }
   ]
 }

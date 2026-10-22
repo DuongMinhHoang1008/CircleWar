@@ -19,7 +19,7 @@ describe("character VFX atlas", () => {
     expect(silhouettes.size).toBe(ROSTER.filter(c => c.base === "ranger" || c.base === "frost").length);
   });
   it("has complete animated skill and super rows for all five new characters", () => {
-    for (const id of ["char_26", "char_27", "char_28", "char_29", "char_30"]) for (const kind of ["skill", "super"]) {
+    for (const id of ["char_26", "char_27", "char_28", "char_29", "char_30", "char_31", "char_32", "char_33"]) for (const kind of ["skill", "super"]) {
       const frames = cells.filter(cell => Number(cell[2]) === rows[`${id}:${kind}`] * spec.size);
       expect(frames, `${id}:${kind}`).toHaveLength(8);
       expect(new Set(frames.map(frame => frame[3])).size).toBeGreaterThan(1);

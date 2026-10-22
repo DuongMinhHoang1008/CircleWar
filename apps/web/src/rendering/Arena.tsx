@@ -540,7 +540,7 @@ export function Arena({
             ];
             const w = texture.width,
               h = texture.height,
-              sourceCrop = crops[Number(f.characterId.slice(-2)) - 1],
+              sourceCrop = ({ char_31: [.23, 0, .56], char_32: [.25, .06, .55], char_33: [.32, .03, .48] } as Record<string, number[]>)[f.characterId] || crops[Number(f.characterId.slice(-2)) - 1],
               side = Math.min(w, h),
               crop = sourceCrop || [(w - side) / (2 * w), (h - side) / (2 * h), side / w];
             const size = Math.min(
@@ -821,6 +821,8 @@ export function Arena({
             burst("healBurst", target.x, target.y - target.radius * 1.7, e.tick, 1.05);
           } else if (e.type === "shield") {
             burst("shieldBurst", target.x, target.y, e.tick, 1.05);
+          } else if (e.type === "radiation" || e.type === "impact:radiation") {
+            burst("characterSuper", target.x, target.y, e.tick, e.type === "impact:radiation" ? .9 : .4, 0, "char_31");
           } else if (e.type.startsWith("passive:")) {
             burst(personalAnimatedFx[source.characterId || ""]?.skill ? "characterSkill" : "passiveBurst", source.x, source.y, e.tick, 0.75, 0, source.characterId);
           } else if (e.type.startsWith("skill:")) {
@@ -838,8 +840,8 @@ export function Arena({
             burst("bond", source.x, source.y, e.tick, 0.85);
           } else if (e.type.startsWith("group:")) {
             burst("group", source.x, source.y, e.tick, 0.85);
-          } else if (e.type.startsWith("item:")) {
-            const itemId = CHARACTER_IDS[Number(e.type.slice(5)) - 1];
+          } else if (e.type.startsWith("item:") || e.type.startsWith("affinity:")) {
+            const itemId = e.type.startsWith("affinity:") ? source.characterId : CHARACTER_IDS[Number(e.type.slice(5)) - 1];
             burst(
               itemId ? "characterItem" : "utility",
               target.x,
@@ -910,6 +912,10 @@ export function Arena({
             sprite.width = size;
             sprite.height = size;
             sprite.rotation = state.tick * 0.012;
+            if (z.territory) {
+              const warning = state.tick < (z.start || 0);
+              g.circle(z.x * sx, z.y * sy, (z.radius || 0) * 100 * sx).fill({ color: 0x8ddd77, alpha: warning ? .035 : .055 }).stroke({ color: warning ? 0xffe08d : 0x98e889, width: warning ? 2 : 1.5, alpha: .65 });
+            }
           }
           sprite.alpha = z.trap ? 0.2 : z.super ? 0.24 : 0.14;
         });
@@ -978,6 +984,7 @@ export function Arena({
                 e.type.startsWith("skill:") ||
                 e.type.startsWith("bond:") ||
                 e.type.startsWith("item:") ||
+                e.type.startsWith("affinity:") ||
                 e.type.startsWith("group:")),
           )
           .slice(-10);
@@ -1006,7 +1013,7 @@ export function Arena({
                           ? "Ghép Đôi Vá Nóng"
                           : FRIEND_GROUPS.find((g) => g.id === e.type.slice(6))
                               ?.name || "Hội bạn")
-                      : e.type === "item:01"
+                      : e.type.startsWith("affinity:") ? "✦ HỢP CẠ!" : e.type === "item:01"
                         ? "TÍCH!"
                         : e.type === "item:15"
                           ? "MÁT RỒI!"
@@ -1039,14 +1046,19 @@ export function Arena({
                 config.teams.findIndex((t) => t.id === f.team) % colors.length
               ];
           labels[i].visible = f.hp > 0;
-          let burning = f.burnUntil > state.tick, buffed = false;
+          if (f.hp > 0 && f.characterId === "char_22") {
+            g.circle(x, y, 160 * 100 * sx).stroke({ color: 0xc8b3ff, width: 1.2, alpha: .3 });
+          }
+          let burning = f.burnUntil > state.tick, buffed = false, radiated = false;
           for (const buff of f.buffs) {
             if (buff.until <= state.tick) continue;
-            if (buff.kind === "burnDot" || buff.kind === "dot") burning = true;
+            if (buff.kind === "burnDot" || buff.kind === "dot" || buff.kind === "soupDot") burning = true;
+            if (buff.kind === "radiation") { burning = true; radiated = true; }
             if (buff.kind === "attack" || buff.kind === "bonus" || buff.kind === "electric" || buff.kind === "envelope" || buff.kind === "haste") buffed = true;
           }
           for (let slot = 0; slot < 3; slot++) {
             const icon = statusNodes[i][slot];
+            icon.tint = slot === 0 && radiated ? 0xbfea60 : 0xffffff;
             icon.visible = f.hp > 0 && !options.current.low && (slot === 0 ? burning : slot === 1 ? f.slowUntil > state.tick : buffed);
             if (!icon.visible) continue;
             const frames = animatedFx[slot === 0 ? "burnLoop" : slot === 1 ? "slowLoop" : "passiveBurst"];
@@ -1120,8 +1132,8 @@ export function Arena({
               const length = Math.max(1, reach - r * 0.7);
               const angle = ((f.angle + w * 16) * Math.PI) / 16;
               if (number >= 26) {
-                // The new assets are square silhouettes, not narrow staves.
-                // Fill their width while keeping the outer tip at weaponReach.
+                // Custom #26–33 silhouettes point up, with the grip at the bottom.
+                // Rotate from that axis so the tip follows the physical weapon reach.
                 weapon.height = length / 0.95;
                 weapon.width = weapon.height * (f.classId === "ranger" || f.classId === "frost" ? 0.98 : 1.12);
                 weapon.rotation = angle + Math.PI / 2;

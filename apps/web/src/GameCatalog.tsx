@@ -24,6 +24,7 @@ import {
 import type { Fighter } from "../../../packages/battle-engine/src/types";
 import weaponAtlas from "./rendering/weapon-atlas.json";
 import { cardEvolution } from "../../../packages/shared/src/progression";
+import { affinityDescription } from "../../../packages/shared/src/affinity";
 export type Inspect = {
   kind: "character" | "item";
   id: string;
@@ -34,7 +35,7 @@ export type Inspect = {
   actions?: { label: string; run: () => void; disabled?: boolean }[];
 };
 export const avatar = (id: string, transformed = false) =>
-  `${import.meta.env.BASE_URL}avatars/${id}${transformed ? "-evolved" : ""}.png`;
+  `${import.meta.env.BASE_URL}avatars/${id}${id === "char_31" ? "-v2" : transformed ? "-evolved" : ""}.png`;
 const rarityLabel = (tier: string) => ({ RAC: "Rác", T1: "Thường", T2: "Hiếm", T3: "Sử thi", T4: "Huyền thoại", GOD: "GOD" }[tier] || tier);
 const rarityClass = (tier: string | number) => {
   if (tier === "RAC") return "tier-rac";
@@ -50,14 +51,14 @@ const concise = (text: string | undefined, max = 96) => {
 export const weaponAtlasUrl = () =>
   `${import.meta.env.BASE_URL}weapons/weapon-atlas-v2.png`;
 export const weaponArtUrl = (id: string) =>
-  Number(id.slice(-2)) >= 21 && Number(id.slice(-2)) <= 30
+  Number(id.slice(-2)) >= 21 && Number(id.slice(-2)) <= ROSTER.length
     ? `${import.meta.env.BASE_URL}weapons/${id}.svg`
     : weaponAtlasUrl();
 export const weaponFrame = (id: string) =>
   weaponAtlas.frames[(Number(id.slice(-2)) - 1) % weaponAtlas.frames.length];
 export function WeaponArt({ id }: { id: string }) {
   const frame = weaponFrame(id);
-  const custom = Number(id.slice(-2)) >= 21 && Number(id.slice(-2)) <= 30;
+  const custom = Number(id.slice(-2)) >= 21 && Number(id.slice(-2)) <= ROSTER.length;
   return (
     <svg
       className="weapon-art"
@@ -258,6 +259,9 @@ const itemPhotoIds = new Set([
   "item_28",
   "item_29",
   "item_30",
+  "item_31",
+  "item_32",
+  "item_33",
 ]);
 export function ItemSprite({
   id,
@@ -770,7 +774,7 @@ export function InfoPopup({
                 <b>
                   {character(it.affinity)?.name} · {it.affinityName}
                 </b>
-                <p>{humanText(it.affinityDescription)}</p>
+                <p>{humanText(affinityDescription(it.id, itemMultiplier(it.id, itemLevel, true)))}</p>
               </div>
             </button>
             {info?.loadout && (
