@@ -114,8 +114,10 @@ try {
   );
   assert.equal(atlas.status(), 200);
   assert.equal(((await atlas.text()).match(/<svg x=/g) || []).length, 64);
-  await page.waitForFunction(() => performance.getEntriesByType("resource")
-    .filter((entry) => /\/art-v26\/(weapons|objects|constructs|vfx)\.webp$/.test(entry.name)).length === 4);
+  // Pixi may both fetch and decode the same image; track distinct successful
+  // responses instead of assuming exactly four Resource Timing entries.
+  for (let n = 0; n < 100 && kitAssets.size < 4; n++)
+    await new Promise((resolve) => setTimeout(resolve, 100));
   assert.equal(kitAssets.size, 4, "Arena must load all generated v26 atlases");
   mkdirSync("reports", { recursive: true });
   await page.screenshot({ path: "reports/deployment-v26.png", fullPage: true });

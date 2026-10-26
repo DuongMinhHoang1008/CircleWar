@@ -6,14 +6,15 @@ Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không 
 
 - Website: https://riseon-ultimate-battle.pages.dev
 - API: https://circle-chaos.circle-chaos.workers.dev
-- Engine: `chaos-integer-v24`, giao diện v`2026.10.21.4`, triển khai ngày 21/10/2026.
-- Worker version: `9d0ed1c9-007e-48d0-a019-2e8aff398bcb`.
-- Pages deployment: https://04fcc027.riseon-ultimate-battle.pages.dev.
-- Bản này gồm 33 nội tại riêng, bộ chiêu của 5 Huyền thoại, ảnh Ủn mới, vũ khí #31–33 cầm dọc, Pack Boss/tỉ lệ, hợp cạ và ải không scale chỉ số ẩn. Popup cập nhật và thưởng đi ải/multiplayer dùng cùng modal căn giữa viewport.
-- Trước deploy: 168/168 test pass; typecheck, frontend build và Worker dry-run pass. Audit offline 6.864 trận cân bằng và 4.720 trận campaign đều qua giới hạn/counter; 52 trường hợp ải thường đều có counter cùng cấp. Đây không phải win rate người chơi thật.
-- UI local: `reward-popups-browser.ts` kiểm tra popup cập nhật/thưởng trên desktop, mobile, landscape; ải thường, boss 1/3 pack, kho đầy, focus/Escape và không cộng thưởng trùng. Callback Arena và trạng thái FINISHED là fixture; profile được lưu bằng Worker local thật.
-- Production smoke sau deploy: `profile-sync-smoke.ts` pass health/CORS, SAVE kết quả 100 pack trên hồ sơ thử riêng, retry idempotent, INIT cũ không ghi đè thưởng, release .4 và atlas 256 frame. Báo cáo `reports/deployment-2026-10-21.json`.
-- `deployment-smoke.ts` pass trên origin production: popup căn giữa desktop/mobile, khôi phục hồ sơ, SVG vũ khí đúng trục, mô phỏng sân vuông/20 giây, màu đội và phòng/WebSocket thực; không page error. Phòng thử được rời sau kiểm tra. Báo cáo `reports/production-browser-v24.json`; không chạy load test production.
+- Engine: `chaos-integer-v26`, giao diện v`2026.10.26.2`, triển khai ngày 26/10/2026 từ commit `22f3199` trên `main`.
+- Worker version: `01048018-b4bf-4666-b351-67998b7c9467`.
+- Pages deployment: https://da06bd89.riseon-ultimate-battle.pages.dev.
+- Bản này gồm 36 bộ chiến đấu (33 nhân vật và ba dạng biến hình), trạng thái và hai trục tăng trưởng riêng; đồng bộ đi ải, thống kê và bảo hiểm Pack Boss. Siêu Chiến Binh Wacom được giảm sức mạnh; Super Ủn ảnh hưởng toàn map và đồng minh. Đạn/vùng/trụ/đệ tồn tại theo lifetime sau khi chủ chết; Hộp Quà tự gọi đệ mỗi 4 giây. Bốn atlas WebP sprite/VFX mới được tích hợp.
+- Trước deploy: 211/211 tests pass; typecheck, frontend build và Worker dry-run pass. Audit offline 6.864 trận không kẹt; đây không phải win rate người chơi thật. Chi tiết tại `TESTING.md`, `docs/CHARACTER_KITS_V26.md` và `docs/ART_V26.md`.
+- Production profile smoke pass: health/CORS, SAVE kết quả 100 pack trên hồ sơ thử riêng, retry idempotent, INIT cũ không ghi đè thưởng, release .2 và atlas cũ 256 frame. Báo cáo `reports/deployment-2026-10-26.json`.
+- Browser smoke trên origin production pass: popup căn giữa desktop/mobile, khôi phục hồ sơ, mô phỏng sân vuông/20 giây, màu đội, cả bốn atlas v26 tải 200 và phòng/WebSocket thực; không page error. Phòng thử được rời sau kiểm tra. Báo cáo `reports/production-browser-v26.json`, ảnh `reports/deployment-v26.png`.
+- Worker production hoàn tất một trận thử riêng hai người: engine v26, 3.551 tick, 31 replay chunk gzip có checksum đúng và các frame trạng thái/chỉ số. Hai tài khoản thử đã rời phòng. Báo cáo `reports/production-engine-v26.json`; không chạy load test production.
+- Vòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng; giữ hồ sơ/bộ sưu tập, chủ phòng mở trận mới qua REMATCH. Test kiểm tra chuyển trạng thái và mở lại vòng v26. Replay format 1 đã hoàn thành vẫn được đọc từ frame lưu sẵn; không xác nhận tương thích mọi bản replay lịch sử.
 
 Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:
 
@@ -30,7 +31,7 @@ $env:TEST_API = $env:VITE_API_URL
 npx tsx tests/integration/deployment-smoke.ts
 ```
 
-Smoke test tạo hồ sơ/phòng thử riêng, kiểm tra CORS, kết nối lại hồ sơ, WebSocket, đấu trường vuông, thời gian thu 20 giây và atlas VFX 64 frame. Phòng thử được rời sau kiểm tra. `npm run build` chỉ dry-run Worker; cần chạy `deploy:worker` riêng như trên.
+Smoke test tạo hồ sơ/phòng thử riêng, kiểm tra CORS, kết nối lại hồ sơ, WebSocket, đấu trường vuông, thời gian thu 20 giây, atlas VFX cũ và bốn atlas v26. Phòng thử được rời sau kiểm tra. `npm run build` chỉ dry-run Worker; cần chạy `deploy:worker` riêng như trên.
 
 ## Cloudflare Workers
 
@@ -85,10 +86,10 @@ Benchmark Node local 60 nhân vật được lưu trong `reports/benchmark.json`
 
 Wrangler local persist trong `.wrangler` dưới project Worker; không commit. Phòng lobby/finished không thay đổi gameplay trong 24h được cleanup bằng Alarm. Replay chỉ giữ vòng gần nhất để giới hạn storage. Session hết hạn sau bảy ngày. `GET /api/rooms/CODE/export` với Bearer token xuất public room snapshot và replay hiện tại; không chứa token hash hoặc session người khác. Đây là export dữ liệu chơi, chưa phải full provider migration tool.
 
-Sau khi thay engine version, không ghi đè engine của phòng đang mô phỏng. Cần kết thúc phòng cũ trước hoặc triển khai cơ chế giữ engine cũ. Theo dõi lỗi quota, các lần Alarm retry và divergence trước khi mở rộng.
+Sau khi thay engine version, không ghi đè engine của phòng đang mô phỏng. `advance` kết thúc vòng không tương thích mà không trao thưởng; chủ phòng có thể mở trận mới, không cần chạy engine mới trên state cũ. Theo dõi lỗi quota, các lần Alarm retry và divergence trước khi mở rộng.
 
 ## Replay format 1 rollout
 
 Replay frames are stored as gzip-compressed, base64 values under per-room keys scoped to game, round and chunk index. Room state and chunk writes commit in one Durable Object storage transaction. The replay metadata endpoint omits seed, official result and terminal simulation state; authenticated clients request chunks individually. The current application has no live battle action that can use information from later replay chunks, but the frames reveal the winner before playback ends.
 
-Completed old-format replays use a deterministic compatibility path; old active simulations begin recording from their first state after upgrade. Compatibility with preserved historical Durable Object records has not been measured by the deployment smoke test. Deploy Worker and frontend together. Confirm staging CPU, storage, alarms and quota behavior before increasing load.
+Completed old-format replays use a deterministic compatibility path, which is not guaranteed across engine versions. Persisted simulations with a different engine version are cancelled without settlement; same-engine simulations that predate recording begin capture at their first available state. Compatibility with every historical Durable Object record has not been measured by the deployment smoke test. Deploy Worker and frontend together. Confirm staging CPU, storage, alarms and quota behavior before increasing load.

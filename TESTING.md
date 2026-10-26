@@ -3,6 +3,7 @@
 ## v26 — 26/10/2026: 33 nhân vật và ba dạng biến hình
 
 - Release 2026.10.26.2, engine chaos-integer-v26. Chi tiết tại [CHARACTER_KITS_V26.md](docs/CHARACTER_KITS_V26.md).
+- Đã deploy production 26/10: browser/API/CORS, hồ sơ và WebSocket pass; bốn atlas v26 tải 200, không page error. Một trận Worker hai người hoàn tất 3.551 tick, 31 chunk gzip có checksum đúng. Báo cáo production-browser-v26.json, production-engine-v26.json và deployment-2026-10-26.json; không phải load test production.
 - 211/211 tests pass; typecheck, Vite build và Worker dry-run pass. Có kiểm tra từng Super/checkpoint của 36 kit, hai trục tăng trưởng, proc riêng, thân/đạn, friendly fire, bẫy, đệ, boomerang, cổ phiếu, stun và Paralyzed trong chuỗi Super. Phòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng, giữ bộ sưu tập và có thể mở trận mới; không chạy v26 trên state v24.
 - Worker local: 20 người chơi, replay ghi sẵn/nén và WebSocket reconnect pass (reports/integration.json). Đây là kiểm tra local.
 - Art được tạo bằng built-in image_gen, bốn atlas WebP đã kiểm tra alpha/tải 200; chi tiết và prompt tại [ART_V26.md](docs/ART_V26.md). Replay giây 6 với chủ trụ/đệ đã chết vẫn có các construct hoạt động, không lỗi JS/WebGL trên desktop/mobile: reports/combat-v26-lifetime-browser.json và ảnh lifetime.

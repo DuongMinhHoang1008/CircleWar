@@ -1,0 +1,18 @@
+{
+  "time": "2026-10-26T10:38:34.862Z",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "status": "PASS",
+  "engine": "chaos-integer-v26",
+  "players": 2,
+  "format": 1,
+  "ticks": 3551,
+  "replayChunks": 31,
+  "checks": [
+    "production simulation completes",
+    "v26 engine",
+    "compressed chunk checksums",
+    "status and combat stat frames",
+    "isolated test room cleanup"
+  ]
+}

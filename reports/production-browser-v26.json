@@ -1,0 +1,17 @@
+{
+  "version": "2026.10.26.2",
+  "time": "2026-10-26T10:40:00.491Z",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "centeredPopup": true,
+  "verticalWeapons": true,
+  "profileRestored": true,
+  "websocket": true,
+  "generatedAtlases": [
+    "constructs",
+    "objects",
+    "vfx",
+    "weapons"
+  ],
+  "errors": []
+}
