@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { campaignEncounter, campaignPackReward, campaignBossPackReward, campaignStats } from "../../packages/shared/src/campaign";
+import { CAMPAIGN_TEAMS, campaignEncounter, campaignPackReward, campaignBossPackReward, campaignStats } from "../../packages/shared/src/campaign";
 import { computeStats, type Loadout } from "../../packages/shared/src/balance";
 import { createBattle, debugConfig, stepBattle, calculateStateHash } from "../../packages/battle-engine/src/index";
 
@@ -11,7 +11,7 @@ describe("campaign encounters", () => {
       if (stage % 5 === 0) continue;
       const encounter = campaignEncounter(stage, 3);
       const ids = encounter.loadouts.map(l => l.characterId!);
-      expect(ids.some(id => previous.includes(id)), `stage ${stage}`).toBe(false);
+      expect(ids.join(","), `stage ${stage}`).not.toBe(previous.join(","));
       expect(new Set(ids).size).toBe(3);
       expect(encounter).toEqual(campaignEncounter(stage, 3));
       ids.forEach(id => seen.add(id));
@@ -28,13 +28,13 @@ describe("campaign encounters", () => {
         expect(loadout.level).toBeLessThanOrEqual(10);
         expect(loadout.equipment.length).toBeLessThanOrEqual(1);
       }
-      expect(encounter.counter.length).toBeGreaterThan(10);
+      expect(encounter.strategy.length).toBeGreaterThan(10);
     }
   });
-  it("creates one enlarged boss with stronger persistent stats and scales it for 1–3 opponents", () => {
+  it("creates one enlarged commander and two escorts with ordinary card stats", () => {
     for (const squadSize of [1, 2, 3]) {
       const boss = campaignEncounter(5, squadSize);
-      expect(boss.loadouts).toHaveLength(1);
+      expect(boss.loadouts).toHaveLength(3);
       const config = debugConfig(2);
       const hero: Loadout = { characterId: "char_01", classId: "guardian", level: 1, equipment: [] };
       config.teams = [{ id: "player", loadouts: Array.from({ length: squadSize }, () => hero) }, { id: "enemy", loadouts: boss.loadouts }];
@@ -46,11 +46,25 @@ describe("campaign encounters", () => {
       expect(enemy.stats.hp).toBeGreaterThan(computeStats(boss.loadouts[0]).hp);
       expect(enemy.stats.attack).toBeGreaterThan(computeStats(boss.loadouts[0]).attack);
       expect(enemy.stats.mass).toBeGreaterThan(computeStats(boss.loadouts[0]).mass);
+      for (const escort of state.fighters.filter(f => f.team === "enemy" && f.slot > 0)) {
+        expect(escort.boss).toBeUndefined();
+        expect(escort.radius).toBe(1700);
+        expect(escort.baseStats).toEqual(computeStats(boss.loadouts[escort.slot]));
+      }
       const originalAttack = enemy.baseStats.attack;
       stepBattle(state);
       expect(enemy.baseStats.attack).toBe(originalAttack);
       expect(enemy.radius).toBe(2800);
       expect(state.fighters.filter(f => f.team === "player").every(f => !f.boss && f.radius === 1700)).toBe(true);
+    }
+  });
+  it("has 729 unique linked combinations and prefers advanced synergies after stage 30", () => {
+    expect(CAMPAIGN_TEAMS).toHaveLength(729);
+    expect(new Set(CAMPAIGN_TEAMS.map(team => team.ids.join(","))).size).toBe(729);
+    expect(CAMPAIGN_TEAMS.every(team => team.links > 0 && new Set(team.ids).size === 3)).toBe(true);
+    for (let stage = 31; stage < 200; stage++) {
+      const encounter = campaignEncounter(stage, 3);
+      expect(encounter.links >= 2 || encounter.fullGroup).toBe(true);
     }
   });
   it("replays deterministically and leaves ordinary PvP stats unchanged", () => {

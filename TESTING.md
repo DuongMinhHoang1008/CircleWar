@@ -1,5 +1,29 @@
 # Kiểm thử
 
+## v26 — 26/10/2026: 33 nhân vật và ba dạng biến hình
+
+- Release 2026.10.26.2, engine chaos-integer-v26. Chi tiết tại [CHARACTER_KITS_V26.md](docs/CHARACTER_KITS_V26.md).
+- 211/211 tests pass; typecheck, Vite build và Worker dry-run pass. Có kiểm tra từng Super/checkpoint của 36 kit, hai trục tăng trưởng, proc riêng, thân/đạn, friendly fire, bẫy, đệ, boomerang, cổ phiếu, stun và Paralyzed trong chuỗi Super. Phòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng, giữ bộ sưu tập và có thể mở trận mới; không chạy v26 trên state v24.
+- Worker local: 20 người chơi, replay ghi sẵn/nén và WebSocket reconnect pass (reports/integration.json). Đây là kiểm tra local.
+- Art được tạo bằng built-in image_gen, bốn atlas WebP đã kiểm tra alpha/tải 200; chi tiết và prompt tại [ART_V26.md](docs/ART_V26.md). Replay giây 6 với chủ trụ/đệ đã chết vẫn có các construct hoạt động, không lỗi JS/WebGL trên desktop/mobile: reports/combat-v26-lifetime-browser.json và ảnh lifetime.
+- reports/combat-v26-browser.json: 36 ca hash Node/Chrome khớp, không lỗi JS/render; replay fixture gồm 12 nhân vật, hai construct, vùng và đạn riêng. Không tràn ngang ở 390px; ảnh combat-v26-arena-desktop/mobile.png đã được xem kiểm tra. Fixture dùng Super đầy và HP cao để kiểm tra hình ảnh, không dùng đo cân bằng.
+- reports/combat-v26-benchmark.json: 2–60 nhân vật đều kết thúc; mẫu 60 nhân vật 763 tick, khoảng 488 ms wall time trong Node khi đang chạy audit, cao nhất 27 đạn/4 construct/54 vùng. Không phải số đo GPU mobile hoặc CPU Cloudflare.
+- Các báo cáo balance-initial/second/third/fourth/fifth/sixth và lifetime-initial là các lượt hiệu chỉnh lịch sử. Dùng báo cáo combat-v26-balance-audit cho kết quả sau cùng; không suy ra win-rate người chơi thật từ seed cố định. Có thể đặt biến môi trường BALANCE_REPORT khi chạy audit để giữ báo cáo theo phiên bản.
+
+- Audit cuối: 6.864 trận, không kẹt; mọi card và build hợp cạ đều có counter trong mẫu. Bare duel tối đa 75%, đội tối đa 73%; build hợp cạ tối đa 77%. Đây là seed cố định, không bảo đảm mọi đội hình có sức mạnh ngang nhau. Hỗ trợ vẫn yếu hơn trong đấu đơn và phụ thuộc đội hình.
+
+## v25 — 26/10/2026: trạng thái, hướng bắn và đồng bộ ngoài combat
+
+- `npm test`: **184/184 pass**. `npm run build`: TypeScript, Vite production và Worker dry-run pass; vẫn có cảnh báo bundle lớn như bản trước.
+- Hợp đồng và giới hạn cân bằng tại [COMBAT_V25.md](docs/COMBAT_V25.md). Các kết quả v24 bên dưới là lịch sử, không dùng làm số đo cân bằng cho engine mới.
+- Kiểm thử mới kiểm tra Poison 5 tầng, Burn không stack, DoT sau khi nguồn chết, Blessing/giảm hồi phục, Paralyzed/cooldown/phần dư xoay, Frozen/di chuyển, checkpoint và replay; hướng bắn quét qua mục tiêu và chống bắn liên tục.
+- Thống kê có kiểm thử khử trùng event/frame, bảo toàn kill/liên kết khi VFX burst, giới hạn 200 bản ghi, lỗi quota và dữ liệu hỏng. Pack Boss kiểm tra bảo hiểm thứ 50, Sử thi không reset và không trừ pack khi hết T4 khả dụng.
+- `reports/combat-v25-balance-sample.json`: 132 trận đổi phía, không có trận kẹt, tối đa 1.882 tick trong mẫu. Chỉ là kiểm tra vận hành với hai kit tham chiếu, chưa là audit cân bằng toàn roster.
+- `reports/combat-v25-browser.json`: Chrome desktop/mobile không page error; Huyền thoại bảo hiểm thật, bộ đếm round-trip Worker, lịch sử trận đi ải hoàn tất, reload, xuất JSON, không ghi trận thoát giữa chừng. Ảnh giao diện và JSON xuất có tiền tố `reports/combat-v25-analytics-`.
+- `npm run test:integration`: 20 người trên Worker local, request mở pack trùng chỉ xử lý một lần, chunk replay/hash, field trạng thái/chỉ số mới và WebSocket reconnect. Fixture đã sửa đúng luồng `START` khóa round đầu trực tiếp.
+- Chỉ kiểm tra local; không push/deploy trong lần cập nhật này.
+- `reports/combat-v25-benchmark.json`: 2/10/20/40/60 nhân vật đều kết thúc; mẫu 60 nhân vật mất khoảng 590 ms wall time cho 1.213 tick trên Node khi máy đang chạy các kiểm tra khác. Không quy đổi số đo này thành hiệu năng GPU mobile hoặc CPU Cloudflare.
+
 ## v24 — 21/10/2026: 33 nội tại riêng và 5 bộ chiêu Huyền thoại
 
 - `npm test`: 168/168 pass, gồm 33 nội tại thực, cooldown/giới hạn lượt/checkpoint, aura theo vị trí, tăng tầm vật lý, phóng xạ, vùng chiêu báo trước và đồ ăn hồi phục.

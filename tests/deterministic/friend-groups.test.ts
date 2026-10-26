@@ -139,7 +139,7 @@ it("preserves the expanded groups, exclusions and required anchors", () => {
     expect(FRIEND_GROUPS.find((g) => g.id === "G12")?.members).toContain(id);
   expect(character("char_07")?.look).toContain("Courage");
   expect(character("char_07")?.race).toBe("Thú Nhân");
-  expect(character("char_07")?.weapon).toContain("không phải râu");
+  expect(character("char_07")?.weapon).toContain("né");
   expect(
     availableGroups([{ characterId: "char_01" }, { characterId: "char_01" }]),
   ).toEqual([]);
@@ -160,7 +160,7 @@ it("2k4 counts distinct alive members, grants only two clock pulses and drops fr
   expect(s.groups["a:G01"].uses).toBe(1);
   expect(s.fighters[0].stats.speed).toBe(
     Math.floor(
-      (Math.floor((s.fighters[0].baseStats.speed * 105) / 100) * 106) / 100,
+      (s.fighters[0].baseStats.speed * 106) / 100,
     ),
   );
   s.tick = 600;
@@ -173,7 +173,7 @@ it("2k4 counts distinct alive members, grants only two clock pulses and drops fr
   beforeCharacterTick(s);
   expect(s.fighters[0].stats.speed).toBe(
     Math.floor(
-      (Math.floor((s.fighters[0].baseStats.speed * 110) / 100) * 104) / 100,
+      (s.fighters[0].baseStats.speed * 104) / 100,
     ),
   );
   s.tick = 900;
@@ -187,7 +187,7 @@ it("RiseOn shields only the partner and obeys shared cooldown, range and source 
     partner = s.fighters[1];
   s.tick = 1;
   beforeCharacterTick(s);
-  f.skillReady = 0;
+  f.energy = 100;
   characterCombat(s);
   expect(
     s.events.some(
@@ -197,29 +197,29 @@ it("RiseOn shields only the partner and obeys shared cooldown, range and source 
   expect(s.groups["a:G02"].uses).toBe(1);
   s.tick = 2;
   beforeCharacterTick(s);
-  f.skillReady = 0;
+  f.energy = 100;
   characterCombat(s);
   expect(s.groups["a:G02"].uses).toBe(1);
   s.tick = 250;
   partner.x = 1000;
   beforeCharacterTick(s);
-  f.skillReady = 0;
+  f.energy = 100;
   characterCombat(s);
   expect(s.groups["a:G02"].uses).toBe(1);
   partner.x = 51000;
   partner.hp = 0;
   s.tick = 500;
   beforeCharacterTick(s);
-  f.skillReady = 0;
+  f.energy = 100;
   characterCombat(s);
   expect(s.groups["a:G02"].uses).toBe(1);
 });
-it("Hoàng tử 34 activates its link from a skill and grants both shields", () => {
+it("Hoàng tử 34 activates its link from a Super and grants both shields", () => {
   const s = team("G03", ["char_02", "char_10"]),
     [f, partner, enemy] = s.fighters;
   s.tick = 1;
   beforeCharacterTick(s);
-  f.skillReady = 0;
+  f.energy = 100;
   characterCombat(s);
   expect(s.groups["a:G03"].uses).toBe(1);
   expect(

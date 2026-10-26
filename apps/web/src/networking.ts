@@ -28,7 +28,7 @@ export interface Identity {
   code: string;
 }
 export const defaultApi =
-  import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8787" : "");
+  import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "http://127.0.0.1:8787" : "https://circle-chaos.circle-chaos.workers.dev");
 
 // Older workers hashed frames before JSON serialization. An undefined value in
 // an array was hashed as an empty slot there, but is sent as null to clients.

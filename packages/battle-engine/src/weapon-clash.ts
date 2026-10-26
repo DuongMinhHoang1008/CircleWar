@@ -1,5 +1,6 @@
 import type { BattleState, Fighter } from "./types";
-import { DIRECTIONS, div, UNIT } from "./math";
+import { DIRECTIONS, div, UNIT, random } from "./math";
+import { retainCombatEvents } from "./events";
 import { capsuleHit } from "./physics";
 import { weaponCount, weaponReach } from "./weapons";
 
@@ -18,7 +19,14 @@ export function reverseWeaponSpin(f: Fighter, tick: number) {
 
 export function rotateWeaponAngle(f: Fighter, multiplier = 1) {
   const direction = f.memory.spinDirection || 1;
-  f.angle = (f.angle + f.stats.rotation * multiplier * direction + 32) % 32;
+  const rate = (f.memory.spinRate || 100) * (f.memory.statusAttackRate || 100);
+  const progress =
+    (f.memory.spinProgress || 0) + f.stats.rotation * multiplier * rate;
+  const steps = div(progress, 10000);
+  f.memory.previousAngle = f.angle;
+  f.memory.spinSteps = steps;
+  f.memory.spinProgress = progress % 10000;
+  f.angle = (f.angle + steps * direction + 32) % 32;
 }
 
 function segment(f: Fighter, weapon: number, reach: number) {
@@ -94,9 +102,9 @@ export function resolveWeaponClashes(s: BattleState) {
       if ((a.cooldowns[key] || 0) > s.tick) continue;
       let touched = false;
       for (let aw = 0; aw < weaponCount(a) && !touched; aw++) {
-        const as = segment(a, aw, weaponReach(s, a));
+        const as = segment(a, aw, weaponReach(s, a, aw));
         for (let bw = 0; bw < weaponCount(b); bw++) {
-          if (segmentsTouch(as, segment(b, bw, weaponReach(s, b)))) {
+          if (segmentsTouch(as, segment(b, bw, weaponReach(s, b, bw)))) {
             touched = true;
             break;
           }
@@ -105,6 +113,22 @@ export function resolveWeaponClashes(s: BattleState) {
       if (!touched) continue;
       a.cooldowns[key] = s.tick + CLASH_COOLDOWN;
       b.cooldowns[`clash:${a.id}`] = s.tick + CLASH_COOLDOWN;
+      const phaseA =
+        a.characterId === "char_23" &&
+        (a.superUntil > s.tick || random(s) % 100 < 15);
+      const phaseB =
+        b.characterId === "char_23" &&
+        (b.superUntil > s.tick || random(s) % 100 < 15);
+      if (phaseA || phaseB) {
+        s.events.push({
+          tick: s.tick,
+          type: "kit:phase",
+          source: phaseA ? a.id : b.id,
+          target: phaseA ? b.id : a.id,
+          amount: 0,
+        });
+        continue;
+      }
       const firstClashA = !isClashProtected(a, s.tick),
         firstClashB = !isClashProtected(b, s.tick);
       a.memory.clashTick = s.tick;
@@ -130,5 +154,5 @@ export function resolveWeaponClashes(s: BattleState) {
       });
     }
   }
-  s.events = s.events.slice(-120);
+  retainCombatEvents(s);
 }

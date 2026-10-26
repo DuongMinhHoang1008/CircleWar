@@ -1,0 +1,32 @@
+{
+  "engine": "chaos-integer-v26",
+  "chromiumNodeMatches": 36,
+  "errors": [],
+  "qaErrors": [],
+  "mobileOverflow": false,
+  "rendered": {
+    "constructs": 3,
+    "zones": 3,
+    "projectiles": 3,
+    "frames": 241
+  },
+  "atlases": [
+    {
+      "url": "objects.webp",
+      "status": 200
+    },
+    {
+      "url": "constructs.webp",
+      "status": 200
+    },
+    {
+      "url": "weapons.webp",
+      "status": 200
+    },
+    {
+      "url": "vfx.webp",
+      "status": 200
+    }
+  ],
+  "note": "36 full-roster/form cross-runtime hashes matched in this run. Fixture replay uses real engine snapshots with full starting Super bars and high HP to inspect constructs/fields/projectiles."
+}

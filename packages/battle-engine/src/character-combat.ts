@@ -14,19 +14,37 @@ import type { BattleState, Fighter } from "./types";
 import { div, normalize, UNIT, DIRECTIONS, random } from "./math";
 import { capsuleHit } from "./physics";
 import { safeBounds } from "./bounds";
-import { roundTempo } from "./pacing";
+
 import { itemMultiplier } from "../../shared/src/balance";
-import { CHARACTER_BALANCE } from "../../shared/src/combat-balance";
 import { ITEM_AFFINITY, type AffinityTrigger } from "../../shared/src/affinity";
-import { CHARACTER_PASSIVES, LEGENDARY_KITS, type PassiveTrigger } from "../../shared/src/character-abilities";
+import { kitGrowth } from "../../shared/src/character-kits";
 import {
-  isRanged,
-  weaponCount,
-  weaponReach,
-  RANGED_ATTACK_RANGE,
-  RANGED_SKILL_RANGE,
-  RANGED_SUPER_RANGE,
-} from "./weapons";
+  applyKitStats,
+  kitAura,
+  kitIncoming,
+  kitNormalHit,
+  kitSuper,
+  kitShoot,
+  kitTick,
+  kitContact,
+  kitKnockback,
+  kitImpulse,
+  tickKitProjectiles,
+  tickKitFields,
+  tickConstructs,
+  kitMeleeConstructs,
+  type KitCombatServices,
+} from "./kit-combat";
+import {
+  applyStatus,
+  clearStatus,
+  statusPower,
+  statusDamage,
+  attackCooldown,
+  healingRate,
+} from "./statuses";
+import { retainCombatEvents } from "./events";
+import { isRanged, weaponCount, weaponReach } from "./weapons";
 import {
   isClashProtected,
   reverseWeaponSpin,
@@ -36,11 +54,10 @@ import {
 const no = (f: Fighter) => Number(f.characterId?.slice(-2) || 0);
 const superValue = (f: Fighter, value: number) =>
   div(value * f.stats.superPower, 100);
-// Late-round damage ramps must outpace recovery so defensive mirrors can finish.
-const recoveryValue = (f: Fighter, value: number) =>
-  div(value * Math.min(150, f.stats.superPower), 100);
-const has = (f: Fighter, n: number) => f.equipment.includes(CATALOG_ITEMS[n - 1].id);
-const affinity = (f: Fighter, n: number) => CATALOG_ITEMS[n - 1].affinity === f.characterId;
+const has = (f: Fighter, n: number) =>
+  f.equipment.includes(CATALOG_ITEMS[n - 1].id);
+const affinity = (f: Fighter, n: number) =>
+  CATALOG_ITEMS[n - 1].affinity === f.characterId;
 const itemValue = (f: Fighter, n: number, value: number) => {
   const id = CATALOG_ITEMS[n - 1].id;
   return Math.max(
@@ -71,8 +88,14 @@ function nearest(
     if (t.hp <= 0 || (ally ? t.team !== f.team : t.team === f.team)) continue;
     const d = distance(f, t);
     if (d > rangeSquared) continue;
-    const healthOrder = weak && target ? t.hp * target.stats.hp - target.hp * t.stats.hp : 0;
-    if (!target || healthOrder < 0 || (healthOrder === 0 && (d < closest || (d === closest && t.id < target.id)))) {
+    const healthOrder =
+      weak && target ? t.hp * target.stats.hp - target.hp * t.stats.hp : 0;
+    if (
+      !target ||
+      healthOrder < 0 ||
+      (healthOrder === 0 &&
+        (d < closest || (d === closest && t.id < target.id)))
+    ) {
       target = t;
       closest = d;
     }
@@ -90,6 +113,24 @@ function buff(
   ticks: number,
   source = f.id,
 ) {
+  const owner = s.fighters[source] || f;
+  if (kind === "burnDot" || kind === "soupDot" || kind === "dot") {
+    applyStatus(
+      s,
+      owner,
+      f,
+      kind === "dot" ? "poison" : "burn",
+      kind === "soupDot"
+        ? Math.max(1, div(owner.stats.attack * value, 100))
+        : value,
+      ticks,
+    );
+    return;
+  }
+  if (kind === "attack" && source > -1000) {
+    applyStatus(s, owner, f, "rage", value, ticks);
+    return;
+  }
   const existing = f.buffs.find((b) => b.kind === kind && b.source === source);
   if (existing) {
     existing.value = value;
@@ -115,8 +156,14 @@ function shield(
 }
 function heal(s: BattleState, source: Fighter, f: Fighter, n: number) {
   if (f.hp <= 0) return 0;
-  const radiation = Math.min(3, f.buffs.filter(b => b.kind === "radiation" && b.until > s.tick && s.fighters[b.source]?.hp > 0).reduce((sum, b) => sum + b.value, 0));
-  const amount = Math.max(0, Math.min(div(n * (100 - radiation * LEGENDARY_KITS.char_31.radiationWound), 100), f.stats.hp - f.hp));
+  const fatigue = Math.max(35, 100 - Math.max(0, div(s.tick - 1800, 90)) * 3);
+  const amount = Math.max(
+    0,
+    Math.min(
+      div(n * healingRate(f, s.tick) * fatigue, 10000),
+      f.stats.hp - f.hp,
+    ),
+  );
   f.hp += amount;
   if (amount) event(s, "heal", source, f, amount);
   return amount;
@@ -131,79 +178,21 @@ function slow(
   if ((f.memory.immuneSlow || 0) > s.tick) return;
   if (has(f, 15) && !f.memory.herb) {
     f.memory.herb = 1;
+    clearStatus(f, "frozen");
     f.slowUntil = 0;
     f.memory.immuneSlow = s.tick + itemValue(f, 15, 30);
     event(s, "item:15", f);
     return;
   }
-  buff(s, f, "slow", Math.min(35, power), ticks, source.id);
+  applyStatus(s, source, f, "frozen", Math.min(35, power), ticks);
   f.slowUntil = Math.max(f.slowUntil, s.tick + ticks);
-  f.memory.slowPower = Math.max(
-    ...f.buffs
-      .filter((b) => b.kind === "slow" && b.until > s.tick)
-      .map((b) => b.value),
-    0,
-  );
+  f.memory.slowPower = statusPower(f, "frozen", s.tick);
 }
 function push(source: Fighter, f: Fighter, strength: number) {
   const [x, y] = normalize(f.x - source.x, f.y - source.y);
   const resist = 100;
   f.vx += div(x * strength * resist, UNIT * f.stats.stability);
   f.vy += div(y * strength * resist, UNIT * f.stats.stability);
-}
-function aim(f: Fighter, t: { x: number; y: number }) {
-  const [x, y] = normalize(t.x - f.x, t.y - f.y);
-  let best = 0,
-    dot = -Infinity;
-  DIRECTIONS.forEach((d, i) => {
-    const v = x * d[0] + y * d[1];
-    if (v > dot) {
-      best = i;
-      dot = v;
-    }
-  });
-  return best;
-}
-function launch(
-  s: BattleState,
-  f: Fighter,
-  t: Fighter,
-  power: number,
-  options: {
-    normal?: boolean;
-    push?: number;
-    range?: number;
-    kind?: "skill" | "super";
-    slow?: number;
-    radiation?: number;
-    splash?: number;
-    splashPower?: number;
-  } = {},
-) {
-  if (s.projectiles.length >= 240) return false;
-  const { normal = false, push = 0, range = 300, kind } = options;
-  const d = DIRECTIONS[aim(f, t)];
-  const projectileSpeed = normal ? 900 : 1100;
-  s.projectiles.push({
-    id: s.nextProjectile++,
-    owner: f.id,
-    x: f.x,
-    y: f.y,
-    vx: div(d[0] * projectileSpeed, UNIT),
-    vy: div(d[1] * projectileSpeed, UNIT),
-    life: Math.max(1, div(range * 100, projectileSpeed)),
-    pierce: 0,
-    hit: [],
-    power,
-    normal,
-    push,
-    kind,
-    slow: options.slow,
-    radiation: options.radiation,
-    splash: options.splash,
-    splashPower: options.splashPower,
-  });
-  return true;
 }
 function threshold(s: BattleState, f: Fighter) {
   if (f.hp <= 0) return;
@@ -225,7 +214,6 @@ function threshold(s: BattleState, f: Fighter) {
     heal(s, f, f, itemValue(f, 17, 16));
   }
   if (low40) {
-    passiveEvent(s, f, "low");
     affinityEvent(s, f, "low");
     friendEvent(s, f, "low");
   }
@@ -237,18 +225,29 @@ export function characterDamage(
   raw: number,
   normal = false,
   knock = 150,
+  friendly = false,
+  ignoreClash = false,
+  allowDeadSource = false,
 ) {
   if (
-    f.hp <= 0 ||
+    (!allowDeadSource && f.hp <= 0) ||
     t.hp <= 0 ||
-    f.team === t.team ||
-    isClashProtected(t, s.tick)
+    (!friendly && f.team === t.team) ||
+    (!ignoreClash && isClashProtected(t, s.tick))
   )
     return 0;
+  raw = kitIncoming(s, f, t, raw);
+  if (raw <= 0) return 0;
   // Armor is percentage damage reduction; shields absorb the remainder before HP.
   let amount = Math.max(
     1,
-    Math.min(300, div(raw * (100 - Math.min(60, t.stats.defense)), 100)),
+    Math.min(
+      300,
+      div(
+        statusDamage(f, s.tick, raw) * (100 - Math.min(60, t.stats.defense)),
+        100,
+      ),
+    ),
   );
   const absorbed = Math.min(t.shield, amount);
   amount -= absorbed;
@@ -264,8 +263,8 @@ export function characterDamage(
   amount = Math.min(t.hp, amount);
   t.hp -= amount;
   t.taken += amount;
-  f.dealt += amount;
-  if (amount || absorbed) {
+  if (f.team !== t.team) f.dealt += amount;
+  if ((amount || absorbed) && f.team !== t.team) {
     energy(s, f, div((amount + absorbed + 3) * f.stats.charge, 160));
     energy(s, t, div((amount + absorbed + 4) * t.stats.charge, 240));
   }
@@ -273,113 +272,61 @@ export function characterDamage(
   if (knock) push(f, t, knock);
   if (!t.hp) {
     t.deadAt = s.tick;
-    f.kills++;
+    if (f.team !== t.team) f.kills++;
     event(s, "kill", f, t);
-    if (has(f, 13)) heal(s, f, f, itemValue(f, 13, 12));
-    passiveEvent(s, f, "kill", t);
+    if (f.team !== t.team && has(f, 13)) heal(s, f, f, itemValue(f, 13, 12));
   } else {
     threshold(s, t);
-    if (normal && t.hp > 0) passiveEvent(s, t, "taken", f, amount);
-    if (t.hp > 0 && t.hp * 100 <= t.stats.hp * 40) {
-      for (const ally of s.fighters) if (ally.characterId === "char_15" && ally.team === t.team && ally !== t && ally.hp > 0) passiveEvent(s, ally, "allyLow", t);
-    }
   }
-  if (normal && f.hp > 0) normalEffects(s, f, t, amount);
+  if (normal && (f.hp > 0 || allowDeadSource)) normalEffects(s, f, t, amount);
   return amount;
 }
 function nextBonus(s: BattleState, f: Fighter, value: number, source = -1) {
   buff(s, f, "bonus", value, 90, source);
 }
 function clearSlow(f: Fighter) {
-  f.buffs = f.buffs.filter(b => b.kind !== "slow");
+  clearStatus(f, "frozen");
+  f.buffs = f.buffs.filter((b) => b.kind !== "slow");
   f.slowUntil = 0;
   f.memory.slowPower = 0;
 }
-function addRadiation(s: BattleState, source: Fighter, target: Fighter, stacks: number) {
-  if (target.hp <= 0 || source.hp <= 0 || isClashProtected(target, s.tick)) return;
-  const kit = LEGENDARY_KITS.char_31;
-  const other = target.buffs.filter(b => b.kind === "radiation" && b.source !== source.id && b.until > s.tick && s.fighters[b.source]?.hp > 0).reduce((sum, b) => sum + b.value, 0);
-  const old = target.buffs.find(b => b.kind === "radiation" && b.source === source.id && b.until > s.tick)?.value || 0;
-  const value = Math.min(kit.radiationMax - other, old + stacks);
-  if (value <= 0) return;
-  buff(s, target, "radiation", value, kit.radiationDuration, source.id);
-  event(s, "radiation", source, target, value);
-}
-function refreshReach(s: BattleState, f: Fighter) {
-  f.stats.reach = Math.min(9000, f.baseStats.reach + f.buffs.filter(b => b.kind === "reach" && b.until > s.tick).reduce((sum, b) => sum + b.value, 0));
-}
-function passiveEvent(s: BattleState, f: Fighter, trigger: PassiveTrigger, target?: Fighter, damage = 0) {
-  const p = CHARACTER_PASSIVES[f.characterId || ""];
-  if (!p || f.hp <= 0 || p.trigger !== trigger) return;
-  if (p.condition === "slowed" && (!target || target.slowUntil <= s.tick)) return;
-  if (p.condition === "debuffed" && !target?.buffs.some(b => ["slow", "burnDot", "soupDot", "radiation"].includes(b.kind) && b.until > s.tick)) return;
-  if (p.condition === "targetLow" && (!target || target.hp <= 0 || target.hp * 100 > target.stats.hp * 40)) return;
-  if (p.condition === "rangedSource" && (!target || !isRanged(target))) return;
-  if (p.effect === "energy" && (!target || distance(f, target) < (p.range * 100) ** 2)) return;
-  if (p.condition === "ownZone" && !s.zones.some(z => z.owner === f.id && !z.trap && z.until > s.tick && (z.start || 0) <= s.tick && within(z, f, z.radius || 0))) return;
-  if (p.condition === "consecutive" && target) {
-    if (f.memory.passiveTarget !== target.id) f.memory.passiveCount = 0;
-    f.memory.passiveTarget = target.id;
-  }
-  const others = s.fighters.filter(t => t !== f && t.team === f.team && t.hp > 0 && within(f, t, p.range));
-  others.sort((a, b) => a.hp * b.stats.hp - b.hp * a.stats.hp || a.id - b.id);
-  const ally = p.condition === "otherAlly" ? others[0] : nearest(s, f, p.range, true, true);
-  if (p.condition === "otherAlly" && (!ally || trigger === "allyLow" && (!target || !within(f, target, p.range)))) return;
-  if (p.effect === "aura" && !others.length) return;
-  if ((f.memory.passiveReady || 0) > s.tick || p.maxUses && (f.memory.passiveUses || 0) >= p.maxUses) return;
-  f.memory.passiveCount = (f.memory.passiveCount || 0) + 1;
-  if (f.memory.passiveCount < p.every) return;
-  if (["mark", "radiation", "trap"].includes(p.effect) && (!target || target.hp <= 0)) return;
-  f.memory.passiveCount = 0;
-  f.memory.passiveUses = (f.memory.passiveUses || 0) + 1;
-  f.memory.passiveReady = s.tick + p.cooldown;
-  const flat = Math.max(1, Math.round(p.value * f.baseStats.hp / (CHARACTER_BALANCE[f.characterId!].stats.hp || 240)));
-  const hpValue = Math.max(1, div(f.stats.hp * p.value, 100));
-  const source = -6000 - f.id;
-  if (p.effect === "shield") shield(s, f, f, hpValue, p.duration);
-  if (p.effect === "allyShield" && ally) shield(s, f, ally, hpValue, p.duration);
-  if (p.effect === "skillRefund") f.skillReady = Math.max(s.tick + 1, f.skillReady - p.value);
-  if (p.effect === "speed") buff(s, f, "speed", p.value, p.duration, source);
-  if (p.effect === "mark") buff(s, target!, "exposed", p.value, p.duration, f.id);
-  if (p.effect === "allyHaste" && ally) buff(s, ally, "haste", 100 + p.value, p.duration, source);
-  if (p.effect === "escape") { clearSlow(f); f.memory.immuneSlow = s.tick + 30; buff(s, f, "speed", p.value, p.duration, source); }
-  if (p.effect === "lifesteal") heal(s, f, f, div(damage * p.value, 100));
-  if (p.effect === "allyEnergy") others.slice(0, 2).forEach(t => energy(s, t, p.value));
-  if (p.effect === "ram") { shield(s, f, f, hpValue, p.duration); if (target?.hp) push(f, target, 180); }
-  if (p.effect === "allyCleanse" && ally) { clearSlow(ally); shield(s, f, ally, flat, p.duration); }
-  if (["bonus", "combo"].includes(p.effect)) buff(s, f, "bonus", p.value, p.duration, source);
-  if (p.effect === "allyHeal" && ally) heal(s, f, ally, flat);
-  if (p.effect === "trap" && s.zones.length < 120) s.zones.push({ owner: f.id, x: target!.x, y: target!.y, radius: p.range, until: s.tick + p.duration, trap: true, power: p.value, slow: 12 });
-  if (p.effect === "guard" && target?.hp) shield(s, f, target, flat, p.duration);
-  if (p.effect === "mealBurn") { if (target?.hp) buff(s, target, "soupDot", p.value, p.duration, f.id); if (ally) heal(s, f, ally, 4); }
-  if (p.effect === "gift" && ally) { shield(s, f, ally, flat, p.duration); energy(s, ally, 4); }
-  if (p.effect === "allyBonus" && ally) buff(s, ally, "bonus", p.value, p.duration, source);
-  if (p.effect === "battery") { energy(s, f, p.value); buff(s, f, "bonus", 10, 90, source); }
-  if (p.effect === "reach") { buff(s, f, "reach", p.value, p.duration, source); refreshReach(s, f); }
-  if (p.effect === "energy") energy(s, f, p.value);
-  if (p.effect === "shareShield") shield(s, f, others[0] || f, others.length ? flat : div(flat, 2), p.duration);
-  if (p.effect === "cleanseSpeed") { clearSlow(f); buff(s, f, "speed", p.value, p.duration, source); }
-  if (p.effect === "heatZone" && s.zones.length < 120) s.zones.push({ owner: f.id, x: f.x, y: f.y, radius: p.range, until: s.tick + p.duration, start: s.tick, every: 30, power: p.value });
-  if (p.effect === "openingShield") shield(s, f, f, has(f, 28) ? div(flat * 150, 100) : flat, p.duration);
-  if (p.effect === "reload") { f.nextAttack = Math.max(s.tick + 1, f.nextAttack - p.value); energy(s, f, 3); }
-  if (p.effect === "balloon") { shield(s, f, f, 4, p.duration); buff(s, f, "bonus", p.value, p.duration, source); }
-  if (p.effect === "radiation") addRadiation(s, f, target!, 1);
-  if (p.effect === "zoneGuard") shield(s, f, f, flat, p.duration);
-  if (p.effect === "meal") { heal(s, f, f, hpValue); if (others[0]) heal(s, f, others[0], hpValue); }
-  event(s, "passive:" + f.characterId, f, target || ally || f, p.value);
-}
-function affinityEvent(s: BattleState, f: Fighter, trigger: AffinityTrigger, target?: Fighter) {
+function affinityEvent(
+  s: BattleState,
+  f: Fighter,
+  trigger: AffinityTrigger,
+  target?: Fighter,
+) {
   if (f.hp <= 0) return;
   for (const id of f.equipment) {
-    const it = CATALOG_ITEMS.find(it => it.id === id);
+    const it = CATALOG_ITEMS.find((it) => it.id === id);
     const fx = ITEM_AFFINITY[id];
-    if (!it || it.affinity !== f.characterId || !fx || fx.trigger !== trigger) continue;
+    if (!it || it.affinity !== f.characterId || !fx || fx.trigger !== trigger)
+      continue;
     const key = "affinity:" + id;
-    if ((f.memory[key + ":uses"] || 0) >= fx.maxUses || (f.memory[key + ":ready"] || 0) > s.tick) continue;
-    const value = Math.max(1, Math.round(fx.value * itemMultiplier(id, f.equipmentLevels?.[id] || 1, true)));
-    const ally = fx.kind.startsWith("ally") ? nearest(s, f, 180, true, true) : undefined;
-    const enemy = ["slow", "burn"].includes(fx.kind) ? target?.hp && target.team !== f.team && within(f, target, 180) ? target : nearest(s, f, 180) : undefined;
-    if (fx.kind.startsWith("ally") && !ally || ["slow", "burn"].includes(fx.kind) && !enemy) continue;
+    if (
+      (f.memory[key + ":uses"] || 0) >= fx.maxUses ||
+      (f.memory[key + ":ready"] || 0) > s.tick
+    )
+      continue;
+    const value = Math.max(
+      1,
+      Math.round(
+        fx.value * itemMultiplier(id, f.equipmentLevels?.[id] || 1, true),
+      ),
+    );
+    const ally = fx.kind.startsWith("ally")
+      ? nearest(s, f, 180, true, true)
+      : undefined;
+    const enemy = ["slow", "burn"].includes(fx.kind)
+      ? target?.hp && target.team !== f.team && within(f, target, 180)
+        ? target
+        : nearest(s, f, 180)
+      : undefined;
+    if (
+      (fx.kind.startsWith("ally") && !ally) ||
+      (["slow", "burn"].includes(fx.kind) && !enemy)
+    )
+      continue;
     f.memory[key + ":uses"] = (f.memory[key + ":uses"] || 0) + 1;
     f.memory[key + ":ready"] = s.tick + fx.cooldown;
     const source = -4000 - Number(id.slice(-2));
@@ -391,8 +338,7 @@ function affinityEvent(s: BattleState, f: Fighter, trigger: AffinityTrigger, tar
     if (fx.kind === "bonus") buff(s, f, "bonus", value, fx.ticks, source);
     if (fx.kind === "speed") buff(s, f, "speed", value, fx.ticks, source);
     if (fx.kind === "cleanse") {
-      f.buffs = f.buffs.filter(b => b.kind !== "slow");
-      f.slowUntil = 0;
+      clearSlow(f);
       f.memory.slowPower = 0;
       f.memory.immuneSlow = s.tick + value;
     }
@@ -404,7 +350,7 @@ function affinityEvent(s: BattleState, f: Fighter, trigger: AffinityTrigger, tar
 function normalEffects(s: BattleState, f: Fighter, t: Fighter, amount: number) {
   f.hits++;
   if (f.hits % 4 === 0) affinityEvent(s, f, "hit4", t);
-  passiveEvent(s, f, "hit", t, amount);
+  kitNormalHit(s, f, t, kitServices);
   if (t.hp > 0 && f.stats.burn > 0)
     buff(s, t, "burnDot", f.stats.burn, 60, f.id);
   if (t.stats.thorns > 0 && t.hp > 0)
@@ -428,7 +374,14 @@ function normalEffects(s: BattleState, f: Fighter, t: Fighter, amount: number) {
     }
   }
 }
-function normalHit(s: BattleState, f: Fighter, t: Fighter, scale = 100) {
+function normalHit(
+  s: BattleState,
+  f: Fighter,
+  t: Fighter,
+  scale = 100,
+  knock = kitKnockback(s, f),
+  allowDeadSource = false,
+) {
   let hit = f.stats.attack;
   let auxiliary = 0;
   for (const kind of ["bonus", "envelope", "electric"]) {
@@ -439,15 +392,25 @@ function normalHit(s: BattleState, f: Fighter, t: Fighter, scale = 100) {
     }
   }
   // Independent bonds/items contribute additively; the final damage cap remains.
-  const marks = t.buffs.filter(b => b.kind === "exposed" && b.until > s.tick && s.fighters[b.source]?.hp > 0 && s.fighters[b.source]?.team === f.team);
-  if (marks.length) { auxiliary += Math.max(...marks.map(b => b.value)); marks.forEach(b => b.until = s.tick); }
+  const marks = t.buffs.filter(
+    (b) =>
+      b.kind === "exposed" &&
+      b.until > s.tick &&
+      s.fighters[b.source]?.team === f.team,
+  );
+  if (marks.length) {
+    auxiliary += Math.max(...marks.map((b) => b.value));
+    marks.forEach((b) => (b.until = s.tick));
+  }
   hit = div(hit * (100 + auxiliary) * scale, 10000);
   if (random(s) % 100 < f.stats.crit) hit = div(hit * f.stats.critPower, 100);
   if (f.memory.armorIgnore) {
     hit += div(t.stats.defense * f.memory.armorIgnore, 100);
     f.memory.armorIgnore = 0;
   }
-  characterDamage(s, f, t, hit, true);
+  const previousHits = f.hits;
+  characterDamage(s, f, t, hit, true, knock, false, false, allowDeadSource);
+  if (f.hits > previousHits && knock > 150 && t.hp > 0) kitImpulse(f, t, knock);
 }
 
 // Team composition and representative slots are immutable for the life of a battle.
@@ -540,9 +503,21 @@ function friendGroupEvent(
     (["G14", "G15", "G16", "G17"].includes(id) && kind === "super");
   if (!trigger) return;
   if (
-    ["G02", "G03", "G05", "G06", "G08", "G09", "G11", "G12", "G13", "G14", "G15", "G16", "G17"].includes(
-      id,
-    ) &&
+    [
+      "G02",
+      "G03",
+      "G05",
+      "G06",
+      "G08",
+      "G09",
+      "G11",
+      "G12",
+      "G13",
+      "G14",
+      "G15",
+      "G16",
+      "G17",
+    ].includes(id) &&
     members.some((f) =>
       members.some(
         (t) => !within(f, t, ["G02", "G03"].includes(id) ? 240 : 280),
@@ -624,10 +599,20 @@ function friendGroupEvent(
         energy(s, t, three ? 6 : 4);
         buff(s, t, "attack", three ? 12 : 8, 90, -1000 - Number(id.slice(1)));
       });
-  if (id === "G14") members.forEach((t) => shield(s, source, t, three ? 12 : 8, 90));
-  if (id === "G15") members.filter(t => t !== source).forEach(t => energy(s, t, three ? 6 : 4));
-  if (id === "G16") members.filter(t => t !== source).forEach(t => shield(s, source, t, three ? 14 : 10, 90));
-  if (id === "G17") members.filter(t => t !== source).forEach(t => heal(s, source, t, three ? 8 : 6));
+  if (id === "G14")
+    members.forEach((t) => shield(s, source, t, three ? 12 : 8, 90));
+  if (id === "G15")
+    members
+      .filter((t) => t !== source)
+      .forEach((t) => energy(s, t, three ? 6 : 4));
+  if (id === "G16")
+    members
+      .filter((t) => t !== source)
+      .forEach((t) => shield(s, source, t, three ? 14 : 10, 90));
+  if (id === "G17")
+    members
+      .filter((t) => t !== source)
+      .forEach((t) => heal(s, source, t, three ? 8 : 6));
   if (id === "G12")
     members
       .filter((t) => t.id !== source.id)
@@ -651,8 +636,16 @@ export function initializeCharacters(s: BattleState) {
       });
     }
     const n = no(f);
-    f.skillReady = 7 * 30;
-    f.memory.passiveReady = CHARACTER_PASSIVES[f.characterId]?.trigger === "pulse" && CHARACTER_PASSIVES[f.characterId].condition !== "ownZone" ? CHARACTER_PASSIVES[f.characterId].cooldown : 0;
+    f.skillReady = Number.MAX_SAFE_INTEGER;
+    f.memory.nextFlag = 120;
+    f.memory.nextStock = 90;
+    if (f.characterId === "char_14") f.memory.nextSummon = 120;
+    if (f.characterId === "char_25") {
+      f.memory.assets = 100;
+      shield(s, f, f, div(f.baseStats.hp, 10), 900000);
+    }
+    if (f.characterId === "char_18" && !f.boss) f.radius = 2150;
+
     const traits = TRAITS.map((trait) => traitMembers(s, f, trait)).filter(
       (t) => t.members.length >= 2 && t.members.includes(f),
     );
@@ -664,11 +657,9 @@ export function initializeCharacters(s: BattleState) {
     if (has(f, 12)) shield(s, f, f, itemValue(f, 12, 30), 300);
     const support = traits.find((t) => t.trait === "Hỗ trợ");
     if (support) shield(s, f, f, support.members.length >= 3 ? 16 : 10, 150);
-    passiveEvent(s, f, "start");
   }
 }
 export function beforeCharacterTick(s: BattleState) {
-  const tempo = roundTempo(s.tick);
   const contexts = new Map(
     s.config.teams.map((cfg) => {
       const living = chosen(s, cfg.id).filter((f) => f.hp > 0);
@@ -698,13 +689,11 @@ export function beforeCharacterTick(s: BattleState) {
   for (const f of s.fighters) {
     if (!f.characterId) continue;
     f.memory.gain = 0;
-    f.buffs = f.buffs.filter(
-      (b) =>
-        b.until >= s.tick && (!["dot", "radiation", "exposed"].includes(b.kind) || s.fighters[b.source]?.hp > 0),
-    );
+    f.buffs = f.buffs.filter((b) => b.until >= s.tick);
     f.shields = f.shields.filter((l) => l.until > s.tick && l.amount > 0);
     f.shield = f.shields.reduce((sum, l) => sum + l.amount, 0);
     if (f.hp <= 0) continue;
+    const tempo = kitGrowth(f, s.tick);
     const oldSpeed = f.stats.speed,
       oldCooldown = f.stats.cooldown;
     f.stats = { ...f.baseStats };
@@ -716,13 +705,16 @@ export function beforeCharacterTick(s: BattleState) {
     let auraAttack = 0;
     // Passive auras and active fields use the strongest matching aura, never
     // multiply with duplicate emitters. Range/death changes take effect next tick.
-    if (s.fighters.some(a => a !== f && a.team === f.team && a.hp > 0 && a.characterId === "char_22" && within(a, f, CHARACTER_PASSIVES.char_22.range))) {
-      auraAttack = CHARACTER_PASSIVES.char_22.value;
-      synergySpeed += CHARACTER_PASSIVES.char_22.value;
-    }
-    const fields = s.zones.filter(z => s.fighters[z.owner]?.team === f.team && s.fighters[z.owner]?.hp > 0 && z.until > s.tick && (z.start || 0) <= s.tick && within(z.follow ? s.fighters[z.owner] : z, f, z.radius || 0));
-    synergyAttack += Math.max(0, ...fields.map(z => z.auraAttack || 0));
-    synergyHaste += Math.max(0, ...fields.map(z => z.auraHaste || 0));
+    auraAttack = kitAura(s, f);
+    const fields = s.zones.filter(
+      (z) =>
+        s.fighters[z.owner]?.team === f.team &&
+        z.until > s.tick &&
+        (z.start || 0) <= s.tick &&
+        within(z.follow ? s.fighters[z.owner] : z, f, z.radius || 0),
+    );
+    synergyAttack += Math.max(0, ...fields.map((z) => z.auraAttack || 0));
+    synergyHaste += Math.max(0, ...fields.map((z) => z.auraHaste || 0));
     for (const { trait, members } of contexts.get(f.team)!.traits) {
       const count = members.length;
       if (count >= 2 && members.includes(f)) {
@@ -772,7 +764,16 @@ export function beforeCharacterTick(s: BattleState) {
     haste += synergyHaste;
     f.stats.attack = Math.min(
       300,
-      div(div(f.baseStats.attack * tempo.attack, 100) * (100 + attack), 100) + (auraAttack ? Math.max(1, Math.round(div(f.baseStats.attack * tempo.attack, 100) * auraAttack / 100)) : 0),
+      div(div(f.baseStats.attack * tempo.damage, 100) * (100 + attack), 100) +
+        (auraAttack
+          ? Math.max(
+              1,
+              Math.round(
+                (div(f.baseStats.attack * tempo.damage, 100) * auraAttack) /
+                  100,
+              ),
+            )
+          : 0),
     );
     f.stats.speed = Math.min(
       900,
@@ -782,15 +783,13 @@ export function beforeCharacterTick(s: BattleState) {
       8,
       div(div(f.baseStats.cooldown * 100, tempo.haste) * 100, haste),
     );
-    f.stats.charge = Math.min(300, div(f.baseStats.charge * tempo.charge, 100));
-    f.stats.superPower = Math.min(
-      300,
-      div(f.stats.superPower * tempo.superPower, 100),
-    );
+    f.stats.charge = f.baseStats.charge;
+    f.stats.superPower = Math.min(300, f.stats.superPower);
     f.stats.defense = Math.min(60, f.stats.defense);
     f.stats.mass = Math.min(500, f.stats.mass);
     f.stats.crit = Math.min(65, f.stats.crit);
     f.stats.reach = Math.min(9000, f.stats.reach);
+    applyKitStats(s, f);
     f.vx = div(f.vx * f.stats.speed, oldSpeed);
     f.vy = div(f.vy * f.stats.speed, oldSpeed);
     if (f.stats.cooldown !== oldCooldown) {
@@ -810,9 +809,20 @@ export function beforeCharacterTick(s: BattleState) {
               div((f.cooldowns[key] - s.tick) * f.stats.cooldown, oldCooldown),
             );
     }
-    const slows = f.buffs.filter((b) => b.kind === "slow" && b.until > s.tick);
-    f.slowUntil = Math.max(0, ...slows.map((b) => b.until));
-    f.memory.slowPower = Math.max(0, ...slows.map((b) => b.value));
+    let slowUntil = 0,
+      slowPower = 0;
+    for (const effect of f.statuses)
+      if (effect.kind === "frozen" && effect.until > s.tick) {
+        slowUntil = Math.max(slowUntil, effect.until);
+        slowPower = Math.max(slowPower, effect.power);
+      }
+    for (const effect of f.buffs)
+      if (effect.kind === "slow" && effect.until > s.tick) {
+        slowUntil = Math.max(slowUntil, effect.until);
+        slowPower = Math.max(slowPower, effect.value);
+      }
+    f.slowUntil = slowUntil;
+    f.memory.slowPower = slowPower;
     if (has(f, 1) && s.tick % 300 === 0 && s.tick <= 1800) {
       energy(s, f, itemValue(f, 1, 5));
       event(s, "item:01", f);
@@ -828,20 +838,18 @@ export function beforeCharacterTick(s: BattleState) {
       if (source) friendGroupEvent(s, source, "pulse", group.id);
     }
   }
-  if (s.tick > 0 && s.tick % 30 === 0) for (const f of s.fighters) passiveEvent(s, f, "pulse");
-}
-export function characterWall(s: BattleState, f: Fighter) {
-  passiveEvent(s, f, "wall");
 }
 export function characterContacts(s: BattleState, a: Fighter, b: Fighter) {
   if (
     (!a.characterId && !b.characterId) ||
-    a.team === b.team ||
     a.hp <= 0 ||
     b.hp <= 0 ||
     distance(a, b) > (a.radius + b.radius + 2) ** 2
   )
     return;
+  kitContact(s, a, b, kitServices);
+  kitContact(s, b, a, kitServices);
+  if (a.team === b.team) return;
   for (const [f, t] of [
     [a, b],
     [b, a],
@@ -850,15 +858,11 @@ export function characterContacts(s: BattleState, a: Fighter, b: Fighter) {
     const key = "contact:" + t.id;
     if ((f.memory[key] || 0) > s.tick) continue;
     f.memory[key] = s.tick + 24;
-    passiveEvent(s, f, "contact", t);
+
     if (has(f, 11) && s.tick >= (f.memory.fridgeReady || 0)) {
       f.memory.fridgeReady = s.tick + 120;
       slow(s, f, t, itemValue(f, 11, 12), 30);
       event(s, "item:11", f, t);
-    }
-    if ((f.memory.dash || 0) > s.tick) {
-      f.memory.dash = 0;
-      characterDamage(s, f, t, div(f.stats.attack * f.memory.dashPower, 100));
     }
   }
 }
@@ -931,13 +935,17 @@ function resolveBondEvent(
   event(s, "bond:" + b.id, source);
   switch (b.id) {
     case "P22":
-      fs.filter(f => f !== source).forEach(f => shield(s, source, f, 10, 90));
+      fs.filter((f) => f !== source).forEach((f) =>
+        shield(s, source, f, 10, 90),
+      );
       break;
     case "P23":
-      fs.filter(f => f !== source).forEach(f => nextBonus(s, f, 16, buffSource));
+      fs.filter((f) => f !== source).forEach((f) =>
+        nextBonus(s, f, 16, buffSource),
+      );
       break;
     case "P24":
-      fs.filter(f => f !== source).forEach(f => heal(s, source, f, 8));
+      fs.filter((f) => f !== source).forEach((f) => heal(s, source, f, 8));
       break;
     case "P01":
       shield(s, source, get(8), 15, 60);
@@ -1027,8 +1035,7 @@ function resolveBondEvent(
     case "T05":
       fs.forEach((f) => {
         shield(s, source, f, 15, 90);
-        f.buffs = f.buffs.filter((b) => b.kind !== "slow");
-        f.slowUntil = 0;
+        clearSlow(f);
       });
       break;
     case "T06":
@@ -1046,203 +1053,9 @@ function resolveBondEvent(
   }
 }
 
-function abilityTarget(s: BattleState, f: Fighter, rangedRange: number, extraReach = 0) {
-  if (isRanged(f)) return nearest(s, f, rangedRange);
-  let target: Fighter | undefined;
-  let closest = Infinity;
-  for (const t of s.fighters) {
-    if (t.hp <= 0 || t.team === f.team || isClashProtected(t, s.tick)) continue;
-    const d = distance(f, t);
-    if (d <= (Math.min(9000, weaponReach(s, f) + extraReach) + t.radius) ** 2 && d < closest) {
-      target = t;
-      closest = d;
-    }
-  }
-  return target;
-}
-
-/** Undefined delegates to the class kit; null preserves cooldown/energy on failure. */
-function legendaryAbility(s: BattleState, f: Fighter, ultimate: boolean): Fighter | null | undefined {
-  const n = no(f);
-  if (n === 22) {
-    const k = LEGENDARY_KITS.char_22, ally = nearest(s, f, 180, true, true);
-    if (!ally || s.zones.length >= 120) return null;
-    s.zones = s.zones.filter(z => !(z.owner === f.id && z.super === ultimate && z.auraAttack));
-    s.zones.push({ owner: f.id, x: f.x, y: f.y, follow: true, start: s.tick, until: s.tick + (ultimate ? k.superDuration : k.skillDuration), radius: ultimate ? k.superRadius : k.skillRadius, auraAttack: ultimate ? k.superAttack : k.skillAttack, auraHaste: ultimate ? k.superHaste : 0, super: ultimate });
-    shield(s, f, ally, ultimate ? recoveryValue(f, div(f.stats.attack * 60, 100)) : div(f.stats.attack * 80, 100), 90);
-    const enemy = abilityTarget(s, f, 0);
-    if (enemy) characterDamage(s, f, enemy, div(f.stats.attack * (ultimate ? superValue(f, k.superPower) : k.skillPower), 100));
-    return ally;
-  }
-  if (n === 23) {
-    const k = LEGENDARY_KITS.char_23;
-    const reach = ultimate ? k.superReach : k.skillReach;
-    const enemy = abilityTarget(s, f, 0, reach);
-    if (!enemy) return null;
-    buff(s, f, "reach", reach, ultimate ? k.superDuration : k.skillDuration, -7000 - f.id);
-    refreshReach(s, f);
-    characterDamage(s, f, enemy, div(f.stats.attack * (ultimate ? superValue(f, k.superPower) : k.skillPower), 100));
-    return enemy;
-  }
-  if (n === 31) {
-    const k = LEGENDARY_KITS.char_31;
-    const enemy = nearest(s, f, ultimate ? RANGED_SUPER_RANGE : RANGED_SKILL_RANGE);
-    if (!enemy || !launch(s, f, enemy, ultimate ? superValue(f, k.superPower) : k.skillPower, { kind: ultimate ? "super" : "skill", range: ultimate ? RANGED_SUPER_RANGE : RANGED_SKILL_RANGE, radiation: ultimate ? 2 : 1, splash: ultimate ? k.splashRadius : 0, splashPower: ultimate ? superValue(f, k.splashPower) : 0 })) return null;
-    return enemy;
-  }
-  if (n === 32) {
-    const k = LEGENDARY_KITS.char_32, enemy = nearest(s, f, ultimate ? RANGED_SUPER_RANGE : RANGED_SKILL_RANGE);
-    if (!enemy || s.zones.length >= 120) return null;
-    // A caster can hold one territory: recasting replaces it, rather than stacking
-    // several permanent damage/slow fields on a trapped enemy.
-    s.zones = s.zones.filter(z => z.owner !== f.id || !z.territory);
-    const start = s.tick + k.windup;
-    s.zones.push({ owner: f.id, x: enemy.x, y: enemy.y, start, until: start + (ultimate ? k.superDuration : k.skillDuration), radius: ultimate ? k.superRadius : k.skillRadius, power: ultimate ? k.superPower : k.skillPower, slow: ultimate ? k.superSlow : k.skillSlow, every: 30, super: ultimate, territory: true });
-    if (ultimate) f.skillReady = Math.max(f.skillReady, start + k.superDuration);
-    return enemy;
-  }
-  if (n === 33) {
-    const k = LEGENDARY_KITS.char_33, enemy = nearest(s, f, k.range), ally = nearest(s, f, k.range, true, true);
-    if (!ally || !enemy && ally.hp >= ally.stats.hp) return null;
-    if (enemy && !launch(s, f, enemy, ultimate ? superValue(f, k.superPower) : k.skillPower, { kind: ultimate ? "super" : "skill", range: k.range })) return null;
-    heal(s, f, ally, recoveryValue(f, div(f.stats.hp * (ultimate ? k.superHeal : k.skillHeal), 100)));
-    if (ultimate) shield(s, f, f, recoveryValue(f, div(f.stats.hp * k.superShield, 100)), 90);
-    return enemy || ally;
-  }
-  return undefined;
-}
-
-// Melee abilities require physical reach. Ranged damage resolves on collision.
-function skill(s: BattleState, f: Fighter) {
-  const n = no(f);
-  const custom = legendaryAbility(s, f, false);
-  if (custom !== undefined) {
-    if (!custom) return false;
-    event(s, "skill:" + String(n).padStart(2, "0"), f, custom);
-    bondEvent(s, f, "skill");
-    affinityEvent(s, f, "skill", custom);
-    passiveEvent(s, f, "skill", custom);
-    return true;
-  }
-  const role = CHARACTER_BALANCE[f.characterId!].role;
-  if (role === "support") {
-    const ally = nearest(s, f, 180, true, true);
-    if (!ally) return false;
-    shield(s, f, ally, f.stats.attack, 90);
-    const enemy = abilityTarget(s, f, RANGED_SKILL_RANGE);
-    if (enemy) {
-      if (isRanged(f))
-        launch(s, f, enemy, 80, { kind: "skill", range: RANGED_SKILL_RANGE });
-      else characterDamage(s, f, enemy, div(f.stats.attack * 80, 100));
-    }
-    event(s, "skill:" + String(n).padStart(2, "0"), f, ally);
-    bondEvent(s, f, "skill");
-    affinityEvent(s, f, "skill");
-    passiveEvent(s, f, "skill", enemy);
-    return true;
-  }
-  const enemy = abilityTarget(s, f, RANGED_SKILL_RANGE);
-  if (!enemy) return false;
-  let power =
-    role === "tank"
-      ? 110
-      : role === "assassin"
-        ? 150
-        : role === "ranger"
-          ? 140
-          : role === "fighter"
-            ? 130
-            : 120;
-  if ([28, 29, 30].includes(n) && has(f, n)) power += 12;
-  if (isRanged(f)) {
-    if (
-      !launch(s, f, enemy, power, {
-        range: RANGED_SKILL_RANGE,
-        kind: "skill",
-        slow: role === "controller" ? 15 : 0,
-      })
-    )
-      return false;
-  } else characterDamage(s, f, enemy, div(f.stats.attack * power, 100));
-  if (n === 27 && has(f, 27) && enemy.hp > 0)
-    buff(s, enemy, "burnDot", Math.max(1, f.stats.burn), 60, f.id);
-  if (role === "tank") shield(s, f, f, div(f.stats.hp * 3, 100), 60);
-  event(s, "skill:" + String(n).padStart(2, "0"), f, enemy);
-  bondEvent(s, f, "skill");
-  affinityEvent(s, f, "skill", enemy);
-  passiveEvent(s, f, "skill", enemy);
-  return true;
-}
-
-function superCast(s: BattleState, f: Fighter) {
-  const n = no(f);
-  const custom = legendaryAbility(s, f, true);
-  if (custom !== undefined) {
-    if (!custom) return false;
-    finishSuper(s, f, custom);
-    return true;
-  }
-  const role = CHARACTER_BALANCE[f.characterId!].role;
-  const target =
-    role === "support"
-      ? nearest(s, f, 180, true, true)
-      : abilityTarget(s, f, RANGED_SUPER_RANGE);
-  if (!target) return false;
-  let power =
-    role === "tank"
-      ? 150
-      : role === "assassin"
-        ? 320
-        : role === "ranger"
-          ? 300
-          : role === "fighter"
-            ? 280
-            : 240;
-  if ([28, 29, 30].includes(n) && has(f, n)) power += 15;
-  if (role === "support") {
-    heal(s, f, target, recoveryValue(f, div(target.stats.hp * 10, 100)));
-    shield(s, f, target, recoveryValue(f, div(f.stats.attack, 2)), 90);
-    const enemy = abilityTarget(s, f, RANGED_SUPER_RANGE);
-    if (enemy) {
-      if (isRanged(f))
-        launch(s, f, enemy, superValue(f, 160), {
-          kind: "super",
-          range: RANGED_SUPER_RANGE,
-        });
-      else
-        characterDamage(
-          s,
-          f,
-          enemy,
-          superValue(f, div(f.stats.attack * 160, 100)),
-        );
-    }
-  } else if (isRanged(f)) {
-    if (
-      !launch(s, f, target, superValue(f, power), {
-        range: RANGED_SUPER_RANGE,
-        kind: "super",
-        slow: role === "controller" ? 20 : 0,
-      })
-    )
-      return false;
-  } else
-    characterDamage(
-      s,
-      f,
-      target,
-      superValue(f, div(f.stats.attack * power, 100)),
-    );
-  if (role === "tank")
-    shield(s, f, f, recoveryValue(f, div(f.stats.hp * 12, 100)), 90);
-  if (n === 27 && has(f, 27) && target.hp > 0)
-    buff(s, target, "burnDot", Math.max(1, f.stats.burn), 90, f.id);
-  finishSuper(s, f, target);
-  return true;
-}
 function finishSuper(s: BattleState, f: Fighter, target: Fighter) {
   f.energy = 0;
-  f.superUntil = s.tick + 120;
+  f.superUntil = Math.max(s.tick + 30, f.superUntil);
   f.supers++;
   if (has(f, 8)) buff(s, f, "electric", itemValue(f, 8, 25), 120, -8);
   if (has(f, 9)) buff(s, f, "attack", itemValue(f, 9, 8), 90, -9);
@@ -1255,99 +1068,77 @@ function finishSuper(s: BattleState, f: Fighter, target: Fighter) {
   event(s, "super", f, target);
   bondEvent(s, f, "super");
   affinityEvent(s, f, "super", target);
-  passiveEvent(s, f, "super", target);
 }
 
 export function characterCombat(s: BattleState) {
-  // Supers spend only energy present at the beginning of this tick.
   for (const f of s.fighters) {
     if (f.hp <= 0 || !f.characterId) continue;
-    let cast = false;
     if (
-      f.energy >= 100 &&
-      f.superUntil <= s.tick &&
-      (f.memory.interrupt || 0) <= s.tick
-    )
-      cast = superCast(s, f);
-    if (
-      !cast &&
-      f.skillReady <= s.tick &&
+      !statusPower(f, "stunned", s.tick) &&
       (f.memory.interrupt || 0) <= s.tick &&
-      skill(s, f)
+      f.energy >= 100 &&
+      f.superUntil <= s.tick
     ) {
-      f.skillReady = s.tick + 7 * 30;
+      const target = kitSuper(s, f, kitServices);
+      if (target) finishSuper(s, f, target);
     }
+    kitTick(s, f, kitServices);
   }
-
   for (const f of s.fighters) {
-    if (f.hp <= 0) continue;
-    if (s.tick % 30 === 0) for (const b of f.buffs) {
-      if (b.kind !== "radiation" || b.until <= s.tick) continue;
-      const source = s.fighters[b.source];
-      if (source?.hp > 0) characterDamage(s, source, f, Math.max(1, div(source.stats.attack * LEGENDARY_KITS.char_31.radiationPower * b.value, 100)), false, 0);
-    }
-    for (const b of f.buffs)
-      if (
-        (b.kind === "dot" || b.kind === "soupDot" || b.kind === "burnDot") &&
-        b.until >= s.tick &&
-        (b.until - s.tick) % 30 === 0 &&
-        s.tick > b.until - (b.kind === "dot" ? 90 : 60)
-      ) {
-        const src = s.fighters[b.source];
-        if (src?.hp > 0)
-          characterDamage(
-            s,
-            src,
-            f,
-            b.kind === "soupDot"
-              ? div(src.stats.attack * b.value, 100)
-              : b.value,
-            false,
-            0,
-          );
-      }
-    if (f.hp <= 0 || (f.memory.interrupt || 0) > s.tick) continue;
+    if (
+      f.hp <= 0 ||
+      statusPower(f, "stunned", s.tick) ||
+      (f.memory.interrupt || 0) > s.tick
+    )
+      continue;
     rotateWeaponAngle(f);
-    if (f.characterId && isRanged(f)) {
-      if (f.nextAttack <= s.tick) {
-        const t = nearest(s, f, RANGED_ATTACK_RANGE);
-        if (
-          t &&
-          launch(s, f, t, 100, { normal: true, range: RANGED_ATTACK_RANGE })
-        )
-          f.nextAttack = s.tick + f.stats.cooldown;
-      }
+    if (isRanged(f)) {
+      if (f.nextAttack <= s.tick && kitShoot(s, f))
+        f.nextAttack = s.tick + attackCooldown(f, s.tick);
       continue;
     }
-    {
-      const reach = weaponReach(s, f);
-      const count = weaponCount(f);
-      for (let w = 0; w < count; w++) {
-        const d = DIRECTIONS[(f.angle + w * 16) % 32],
-          ax = f.x + div(d[0] * f.radius, UNIT),
-          ay = f.y + div(d[1] * f.radius, UNIT),
-          x = f.x + div(d[0] * reach, UNIT),
-          y = f.y + div(d[1] * reach, UNIT);
-        for (const t of s.fighters) {
-          const key = w + ":" + t.id;
-          if (
-            t.hp <= 0 ||
-            t.team === f.team ||
-            (f.cooldowns[key] || 0) > s.tick
-          )
-            continue;
-          if (capsuleHit(ax, ay, x, y, t.x, t.y, t.radius + 500)) {
-            if (isClashProtected(t, s.tick)) continue;
-            f.cooldowns[key] = s.tick + f.stats.cooldown;
-            reverseWeaponSpin(f, s.tick);
-            normalHit(s, f, t);
-          }
+    const count = weaponCount(f);
+    for (let w = 0; w < count; w++) {
+      const reach = weaponReach(s, f, w);
+      const d = DIRECTIONS[(f.angle + w * 16) % 32],
+        ax = f.x + div(d[0] * f.radius, UNIT),
+        ay = f.y + div(d[1] * f.radius, UNIT),
+        x = f.x + div(d[0] * reach, UNIT),
+        y = f.y + div(d[1] * reach, UNIT);
+      kitMeleeConstructs(s, f, ax, ay, x, y, attackCooldown(f, s.tick));
+      for (const t of s.fighters) {
+        const key = w + ":" + t.id;
+        if (t.hp <= 0 || t.team === f.team || (f.cooldowns[key] || 0) > s.tick)
+          continue;
+        if (
+          capsuleHit(ax, ay, x, y, t.x, t.y, t.radius + 500) &&
+          !isClashProtected(t, s.tick)
+        ) {
+          f.cooldowns[key] = s.tick + attackCooldown(f, s.tick);
+          reverseWeaponSpin(f, s.tick);
+          normalHit(
+            s,
+            f,
+            t,
+            w === 1
+              ? f.characterId === "char_15"
+                ? 40
+                : f.characterId === "char_33"
+                  ? 50
+                  : 100
+              : 100,
+          );
         }
       }
     }
   }
+  tickKitProjectiles(s, kitServices);
+  tickKitFields(s, kitServices);
+  tickConstructs(s, kitServices);
+
   const bounds = safeBounds(s);
   for (const p of s.projectiles) {
+    if (p.kit) continue;
     const f = s.fighters[p.owner],
       ox = p.x,
       oy = p.y;
@@ -1355,7 +1146,6 @@ export function characterCombat(s: BattleState) {
     p.y += p.vy;
     p.life--;
     if (
-      f.hp <= 0 ||
       p.x < bounds.left + 450 ||
       p.x > bounds.right - 450 ||
       p.y < bounds.top + 450 ||
@@ -1385,13 +1175,30 @@ export function characterCombat(s: BattleState) {
           );
         if (p.slow && t.hp > 0 && !isClashProtected(t, s.tick))
           slow(s, f, t, p.slow, p.kind === "super" ? 45 : 30);
+        if (p.paralyze && t.hp > 0 && !isClashProtected(t, s.tick))
+          applyStatus(s, f, t, "paralyzed", p.paralyze, 60);
         if (!isClashProtected(t, s.tick)) {
-          if (p.radiation) addRadiation(s, f, t, p.radiation);
+          if (p.radiation) applyStatus(s, f, t, "radiation", p.radiation, 90);
           if (p.splash) {
-            for (const other of s.fighters) if (other !== t && other.hp > 0 && other.team !== f.team && within(t, other, p.splash) && !isClashProtected(other, s.tick)) {
-              characterDamage(s, f, other, div(f.stats.attack * (p.splashPower || 0), 100), false, 0);
-              if (p.radiation) addRadiation(s, f, other, p.radiation);
-            }
+            for (const other of s.fighters)
+              if (
+                other !== t &&
+                other.hp > 0 &&
+                other.team !== f.team &&
+                within(t, other, p.splash) &&
+                !isClashProtected(other, s.tick)
+              ) {
+                characterDamage(
+                  s,
+                  f,
+                  other,
+                  div(f.stats.attack * (p.splashPower || 0), 100),
+                  false,
+                  0,
+                );
+                if (p.radiation)
+                  applyStatus(s, f, other, "radiation", p.radiation, 90);
+              }
             event(s, "impact:radiation", f, t, p.splash);
           }
         }
@@ -1402,8 +1209,9 @@ export function characterCombat(s: BattleState) {
   }
   s.projectiles = s.projectiles.filter((p) => p.life > 0);
   for (const z of s.zones) {
+    if (z.kit) continue;
     const f = s.fighters[z.owner];
-    if (f.hp <= 0 || z.until < s.tick || s.tick < (z.start || 0)) continue;
+    if (z.until < s.tick || s.tick < (z.start || 0)) continue;
     if (z.territory && s.tick >= z.until) continue;
     if (z.follow) {
       z.x = f.x;
@@ -1416,7 +1224,12 @@ export function characterCombat(s: BattleState) {
       if (t) {
         for (const a of s.fighters)
           if (a.hp > 0 && a.team !== f.team && within(z, a, z.radius || 100)) {
-            characterDamage(s, f, a, div(f.stats.attack * (z.power || 125), 100));
+            characterDamage(
+              s,
+              f,
+              a,
+              div(f.stats.attack * (z.power || 125), 100),
+            );
             slow(s, f, a, z.slow || 25, 30);
           }
         z.until = s.tick;
@@ -1467,10 +1280,21 @@ export function characterCombat(s: BattleState) {
       }
     }
   }
-  s.zones = s.zones.filter(
-    (z) => z.until > s.tick && s.fighters[z.owner].hp > 0,
-  );
+  s.zones = s.zones.filter((z) => z.until > s.tick);
   for (const f of s.fighters)
     f.energy = Math.min(100, f.energy + (f.memory.gain || 0));
-  s.events = s.events.slice(-120);
+  retainCombatEvents(s);
 }
+
+const kitServices: KitCombatServices = {
+  damage: (s, f, t, raw, friendly = false) =>
+    characterDamage(s, f, t, raw, false, 0, friendly, true, true),
+  normal: (s, f, t, scale, knock) => {
+    const before = f.hits;
+    normalHit(s, f, t, scale, knock, true);
+    return f.hits > before;
+  },
+  heal,
+  shield,
+  buff,
+};

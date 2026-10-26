@@ -1,0 +1,61 @@
+{
+  "engine": "chaos-integer-v26",
+  "note": "Node wall time, while balance audit runs. Not mobile GPU/Cloudflare CPU.",
+  "rows": [
+    {
+      "fighters": 2,
+      "ticks": 2094,
+      "finished": true,
+      "wallMs": 81,
+      "maxProjectiles": 0,
+      "maxConstructs": 0,
+      "maxZones": 0,
+      "maxCooldowns": 2,
+      "snapshotBytes": 8544
+    },
+    {
+      "fighters": 10,
+      "ticks": 1382,
+      "finished": true,
+      "wallMs": 178,
+      "maxProjectiles": 5,
+      "maxConstructs": 1,
+      "maxZones": 5,
+      "maxCooldowns": 17,
+      "snapshotBytes": 25358
+    },
+    {
+      "fighters": 20,
+      "ticks": 1027,
+      "finished": true,
+      "wallMs": 243,
+      "maxProjectiles": 18,
+      "maxConstructs": 4,
+      "maxZones": 26,
+      "maxCooldowns": 31,
+      "snapshotBytes": 45777
+    },
+    {
+      "fighters": 40,
+      "ticks": 902,
+      "finished": true,
+      "wallMs": 363,
+      "maxProjectiles": 33,
+      "maxConstructs": 4,
+      "maxZones": 23,
+      "maxCooldowns": 41,
+      "snapshotBytes": 80406
+    },
+    {
+      "fighters": 60,
+      "ticks": 763,
+      "finished": true,
+      "wallMs": 488,
+      "maxProjectiles": 27,
+      "maxConstructs": 4,
+      "maxZones": 54,
+      "maxCooldowns": 46,
+      "snapshotBytes": 124378
+    }
+  ]
+}

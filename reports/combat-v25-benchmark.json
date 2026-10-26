@@ -1,0 +1,75 @@
+{
+  "runtime": "v24.19.0",
+  "engineVersion": "chaos-integer-v25",
+  "characterPool": 33,
+  "platform": "win32",
+  "measuredAt": "2026-10-26T04:50:48.075Z",
+  "note": "Node process CPU and wall time; not Cloudflare production CPU. Heap is process total, not per battle.",
+  "rows": [
+    {
+      "fighters": 2,
+      "ticks": 1134,
+      "wallMs": 29.96,
+      "cpuMs": 32,
+      "ticksPerSecond": 37848,
+      "maxBatchMs": 5.76,
+      "heapMB": 20.82,
+      "snapshotBytes": 6348,
+      "gridPairs": 1,
+      "naivePairs": 1,
+      "hash": "3c67bbcf"
+    },
+    {
+      "fighters": 10,
+      "ticks": 1858,
+      "wallMs": 132.13,
+      "cpuMs": 282,
+      "ticksPerSecond": 14062,
+      "maxBatchMs": 23.12,
+      "heapMB": 18.61,
+      "snapshotBytes": 22129,
+      "gridPairs": 6,
+      "naivePairs": 45,
+      "hash": "3f9292e9"
+    },
+    {
+      "fighters": 20,
+      "ticks": 1067,
+      "wallMs": 215.1,
+      "cpuMs": 452,
+      "ticksPerSecond": 4960,
+      "maxBatchMs": 46.29,
+      "heapMB": 16.91,
+      "snapshotBytes": 37649,
+      "gridPairs": 35,
+      "naivePairs": 190,
+      "hash": "1eb75b67"
+    },
+    {
+      "fighters": 40,
+      "ticks": 840,
+      "wallMs": 460.35,
+      "cpuMs": 844,
+      "ticksPerSecond": 1825,
+      "maxBatchMs": 101.31,
+      "heapMB": 23.15,
+      "snapshotBytes": 70294,
+      "gridPairs": 204,
+      "naivePairs": 780,
+      "hash": "ba484ac3"
+    },
+    {
+      "fighters": 60,
+      "ticks": 1213,
+      "wallMs": 589.94,
+      "cpuMs": 702,
+      "ticksPerSecond": 2056,
+      "maxBatchMs": 181.02,
+      "heapMB": 32.9,
+      "snapshotBytes": 103410,
+      "gridPairs": 490,
+      "naivePairs": 1770,
+      "hash": "8723c2de"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "note": "Fixed-seed equipped duels, both sides, after blast self-elimination fix.",
+  "forms": [
+    {
+      "id": "char_14",
+      "level": 1,
+      "winRate": 50,
+      "counters": [
+        "char_01",
+        "char_02",
+        "char_04",
+        "char_07",
+        "char_08",
+        "char_12",
+        "char_15",
+        "char_18",
+        "char_19",
+        "char_22",
+        "char_27",
+        "char_28",
+        "char_33"
+      ]
+    },
+    {
+      "id": "char_14",
+      "level": 10,
+      "winRate": 48,
+      "counters": [
+        "char_01",
+        "char_02",
+        "char_04",
+        "char_07",
+        "char_08",
+        "char_10",
+        "char_12",
+        "char_15",
+        "char_17",
+        "char_18",
+        "char_25",
+        "char_27",
+        "char_28",
+        "char_33"
+      ]
+    }
+  ]
+}

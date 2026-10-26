@@ -43,7 +43,7 @@ it("automatically combines RiseOn Couple and 2k4 without a selected group", () =
   const s = team(["char_01", "char_19"]);
   s.tick = 1;
   beforeCharacterTick(s);
-  s.fighters[0].skillReady = 0;
+  s.fighters[0].energy = 100;
   characterCombat(s);
   expect(s.fighters[0].stats.speed).toBe(
     Math.floor((s.fighters[0].baseStats.speed * 104) / 100),
@@ -97,7 +97,7 @@ it("activates a pair and its trio together with separate counters and additive s
   const s = team(["char_01", "char_08", "char_15"]);
   s.tick = 1;
   beforeCharacterTick(s);
-  s.fighters[0].skillReady = 0;
+  s.fighters[0].energy = 100;
   s.fighters[2].energy = 100;
   characterCombat(s);
   expect(s.events.some((e) => e.type === "bond:P01")).toBe(true);

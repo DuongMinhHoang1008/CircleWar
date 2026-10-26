@@ -1,9 +1,30 @@
 import { describe, expect, it } from "vitest";
-import { PACK_ODDS, packPool, packTier } from "../../packages/shared/src/packs";
+import { PACK_ODDS, packPool, packTier, packDrawPool, nextBossPity, normalizeBossPity } from "../../packages/shared/src/packs";
 import { applyAction, newRoom } from "../../packages/shared/src/room";
 import { ROSTER, CATALOG_ITEMS } from "../../packages/shared/src/catalog";
 
 describe("normal and boss pack odds", () => {
+  it("guarantees only legendary at Boss draw 50, while epic never resets its counter", () => {
+    const pool = [{ tier: "T1" }, { tier: "T3" }, { tier: "T4" }];
+    expect(packDrawPool(pool, "boss", 0, 19, 99, 49)).toEqual([{ tier: "T4" }]);
+    expect(packDrawPool(pool.slice(0, 2), "boss", 0, 0, 0, 49)).toEqual([]);
+    expect(nextBossPity(48, "T3")).toBe(49);
+    expect(nextBossPity(49, "T4")).toBe(0);
+    expect(packDrawPool(pool, "normal", 0, 0, 0, 49)).toEqual([{ tier: "T1" }]);
+    expect(normalizeBossPity(Infinity)).toBe(0);
+    expect(normalizeBossPity(-10)).toBe(0);
+    expect(normalizeBossPity(200)).toBe(49);
+  });
+  it("retains Boss pack and pity atomically if every legendary is already maxed", () => {
+    let state = applyAction(newRoom("PITYTEST", 1, 0), "a", { type: "JOIN", name: "A" }, 1);
+    const player = state.players[0];
+    Object.assign(player, { bossPacks: 1, bossPacksSinceHighRarity: 49 });
+    player.cards = ROSTER.filter(card => card.tier === "T4").map(card => ({ characterId: card.id as never, level: 10, xp: 0 }));
+    player.itemCards = CATALOG_ITEMS.filter(item => item.rarity === 3).map(item => ({ itemId: item.id, level: 10, xp: 0 }));
+    const before = JSON.stringify(state);
+    expect(() => applyAction(state, "a", { type: "OPEN_PACK", kind: "boss" }, 2)).toThrow("Huyền thoại");
+    expect(JSON.stringify(state)).toBe(before);
+  });
   it("has exactly 10× epic and legendary base probability, independent of pool sizes", () => {
     for (const kind of ["normal", "boss"] as const) {
       const observed: Record<string, number> = { T1: 0, T2: 0, T3: 0, T4: 0 };

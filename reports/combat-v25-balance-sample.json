@@ -1,0 +1,207 @@
+{
+  "engine": "chaos-integer-v25",
+  "battles": 132,
+  "stalled": 0,
+  "maxTicks": 1882,
+  "note": "Small mirrored smoke sample against two reference kits; not a roster-wide balance guarantee or player win rate.",
+  "rows": [
+    {
+      "id": "char_01",
+      "role": "guardian",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_02",
+      "role": "swordsman",
+      "wins": 4,
+      "matches": 4
+    },
+    {
+      "id": "char_03",
+      "role": "frost",
+      "wins": 0,
+      "matches": 4
+    },
+    {
+      "id": "char_04",
+      "role": "berserker",
+      "wins": 1,
+      "matches": 4
+    },
+    {
+      "id": "char_05",
+      "role": "ranger",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_06",
+      "role": "swordsman",
+      "wins": 1,
+      "matches": 4
+    },
+    {
+      "id": "char_07",
+      "role": "frost",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_08",
+      "role": "berserker",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_09",
+      "role": "frost",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_10",
+      "role": "guardian",
+      "wins": 3,
+      "matches": 4
+    },
+    {
+      "id": "char_11",
+      "role": "guardian",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_12",
+      "role": "swordsman",
+      "wins": 4,
+      "matches": 4
+    },
+    {
+      "id": "char_13",
+      "role": "ranger",
+      "wins": 0,
+      "matches": 4
+    },
+    {
+      "id": "char_14",
+      "role": "frost",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_15",
+      "role": "guardian",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_16",
+      "role": "frost",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_17",
+      "role": "assassin",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_18",
+      "role": "berserker",
+      "wins": 1,
+      "matches": 4
+    },
+    {
+      "id": "char_19",
+      "role": "swordsman",
+      "wins": 0,
+      "matches": 4
+    },
+    {
+      "id": "char_20",
+      "role": "swordsman",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_21",
+      "role": "guardian",
+      "wins": 3,
+      "matches": 4
+    },
+    {
+      "id": "char_22",
+      "role": "guardian",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_23",
+      "role": "swordsman",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_24",
+      "role": "ranger",
+      "wins": 1,
+      "matches": 4
+    },
+    {
+      "id": "char_25",
+      "role": "guardian",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_26",
+      "role": "assassin",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_27",
+      "role": "berserker",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_28",
+      "role": "guardian",
+      "wins": 4,
+      "matches": 4
+    },
+    {
+      "id": "char_29",
+      "role": "ranger",
+      "wins": 2,
+      "matches": 4
+    },
+    {
+      "id": "char_30",
+      "role": "guardian",
+      "wins": 1,
+      "matches": 4
+    },
+    {
+      "id": "char_31",
+      "role": "ranger",
+      "wins": 0,
+      "matches": 4
+    },
+    {
+      "id": "char_32",
+      "role": "frost",
+      "wins": 0,
+      "matches": 4
+    },
+    {
+      "id": "char_33",
+      "role": "guardian",
+      "wins": 2,
+      "matches": 4
+    }
+  ]
+}

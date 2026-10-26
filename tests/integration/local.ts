@@ -7,7 +7,6 @@ import {
 import type { ReplayFrame } from "../../packages/battle-engine/src/types";
 import type { RoomState, ReplayInfo } from "../../packages/shared/src/room";
 import type { Action } from "../../packages/shared/src/protocol";
-import { CATALOG_ITEMS } from "../../packages/shared/src/catalog";
 const api = process.env.TEST_API || "http://127.0.0.1:8787",
   origin = "http://127.0.0.1:5173";
 interface Result {
@@ -86,25 +85,19 @@ const settings = {
   preparationSeconds: 10,
 };
 await action(created, { type: "SET_CONFIG", settings });
+await action(created, { type: "CLAIM_PACK" });
+const drawRequestId = crypto.randomUUID();
+const duplicateDraws = await Promise.all([
+  action(created, { type: "OPEN_PACK", kind: "normal" }, drawRequestId),
+  action(created, { type: "OPEN_PACK", kind: "normal" }, drawRequestId),
+]);
+for (const response of duplicateDraws) {
+  const player = response.state.players.find(p => p.id === created.id)!;
+  assert.equal(player.packs, 0);
+  assert.equal(player.missions.draw, 1);
+}
 for (const p of players) await action(p, { type: "READY", ready: true });
 await action(created, { type: "START" });
-const state = (await request(base, undefined, created.token)).state;
-const first = state.players.find((p) => p.id === created.id)!;
-const available = first.shop.findIndex(
-  (id) =>
-    !!id && CATALOG_ITEMS.some((i) => i.id === id && i.price <= first.gold),
-);
-if (available >= 0) {
-  const uuid = crypto.randomUUID();
-  const responses = await Promise.all([
-    action(created, { type: "BUY", offer: available }, uuid),
-    action(created, { type: "BUY", offer: available }, uuid),
-  ]);
-  assert.equal(
-    responses[0].state.players.find((p) => p.id === created.id)!.gold,
-    responses[1].state.players.find((p) => p.id === created.id)!.gold,
-  );
-}
 const spectator = await request(base + "/join", {
   name: "Spectator",
   spectator: true,
@@ -115,7 +108,7 @@ await action(
   crypto.randomUUID(),
   400,
 );
-for (const p of players) await action(p, { type: "READY", ready: true });
+// START locks round one directly; PREPARATION exists between later rounds.
 const start = Date.now();
 let r: Result;
 do {
@@ -145,6 +138,8 @@ for (const descriptor of replay.chunks) {
 }
 assert.equal(recorded[0]?.tick, 0);
 assert.equal(recorded.at(-1)?.tick, replay.totalTicks);
+assert.equal(recorded[0].statuses?.length, recorded[0].fighters.length);
+assert.equal(recorded[0].combatStats?.length, recorded[0].fighters.length);
 assert.equal(
   recorded[0].fighters.length,
   replay.config.teams.reduce((n, t) => n + t.loadouts.length, 0),
@@ -176,7 +171,7 @@ writeFileSync(
         "20 joins",
         "authentication rejection",
         "host authorization",
-        "atomic duplicate purchase",
+        "atomic duplicate pack draw",
         "spectator restrictions",
         "server simulation",
         "recorded replay chunks and checksums",

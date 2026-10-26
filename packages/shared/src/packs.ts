@@ -3,6 +3,19 @@ export const PACK_ODDS = {
   normal: { T1: 84, T2: 14, T3: 1.7, T4: 0.3 },
   boss: { T1: 66, T2: 14, T3: 17, T4: 3 },
 } as const;
+export const BOSS_PITY_LIMIT = 50;
+export function normalizeBossPity(value: unknown) {
+  return typeof value === "number" && Number.isFinite(value) ? Math.max(0, Math.min(BOSS_PITY_LIMIT - 1, Math.trunc(value))) : 0;
+}
+
+/** Shared browser/server selection: boss pity never falls back below legendary. */
+export function packDrawPool<T extends { tier: string }>(available: T[], kind: PackKind, roll: number, sinceRare = 0, sinceHigh = 0, bossPity = 0) {
+  if (kind === "boss" && normalizeBossPity(bossPity) >= BOSS_PITY_LIMIT - 1) return available.filter(card => card.tier === "T4");
+  return packPool(available, packTier(kind, roll, sinceRare), kind === "normal" && sinceHigh >= 99);
+}
+export function nextBossPity(previous: number, tier: string) {
+  return tier === "T4" ? 0 : Math.min(BOSS_PITY_LIMIT - 1, normalizeBossPity(previous) + 1);
+}
 
 /** Pity belongs to normal packs only; boss draws never advance/reset it. */
 export function packTier(kind: PackKind, roll: number, sinceRare = 0) {

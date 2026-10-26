@@ -53,6 +53,26 @@ it("keeps long simulations running with bounded checksums until a real winner", 
   expect(s.checksums).toHaveLength(256);
   expect(s.checksums.at(-1)?.tick).toBe(120 * 257);
 });
+it("cancels an incompatible persisted round without changing collections or rewards", () => {
+  const original = ready(lobby());
+  original.simulation!.version = "chaos-integer-v24";
+  const players = structuredClone(original.players);
+  const cancelled = advance(original, original.deadline);
+  expect(cancelled.phase).toBe("FINISHED");
+  expect(cancelled.simulation).toBeNull();
+  expect(cancelled.replay).toBeNull();
+  expect(cancelled.results).toEqual([]);
+  expect(cancelled.replayFrames).toEqual([]);
+  expect(cancelled.deadline).toBe(0);
+  expect(cancelled.players).toEqual(players.map((p) => ({ ...p, ready: false })));
+  expect(original.simulation?.version).toBe("chaos-integer-v24");
+  settle(cancelled, original.deadline + 1);
+  expect(cancelled.players).toEqual(players.map((p) => ({ ...p, ready: false })));
+  const rematch = applyAction(cancelled, cancelled.host, { type: "REMATCH" }, 200);
+  const restarted = ready(rematch);
+  expect(restarted.phase).toBe("SIMULATING");
+  expect(restarted.simulation?.version).not.toBe("chaos-integer-v24");
+});
 it("anchors replay playback to the first chunk after the worker drains frames", () => {
   let s = ready(lobby());
   lock(s, 101);

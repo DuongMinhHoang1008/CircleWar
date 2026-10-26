@@ -1,0 +1,6641 @@
+{
+  "battles": 6864,
+  "stalled": 0,
+  "unresolved": [],
+  "conditions": "Lv10 evolved cards, bare roster with 2 seeds and both spawn sides; 16 controlled team matchups per card on both sides; Lv10 items vs bare mirrors; own affinity equipment at Lv1 and Lv10 on both sides. Fixed seeds; 10s wall timer. All eligible synergies active. Offline sample, not a live-player win-rate claim.",
+  "characters": [
+    {
+      "id": "char_01",
+      "name": "Hổ Hướng Nội",
+      "role": "tank",
+      "duelWins": 83,
+      "duels": 128,
+      "teamWins": 41,
+      "teams": 64,
+      "duelRate": 65,
+      "teamRate": 64,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_02",
+      "name": "Bé Ôm Bão",
+      "role": "fighter",
+      "duelWins": 56,
+      "duels": 128,
+      "teamWins": 45,
+      "teams": 64,
+      "duelRate": 44,
+      "teamRate": 70,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_07",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_03",
+      "name": "Anh Tím Mọng",
+      "role": "controller",
+      "duelWins": 100,
+      "duels": 128,
+      "teamWins": 34,
+      "teams": 64,
+      "duelRate": 78,
+      "teamRate": 53,
+      "counters": [
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_04",
+      "name": "Đùi Gió Lốc",
+      "role": "fighter",
+      "duelWins": 71,
+      "duels": 128,
+      "teamWins": 38,
+      "teams": 64,
+      "duelRate": 55,
+      "teamRate": 59,
+      "counters": [
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_05",
+      "name": "Kính Cận Bắt Bài",
+      "role": "ranger",
+      "duelWins": 92,
+      "duels": 128,
+      "teamWins": 17,
+      "teams": 64,
+      "duelRate": 72,
+      "teamRate": 27,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_26",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_06",
+      "name": "Đội Trưởng Sắc Màu",
+      "role": "support",
+      "duelWins": 73,
+      "duels": 128,
+      "teamWins": 19,
+      "teams": 64,
+      "duelRate": 57,
+      "teamRate": 30,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_26",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_07",
+      "name": "Courage Nhút Nhát",
+      "role": "controller",
+      "duelWins": 40,
+      "duels": 128,
+      "teamWins": 36,
+      "teams": 64,
+      "duelRate": 31,
+      "teamRate": 56,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_18",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_23",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_27",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_08",
+      "name": "Sói Suy Tư",
+      "role": "fighter",
+      "duelWins": 71,
+      "duels": 128,
+      "teamWins": 45,
+      "teams": 64,
+      "duelRate": 55,
+      "teamRate": 70,
+      "counters": [
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_23",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_09",
+      "name": "Sếp Chốt Đơn",
+      "role": "controller",
+      "duelWins": 86,
+      "duels": 128,
+      "teamWins": 20,
+      "teams": 64,
+      "duelRate": 67,
+      "teamRate": 31,
+      "counters": [
+        {
+          "id": "char_06",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_07",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_10",
+      "name": "Lốp Lăn Ăn Vặt",
+      "role": "tank",
+      "duelWins": 42,
+      "duels": 128,
+      "teamWins": 33,
+      "teams": 64,
+      "duelRate": 33,
+      "teamRate": 52,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_18",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_11",
+      "name": "Cờ Con Cổ Vũ",
+      "role": "support",
+      "duelWins": 11,
+      "duels": 128,
+      "teamWins": 49,
+      "teams": 64,
+      "duelRate": 9,
+      "teamRate": 77,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_07",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_10",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_18",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_23",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_26",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_27",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_12",
+      "name": "Kiếm Khách Mượn Vai",
+      "role": "fighter",
+      "duelWins": 57,
+      "duels": 128,
+      "teamWins": 34,
+      "teams": 64,
+      "duelRate": 45,
+      "teamRate": 53,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_13",
+      "name": "Mâm Quả Chủ Tịch",
+      "role": "support",
+      "duelWins": 66,
+      "duels": 128,
+      "teamWins": 7,
+      "teams": 64,
+      "duelRate": 52,
+      "teamRate": 11,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_14",
+      "name": "Hộp Quà Nghiêm Túc",
+      "role": "controller",
+      "duelWins": 80,
+      "duels": 128,
+      "teamWins": 21,
+      "teams": 64,
+      "duelRate": 63,
+      "teamRate": 33,
+      "counters": [
+        {
+          "id": "char_02",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_27",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_15",
+      "name": "Hiệp Sĩ Gâu Gâu",
+      "role": "tank",
+      "duelWins": 59,
+      "duels": 128,
+      "teamWins": 35,
+      "teams": 64,
+      "duelRate": 46,
+      "teamRate": 55,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_16",
+      "name": "Họa Sĩ Chạy Deadline",
+      "role": "controller",
+      "duelWins": 84,
+      "duels": 128,
+      "teamWins": 31,
+      "teams": 64,
+      "duelRate": 66,
+      "teamRate": 48,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_17",
+      "name": "Anh Tết Ship Nhanh",
+      "role": "assassin",
+      "duelWins": 69,
+      "duels": 128,
+      "teamWins": 41,
+      "teams": 64,
+      "duelRate": 54,
+      "teamRate": 64,
+      "counters": [
+        {
+          "id": "char_02",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_18",
+      "name": "Ông Hoàng Nồi Lẩu",
+      "role": "fighter",
+      "duelWins": 35,
+      "duels": 128,
+      "teamWins": 43,
+      "teams": 64,
+      "duelRate": 27,
+      "teamRate": 67,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_23",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_27",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_19",
+      "name": "Cô Nàng Khui Tết",
+      "role": "support",
+      "duelWins": 23,
+      "duels": 128,
+      "teamWins": 40,
+      "teams": 64,
+      "duelRate": 18,
+      "teamRate": 63,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_20",
+      "name": "Hoàng Tử Ngậm Hoa",
+      "role": "support",
+      "duelWins": 93,
+      "duels": 128,
+      "teamWins": 27,
+      "teams": 64,
+      "duelRate": 73,
+      "teamRate": 42,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_21",
+      "name": "Độ Duy Môn",
+      "role": "tank",
+      "duelWins": 91,
+      "duels": 128,
+      "teamWins": 31,
+      "teams": 64,
+      "duelRate": 71,
+      "teamRate": 48,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_22",
+      "name": "Đẳng Cấp Aura",
+      "role": "support",
+      "duelWins": 7,
+      "duels": 128,
+      "teamWins": 42,
+      "teams": 64,
+      "duelRate": 5,
+      "teamRate": 66,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_07",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_10",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_11",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_18",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_19",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_23",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_26",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_27",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_23",
+      "name": "King Of RiseOn",
+      "role": "fighter",
+      "duelWins": 40,
+      "duels": 128,
+      "teamWins": 30,
+      "teams": 64,
+      "duelRate": 31,
+      "teamRate": 47,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_10",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_24",
+      "name": "Thi Thánh Họ Mai",
+      "role": "ranger",
+      "duelWins": 94,
+      "duels": 128,
+      "teamWins": 26,
+      "teams": 64,
+      "duelRate": 73,
+      "teamRate": 41,
+      "counters": [
+        {
+          "id": "char_14",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_25",
+      "name": "Công Tử Phú Thọ",
+      "role": "tank",
+      "duelWins": 49,
+      "duels": 128,
+      "teamWins": 39,
+      "teams": 64,
+      "duelRate": 38,
+      "teamRate": 61,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_10",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_26",
+      "name": "Anh Fam De Phonk",
+      "role": "assassin",
+      "duelWins": 36,
+      "duels": 128,
+      "teamWins": 32,
+      "teams": 64,
+      "duelRate": 28,
+      "teamRate": 50,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_07",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_10",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_15",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_18",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_19",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_23",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_27",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_27",
+      "name": "Robot Da Đỏ",
+      "role": "fighter",
+      "duelWins": 45,
+      "duels": 128,
+      "teamWins": 32,
+      "teams": 64,
+      "duelRate": 35,
+      "teamRate": 50,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_02",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_10",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_13",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_23",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_28",
+      "name": "Người Máy Sịp Đỏ Phế Thải",
+      "role": "tank",
+      "duelWins": 58,
+      "duels": 128,
+      "teamWins": 36,
+      "teams": 64,
+      "duelRate": 45,
+      "teamRate": 56,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_07",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_08",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_27",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_29",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_33",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_29",
+      "name": "Wacom Hỏng Hóc",
+      "role": "ranger",
+      "duelWins": 67,
+      "duels": 128,
+      "teamWins": 18,
+      "teams": 64,
+      "duelRate": 52,
+      "teamRate": 28,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_05",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_06",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_12",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_20",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_26",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_30",
+      "name": "Chó Bóng Bay",
+      "role": "fighter",
+      "duelWins": 71,
+      "duels": 128,
+      "teamWins": 20,
+      "teams": 64,
+      "duelRate": 55,
+      "teamRate": 31,
+      "counters": [
+        {
+          "id": "char_01",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_03",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_09",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_17",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_25",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_28",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_31",
+      "name": "Ủn Đại Ca",
+      "role": "ranger",
+      "duelWins": 83,
+      "duels": 128,
+      "teamWins": 28,
+      "teams": 64,
+      "duelRate": 65,
+      "teamRate": 44,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_04",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 4,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_32",
+      "name": "Bang Chủ Cái Bang",
+      "role": "controller",
+      "duelWins": 89,
+      "duels": 128,
+      "teamWins": 25,
+      "teams": 64,
+      "duelRate": 70,
+      "teamRate": 39,
+      "counters": [
+        {
+          "id": "char_05",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_14",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_21",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_24",
+          "wins": 4,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    },
+    {
+      "id": "char_33",
+      "name": "Sóc Jake",
+      "role": "tank",
+      "duelWins": 91,
+      "duels": 128,
+      "teamWins": 41,
+      "teams": 64,
+      "duelRate": 71,
+      "teamRate": 64,
+      "counters": [
+        {
+          "id": "char_03",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_16",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_30",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_31",
+          "wins": 3,
+          "matches": 4
+        },
+        {
+          "id": "char_32",
+          "wins": 3,
+          "matches": 4
+        }
+      ]
+    }
+  ],
+  "items": [
+    {
+      "id": "item_01",
+      "name": "Máy chấm công",
+      "wins": 25,
+      "count": 48,
+      "winRate": 52
+    },
+    {
+      "id": "item_02",
+      "name": "RTX 5090",
+      "wins": 36,
+      "count": 48,
+      "winRate": 75
+    },
+    {
+      "id": "item_03",
+      "name": "Xôi",
+      "wins": 38,
+      "count": 48,
+      "winRate": 79
+    },
+    {
+      "id": "item_04",
+      "name": "Bánh mì",
+      "wins": 37,
+      "count": 48,
+      "winRate": 77
+    },
+    {
+      "id": "item_05",
+      "name": "Cơm thợ xây",
+      "wins": 45,
+      "count": 48,
+      "winRate": 94
+    },
+    {
+      "id": "item_06",
+      "name": "Kiếm kim cương Minecraft",
+      "wins": 38,
+      "count": 48,
+      "winRate": 79
+    },
+    {
+      "id": "item_07",
+      "name": "Kem mít",
+      "wins": 34,
+      "count": 48,
+      "winRate": 71
+    },
+    {
+      "id": "item_08",
+      "name": "Robot AI Claude",
+      "wins": 27,
+      "count": 48,
+      "winRate": 56
+    },
+    {
+      "id": "item_09",
+      "name": "PC",
+      "wins": 34,
+      "count": 48,
+      "winRate": 71
+    },
+    {
+      "id": "item_10",
+      "name": "Máy pha cà phê",
+      "wins": 30,
+      "count": 48,
+      "winRate": 63
+    },
+    {
+      "id": "item_11",
+      "name": "Tạp chí hoa hậu áo tắm",
+      "wins": 31,
+      "count": 48,
+      "winRate": 65
+    },
+    {
+      "id": "item_12",
+      "name": "Bánh khảo",
+      "wins": 26,
+      "count": 48,
+      "winRate": 54
+    },
+    {
+      "id": "item_13",
+      "name": "Bánh sinh nhật",
+      "wins": 39,
+      "count": 48,
+      "winRate": 81
+    },
+    {
+      "id": "item_14",
+      "name": "Nem chua",
+      "wins": 37,
+      "count": 48,
+      "winRate": 77
+    },
+    {
+      "id": "item_15",
+      "name": "Rau má",
+      "wins": 32,
+      "count": 48,
+      "winRate": 67
+    },
+    {
+      "id": "item_16",
+      "name": "Vịt quay",
+      "wins": 35,
+      "count": 48,
+      "winRate": 73
+    },
+    {
+      "id": "item_17",
+      "name": "Khau nhục",
+      "wins": 36,
+      "count": 48,
+      "winRate": 75
+    },
+    {
+      "id": "item_18",
+      "name": "Bóng đèn ý tưởng",
+      "wins": 32,
+      "count": 48,
+      "winRate": 67
+    },
+    {
+      "id": "item_19",
+      "name": "Lọ sữa Proby",
+      "wins": 38,
+      "count": 48,
+      "winRate": 79
+    },
+    {
+      "id": "item_20",
+      "name": "Bàn cờ tướng",
+      "wins": 31,
+      "count": 48,
+      "winRate": 65
+    },
+    {
+      "id": "item_21",
+      "name": "Cửa thần kì",
+      "wins": 25,
+      "count": 48,
+      "winRate": 52
+    },
+    {
+      "id": "item_22",
+      "name": "Cánh Aura",
+      "wins": 25,
+      "count": 48,
+      "winRate": 52
+    },
+    {
+      "id": "item_23",
+      "name": "Vương miện của nhà vua",
+      "wins": 32,
+      "count": 48,
+      "winRate": 67
+    },
+    {
+      "id": "item_24",
+      "name": "Thịt dê thông thái",
+      "wins": 35,
+      "count": 48,
+      "winRate": 73
+    },
+    {
+      "id": "item_25",
+      "name": "Vali tiền tỉ",
+      "wins": 39,
+      "count": 48,
+      "winRate": 81
+    },
+    {
+      "id": "item_26",
+      "name": "Tiết Khí Sư Cuối Cùng",
+      "wins": 24,
+      "count": 48,
+      "winRate": 50
+    },
+    {
+      "id": "item_27",
+      "name": "Bình Xăng Lên Men",
+      "wins": 36,
+      "count": 48,
+      "winRate": 75
+    },
+    {
+      "id": "item_28",
+      "name": "Tai Mèo",
+      "wins": 25,
+      "count": 48,
+      "winRate": 52
+    },
+    {
+      "id": "item_29",
+      "name": "Eli The Best",
+      "wins": 39,
+      "count": 48,
+      "winRate": 81
+    },
+    {
+      "id": "item_30",
+      "name": "Chuỗi Tên Lửa Giấy",
+      "wins": 28,
+      "count": 48,
+      "winRate": 58
+    },
+    {
+      "id": "item_31",
+      "name": "Bút Chì Bạc",
+      "wins": 31,
+      "count": 48,
+      "winRate": 65
+    },
+    {
+      "id": "item_32",
+      "name": "Dép Tổ Ong",
+      "wins": 30,
+      "count": 48,
+      "winRate": 63
+    },
+    {
+      "id": "item_33",
+      "name": "Huy Hiệu HB",
+      "wins": 30,
+      "count": 48,
+      "winRate": 63
+    }
+  ],
+  "rarityParity": [
+    {
+      "tier": 2,
+      "characters": [
+        {
+          "id": "char_01",
+          "level": 3,
+          "stats": {
+            "hp": 296,
+            "attack": 16,
+            "defense": 12,
+            "speed": 365,
+            "mass": 170,
+            "rotation": 1,
+            "reach": 6400,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_02",
+          "level": 3,
+          "stats": {
+            "hp": 276,
+            "attack": 22,
+            "defense": 8,
+            "speed": 460,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 24
+          }
+        },
+        {
+          "id": "char_03",
+          "level": 1,
+          "stats": {
+            "hp": 218,
+            "attack": 15,
+            "defense": 4,
+            "speed": 425,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5100,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_04",
+          "level": 3,
+          "stats": {
+            "hp": 265,
+            "attack": 22,
+            "defense": 6,
+            "speed": 495,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 10,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 23
+          }
+        },
+        {
+          "id": "char_05",
+          "level": 1,
+          "stats": {
+            "hp": 203,
+            "attack": 16,
+            "defense": 4,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4700,
+            "crit": 14,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_06",
+          "level": 1,
+          "stats": {
+            "hp": 213,
+            "attack": 12,
+            "defense": 4,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6200,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_07",
+          "level": 1,
+          "stats": {
+            "hp": 255,
+            "attack": 20,
+            "defense": 7,
+            "speed": 500,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 23
+          }
+        },
+        {
+          "id": "char_08",
+          "level": 1,
+          "stats": {
+            "hp": 276,
+            "attack": 22,
+            "defense": 7,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 11,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_10",
+          "level": 3,
+          "stats": {
+            "hp": 322,
+            "attack": 16,
+            "defense": 10,
+            "speed": 380,
+            "mass": 190,
+            "rotation": 1,
+            "reach": 6100,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_11",
+          "level": 1,
+          "stats": {
+            "hp": 244,
+            "attack": 16,
+            "defense": 7,
+            "speed": 405,
+            "mass": 125,
+            "rotation": 1,
+            "reach": 6400,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 115,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_12",
+          "level": 1,
+          "stats": {
+            "hp": 250,
+            "attack": 18,
+            "defense": 6,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_13",
+          "level": 1,
+          "stats": {
+            "hp": 224,
+            "attack": 14,
+            "defense": 5,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4800,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 31
+          }
+        },
+        {
+          "id": "char_15",
+          "level": 1,
+          "stats": {
+            "hp": 286,
+            "attack": 15,
+            "defense": 10,
+            "speed": 395,
+            "mass": 155,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_17",
+          "level": 1,
+          "stats": {
+            "hp": 244,
+            "attack": 23,
+            "defense": 6,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 17,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 20
+          }
+        },
+        {
+          "id": "char_18",
+          "level": 1,
+          "stats": {
+            "hp": 260,
+            "attack": 19,
+            "defense": 7,
+            "speed": 390,
+            "mass": 130,
+            "rotation": 1,
+            "reach": 6100,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_19",
+          "level": 1,
+          "stats": {
+            "hp": 250,
+            "attack": 20,
+            "defense": 6,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 24
+          }
+        },
+        {
+          "id": "char_20",
+          "level": 1,
+          "stats": {
+            "hp": 244,
+            "attack": 19,
+            "defense": 6,
+            "speed": 460,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_24",
+          "level": 1,
+          "stats": {
+            "hp": 213,
+            "attack": 17,
+            "defense": 4,
+            "speed": 430,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4900,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 28
+          }
+        },
+        {
+          "id": "char_25",
+          "level": 1,
+          "stats": {
+            "hp": 322,
+            "attack": 19,
+            "defense": 12,
+            "speed": 405,
+            "mass": 160,
+            "rotation": 1,
+            "reach": 6800,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_26",
+          "level": 1,
+          "stats": {
+            "hp": 224,
+            "attack": 19,
+            "defense": 4,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 5700,
+            "crit": 18,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 21
+          }
+        },
+        {
+          "id": "char_27",
+          "level": 1,
+          "stats": {
+            "hp": 260,
+            "attack": 19,
+            "defense": 7,
+            "speed": 420,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6000,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_28",
+          "level": 7,
+          "stats": {
+            "hp": 302,
+            "attack": 17,
+            "defense": 11,
+            "speed": 375,
+            "mass": 145,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_29",
+          "level": 7,
+          "stats": {
+            "hp": 234,
+            "attack": 19,
+            "defense": 5,
+            "speed": 440,
+            "mass": 90,
+            "rotation": 1,
+            "reach": 5000,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_30",
+          "level": 7,
+          "stats": {
+            "hp": 255,
+            "attack": 19,
+            "defense": 7,
+            "speed": 440,
+            "mass": 90,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        }
+      ]
+    },
+    {
+      "tier": 3,
+      "characters": [
+        {
+          "id": "char_01",
+          "level": 7,
+          "stats": {
+            "hp": 308,
+            "attack": 16,
+            "defense": 12,
+            "speed": 365,
+            "mass": 170,
+            "rotation": 1,
+            "reach": 6400,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_02",
+          "level": 7,
+          "stats": {
+            "hp": 286,
+            "attack": 23,
+            "defense": 8,
+            "speed": 460,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 24
+          }
+        },
+        {
+          "id": "char_03",
+          "level": 3,
+          "stats": {
+            "hp": 227,
+            "attack": 15,
+            "defense": 4,
+            "speed": 425,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5100,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_04",
+          "level": 7,
+          "stats": {
+            "hp": 275,
+            "attack": 23,
+            "defense": 6,
+            "speed": 495,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 10,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 23
+          }
+        },
+        {
+          "id": "char_05",
+          "level": 3,
+          "stats": {
+            "hp": 211,
+            "attack": 16,
+            "defense": 4,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4700,
+            "crit": 14,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_06",
+          "level": 3,
+          "stats": {
+            "hp": 221,
+            "attack": 13,
+            "defense": 4,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6200,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_07",
+          "level": 3,
+          "stats": {
+            "hp": 265,
+            "attack": 21,
+            "defense": 7,
+            "speed": 500,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 23
+          }
+        },
+        {
+          "id": "char_08",
+          "level": 3,
+          "stats": {
+            "hp": 286,
+            "attack": 23,
+            "defense": 7,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 11,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_09",
+          "level": 1,
+          "stats": {
+            "hp": 227,
+            "attack": 16,
+            "defense": 4,
+            "speed": 410,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5200,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 115,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 31
+          }
+        },
+        {
+          "id": "char_10",
+          "level": 7,
+          "stats": {
+            "hp": 335,
+            "attack": 16,
+            "defense": 10,
+            "speed": 380,
+            "mass": 190,
+            "rotation": 1,
+            "reach": 6100,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_11",
+          "level": 3,
+          "stats": {
+            "hp": 254,
+            "attack": 16,
+            "defense": 7,
+            "speed": 405,
+            "mass": 125,
+            "rotation": 1,
+            "reach": 6400,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 115,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_12",
+          "level": 3,
+          "stats": {
+            "hp": 259,
+            "attack": 18,
+            "defense": 6,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_13",
+          "level": 3,
+          "stats": {
+            "hp": 232,
+            "attack": 14,
+            "defense": 5,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4800,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 31
+          }
+        },
+        {
+          "id": "char_14",
+          "level": 1,
+          "stats": {
+            "hp": 238,
+            "attack": 17,
+            "defense": 4,
+            "speed": 395,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5000,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_15",
+          "level": 3,
+          "stats": {
+            "hp": 297,
+            "attack": 15,
+            "defense": 10,
+            "speed": 395,
+            "mass": 155,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_16",
+          "level": 1,
+          "stats": {
+            "hp": 216,
+            "attack": 17,
+            "defense": 4,
+            "speed": 465,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5300,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 27
+          }
+        },
+        {
+          "id": "char_17",
+          "level": 3,
+          "stats": {
+            "hp": 254,
+            "attack": 24,
+            "defense": 6,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 17,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 20
+          }
+        },
+        {
+          "id": "char_18",
+          "level": 3,
+          "stats": {
+            "hp": 270,
+            "attack": 19,
+            "defense": 7,
+            "speed": 390,
+            "mass": 130,
+            "rotation": 1,
+            "reach": 6100,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_19",
+          "level": 3,
+          "stats": {
+            "hp": 259,
+            "attack": 21,
+            "defense": 6,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 24
+          }
+        },
+        {
+          "id": "char_20",
+          "level": 3,
+          "stats": {
+            "hp": 254,
+            "attack": 19,
+            "defense": 6,
+            "speed": 460,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_21",
+          "level": 1,
+          "stats": {
+            "hp": 281,
+            "attack": 13,
+            "defense": 9,
+            "speed": 345,
+            "mass": 180,
+            "rotation": 1,
+            "reach": 6700,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 32
+          }
+        },
+        {
+          "id": "char_24",
+          "level": 3,
+          "stats": {
+            "hp": 221,
+            "attack": 17,
+            "defense": 4,
+            "speed": 430,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4900,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 28
+          }
+        },
+        {
+          "id": "char_25",
+          "level": 3,
+          "stats": {
+            "hp": 335,
+            "attack": 19,
+            "defense": 12,
+            "speed": 405,
+            "mass": 160,
+            "rotation": 1,
+            "reach": 6800,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_26",
+          "level": 3,
+          "stats": {
+            "hp": 232,
+            "attack": 19,
+            "defense": 4,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 5700,
+            "crit": 18,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 21
+          }
+        },
+        {
+          "id": "char_27",
+          "level": 3,
+          "stats": {
+            "hp": 270,
+            "attack": 19,
+            "defense": 7,
+            "speed": 420,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6000,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        }
+      ]
+    },
+    {
+      "tier": 4,
+      "characters": [
+        {
+          "id": "char_03",
+          "level": 7,
+          "stats": {
+            "hp": 235,
+            "attack": 16,
+            "defense": 4,
+            "speed": 425,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5100,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_05",
+          "level": 7,
+          "stats": {
+            "hp": 218,
+            "attack": 17,
+            "defense": 4,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4700,
+            "crit": 14,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_06",
+          "level": 7,
+          "stats": {
+            "hp": 230,
+            "attack": 13,
+            "defense": 4,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6200,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_07",
+          "level": 7,
+          "stats": {
+            "hp": 274,
+            "attack": 21,
+            "defense": 7,
+            "speed": 500,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 23
+          }
+        },
+        {
+          "id": "char_08",
+          "level": 7,
+          "stats": {
+            "hp": 297,
+            "attack": 24,
+            "defense": 7,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 11,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_09",
+          "level": 3,
+          "stats": {
+            "hp": 235,
+            "attack": 17,
+            "defense": 4,
+            "speed": 410,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5200,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 115,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 31
+          }
+        },
+        {
+          "id": "char_11",
+          "level": 7,
+          "stats": {
+            "hp": 263,
+            "attack": 17,
+            "defense": 7,
+            "speed": 405,
+            "mass": 125,
+            "rotation": 1,
+            "reach": 6400,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 115,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_12",
+          "level": 7,
+          "stats": {
+            "hp": 269,
+            "attack": 19,
+            "defense": 6,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_13",
+          "level": 7,
+          "stats": {
+            "hp": 241,
+            "attack": 15,
+            "defense": 5,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4800,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 31
+          }
+        },
+        {
+          "id": "char_14",
+          "level": 3,
+          "stats": {
+            "hp": 246,
+            "attack": 18,
+            "defense": 4,
+            "speed": 395,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5000,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_15",
+          "level": 7,
+          "stats": {
+            "hp": 308,
+            "attack": 16,
+            "defense": 10,
+            "speed": 395,
+            "mass": 155,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_16",
+          "level": 3,
+          "stats": {
+            "hp": 224,
+            "attack": 18,
+            "defense": 4,
+            "speed": 465,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5300,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 27
+          }
+        },
+        {
+          "id": "char_17",
+          "level": 7,
+          "stats": {
+            "hp": 263,
+            "attack": 25,
+            "defense": 6,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 17,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 20
+          }
+        },
+        {
+          "id": "char_18",
+          "level": 7,
+          "stats": {
+            "hp": 280,
+            "attack": 20,
+            "defense": 7,
+            "speed": 390,
+            "mass": 130,
+            "rotation": 1,
+            "reach": 6100,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_19",
+          "level": 7,
+          "stats": {
+            "hp": 269,
+            "attack": 21,
+            "defense": 6,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 24
+          }
+        },
+        {
+          "id": "char_20",
+          "level": 7,
+          "stats": {
+            "hp": 263,
+            "attack": 20,
+            "defense": 6,
+            "speed": 460,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_21",
+          "level": 3,
+          "stats": {
+            "hp": 291,
+            "attack": 13,
+            "defense": 9,
+            "speed": 345,
+            "mass": 180,
+            "rotation": 1,
+            "reach": 6700,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 32
+          }
+        },
+        {
+          "id": "char_22",
+          "level": 1,
+          "stats": {
+            "hp": 297,
+            "attack": 21,
+            "defense": 8,
+            "speed": 415,
+            "mass": 115,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_23",
+          "level": 1,
+          "stats": {
+            "hp": 274,
+            "attack": 19,
+            "defense": 7,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 10,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 28
+          }
+        },
+        {
+          "id": "char_24",
+          "level": 7,
+          "stats": {
+            "hp": 230,
+            "attack": 18,
+            "defense": 4,
+            "speed": 430,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4900,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 28
+          }
+        },
+        {
+          "id": "char_25",
+          "level": 7,
+          "stats": {
+            "hp": 347,
+            "attack": 20,
+            "defense": 12,
+            "speed": 405,
+            "mass": 160,
+            "rotation": 1,
+            "reach": 6800,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_26",
+          "level": 7,
+          "stats": {
+            "hp": 241,
+            "attack": 20,
+            "defense": 4,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 5700,
+            "crit": 18,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 21
+          }
+        },
+        {
+          "id": "char_27",
+          "level": 7,
+          "stats": {
+            "hp": 280,
+            "attack": 20,
+            "defense": 7,
+            "speed": 420,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6000,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_28",
+          "level": 10,
+          "stats": {
+            "hp": 325,
+            "attack": 18,
+            "defense": 11,
+            "speed": 375,
+            "mass": 145,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_29",
+          "level": 10,
+          "stats": {
+            "hp": 252,
+            "attack": 20,
+            "defense": 5,
+            "speed": 440,
+            "mass": 90,
+            "rotation": 1,
+            "reach": 5000,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_30",
+          "level": 10,
+          "stats": {
+            "hp": 274,
+            "attack": 20,
+            "defense": 7,
+            "speed": 440,
+            "mass": 90,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_31",
+          "level": 1,
+          "stats": {
+            "hp": 230,
+            "attack": 16,
+            "defense": 4,
+            "speed": 420,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5100,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_32",
+          "level": 1,
+          "stats": {
+            "hp": 252,
+            "attack": 16,
+            "defense": 5,
+            "speed": 425,
+            "mass": 110,
+            "rotation": 1,
+            "reach": 5200,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_33",
+          "level": 1,
+          "stats": {
+            "hp": 286,
+            "attack": 13,
+            "defense": 9,
+            "speed": 370,
+            "mass": 165,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 32
+          }
+        }
+      ]
+    },
+    {
+      "tier": 5,
+      "characters": [
+        {
+          "id": "char_01",
+          "level": 10,
+          "stats": {
+            "hp": 336,
+            "attack": 18,
+            "defense": 12,
+            "speed": 365,
+            "mass": 170,
+            "rotation": 1,
+            "reach": 6400,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_02",
+          "level": 10,
+          "stats": {
+            "hp": 313,
+            "attack": 25,
+            "defense": 8,
+            "speed": 460,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 24
+          }
+        },
+        {
+          "id": "char_03",
+          "level": 10,
+          "stats": {
+            "hp": 248,
+            "attack": 17,
+            "defense": 4,
+            "speed": 425,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5100,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_04",
+          "level": 10,
+          "stats": {
+            "hp": 301,
+            "attack": 25,
+            "defense": 6,
+            "speed": 495,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 10,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 23
+          }
+        },
+        {
+          "id": "char_05",
+          "level": 10,
+          "stats": {
+            "hp": 230,
+            "attack": 18,
+            "defense": 4,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4700,
+            "crit": 14,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_06",
+          "level": 10,
+          "stats": {
+            "hp": 242,
+            "attack": 14,
+            "defense": 4,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6200,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_07",
+          "level": 10,
+          "stats": {
+            "hp": 289,
+            "attack": 22,
+            "defense": 7,
+            "speed": 500,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 23
+          }
+        },
+        {
+          "id": "char_08",
+          "level": 10,
+          "stats": {
+            "hp": 313,
+            "attack": 25,
+            "defense": 7,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 11,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_09",
+          "level": 7,
+          "stats": {
+            "hp": 246,
+            "attack": 18,
+            "defense": 4,
+            "speed": 410,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5200,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 115,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 31
+          }
+        },
+        {
+          "id": "char_10",
+          "level": 10,
+          "stats": {
+            "hp": 366,
+            "attack": 18,
+            "defense": 10,
+            "speed": 380,
+            "mass": 190,
+            "rotation": 1,
+            "reach": 6100,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_11",
+          "level": 10,
+          "stats": {
+            "hp": 277,
+            "attack": 18,
+            "defense": 7,
+            "speed": 405,
+            "mass": 125,
+            "rotation": 1,
+            "reach": 6400,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 115,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_12",
+          "level": 10,
+          "stats": {
+            "hp": 283,
+            "attack": 20,
+            "defense": 6,
+            "speed": 455,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6600,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_13",
+          "level": 10,
+          "stats": {
+            "hp": 254,
+            "attack": 15,
+            "defense": 5,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4800,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 31
+          }
+        },
+        {
+          "id": "char_14",
+          "level": 7,
+          "stats": {
+            "hp": 258,
+            "attack": 19,
+            "defense": 4,
+            "speed": 395,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5000,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_15",
+          "level": 10,
+          "stats": {
+            "hp": 325,
+            "attack": 17,
+            "defense": 10,
+            "speed": 395,
+            "mass": 155,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_16",
+          "level": 7,
+          "stats": {
+            "hp": 234,
+            "attack": 19,
+            "defense": 4,
+            "speed": 465,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5300,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 27
+          }
+        },
+        {
+          "id": "char_17",
+          "level": 10,
+          "stats": {
+            "hp": 277,
+            "attack": 26,
+            "defense": 6,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 17,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 20
+          }
+        },
+        {
+          "id": "char_18",
+          "level": 10,
+          "stats": {
+            "hp": 295,
+            "attack": 21,
+            "defense": 7,
+            "speed": 390,
+            "mass": 130,
+            "rotation": 1,
+            "reach": 6100,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_19",
+          "level": 10,
+          "stats": {
+            "hp": 283,
+            "attack": 22,
+            "defense": 6,
+            "speed": 445,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 24
+          }
+        },
+        {
+          "id": "char_20",
+          "level": 10,
+          "stats": {
+            "hp": 277,
+            "attack": 21,
+            "defense": 6,
+            "speed": 460,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6300,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_21",
+          "level": 7,
+          "stats": {
+            "hp": 305,
+            "attack": 14,
+            "defense": 9,
+            "speed": 345,
+            "mass": 180,
+            "rotation": 1,
+            "reach": 6700,
+            "crit": 4,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 32
+          }
+        },
+        {
+          "id": "char_22",
+          "level": 3,
+          "stats": {
+            "hp": 307,
+            "attack": 22,
+            "defense": 8,
+            "speed": 415,
+            "mass": 115,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 110,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 25
+          }
+        },
+        {
+          "id": "char_23",
+          "level": 3,
+          "stats": {
+            "hp": 284,
+            "attack": 20,
+            "defense": 7,
+            "speed": 435,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 10,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 28
+          }
+        },
+        {
+          "id": "char_24",
+          "level": 10,
+          "stats": {
+            "hp": 242,
+            "attack": 19,
+            "defense": 4,
+            "speed": 430,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 4900,
+            "crit": 12,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 28
+          }
+        },
+        {
+          "id": "char_25",
+          "level": 10,
+          "stats": {
+            "hp": 366,
+            "attack": 21,
+            "defense": 12,
+            "speed": 405,
+            "mass": 160,
+            "rotation": 1,
+            "reach": 6800,
+            "crit": 6,
+            "critPower": 150,
+            "charge": 105,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_26",
+          "level": 10,
+          "stats": {
+            "hp": 254,
+            "attack": 21,
+            "defense": 4,
+            "speed": 570,
+            "mass": 85,
+            "rotation": 1,
+            "reach": 5700,
+            "crit": 18,
+            "critPower": 175,
+            "charge": 95,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 21
+          }
+        },
+        {
+          "id": "char_27",
+          "level": 10,
+          "stats": {
+            "hp": 295,
+            "attack": 21,
+            "defense": 7,
+            "speed": 420,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 6000,
+            "crit": 8,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 26
+          }
+        },
+        {
+          "id": "char_31",
+          "level": 3,
+          "stats": {
+            "hp": 238,
+            "attack": 16,
+            "defense": 4,
+            "speed": 420,
+            "mass": 100,
+            "rotation": 1,
+            "reach": 5100,
+            "crit": 9,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 30
+          }
+        },
+        {
+          "id": "char_32",
+          "level": 3,
+          "stats": {
+            "hp": 261,
+            "attack": 16,
+            "defense": 5,
+            "speed": 425,
+            "mass": 110,
+            "rotation": 1,
+            "reach": 5200,
+            "crit": 7,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 29
+          }
+        },
+        {
+          "id": "char_33",
+          "level": 3,
+          "stats": {
+            "hp": 296,
+            "attack": 14,
+            "defense": 9,
+            "speed": 370,
+            "mass": 165,
+            "rotation": 1,
+            "reach": 6500,
+            "crit": 5,
+            "critPower": 150,
+            "charge": 100,
+            "shield": 0,
+            "thorns": 0,
+            "burn": 0,
+            "bounce": 100,
+            "stability": 100,
+            "superPower": 100,
+            "cooldown": 32
+          }
+        }
+      ]
+    }
+  ],
+  "equipped": [
+    {
+      "level": 1,
+      "characters": [
+        {
+          "id": "char_01",
+          "wins": 30,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_07",
+            "char_08",
+            "char_09",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_21",
+            "char_24",
+            "char_28",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 47
+        },
+        {
+          "id": "char_02",
+          "wins": 29,
+          "matches": 64,
+          "counters": [
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_08",
+            "char_09",
+            "char_10",
+            "char_16",
+            "char_21",
+            "char_23",
+            "char_24",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 45
+        },
+        {
+          "id": "char_03",
+          "wins": 48,
+          "matches": 64,
+          "counters": [
+            "char_05",
+            "char_14",
+            "char_30",
+            "char_32"
+          ],
+          "winRate": 75
+        },
+        {
+          "id": "char_04",
+          "wins": 25,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_09",
+            "char_12",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 39
+        },
+        {
+          "id": "char_05",
+          "wins": 46,
+          "matches": 64,
+          "counters": [
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 72
+        },
+        {
+          "id": "char_06",
+          "wins": 22,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_05",
+            "char_07",
+            "char_10",
+            "char_12",
+            "char_14",
+            "char_15",
+            "char_16",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_26",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 34
+        },
+        {
+          "id": "char_07",
+          "wins": 26,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_03",
+            "char_05",
+            "char_09",
+            "char_16",
+            "char_18",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_27",
+            "char_28",
+            "char_30",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 41
+        },
+        {
+          "id": "char_08",
+          "wins": 32,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_06",
+            "char_09",
+            "char_13",
+            "char_21",
+            "char_24",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 50
+        },
+        {
+          "id": "char_09",
+          "wins": 41,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_12",
+            "char_14",
+            "char_29",
+            "char_30",
+            "char_33"
+          ],
+          "winRate": 64
+        },
+        {
+          "id": "char_10",
+          "wins": 18,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_08",
+            "char_13",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_27",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 28
+        },
+        {
+          "id": "char_11",
+          "wins": 4,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_07",
+            "char_08",
+            "char_09",
+            "char_10",
+            "char_12",
+            "char_13",
+            "char_14",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_24",
+            "char_25",
+            "char_26",
+            "char_27",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 6
+        },
+        {
+          "id": "char_12",
+          "wins": 24,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_05",
+            "char_13",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_24",
+            "char_25",
+            "char_27",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 38
+        },
+        {
+          "id": "char_13",
+          "wins": 26,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_03",
+            "char_05",
+            "char_09",
+            "char_14",
+            "char_16",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 41
+        },
+        {
+          "id": "char_14",
+          "wins": 29,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_04",
+            "char_07",
+            "char_08",
+            "char_12",
+            "char_17",
+            "char_18",
+            "char_25",
+            "char_28",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 45
+        },
+        {
+          "id": "char_15",
+          "wins": 23,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_07",
+            "char_08",
+            "char_12",
+            "char_14",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 36
+        },
+        {
+          "id": "char_16",
+          "wins": 45,
+          "matches": 64,
+          "counters": [
+            "char_14",
+            "char_21",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 70
+        },
+        {
+          "id": "char_17",
+          "wins": 31,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_03",
+            "char_08",
+            "char_09",
+            "char_12",
+            "char_16",
+            "char_20",
+            "char_23",
+            "char_25",
+            "char_29",
+            "char_30",
+            "char_33"
+          ],
+          "winRate": 48
+        },
+        {
+          "id": "char_18",
+          "wins": 21,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_08",
+            "char_13",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 33
+        },
+        {
+          "id": "char_19",
+          "wins": 7,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_07",
+            "char_08",
+            "char_09",
+            "char_10",
+            "char_11",
+            "char_13",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_20",
+            "char_21",
+            "char_22",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 11
+        },
+        {
+          "id": "char_20",
+          "wins": 34,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_06",
+            "char_09",
+            "char_14",
+            "char_16",
+            "char_24",
+            "char_29",
+            "char_30",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 53
+        },
+        {
+          "id": "char_21",
+          "wins": 48,
+          "matches": 64,
+          "counters": [
+            "char_30",
+            "char_32"
+          ],
+          "winRate": 75
+        },
+        {
+          "id": "char_22",
+          "wins": 9,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_07",
+            "char_08",
+            "char_09",
+            "char_10",
+            "char_12",
+            "char_14",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 14
+        },
+        {
+          "id": "char_23",
+          "wins": 25,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_04",
+            "char_06",
+            "char_09",
+            "char_16",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 39
+        },
+        {
+          "id": "char_24",
+          "wins": 42,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_14",
+            "char_16",
+            "char_29",
+            "char_30",
+            "char_31"
+          ],
+          "winRate": 66
+        },
+        {
+          "id": "char_25",
+          "wins": 39,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_05",
+            "char_08",
+            "char_09",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 61
+        },
+        {
+          "id": "char_26",
+          "wins": 14,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_07",
+            "char_09",
+            "char_10",
+            "char_15",
+            "char_17",
+            "char_19",
+            "char_20",
+            "char_22",
+            "char_23",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 22
+        },
+        {
+          "id": "char_27",
+          "wins": 17,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_09",
+            "char_13",
+            "char_15",
+            "char_16",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_24",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 27
+        },
+        {
+          "id": "char_28",
+          "wins": 41,
+          "matches": 64,
+          "counters": [
+            "char_08",
+            "char_09",
+            "char_17",
+            "char_20",
+            "char_29",
+            "char_30",
+            "char_31"
+          ],
+          "winRate": 64
+        },
+        {
+          "id": "char_29",
+          "wins": 55,
+          "matches": 64,
+          "counters": [
+            "char_30",
+            "char_31"
+          ],
+          "winRate": 86
+        },
+        {
+          "id": "char_30",
+          "wins": 64,
+          "matches": 64,
+          "counters": [],
+          "winRate": 100
+        },
+        {
+          "id": "char_31",
+          "wins": 48,
+          "matches": 64,
+          "counters": [
+            "char_25",
+            "char_30",
+            "char_32"
+          ],
+          "winRate": 75
+        },
+        {
+          "id": "char_32",
+          "wins": 45,
+          "matches": 64,
+          "counters": [
+            "char_13",
+            "char_16",
+            "char_29",
+            "char_30",
+            "char_33"
+          ],
+          "winRate": 70
+        },
+        {
+          "id": "char_33",
+          "wins": 48,
+          "matches": 64,
+          "counters": [
+            "char_16",
+            "char_21",
+            "char_24",
+            "char_29",
+            "char_30",
+            "char_31"
+          ],
+          "winRate": 75
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "characters": [
+        {
+          "id": "char_01",
+          "wins": 40,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_30"
+          ],
+          "winRate": 63
+        },
+        {
+          "id": "char_02",
+          "wins": 40,
+          "matches": 64,
+          "counters": [
+            "char_08",
+            "char_13",
+            "char_24",
+            "char_30"
+          ],
+          "winRate": 63
+        },
+        {
+          "id": "char_03",
+          "wins": 49,
+          "matches": 64,
+          "counters": [
+            "char_05",
+            "char_14",
+            "char_16",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 77
+        },
+        {
+          "id": "char_04",
+          "wins": 26,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_08",
+            "char_09",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_28",
+            "char_30",
+            "char_32"
+          ],
+          "winRate": 41
+        },
+        {
+          "id": "char_05",
+          "wins": 48,
+          "matches": 64,
+          "counters": [
+            "char_14",
+            "char_17",
+            "char_30"
+          ],
+          "winRate": 75
+        },
+        {
+          "id": "char_06",
+          "wins": 30,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_05",
+            "char_07",
+            "char_14",
+            "char_17",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 47
+        },
+        {
+          "id": "char_07",
+          "wins": 24,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_08",
+            "char_10",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_20",
+            "char_23",
+            "char_24",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 38
+        },
+        {
+          "id": "char_08",
+          "wins": 36,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_06",
+            "char_21",
+            "char_24",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 56
+        },
+        {
+          "id": "char_09",
+          "wins": 30,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_05",
+            "char_06",
+            "char_07",
+            "char_10",
+            "char_12",
+            "char_14",
+            "char_24",
+            "char_25",
+            "char_30"
+          ],
+          "winRate": 47
+        },
+        {
+          "id": "char_10",
+          "wins": 26,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_05",
+            "char_06",
+            "char_08",
+            "char_12",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_29",
+            "char_30",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 41
+        },
+        {
+          "id": "char_11",
+          "wins": 6,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_07",
+            "char_08",
+            "char_09",
+            "char_10",
+            "char_12",
+            "char_13",
+            "char_14",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_24",
+            "char_25",
+            "char_27",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 9
+        },
+        {
+          "id": "char_12",
+          "wins": 30,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_18",
+            "char_21",
+            "char_24",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 47
+        },
+        {
+          "id": "char_13",
+          "wins": 21,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_06",
+            "char_08",
+            "char_10",
+            "char_12",
+            "char_14",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_24",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 33
+        },
+        {
+          "id": "char_14",
+          "wins": 35,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_04",
+            "char_07",
+            "char_08",
+            "char_12",
+            "char_17",
+            "char_25",
+            "char_26",
+            "char_28",
+            "char_30",
+            "char_33"
+          ],
+          "winRate": 55
+        },
+        {
+          "id": "char_15",
+          "wins": 25,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_03",
+            "char_05",
+            "char_07",
+            "char_08",
+            "char_10",
+            "char_12",
+            "char_14",
+            "char_17",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 39
+        },
+        {
+          "id": "char_16",
+          "wins": 45,
+          "matches": 64,
+          "counters": [
+            "char_05",
+            "char_15",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 70
+        },
+        {
+          "id": "char_17",
+          "wins": 39,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_08",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_33"
+          ],
+          "winRate": 61
+        },
+        {
+          "id": "char_18",
+          "wins": 21,
+          "matches": 64,
+          "counters": [
+            "char_02",
+            "char_03",
+            "char_06",
+            "char_08",
+            "char_09",
+            "char_14",
+            "char_15",
+            "char_16",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_27",
+            "char_28",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 33
+        },
+        {
+          "id": "char_19",
+          "wins": 8,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_07",
+            "char_08",
+            "char_09",
+            "char_10",
+            "char_11",
+            "char_13",
+            "char_14",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 13
+        },
+        {
+          "id": "char_20",
+          "wins": 40,
+          "matches": 64,
+          "counters": [
+            "char_05",
+            "char_14",
+            "char_24",
+            "char_30",
+            "char_31",
+            "char_33"
+          ],
+          "winRate": 63
+        },
+        {
+          "id": "char_21",
+          "wins": 42,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_09",
+            "char_16",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 66
+        },
+        {
+          "id": "char_22",
+          "wins": 3,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_07",
+            "char_08",
+            "char_09",
+            "char_10",
+            "char_11",
+            "char_12",
+            "char_13",
+            "char_14",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_19",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 5
+        },
+        {
+          "id": "char_23",
+          "wins": 13,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_04",
+            "char_05",
+            "char_06",
+            "char_09",
+            "char_10",
+            "char_12",
+            "char_13",
+            "char_14",
+            "char_15",
+            "char_16",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_27",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 20
+        },
+        {
+          "id": "char_24",
+          "wins": 44,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_14",
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 69
+        },
+        {
+          "id": "char_25",
+          "wins": 35,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_05",
+            "char_16",
+            "char_20",
+            "char_21",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 55
+        },
+        {
+          "id": "char_26",
+          "wins": 12,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_05",
+            "char_07",
+            "char_08",
+            "char_10",
+            "char_11",
+            "char_12",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_18",
+            "char_19",
+            "char_20",
+            "char_21",
+            "char_23",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_30",
+            "char_33"
+          ],
+          "winRate": 19
+        },
+        {
+          "id": "char_27",
+          "wins": 16,
+          "matches": 64,
+          "counters": [
+            "char_01",
+            "char_02",
+            "char_03",
+            "char_06",
+            "char_08",
+            "char_09",
+            "char_15",
+            "char_16",
+            "char_17",
+            "char_20",
+            "char_21",
+            "char_24",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31",
+            "char_32",
+            "char_33"
+          ],
+          "winRate": 25
+        },
+        {
+          "id": "char_28",
+          "wins": 47,
+          "matches": 64,
+          "counters": [
+            "char_16",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 73
+        },
+        {
+          "id": "char_29",
+          "wins": 49,
+          "matches": 64,
+          "counters": [
+            "char_05",
+            "char_30"
+          ],
+          "winRate": 77
+        },
+        {
+          "id": "char_30",
+          "wins": 64,
+          "matches": 64,
+          "counters": [],
+          "winRate": 100
+        },
+        {
+          "id": "char_31",
+          "wins": 40,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_21",
+            "char_25",
+            "char_28",
+            "char_30"
+          ],
+          "winRate": 63
+        },
+        {
+          "id": "char_32",
+          "wins": 31,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_14",
+            "char_16",
+            "char_20",
+            "char_21",
+            "char_25",
+            "char_28",
+            "char_29",
+            "char_30"
+          ],
+          "winRate": 48
+        },
+        {
+          "id": "char_33",
+          "wins": 41,
+          "matches": 64,
+          "counters": [
+            "char_03",
+            "char_05",
+            "char_09",
+            "char_21",
+            "char_28",
+            "char_29",
+            "char_30",
+            "char_31"
+          ],
+          "winRate": 64
+        }
+      ]
+    }
+  ]
+}

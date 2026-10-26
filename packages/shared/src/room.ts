@@ -11,7 +11,7 @@ import {
 } from "./balance";
 import { DEFAULT_SETTINGS, type Action, type Settings } from "./protocol";
 import { campaignEncounter, campaignPackReward, campaignBossPackReward } from "./campaign";
-import { packPool, packTier } from "./packs";
+import { packDrawPool, nextBossPity } from "./packs";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "./arena";
 import { addCardXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "./progression";
 import {
@@ -72,6 +72,7 @@ export interface Player {
   bossPacks?: number;
   packsSinceRare?: number;
   packsSinceHighRarity?: number;
+  bossPacksSinceHighRarity?: number;
   lastPackAt: number;
   missions: { draw: number; win: number; campaign: number };
   claimedMissions: string[];
@@ -525,10 +526,10 @@ export function applyAction(
           ...CATALOG_ITEMS.filter(it => (ownedItems.find(owned => owned.itemId === it.id)?.level || 0) < 10).map(it => ({ id: it.id, kind: "item" as const, tier: `T${it.rarity + 1}` })),
         ];
         requireRule(available.length > 0, "Tất cả thẻ đã đạt cấp tối đa");
-        const tier = packTier(kind, (random(s) % 100000) / 1000, p.packsSinceRare || 0);
-        const pool = packPool(available, tier, kind === "normal" && (p.packsSinceHighRarity || 0) >= 99);
+        const pool = packDrawPool(available, kind, (random(s) % 100000) / 1000, p.packsSinceRare || 0, p.packsSinceHighRarity || 0, p.bossPacksSinceHighRarity || 0);
+        requireRule(pool.length > 0, "Tất cả thẻ Huyền thoại đã đạt Lv.10. Pack Boss bảo hiểm được giữ lại.");
         const pulled = pool[random(s) % pool.length];
-        if (kind === "boss") p.bossPacks!--;
+        if (kind === "boss") { p.bossPacks!--; p.bossPacksSinceHighRarity = nextBossPity(p.bossPacksSinceHighRarity || 0, pulled.tier); }
         else {
           p.packs--;
           p.packsSinceRare = pulled.tier === "T1" ? Math.min(19, (p.packsSinceRare || 0) + 1) : 0;
@@ -853,6 +854,25 @@ export function advance(
   s.game ??= 0;
   s.replayFrames ??= [];
   s.replayChunks ??= [];
+  // A persisted round belongs to its original engine. Cancel it without rewards
+  // rather than stepping incompatible state or leaving its alarm retrying forever.
+  if (s.phase === "SIMULATING" && s.simulation?.version !== ENGINE_VERSION) {
+    s.phase = "FINISHED";
+    s.simulation = null;
+    s.replay = null;
+    s.replayFrames = [];
+    s.replayChunks = [];
+    s.checksums = [];
+    s.results = [];
+    s.champion = null;
+    s.placement = [];
+    s.settledRound = s.round;
+    s.deadline = 0;
+    for (const player of s.players) player.ready = false;
+    s.seq++;
+    s.updated = now;
+    return s;
+  }
   if (!s.deadline || now < s.deadline) return s;
   if (s.phase === "PREPARATION") lock(s, now);
   else if (s.phase === "SIMULATING") {

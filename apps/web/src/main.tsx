@@ -31,7 +31,9 @@ import { PROFILE_KEY, acknowledgeProfile, commitLocalProfile, readLocalProfile, 
 import { CURRENT_RELEASE_VERSION, PatchNotesPage } from "./PatchNotes";
 import { CenteredModal, MatchRewardPopup, type MatchReward } from "./CenteredModal";
 import { campaignEncounter, campaignPackReward, campaignBossPackReward, isCampaignBoss, isHardCampaignBoss } from "../../../packages/shared/src/campaign";
-import { PACK_ODDS, packPool, packTier, type PackKind } from "../../../packages/shared/src/packs";
+import { PACK_ODDS, packDrawPool, nextBossPity, normalizeBossPity, type PackKind } from "../../../packages/shared/src/packs";
+import { BattleAnalyticsPage } from "./BattleAnalyticsPage";
+import { readBattleRecords, saveBattleRecord, type BattleMode, type BattleSummary } from "./battleAnalytics";
 import { Arena } from "./rendering/Arena";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "../../../packages/shared/src/arena";
 import "./styles.css";
@@ -63,6 +65,7 @@ interface GlobalProfile {
   processedMatches: string[];
   packsSinceRare: number;
   packsSinceHighRarity: number;
+  bossPacksSinceHighRarity: number;
   updateRewardVersion?: string;
   lastPull?: { kind: "character" | "item"; id: string; tier: string; rarity: string; duplicate?: boolean; xpGained?: number; oldXp?: number; experience?: number; oldLevel?: number; level?: number; leveledUp?: boolean; batchCount?: number; evolved?: boolean; oldTier?: string; packKind?: PackKind };
 }
@@ -86,12 +89,12 @@ const UPDATE_REWARD = { version: CURRENT_RELEASE_VERSION, packs: 50, characterId
 const NAVIGATION_GROUPS = [
   { title: "Bộ sưu tập", items: [["packs", "Mở thẻ"], ["inventory", "Kho đồ"], ["training", "Luyện bài"], ["trade", "Trao đổi bài"]] },
   { title: "Chiến đấu", items: [["campaign", "Đi ải"], ["simulation", "Mô phỏng"], ["multiplayer", "Multiplayer"]] },
-  { title: "Tra cứu", items: [["catalog", "Catalog"], ["help", "Cách chơi"]] },
+  { title: "Tra cứu", items: [["catalog", "Catalog"], ["analytics", "Phân tích số liệu"], ["help", "Cách chơi"]] },
   { title: "Cộng đồng & cập nhật", items: [["feedback", "Góp ý"], ["patchNotes", "Patch notes"]] },
 ] as const;
 function safeApiUrl(value: string) {
   if (typeof window !== "undefined" && window.location.protocol === "https:" && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(value))
-    return import.meta.env.VITE_API_URL || "";
+    return defaultApi;
   return value;
 }
 async function fetchProfileWithRetry(url: string, init: RequestInit) {
@@ -123,6 +126,7 @@ function newProfile(): GlobalProfile {
     processedMatches: [],
     packsSinceRare: 0,
     packsSinceHighRarity: 0,
+    bossPacksSinceHighRarity: 0,
   };
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
   sessionStorage.setItem("circlewar-welcome-gift", "1");
@@ -133,17 +137,22 @@ function newProfileDefaults(): GlobalProfile {
     cards: [{ characterId: "char_01", level: 1, xp: 0 }],
     itemCards: [], team: ["char_01"], equipment: {}, packs: 50, bossPacks: 0, lastPackAt: Date.now(),
     missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], missionDay: dailyQuestDay(),
-    campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0,
+    campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0, bossPacksSinceHighRarity: 0,
   };
 }
 function PackRates({ kind }: { kind: PackKind }) {
-  return <div className="pack-rates" aria-label={kind === "boss" ? "Tỉ lệ Pack Boss" : "Tỉ lệ pack thường"}><b>Tỉ lệ cơ bản mỗi lần mở</b><dl>{Object.entries(PACK_ODDS[kind]).map(([tier, chance]) => <div key={tier}><dt>{tierRarity(tier)}</dt><dd>{chance.toLocaleString("vi-VN")}%</dd></div>)}</dl><small>Áp dụng chung cho nhân vật và vật phẩm, phân đều trong mỗi bậc. Card Rác nằm trong nhóm Thường; GOD chỉ nhận qua tiến hóa. Bậc hết card chưa đạt Lv.10 sẽ ưu tiên bậc cao hơn còn khả dụng, nếu không còn thì dùng bậc cao nhất còn lại.</small>{kind === "normal" && <small>Bảo hiểm: sau 19 pack liên tiếp chỉ ra Thường, pack thứ 20 có Hiếm 85% · Sử thi 13% · Huyền thoại 2%. Sau 99 pack chưa ra Sử thi trở lên, pack thứ 100 bảo đảm bậc cao nhất còn khả dụng. Khi cả hai cùng tới hạn, ưu tiên bảo hiểm 100 pack.</small>}{kind === "boss" && <small>Không dùng bảo hiểm và không tăng hoặc xóa tiến độ bảo hiểm của pack thường.</small>}</div>;
+  return <div className="pack-rates" aria-label={kind === "boss" ? "Tỉ lệ Pack Boss" : "Tỉ lệ pack thường"}><b>Tỉ lệ cơ bản mỗi lần mở</b><dl>{Object.entries(PACK_ODDS[kind]).map(([tier, chance]) => <div key={tier}><dt>{tierRarity(tier)}</dt><dd>{chance.toLocaleString("vi-VN")}%</dd></div>)}</dl><small>Áp dụng chung cho nhân vật và vật phẩm, phân đều trong mỗi bậc. Card Rác nằm trong nhóm Thường; GOD chỉ nhận qua tiến hóa. Bậc hết card chưa đạt Lv.10 sẽ ưu tiên bậc cao hơn còn khả dụng, nếu không còn thì dùng bậc cao nhất còn lại.</small>{kind === "normal" && <small>Bảo hiểm: sau 19 pack liên tiếp chỉ ra Thường, pack thứ 20 có Hiếm 85% · Sử thi 13% · Huyền thoại 2%. Sau 99 pack chưa ra Sử thi trở lên, pack thứ 100 bảo đảm bậc cao nhất còn khả dụng. Khi cả hai cùng tới hạn, ưu tiên bảo hiểm 100 pack.</small>}{kind === "boss" && <small>Bảo hiểm riêng: sau 49 Pack Boss chưa ra Huyền thoại, pack thứ 50 bảo đảm Huyền thoại. Sử thi không đặt lại bộ đếm; không ảnh hưởng bảo hiểm pack thường.</small>}</div>;
 }
 function ExperienceBar({ level, xp }: { level: number; xp: number }) {
   const required = xpForNextLevel(level);
   return <div className="card-experience"><div className="card-experience-label"><span>Lv.{level}{level >= 10 ? " · MAX" : ""}</span><span>{level >= 10 ? "MAX" : `${xp}/${required} EXP`}</span></div><div className="xp-track"><i style={{ width: `${level >= 10 ? 100 : Math.min(100, (xp / required) * 100)}%` }} /></div></div>;
 }
 function App() {
+  const [battleRecords, setBattleRecords] = useState(() => readBattleRecords(localStorage));
+  function recordBattle(summary: BattleSummary, mode: BattleMode, recordId?: string) {
+    try { setBattleRecords(saveBattleRecord(localStorage, { ...summary, mode, id: recordId || crypto.randomUUID(), savedAt: Date.now() })); }
+    catch { report("Không lưu được phân tích trận đấu. Hãy giải phóng bộ nhớ trình duyệt."); }
+  }
   const [profileIdentity] = useState(() => {
     let id = localStorage.getItem(PROFILE_ID_KEY);
     let token = localStorage.getItem(PROFILE_TOKEN_KEY);
@@ -179,6 +188,7 @@ function App() {
           ...restored,
           packsSinceRare: Number.isInteger(restored.packsSinceRare) ? Math.max(0, restored.packsSinceRare!) : 0,
           packsSinceHighRarity: Number.isInteger(restored.packsSinceHighRarity) ? Math.max(0, Math.min(99, restored.packsSinceHighRarity!)) : 0,
+          bossPacksSinceHighRarity: normalizeBossPity(restored.bossPacksSinceHighRarity),
           team, cards, itemCards, equipment,
           missionDay: today,
           missions: sameMissionDay ? restored.missions || defaults.missions : { draw: 0, win: 0, campaign: 0 },
@@ -215,7 +225,7 @@ function App() {
   const [profileOnline, setProfileOnline] = useState(false);
   const [profileRoomSynced, setProfileRoomSynced] = useState(false);
   const profileSaveQueue = useRef<Promise<void>>(Promise.resolve());
-  const [screen, setScreen] = useState<"arena" | "simulation" | "multiplayer" | "packs" | "inventory" | "training" | "campaign" | "catalog" | "trade" | "feedback" | "patchNotes">("packs");
+  const [screen, setScreen] = useState<"arena" | "simulation" | "multiplayer" | "packs" | "inventory" | "training" | "campaign" | "catalog" | "trade" | "feedback" | "patchNotes" | "analytics">("packs");
   const [navOpen, setNavOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
@@ -246,6 +256,7 @@ function App() {
   const [selectedTeamTarget, setSelectedTeamTarget] = useState<string>(profile.team[0] || "");
   const [campaignBattle, setCampaignBattle] = useState<{ config: BattleConfig; seed: number } | null>(null);
   const [campaignWon, setCampaignWon] = useState<boolean | null>(null);
+  const upcomingCampaign = useMemo(() => campaignEncounter(profile.campaignStage + 1, profile.team.length), [profile.campaignStage, profile.team.length]);
   const [info, setInfo] = useState<Inspect | null>(null);
   const [trainingTarget, setTrainingTarget] = useState("");
   const [trainingSacrifice, setTrainingSacrifice] = useState<string[]>([]);
@@ -561,6 +572,7 @@ function App() {
     const itemCards = profile.itemCards.map((card) => ({ ...card }));
     let packsSinceRare = profile.packsSinceRare || 0;
     let packsSinceHighRarity = profile.packsSinceHighRarity || 0;
+    let bossPacksSinceHighRarity = normalizeBossPity(profile.bossPacksSinceHighRarity);
     let pulledResult: NonNullable<GlobalProfile["lastPull"]> | undefined;
     let evolvedPull: NonNullable<GlobalProfile["lastPull"]> | undefined;
     const pulledCards: NonNullable<GlobalProfile["lastPull"]>[] = [];
@@ -577,15 +589,15 @@ function App() {
       ];
       if (!allAvailable.length) break;
       const roll = Math.random() * 100;
-      const tier = packTier(packKind, roll, packsSinceRare);
-      const guaranteedHigh = packKind === "normal" && packsSinceHighRarity >= 99;
-      const fallbackPool = packPool(allAvailable, tier, guaranteedHigh);
-      const pulled = fallbackPool[Math.floor(Math.random() * fallbackPool.length)] || allAvailable[0];
+      const fallbackPool = packDrawPool(allAvailable, packKind, roll, packsSinceRare, packsSinceHighRarity, bossPacksSinceHighRarity);
+      if (!fallbackPool.length) { report("Tất cả thẻ Huyền thoại đã đạt Lv.10. Pack Boss bảo hiểm được giữ lại."); break; }
+      const pulled = fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
       const actualTier = cardTier(pulled.tier);
       if (packKind === "normal") {
         packsSinceRare = actualTier === "T1" ? Math.min(19, packsSinceRare + 1) : 0;
         packsSinceHighRarity = rarityRank(actualTier) >= 3 ? 0 : Math.min(99, packsSinceHighRarity + 1);
       }
+      else bossPacksSinceHighRarity = nextBossPity(bossPacksSinceHighRarity, actualTier);
       let isDuplicate = false, xpGained = 0, oldXp = 0, experience = 0, oldLevel = 1, level = 1, leveledUp = false, evolved = false;
       if (pulled.kind === "character") {
         const existing = cards.find((card) => card.characterId === pulled.id);
@@ -639,6 +651,7 @@ function App() {
       lastPackAt: accruedAt,
       packsSinceRare,
       packsSinceHighRarity,
+      bossPacksSinceHighRarity,
       lastPull: (displayPulls[0] || evolvedPull || pulledResult) ? { ...(displayPulls[0] || evolvedPull || pulledResult)!, batchCount: openedCount } : undefined,
       missions: { ...profile.missions, draw: profile.missions.draw + openedCount },
       team: profile.team,
@@ -1205,8 +1218,8 @@ function App() {
       <main>
         <div className="page-title">
           <div className="eyebrow">BOUNCE. BATTLE. SURVIVE.</div>
-          <h1>{screen === "packs" ? "Mở thẻ." : screen === "inventory" ? "Kho đồ." : screen === "training" ? "Luyện bài." : screen === "trade" ? "Trao đổi bài." : screen === "patchNotes" ? "Patch notes." : screen === "feedback" ? "Gửi góp ý." : screen === "campaign" ? "Đi ải." : screen === "catalog" ? "Catalog." : screen === "simulation" ? "Mô phỏng." : screen === "multiplayer" ? "Đấu trường." : <>Mỗi vòng đấu.<br /><span>Một quyết định mới.</span></>}</h1>
-          <p>{screen === "packs" ? "Mỗi pack mở ra một thẻ nhân vật hoặc vật phẩm." : screen === "inventory" ? "Xây team, trang bị và xem chi tiết bộ sưu tập thẻ." : screen === "training" ? "Hy sinh thẻ dư để truyền EXP cho thẻ bạn muốn nâng." : screen === "trade" ? "Tạo phiên, chọn thẻ muốn đổi và xác nhận cùng người chơi khác." : screen === "campaign" ? "Vượt ải trong trận cục bộ để kiếm thêm pack." : screen === "catalog" ? "Tra cứu nhân vật, vật phẩm, kỹ năng và liên kết." : screen === "patchNotes" ? "Theo dõi thay đổi, cải tiến và cân bằng qua từng phiên bản." : screen === "feedback" ? "Gửi ý kiến và báo lỗi cho đội phát triển." : "Xây đội hình. Xem hỗn loạn bùng nổ."}</p>
+          <h1>{screen === "analytics" ? "Phân tích số liệu." : screen === "packs" ? "Mở thẻ." : screen === "inventory" ? "Kho đồ." : screen === "training" ? "Luyện bài." : screen === "trade" ? "Trao đổi bài." : screen === "patchNotes" ? "Patch notes." : screen === "feedback" ? "Gửi góp ý." : screen === "campaign" ? "Đi ải." : screen === "catalog" ? "Catalog." : screen === "simulation" ? "Mô phỏng." : screen === "multiplayer" ? "Đấu trường." : <>Mỗi vòng đấu.<br /><span>Một quyết định mới.</span></>}</h1>
+          <p>{screen === "analytics" ? "Theo dõi hiệu quả đội hình qua các trận đã hoàn tất." : screen === "packs" ? "Mỗi pack mở ra một thẻ nhân vật hoặc vật phẩm." : screen === "inventory" ? "Xây team, trang bị và xem chi tiết bộ sưu tập thẻ." : screen === "training" ? "Hy sinh thẻ dư để truyền EXP cho thẻ bạn muốn nâng." : screen === "trade" ? "Tạo phiên, chọn thẻ muốn đổi và xác nhận cùng người chơi khác." : screen === "campaign" ? "Vượt ải trong trận cục bộ để kiếm thêm pack." : screen === "catalog" ? "Tra cứu nhân vật, vật phẩm, kỹ năng và liên kết." : screen === "patchNotes" ? "Theo dõi thay đổi, cải tiến và cân bằng qua từng phiên bản." : screen === "feedback" ? "Gửi ý kiến và báo lỗi cho đội phát triển." : "Xây đội hình. Xem hỗn loạn bùng nổ."}</p>
         </div>
         {help && (
           <section className="notice">
@@ -1223,7 +1236,7 @@ function App() {
           </div>
         )}
         {availableUpdate && <div className="release-refresh" role="status"><span>Đã có bản cập nhật v{availableUpdate}. Refresh trang để nhận thay đổi và quà cập nhật.</span><button disabled={openingPack} onClick={async () => { await profileSaveQueue.current.catch(() => {}); window.location.reload(); }}>Refresh trang</button></div>}
-        {screen === "patchNotes" ? <PatchNotesPage /> : screen === "feedback" ? <section className="profile-screen feedback-screen"><div className="panel-title"><h2>Gửi feedback</h2><b>Phản hồi trực tiếp</b></div><p className="muted">Mô tả góp ý hoặc lỗi bạn gặp. Ứng dụng email sẽ mở sẵn nội dung để bạn gửi đến đội phát triển.</p><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const subject = encodeURIComponent(`[CircleWar Feedback] ${String(form.get("topic") || "Góp ý")}`); const body = encodeURIComponent(`Người chơi: ${name}\nLoại: ${String(form.get("kind") || "Góp ý")}\n\n${String(form.get("message") || "")}`); window.location.href = `mailto:hoangls1008@gmail.com?subject=${subject}&body=${body}`; }}><label>Chủ đề<input name="topic" required maxLength={100} placeholder="Ví dụ: Pack bị lỗi" /></label><label>Loại phản hồi<select name="kind"><option>Góp ý</option><option>Báo lỗi</option><option>Cân bằng thẻ</option></select></label><label>Nội dung<textarea name="message" required minLength={10} maxLength={3000} rows={7} placeholder="Mô tả chi tiết để đội phát triển dễ xử lý…" /></label><button className="primary" type="submit">Soạn email feedback</button></form></section> : screen === "catalog" ? <section className="catalog-page"><CatalogLibrary inspect={setInfo} initialOpen /></section> : screen === "trade" ? <section className="profile-screen trade-screen">
+        {screen === "analytics" ? <BattleAnalyticsPage records={battleRecords} equipment={profile.team.map(characterId => ({ characterId, classId: character(characterId)!.base as ClassId, level: profile.cards.find(card => card.characterId === characterId)?.level || 1, equipment: profile.equipment[characterId] || [], equipmentLevels: Object.fromEntries((profile.equipment[characterId] || []).map(id => [id, profile.itemCards.find(card => card.itemId === id)?.level || 1])) }))} /> : screen === "patchNotes" ? <PatchNotesPage /> : screen === "feedback" ? <section className="profile-screen feedback-screen"><div className="panel-title"><h2>Gửi feedback</h2><b>Phản hồi trực tiếp</b></div><p className="muted">Mô tả góp ý hoặc lỗi bạn gặp. Ứng dụng email sẽ mở sẵn nội dung để bạn gửi đến đội phát triển.</p><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const subject = encodeURIComponent(`[CircleWar Feedback] ${String(form.get("topic") || "Góp ý")}`); const body = encodeURIComponent(`Người chơi: ${name}\nLoại: ${String(form.get("kind") || "Góp ý")}\n\n${String(form.get("message") || "")}`); window.location.href = `mailto:hoangls1008@gmail.com?subject=${subject}&body=${body}`; }}><label>Chủ đề<input name="topic" required maxLength={100} placeholder="Ví dụ: Pack bị lỗi" /></label><label>Loại phản hồi<select name="kind"><option>Góp ý</option><option>Báo lỗi</option><option>Cân bằng thẻ</option></select></label><label>Nội dung<textarea name="message" required minLength={10} maxLength={3000} rows={7} placeholder="Mô tả chi tiết để đội phát triển dễ xử lý…" /></label><button className="primary" type="submit">Soạn email feedback</button></form></section> : screen === "catalog" ? <section className="catalog-page"><CatalogLibrary inspect={setInfo} initialOpen /></section> : screen === "trade" ? <section className="profile-screen trade-screen">
           {!tradeSession ? <div className="trade-lobby panel">
             <div className="panel-title"><h2>Tạo hoặc tham gia phiên</h2><b>{profileOnline ? "Hồ sơ đã kết nối" : "Cần kết nối máy chủ"}</b></div>
             {!profileOnline && <p className="muted">{!api ? "Backend URL chưa được cấu hình. Trong tab Multiplayer, nhập HTTPS URL của Cloudflare Worker để bật hồ sơ và trao đổi." : "Trao đổi cần máy chủ hồ sơ. Kiểm tra Backend URL, HTTPS và ALLOWED_ORIGINS của Worker nếu không kết nối được."}</p>}
@@ -1260,7 +1273,7 @@ function App() {
             </section>
             <div className="pack-recharge">{queuedPacks >= PACK_CAPACITY ? "Hàng chờ đã đầy · pack tự hồi khi còn chỗ" : `Pack tiếp theo sau ${Math.floor(packWait / 60000)}:${String(Math.floor(packWait / 1000) % 60).padStart(2, "0")} · tự hồi mỗi phút, tối đa ${PACK_CAPACITY}`}</div>
             <section className="pack-hero boss-pack-hero" aria-label="Pack Boss">
-              <div className="pack-hero-copy"><span className="pack-eyebrow">PHẦN THƯỞNG CHINH PHỤC BOSS</span><h2>Pack Boss<br /><em>Nah, I'd drop.</em></h2><p>Tỉ lệ cơ bản: Sử thi 17% · Huyền thoại 3%, gấp 10 lần pack thường (1,7% · 0,3%). Thường 66% · Hiếm 14%.</p><div className="pack-queue-card"><span>PACK BOSS ĐANG CÓ</span><strong>{profile.bossPacks || 0}</strong></div><div className="pack-open-options">{[1, 3, 5, 10].map(count => <button key={count} disabled={!profileReady || (profile.bossPacks || 0) < count || openingPack || eligiblePackCards <= 0} onClick={() => openPack(count, "boss")}>Mở Boss x{count}</button>)}</div><p>Chỉ nhận khi thắng boss: mỗi ải thứ 5 thưởng 1 pack, mỗi ải thứ 10 là boss khó thưởng 3 pack. Pack Boss không tự hồi.</p><PackRates kind="boss" /></div>
+              <div className="pack-hero-copy"><span className="pack-eyebrow">PHẦN THƯỞNG CHINH PHỤC BOSS</span><h2>Pack Boss<br /><em>Nah, I'd drop.</em></h2><p>Tỉ lệ cơ bản: Sử thi 17% · Huyền thoại 3%, gấp 10 lần pack thường (1,7% · 0,3%). Thường 66% · Hiếm 14%.</p><div className="pack-queue-card"><span>PACK BOSS ĐANG CÓ</span><strong>{profile.bossPacks || 0}</strong></div><div className="pack-open-options">{[1, 3, 5, 10].map(count => <button key={count} disabled={!profileReady || (profile.bossPacks || 0) < count || openingPack || eligiblePackCards <= 0} onClick={() => openPack(count, "boss")}>Mở Boss x{count}</button>)}</div><p>Chỉ nhận khi thắng boss: mỗi ải thứ 5 thưởng 1 pack, mỗi ải thứ 10 là boss khó thưởng 3 pack. Pack Boss không tự hồi.</p><PackRates kind="boss" /><div className="pack-pity-card"><div><span>BẢO HIỂM PACK BOSS · HUYỀN THOẠI</span><strong>{profile.bossPacksSinceHighRarity || 0}<small> / 50 pack</small></strong></div><progress max={50} value={profile.bossPacksSinceHighRarity || 0} /><p>Còn {50 - (profile.bossPacksSinceHighRarity || 0)} pack tới bảo hiểm. Chỉ Huyền thoại đặt lại bộ đếm.</p></div></div>
               <div className="pack-hero-art"><PackArtwork kind="boss" /><span className="pack-total-badge">{profile.bossPacks || 0} PACK BOSS</span></div>
             </section>
             <h3>Nhiệm Vụ Hằng Ngày · tiến độ làm mới mỗi ngày · mỗi nhiệm vụ nhận 1 pack</h3>
@@ -1295,7 +1308,7 @@ function App() {
             </section>
             <section className="training-card-pool"><div className="training-section-heading"><span>02 · THẺ CỦA BẠN</span><strong>Kéo thả để chọn</strong></div><p>Kéo thẻ vào lò để nhận EXP hoặc vào khung hy sinh. Nhân vật trong đội và vật phẩm đang gắn chỉ có thể làm thẻ nhận EXP.</p><div className="training-pool-grid">{profile.cards.map((card) => { const key = `character:${card.characterId}`; const c = character(card.characterId); const disabled = profile.team.includes(card.characterId); const selected = trainingSacrifice.includes(key); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${disabled ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => disabled ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><Portrait id={card.characterId} /><b>{c?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{disabled ? "ĐANG TRONG ĐỘI · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{profile.itemCards.map((card) => { const key = `item:${card.itemId}`; const it = itemInfo(card.itemId); const selected = trainingSacrifice.includes(key); const equipped = Object.values(profile.equipment).some((ids) => ids.includes(card.itemId)); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${equipped ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => equipped ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><ItemSprite id={card.itemId} /><b>{it?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{equipped ? "ĐANG GẮN · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{!profile.cards.length && !profile.itemCards.length && <div className="training-pool-empty">Mở pack để nhận thẻ có thể luyện.</div>}</div></section>
           </div>}
-          {screen === "campaign" && <><div className="panel-title"><h2>Đi ải · ải {profile.campaignStage + 1}</h2><b>Đã vượt {profile.campaignStage}</b></div><p className="muted">Ải thường dùng đúng chỉ số card và trang bị ở level hiển thị, tối đa Lv.10. Thắng nhận 5 pack thường. Mỗi 5 ải có boss: thêm 15 pack thường + 1 Pack Boss; mỗi 10 ải là boss khó: 15 pack thường + 3 Pack Boss.</p>{!campaignBattle && <div className="campaign-enemy-preview"><p>{campaignEncounter(profile.campaignStage + 1, profile.team.length).strategy} · {campaignEncounter(profile.campaignStage + 1, profile.team.length).counter}</p><b>Đối thủ sắp tới{isHardCampaignBoss(profile.campaignStage + 1) ? " · BOSS KHÓ" : isCampaignBoss(profile.campaignStage + 1) ? " · BOSS" : ""}</b><div>{campaignEncounter(profile.campaignStage + 1, profile.team.length).loadouts.map(unit => <span key={unit.characterId}><Portrait id={unit.characterId!} /><span>{character(unit.characterId)?.name}<small>Lv.{unit.level}{unit.equipment.length ? ` · ${unit.equipment.map(id => itemInfo(id)?.name).join(", ")}` : ""}</small></span></span>)}</div></div>}{!campaignBattle && <button className="primary wide" disabled={!profileReady} onClick={launchCampaign}>Bắt đầu ải {profile.campaignStage + 1}</button>}{campaignBattle && <>{campaignWon === null && <Arena key={`campaign-${campaignBattle.seed}`} config={campaignBattle.config} seed={campaignBattle.seed} replay={null} loadReplayChunk={async () => []} muted={muted} low={low} label={isCampaignBoss(campaignBattle.config.campaign!.stage) ? `BOSS · ẢI ${campaignBattle.config.campaign!.stage}` : `ĐI ẢI · ${campaignBattle.config.campaign!.stage}`} highlightTeamId="team-player" onError={report} onFinished={finishCampaign} />}<div className="campaign-result">{campaignWon === null ? "Trận đang diễn ra…" : campaignWon ? `🏆 ${isCampaignBoss(campaignBattle.config.campaign!.stage) ? "Hạ boss" : "Vượt ải"} thành công · nhận ${campaignPackReward(campaignBattle.config.campaign!.stage)} pack thường${campaignBossPackReward(campaignBattle.config.campaign!.stage) ? ` + ${campaignBossPackReward(campaignBattle.config.campaign!.stage)} Pack Boss` : ""}` : "💥 Ải thất bại · hãy chỉnh team rồi thử lại"}</div>{campaignWon !== null && <button className="primary wide" onClick={() => setCampaignBattle(null)}>{campaignWon ? `Đi tiếp · ải ${profile.campaignStage + 1}` : "Thử lại"}</button>}</>}</>}
+          {screen === "campaign" && <><div className="panel-title"><h2>Đi ải · ải {profile.campaignStage + 1}</h2><b>Đã vượt {profile.campaignStage}</b></div><p className="muted">Ải thường dùng đúng chỉ số card và trang bị ở level hiển thị, tối đa Lv.10. Thắng nhận 5 pack thường. Mỗi 5 ải có boss: thêm 15 pack thường + 1 Pack Boss; mỗi 10 ải là boss khó: 15 pack thường + 3 Pack Boss.</p>{!campaignBattle && <div className="campaign-enemy-preview"><p>{upcomingCampaign.strategy}</p><b>Đối thủ sắp tới{isHardCampaignBoss(profile.campaignStage + 1) ? " · BOSS KHÓ" : isCampaignBoss(profile.campaignStage + 1) ? " · BOSS" : ""}</b><div>{upcomingCampaign.loadouts.map(unit => <span key={unit.characterId}><Portrait id={unit.characterId!} /><span>{character(unit.characterId)?.name}<small>Lv.{unit.level}{unit.equipment.length ? ` · ${unit.equipment.map(id => itemInfo(id)?.name).join(", ")}` : ""}</small></span></span>)}</div></div>}{!campaignBattle && <button className="primary wide" disabled={!profileReady} onClick={launchCampaign}>Bắt đầu ải {profile.campaignStage + 1}</button>}{campaignBattle && <>{campaignWon === null && <Arena key={`campaign-${campaignBattle.seed}`} config={campaignBattle.config} seed={campaignBattle.seed} replay={null} loadReplayChunk={async () => []} muted={muted} low={low} label={isCampaignBoss(campaignBattle.config.campaign!.stage) ? `BOSS · ẢI ${campaignBattle.config.campaign!.stage}` : `ĐI ẢI · ${campaignBattle.config.campaign!.stage}`} highlightTeamId="team-player" onError={report} onFinished={finishCampaign} onBattleComplete={summary => recordBattle(summary, "campaign")} />}<div className="campaign-result">{campaignWon === null ? "Trận đang diễn ra…" : campaignWon ? `🏆 ${isCampaignBoss(campaignBattle.config.campaign!.stage) ? "Hạ boss" : "Vượt ải"} thành công · nhận ${campaignPackReward(campaignBattle.config.campaign!.stage)} pack thường${campaignBossPackReward(campaignBattle.config.campaign!.stage) ? ` + ${campaignBossPackReward(campaignBattle.config.campaign!.stage)} Pack Boss` : ""}` : "💥 Ải thất bại · hãy chỉnh team rồi thử lại"}</div>{campaignWon !== null && <button className="primary wide" onClick={() => setCampaignBattle(null)}>{campaignWon ? `Đi tiếp · ải ${profile.campaignStage + 1}` : "Thử lại"}</button>}</>}</>}
         </section> : <div className="layout">
           <aside className="panel">
             <div className="panel-title">
@@ -1765,6 +1778,7 @@ function App() {
                 highlightTeamId={offline ? debug.teams[0]?.id : id || undefined}
                 watchedTeamId={!offline && watchedPlayerId !== id ? watchedPlayerId : undefined}
                 onError={report}
+                onBattleComplete={summary => recordBattle(summary, offline ? "simulation" : "multiplayer", offline ? undefined : `${room?.code}:${currentReplay?.format === 1 ? currentReplay.game : "legacy"}:${currentReplay?.round}`)}
                 onInspect={(fighter, tick) =>
                   setInfo({
                     kind: "character",

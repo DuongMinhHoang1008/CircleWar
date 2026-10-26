@@ -104,7 +104,7 @@ describe("approved catalog gameplay", () => {
     ).toBe(4);
     expect(weapon.superPower).toBe(110);
   });
-  it("fires each of 19 unique supers and each automatic skill", () => {
+  it("fires every character Super without a separate automatic skill", () => {
     for (const c of ROSTER) {
       const s = fixture([c.id]),
         f = s.fighters[0],
@@ -119,48 +119,15 @@ describe("approved catalog gameplay", () => {
       expect(
         s.events.some((e) => e.type === "super" && e.source === f.id),
       ).toBe(true);
-      f.skillReady = 0;
-      s.tick = 2;
-      beforeCharacterTick(s);
-      characterCombat(s);
-      expect(
-        s.events.some(
-          (e) => e.type === `skill:${c.id.slice(-2)}` && e.source === f.id,
-        ),
-        c.id,
-      ).toBe(true);
+      expect(f.skillReady).toBe(Number.MAX_SAFE_INTEGER);
     }
   });
-  it("tank Super and skill apply armor percentage and grant finite shields", () => {
-    const s = fixture(["char_01"]),
-      f = s.fighters[0];
-    const enemy = s.fighters[1],
-      startingHp = enemy.hp;
-    Object.assign(f, { x: 60000, y: 36000 });
-    Object.assign(enemy, { x: 65000, y: 36000 });
-    f.baseStats.rotation = enemy.baseStats.rotation = 0;
-    f.angle = 16;
-    enemy.angle = 0;
-    f.energy = 100;
-    s.tick = 1;
-    beforeCharacterTick(s);
-    characterCombat(s);
-    expect(startingHp - enemy.hp).toBe(
-      Math.floor(
-        (Math.floor(f.stats.attack * 1.5) * (100 - enemy.stats.defense)) / 100,
-      ),
-    );
-    expect(f.shield).toBe(Math.floor((f.stats.hp * 12) / 100));
-    const hpBeforeSkill = enemy.hp;
-    f.skillReady = 0;
-    s.tick = 2;
-    beforeCharacterTick(s);
-    characterCombat(s);
-    expect(hpBeforeSkill - enemy.hp).toBe(
-      Math.floor(
-        (Math.floor(f.stats.attack * 1.1) * (100 - enemy.stats.defense)) / 100,
-      ),
-    );
+  it("Tiger pounce only damages on physical contact and respects armor", () => {
+    const s=fixture(["char_01"]),[f,enemy]=s.fighters;
+    Object.assign(f,{x:60000,y:36000,nextAttack:99999}); Object.assign(enemy,{x:66000,y:36000,nextAttack:99999});
+    f.energy=100;s.tick=1;const hp=enemy.hp;characterCombat(s);expect(enemy.hp).toBe(hp);
+    enemy.x=f.x+3000;characterContacts(s,f,enemy);expect(hp-enemy.hp).toBe(Math.floor(Math.floor(f.stats.attack*1.8)*(100-enemy.stats.defense)/100));
+    const after=enemy.hp;characterContacts(s,f,enemy);expect(enemy.hp).toBe(after);
   });
   it("expires shields, has finite low-HP protection, and cannot revive a lethal hit", () => {
     const s = fixture(["char_01"], [["item_02"]]),
@@ -348,10 +315,10 @@ describe("approved catalog gameplay", () => {
       }
       s.tick = 1;
       beforeCharacterTick(s);
-      actor.skillReady = 0;
+      actor.energy = 100;
       if (b.size === 3) actor.energy = 100;
       if (b.size === 3 || Number(b.id.slice(1)) >= 14) actor.energy = 100;
-      else actor.skillReady = 0;
+      else actor.energy = 100;
       characterCombat(s);
       expect(
         s.events.some((e) => e.type === "bond:" + b.id),

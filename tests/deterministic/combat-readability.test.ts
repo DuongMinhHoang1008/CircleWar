@@ -60,35 +60,18 @@ function tick(s: BattleState, count = 1) {
 }
 
 describe("readable combat", () => {
-  it("cannot damage distant enemies or spend a melee Super outside physical reach", () => {
-    for (const c of ROSTER.filter(
-      (c) =>
-        c.base !== "ranger" &&
-        c.base !== "frost" &&
-        CHARACTER_BALANCE[c.id].role !== "support",
-    )) {
-      const s = duel(c.id as CharacterId),
-        [f, enemy] = s.fighters;
-      f.energy = 100;
-      f.skillReady = 0;
-      const hp = enemy.hp;
-      tick(s);
-      expect(enemy.hp, c.id).toBe(hp);
-      expect(f.energy, c.id).toBe(100);
-      expect(f.skillReady, c.id).toBe(0);
-      expect(s.projectiles).toHaveLength(0);
-    }
-  });
-
-  it.each(["skill", "super", "normal"] as const)(
+  it("melee pounce spends energy to approach but requires contact for damage",()=>{
+ const s=duel("char_01"),[f,enemy]=s.fighters; f.energy=100; const hp=enemy.hp;tick(s);
+ expect(enemy.hp).toBe(hp);expect(f.energy).toBe(0);expect(f.memory.pounceUntil).toBeGreaterThan(s.tick);
+ });
+  it.each(["super", "normal"] as const)(
     "ranged %s waits for a projectile to hit",
     (kind) => {
-      const s = duel("char_05"),
+      const s = duel(kind === "super" ? "char_31" : "char_05"),
         [f, enemy] = s.fighters;
       const hp = enemy.hp;
-      if (kind === "skill") f.skillReady = 0;
       if (kind === "super") f.energy = 100;
-      if (kind === "normal") f.nextAttack = 0;
+      if (kind === "normal") { f.nextAttack = 0; f.angle = 31; f.stats.rotation = 1; }
       tick(s);
       expect(enemy.hp).toBe(hp);
       expect(s.projectiles).toHaveLength(1);
@@ -102,11 +85,12 @@ describe("readable combat", () => {
   it("lets a moving target dodge and expires missed projectiles", () => {
     const s = duel("char_03"),
       [f, enemy] = s.fighters;
-    f.skillReady = 0;
+    f.nextAttack = 0;f.angle=31;f.stats.rotation=1;
     const hp = enemy.hp;
     tick(s);
+    f.nextAttack = 999999;
     enemy.y += 12000;
-    tick(s, 40);
+    tick(s, 100);
     expect(enemy.hp).toBe(hp);
     expect(s.projectiles).toHaveLength(0);
   });
@@ -114,8 +98,9 @@ describe("readable combat", () => {
   it("hits the first enemy along the path instead of damaging the selected target remotely", () => {
     const s = duel("char_05"),
       [f, enemy] = s.fighters;
-    f.energy = 100;
+    f.nextAttack=0;f.angle=31;f.stats.rotation=1;
     tick(s);
+    f.nextAttack=999999;
     const blocker = structuredClone(enemy);
     Object.assign(blocker, { id: 2, x: 50000 });
     s.fighters.push(blocker);
@@ -127,7 +112,7 @@ describe("readable combat", () => {
   });
 
   it("keeps projectile identity, facing and ability VFX through replay and checkpoints", () => {
-    const s = duel("char_05");
+    const s = duel("char_31");
     s.fighters[0].energy = 100;
     tick(s);
     const restored = restoreBattleState(serializeBattleState(s));
@@ -148,7 +133,7 @@ describe("readable combat", () => {
   });
 
   it("does not consume energy or cooldown when the projectile pool is full", () => {
-    const s = duel("char_05"),
+    const s = duel("char_31"),
       f = s.fighters[0];
     f.energy = 100;
     f.skillReady = 0;

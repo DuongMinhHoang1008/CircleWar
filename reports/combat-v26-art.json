@@ -1,0 +1,38 @@
+{
+  "generator": "built-in image_gen",
+  "encoding": "WebP 90%, original PNGs retained, alpha verified",
+  "rows": [
+    {
+      "name": "weapons",
+      "width": 1254,
+      "height": 1254,
+      "clear": 857095,
+      "partial": 714765,
+      "bytes": 707218
+    },
+    {
+      "name": "objects",
+      "width": 1403,
+      "height": 1121,
+      "clear": 831960,
+      "partial": 740404,
+      "bytes": 616616
+    },
+    {
+      "name": "constructs",
+      "width": 1774,
+      "height": 887,
+      "clear": 749135,
+      "partial": 823503,
+      "bytes": 559420
+    },
+    {
+      "name": "vfx",
+      "width": 1254,
+      "height": 1254,
+      "clear": 544436,
+      "partial": 1028080,
+      "bytes": 976456
+    }
+  ]
+}

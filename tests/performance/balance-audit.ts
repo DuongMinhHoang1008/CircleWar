@@ -16,6 +16,7 @@ import {
   createBattle,
   stepBattle,
   calculateBattleResult,
+  ENGINE_VERSION,
 } from "../../packages/battle-engine/src/index";
 
 const load = (id: string, item?: string): Loadout => ({
@@ -153,6 +154,8 @@ const equipped = process.argv.includes("--roster-only") ? [] : [1, 10].map(level
   return { level, characters: result.map(r => ({ ...r, winRate: Math.round(r.wins / r.matches * 100) })) };
 });
 const report = {
+  engine: ENGINE_VERSION,
+  measuredAt: new Date().toISOString(),
   battles,
   stalled,
   unresolved,
@@ -171,7 +174,7 @@ const report = {
   rarityParity,
   equipped,
 };
-writeFileSync("reports/balance-audit.json", JSON.stringify(report, null, 2));
+writeFileSync(process.env.BALANCE_REPORT || "reports/balance-audit.json", JSON.stringify(report, null, 2));
 console.table(
   report.characters.map(({ id, role, duelRate, teamRate }) => ({
     id,

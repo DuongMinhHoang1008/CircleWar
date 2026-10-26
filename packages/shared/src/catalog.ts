@@ -1,12 +1,12 @@
 import data from "./catalog-data.json";
 import { cardRarityMultiplier } from "./progression";
 import { affinityDescription } from "./affinity";
-import { CHARACTER_PASSIVES, passiveDescription, LEGENDARY_TEXT, LEGENDARY_IDENTITIES } from "./character-abilities";
+import { LEGENDARY_IDENTITIES } from "./character-abilities";
+import { CHARACTER_KITS, kitGrowthDescription } from "./character-kits";
 import {
   CHARACTER_BALANCE,
   ITEM_BALANCE,
   ITEM_EFFECT_TEXT,
-  ROLE_TEXT,
 } from "./combat-balance";
 export const CHARACTER_IDS = [
   "char_01",
@@ -46,20 +46,21 @@ export const CHARACTER_IDS = [
 export type CharacterId = (typeof CHARACTER_IDS)[number];
 export const ROSTER = data.characters.map((c) => {
   const profile = CHARACTER_BALANCE[c.id];
-  const text = ROLE_TEXT[profile.role];
-  const passive = CHARACTER_PASSIVES[c.id];
+  const kit = CHARACTER_KITS[c.id];
   const { hp, attack, defense, speed } = profile.stats;
   return {
     ...c,
     ...LEGENDARY_IDENTITIES[c.id],
-    role: passive.niche,
+    role: kit.ranged ? "Kit riêng / tầm xa theo hướng xoay" : "Kit riêng / cận chiến bi-a",
+    weapon: kit.normal,
+    weakness: c.id === "char_23" ? "Bỏ qua va chạm không bỏ qua giáp/khiên; vẫn bị bắn hoặc đánh vào thân." : c.id === "char_31" || c.id === "char_30" || c.id === "char_29" ? "Có rủi ro gây sát thương chủ/đồng đội; cần giữ vị trí và dùng dạng tiến hóa để giảm rủi ro nếu có." : kit.ranged ? "Giữ khoảng cách, ép góc hoặc chặn đường đạn; Cận Thị làm giảm tầm bắn." : "Thả diều, khống chế và chọn thời điểm Super; khiên/đệ có thể bị phá.",
     stats: [hp!, attack!, defense!, speed!],
     passive: [
-      passive.name,
-      passiveDescription(c.id),
+      kit.name,
+      kit.normal,
     ],
-    skill: [c.skill[0], LEGENDARY_TEXT[c.id]?.skill || text.skill],
-    super: [c.super[0], LEGENDARY_TEXT[c.id]?.super || text.super],
+    skill: ["Tăng trưởng combat", kitGrowthDescription(kit)],
+    super: [c.super[0], kit.super],
     upgrade: "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
   };
 });

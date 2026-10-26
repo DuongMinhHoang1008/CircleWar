@@ -1,6 +1,7 @@
 import type { Loadout, Stats } from "../../shared/src/balance";
 import type { TeamChoice } from "../../shared/src/catalog";
-export const ENGINE_VERSION = "chaos-integer-v24";
+import type { CombatStatus } from "./statuses";
+export const ENGINE_VERSION = "chaos-integer-v26";
 export const TICK_RATE = 30;
 export interface BattleConfig {
   campaign?: { stage: number; enemyTeamId: string };
@@ -25,6 +26,7 @@ export interface Fighter {
   nextAttack: number;
   memory: Record<string, number>;
   buffs: { kind: string; value: number; until: number; source: number }[];
+  statuses: CombatStatus[];
   shields: { amount: number; until: number; source: number }[];
   x: number;
   y: number;
@@ -64,9 +66,25 @@ export interface Projectile {
   secondary?: number;
   kind?: "skill" | "super";
   slow?: number;
+  paralyze?: number;
   radiation?: number;
   splash?: number;
   splashPower?: number;
+  kit?: "fruit" | "basket" | "bullet" | "ribbon" | "deadline" | "buffFruit" | "ink" | "envelope" | "rose" | "air" | "randomInk" | "wacom" | "balloon" | "rocket" | "slipper" | "chicken" | "shrapnel";
+  bounces?: number;
+  age?: number;
+  radius?: number;
+  friendlyScale?: number;
+  selfScale?: number;
+  homing?: boolean;
+  target?: number;
+  returnAfter?: number;
+  returning?: boolean;
+  heal?: number;
+  armedAfter?: number;
+  detonated?: boolean;
+  superShot?: boolean;
+  onHitReady?: Record<number, number>;
 }
 export interface Zone {
   owner: number;
@@ -89,6 +107,13 @@ export interface Zone {
   group?: number;
   super?: boolean;
   line?: { dx: number; dy: number; length: number; width: number };
+  kit?: "deadline" | "flag" | "fruit" | "rose" | "soup" | "paint" | "vortex" | "slipper";
+  allOthers?: boolean;
+}
+export interface Construct {
+  id: number; owner: number; kind: "minion" | "giant" | "turret";
+  x: number; y: number; vx: number; vy: number; radius: number;
+  hp: number; maxHp: number; damage: number; until: number; nextAttack: number;
 }
 export interface BattleState {
   version: string;
@@ -100,6 +125,8 @@ export interface BattleState {
   projectiles: Projectile[];
   zones: Zone[];
   nextProjectile: number;
+  constructs: Construct[];
+  nextConstruct: number;
   finished: boolean;
   eliminated: Record<string, number>;
   events: {
@@ -147,6 +174,11 @@ export interface ReplayFrame {
     number,
   ][];
   buffs: BattleState["fighters"][number]["buffs"][];
+  statuses?: CombatStatus[][];
+  /** attack, speed, rotation, charge, cooldown, effective spin percentage */
+  combatStats?: [number, number, number, number, number, number][];
+  constructs?: Construct[];
+  kitProjectiles?: { id: number; kit: Projectile["kit"]; radius: number; returning?: boolean }[];
   /** id, owner, x, y; optional visual metadata keeps older frames readable. */
   projectiles: [
     number, number, number, number, number?, number?, boolean?, ("skill" | "super")?,

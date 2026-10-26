@@ -1,0 +1,103 @@
+{
+  "note": "Fixed-seed equipped duels, both sides, after blast self-elimination fix.",
+  "forms": [
+    {
+      "id": "char_28",
+      "level": 1,
+      "winRate": 64,
+      "counters": [
+        "char_08",
+        "char_09",
+        "char_20",
+        "char_29",
+        "char_31"
+      ]
+    },
+    {
+      "id": "char_29",
+      "level": 1,
+      "winRate": 64,
+      "counters": [
+        "char_07",
+        "char_14",
+        "char_17",
+        "char_31",
+        "char_32",
+        "char_33"
+      ]
+    },
+    {
+      "id": "char_30",
+      "level": 1,
+      "winRate": 52,
+      "counters": [
+        "char_01",
+        "char_05",
+        "char_07",
+        "char_08",
+        "char_16",
+        "char_20",
+        "char_24",
+        "char_25"
+      ]
+    },
+    {
+      "id": "char_31",
+      "level": 1,
+      "winRate": 77,
+      "counters": [
+        "char_25",
+        "char_32"
+      ]
+    },
+    {
+      "id": "char_28",
+      "level": 10,
+      "winRate": 67,
+      "counters": [
+        "char_02",
+        "char_20",
+        "char_25",
+        "char_29"
+      ]
+    },
+    {
+      "id": "char_29",
+      "level": 10,
+      "winRate": 64,
+      "counters": [
+        "char_03",
+        "char_05",
+        "char_09",
+        "char_10",
+        "char_14"
+      ]
+    },
+    {
+      "id": "char_30",
+      "level": 10,
+      "winRate": 52,
+      "counters": [
+        "char_01",
+        "char_04",
+        "char_05",
+        "char_16",
+        "char_20",
+        "char_21",
+        "char_24",
+        "char_25",
+        "char_31",
+        "char_33"
+      ]
+    },
+    {
+      "id": "char_31",
+      "level": 10,
+      "winRate": 70,
+      "counters": [
+        "char_03",
+        "char_21"
+      ]
+    }
+  ]
+}

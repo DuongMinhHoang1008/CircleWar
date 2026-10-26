@@ -1,3 +1,4 @@
+import kitArtManifest from "./rendering/kit-art.json";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   character,
@@ -22,6 +23,8 @@ import {
   type Loadout,
 } from "../../../packages/shared/src/balance";
 import type { Fighter } from "../../../packages/battle-engine/src/types";
+import { characterKit, kitGrowthDescription } from "../../../packages/shared/src/character-kits";
+import { STATUS_RULES, attackCooldown, statusPower } from "../../../packages/battle-engine/src/statuses";
 import weaponAtlas from "./rendering/weapon-atlas.json";
 import { cardEvolution } from "../../../packages/shared/src/progression";
 import { affinityDescription } from "../../../packages/shared/src/affinity";
@@ -56,25 +59,13 @@ export const weaponArtUrl = (id: string) =>
     : weaponAtlasUrl();
 export const weaponFrame = (id: string) =>
   weaponAtlas.frames[(Number(id.slice(-2)) - 1) % weaponAtlas.frames.length];
-export function WeaponArt({ id }: { id: string }) {
-  const frame = weaponFrame(id);
-  const custom = Number(id.slice(-2)) >= 21 && Number(id.slice(-2)) <= ROSTER.length;
-  return (
-    <svg
-      className="weapon-art"
-      role="img"
-      aria-label={"Vũ khí " + (character(id)?.weaponName || id)}
-      viewBox={custom ? "0 0 256 256" : frame.join(" ")}
-      preserveAspectRatio="xMidYMid meet"
-      overflow="hidden"
-    >
-      <image
-        href={weaponArtUrl(id)}
-        width={custom ? 256 : weaponAtlas.width}
-        height={custom ? 256 : weaponAtlas.height}
-      />
-    </svg>
-  );
+export function WeaponArt({ id, equipment = [] }: { id: string; equipment?: readonly string[] }) {
+  const kit = characterKit(id, equipment);
+  const index = kit?.id === "fu_di" ? 33 : kit?.id === "wacom" ? 34 : kit?.id === "skyrocket" ? 35 : Math.max(0, Number(id.slice(-2)) - 1);
+  const spec = kitArtManifest.weapons, frame = spec.frames[index] || spec.frames[0];
+  return <svg className="weapon-art" role="img" aria-label={"Vũ khí " + (kit?.name || id)} viewBox={frame.join(" ")} preserveAspectRatio="xMidYMid meet" overflow="hidden">
+    <image href={import.meta.env.BASE_URL + spec.file} width={spec.width} height={spec.height} />
+  </svg>;
 }
 const itemArt: Record<string, ReactNode> = {
   item_01: (
@@ -390,6 +381,7 @@ export function InfoPopup({
 }) {
   const ref = useRef<HTMLDialogElement>(null),
     body = useRef<HTMLDivElement>(null);
+  const live = info?.live, liveTick = info?.liveTick || 0;
   useEffect(() => {
     if (info) {
       if (!ref.current?.open) ref.current?.showModal();
@@ -401,7 +393,8 @@ export function InfoPopup({
       info?.kind === "item"
         ? CATALOG_ITEMS.find((i) => i.id === info.id)
         : undefined;
-  const transformed = !!c && isTransformedCharacter(c.id, info?.loadout?.equipment || []);
+  const transformed = !!c && isTransformedCharacter(c.id, live?.equipment || info?.loadout?.equipment || []);
+  const kit = c ? characterKit(c.id, info?.live?.equipment || info?.loadout?.equipment || []) : undefined;
   const formName: Record<string,string> = { char_28: "Người Máy Đỉnh Cao Fu Di", char_29: "Siêu Chiến Binh Wacom", char_30: "Skyrocket Dog" };
   const stats = c
     ? info?.live?.stats ||
@@ -459,7 +452,7 @@ export function InfoPopup({
             <div className="profile-hero">
               <div className="profile-art">
                 <Portrait id={c.id} transformed={transformed} />
-                <WeaponArt id={c.id} />
+                <WeaponArt id={c.id} equipment={live?.equipment || info?.loadout?.equipment || []} />
               </div>
               <div>
                 <span className="eyebrow">NHÂN VẬT #{c.id.slice(-2)}</span>
@@ -486,14 +479,12 @@ export function InfoPopup({
                   Trạng thái tại giây {((info.liveTick || 0) / 30).toFixed(1)}
                 </b>
                 <p>
-                  Chiêu tự động:{" "}
-                  {Math.max(
-                    0,
-                    (info.live.skillReady - (info.liveTick || 0)) / 30,
-                  ).toFixed(1)}{" "}
-                  giây còn lại · Super: {info.live.energy}/100 năng lượng.
+                  Tăng trưởng: {Math.min(12, Math.floor((info.liveTick || 0) / 300))}/12 tầng · Super: {info.live.energy}/100 năng lượng.
                 </p>
                 <div className="badges">
+                  {live?.statuses.filter(effect => effect.until > liveTick).map((effect, i) => <span key={`status-${i}`}>
+                    {STATUS_RULES[effect.kind].label} · {effect.power}{["rage", "frozen", "paralyzed", "introvert", "diabetes", "myopia", "pressure"].includes(effect.kind) ? "%" : effect.kind === "stunned" || effect.kind === "radiation" ? "" : " HP/s"} · {((effect.until - liveTick) / 30).toFixed(1)}s
+                  </span>)}
                   {info.live.buffs
                     .filter((b) => b.until > (info.liveTick || 0))
                     .map((b, i) => (
@@ -533,39 +524,41 @@ export function InfoPopup({
             <div className="profile-stats">
               {Object.entries(stats!)
                 .filter(([k]) =>
-                  ["hp", "attack", "defense", "speed"].includes(k),
+                  ["hp", "attack", "speed", "rotation"].includes(k),
                 )
                 .map(([k, v]) => (
                   <div key={k}>
                     <small>{labels[k] || k}</small>
-                    <b>{statValue(k, v)}</b>
+                    <b>{statValue(k, live && k === "attack" ? Math.floor(v * (100 + statusPower(live, "rage", liveTick)) / 100) : live && k === "rotation" ? v * (live.memory.spinRate || 100) * (100 - statusPower(live, "paralyzed", liveTick)) / 10000 : v)}</b>
                   </div>
                 ))}
+              <div><small>Super Bar Progress</small><b>{live?.energy || 0} / 100</b></div>
             </div>
             <details className="all-stats">
               <summary>Toàn bộ chỉ số chiến đấu</summary>
               <div className="profile-stats">
                 {Object.entries(stats!)
                   .filter(
-                    ([k]) => !["hp", "attack", "defense", "speed"].includes(k),
+                    ([k]) => !["hp", "attack", "speed", "rotation"].includes(k),
                   )
                   .map(([k, v]) => (
                     <div key={k}>
                       <small>{labels[k] || k}</small>
-                      <b>{statValue(k, v)}</b>
+                      <b>{statValue(k, live && k === "cooldown" ? attackCooldown(live, liveTick) : v)}</b>
                     </div>
                   ))}
               </div>
             </details>
-            <p className="info-note">Giáp giảm sát thương theo phần trăm và không bị tiêu hao.
+            <p className="info-note">Đòn thường tầm xa chỉ bắn khi vũ khí xoay quét qua mục tiêu và hồi bắn đã sẵn sàng. Super đầy ở 100. Mỗi 10 giây tăng đúng hai thuộc tính riêng ghi bên dưới, tối đa 12 tầng; không tăng mọi chỉ số theo cùng một công thức.
+              Burn không cộng tầng; Poison tối đa 5 tầng. Frozen giảm di chuyển, Paralyzed giảm nhịp đòn và xoay. Blessing hồi HP theo thời gian; Rage tăng sát thương. Các trạng thái ngoài Poison chỉ lấy hiệu lực mạnh nhất.
+              Giáp giảm sát thương theo phần trăm và không bị tiêu hao.
               Khiên là HP hấp thụ tạm thời, bị trừ sau giáp và trước máu.
               Ví dụ: đòn 100 gặp giáp 10% còn 90; có 30 khiên thì chỉ mất 60 HP.</p>
             <div className="skill-list">
               {[
-                ["⚔", c.weaponName, c.weapon],
-                ["✦", `Nội tại · ${c.passive[0]}`, c.passive[1]],
-                ["◷", `Kỹ năng · ${c.skill[0]}`, `${c.skill[1]}${transformed ? " Khi biến hình, kỹ năng được tăng sức mạnh." : ""}`],
-                ["★", `Super · ${c.super[0]}`, `${c.super[1]}${transformed ? " Khi biến hình, Super được tăng sức mạnh." : ""}`],
+                ["⚔", `Đòn thường · ${kit?.name || c.name}`, kit?.normal || c.passive[1]],
+                ["↗", "Tăng trưởng theo thời gian", kit ? kitGrowthDescription(kit) : c.skill[1]],
+                ["★", `Super · ${c.super[0]}`, kit?.super || c.super[1]],
               ].map(([icon, name, text]) => (
                 <section className="skill-info" key={name}>
                   <span className="skill-icon">{icon}</span>

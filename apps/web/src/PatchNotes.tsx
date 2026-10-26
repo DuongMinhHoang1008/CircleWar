@@ -1,6 +1,34 @@
 import React from "react";
 
 export const PATCH_NOTES = [{
+  version: "2026.10.26.2",
+  date: "2026-10-26",
+  title: "36 bộ chiến đấu riêng",
+  summary: "Làm lại đòn thường, Super và hai hướng tăng trưởng cho 33 nhân vật cùng ba dạng biến hình; giữ nguyên class và race.",
+  sections: [
+    { title: "Nhân vật và trạng thái", entries: ["Mỗi nhân vật có cơ chế riêng: đạn nảy, trụ súng, đệ có HP, cờ, vườn hồng, boomerang, cổ phiếu và aura. Đòn xa vẫn cần vũ khí hướng đúng mục tiêu.", "Hướng Nội chỉ Hổ tự nhận: giảm 25% sát thương trực tiếp, hồi 1% HP mỗi giây và giảm 15% di chuyển. Tiểu Đường giảm hồi phục, Cận Thị giảm tầm bắn, Bleeding mất HP khi di chuyển; Choáng khóa đánh và Super ngắn, không dừng quán tính.", "Mỗi 10 giây sống sót chỉ tăng hai chỉ số riêng của bộ chiến đấu, tối đa 12 tầng. Liên kết và hợp cạ kích hoạt qua Super, thay kỹ năng tự động 7 giây cũ."] },
+    { title: "Cân bằng và rủi ro", entries: ["Giảm sức mạnh Siêu Chiến Binh Wacom: đạn thường còn 60% Damage, hồi bắn dài hơn 30%; Super tám phát 28% Damage, không bắn thường chồng lên chuỗi.", "Super Ủn Đại Ca nổ toàn bản đồ: 220% Damage trong bán kính 130 và 80% ngoài vùng tâm. Phóng xạ/Burn ảnh hưởng cả chủ và đồng đội; sát thương phe mình bằng 50% tương ứng.", "Wacom hỏng và bóng bay thường có sát thương đồng đội; Skyrocket không gây sát thương phe mình. Trụ/đệ bị phá được, không kéo dài trận khi chủ chết; vùng chồng cùng chủ không nhân tick sát thương.", "Đạn, vùng hiệu ứng, trụ và đệ tiếp tục hoạt động sau khi chủ chết đến hết lifetime hoặc bị phá. Hộp Quà tự gọi đệ nhỏ mỗi 4 giây, không cần tấn công.", "Thêm 36 sprite vũ khí, 20 sprite đạn/vật thể, 8 sprite trụ/đệ/vùng và sáu bộ VFX hoạt ảnh mới; giữ chân dung hiện tại.", "Replay và checkpoint dùng engine v26; hãy tạo trận mới để dùng bộ kỹ năng mới."] },
+  ],
+}, {
+  version: "2026.10.26.1",
+  date: "2026-10-26",
+  title: "Nền combat theo trạng thái và hướng xoay",
+  summary: "Sáu trạng thái dùng chung, đòn xa theo hướng vũ khí; đồng bộ đi ải, phân tích số liệu và bảo hiểm Pack Boss.",
+  sections: [
+    { title: "Combat", entries: ["Năm chỉ số chính: HP, Damage, Super Bar Progress, Speed và Spin Speed. Super đầy ở 100; đòn xa chỉ bắn khi vũ khí xoay quét qua mục tiêu và hồi bắn đã sẵn sàng.", "Burn không cộng tầng; Poison tối đa 5 tầng riêng biệt. Frozen giảm di chuyển, Paralyzed giảm nhịp đòn và xoay. Blessing hồi HP theo thời gian; Rage tăng sát thương. Hiệu ứng có trần và thời hạn, không cộng dồn vô hạn.", "Mỗi 10 giây sống sót tăng sát thương, tốc độ, nhịp đòn, xoay và nạp Super từ chỉ số gốc; có trần, không tăng HP. Engine v25 yêu cầu trận mới; bộ chiêu riêng từng nhân vật sẽ được điều chỉnh ở đợt sau."] },
+    { title: "Ngoài combat", entries: ["Đồng bộ các thay đổi của bản web 2026.10.22.1: 729 đội hình đi ải có liên kết, ưu tiên phối hợp từ ải 31; boss có một chỉ huy và hai quân hỗ trợ dùng chỉ số thường.", "Thêm Phân tích số liệu: 200 trận hoàn tất gần nhất, lọc chế độ/nhân vật, lịch sử hạ gục, trang bị, liên kết/hội và xuất JSON. Lưu trên trình duyệt hiện tại.", "Pack Boss có bảo hiểm Huyền thoại ở pack thứ 50; chỉ Huyền thoại đặt lại bộ đếm. Dùng chung luật client/server; nếu không còn Huyền thoại chưa max thì giữ pack bảo hiểm."] },
+  ],
+}, {
+  version: "2026.10.22.1",
+  date: "2026-10-22",
+  title: "Đi ải đa dạng, theo dõi đội hình",
+  summary: "Đội địch có nhiều cách phối hợp hơn, màn hình trước ải gọn hơn và thêm Phân tích số liệu.",
+  sections: [
+    { title: "Đi ải", entries: ["Thay vòng lặp 12 đội bằng 729 tổ hợp có liên kết. Từ ải 31 ưu tiên đội có nhiều liên kết hoặc hội đủ ba người; trang bị thay đổi trong giới hạn thông thường.", "Trước trận chỉ hiện đội địch và một câu mô tả. Boss có chỉ huy được cường hóa và hai quân hỗ trợ dùng chỉ số thường."] },
+    { title: "Phân tích số liệu", entries: ["Lưu 200 trận hoàn tất gần nhất trên trình duyệt: ai hạ ai, tỉ lệ thắng, cấp và trang bị từng trận, số lần liên kết/hội kích hoạt. Có lọc theo chế độ, nhân vật và xuất JSON."] },
+    { title: "Pack Boss", entries: ["Sau 49 Pack Boss liên tiếp chưa ra Huyền thoại, pack thứ 50 bảo đảm Huyền thoại. Sử thi không đặt lại bộ đếm; bảo hiểm pack thường độc lập."] },
+  ],
+}, {
   version: "2026.10.21.4",
   date: "2026-10-21",
   title: "Nội tại riêng, Huyền thoại đúng vai trò",

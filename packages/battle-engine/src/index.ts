@@ -6,13 +6,13 @@ import { DIRECTIONS, div, hash, random, UNIT, normalize } from "./math";
 import { collide, constrain, pairs } from "./physics";
 import { safeBounds } from "./bounds";
 import { applyRoundTempo } from "./pacing";
+import { statusPower, tickStatuses } from "./statuses";
 import { resolveWeaponClashes } from "./weapon-clash";
 import { ROSTER, type CharacterId } from "../../shared/src/catalog";
 import {
   initializeCharacters,
   beforeCharacterTick,
   characterContacts,
-  characterWall,
   characterCombat,
 } from "./character-combat";
 import {
@@ -27,6 +27,7 @@ export * from "./math";
 export * from "./bounds";
 export * from "./pacing";
 export * from "./weapons";
+export * from "./statuses";
 export function createBattle(config: BattleConfig, seed: number): BattleState {
   if (
     config.teams.length < 2 ||
@@ -56,6 +57,8 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
     projectiles: [],
     zones: [],
     nextProjectile: 0,
+    constructs: [],
+    nextConstruct: 0,
     finished: false,
     eliminated: {},
     events: [],
@@ -78,8 +81,8 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
   for (let id = 0; id < loadouts.length; id++) {
     const { team, l, slot } = loadouts[id],
       campaignEnemy = !!config.campaign && team === config.campaign.enemyTeamId,
-      boss = campaignEnemy && isCampaignBoss(config.campaign!.stage),
-      stats = campaignEnemy ? campaignStats(l, config.campaign!.stage, campaignSquadSize) : computeStats(l),
+      boss = campaignEnemy && slot === 0 && isCampaignBoss(config.campaign!.stage),
+      stats = campaignEnemy ? campaignStats(l, config.campaign!.stage, campaignSquadSize, slot) : computeStats(l),
       cell = cells[id],
       d = DIRECTIONS[random(spawn) % 32];
     s.fighters.push({
@@ -96,6 +99,7 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
       nextAttack: stats.cooldown,
       memory: {},
       buffs: [],
+      statuses: [],
       shields: [],
       stats,
       baseStats: { ...stats },
@@ -131,6 +135,7 @@ export function stepBattle(s: BattleState): BattleState {
   s.tick++;
   applyRoundTempo(s);
   beforeCharacterTick(s);
+  tickStatuses(s);
   const bounds = safeBounds(s);
   for (const f of s.fighters) {
     if (f.hp <= 0) continue;
@@ -138,15 +143,13 @@ export function stepBattle(s: BattleState): BattleState {
       f.slowUntil > s.tick
         ? f.characterId
           ? 100 - (f.memory.slowPower || 20)
-          : 55
+          : 100 - (statusPower(f, "frozen", s.tick) || 45)
         : 100;
+    speed = Math.min(speed, 100 - statusPower(f, "frozen", s.tick));
+    if (statusPower(f, "introvert", s.tick)) speed = Math.min(speed, 85);
+    const previousX = f.x, previousY = f.y;
     if (!f.characterId && f.superUntil > s.tick && f.classId === "assassin")
       speed += 40;
-    const wall =
-      f.x <= bounds.left + f.radius ||
-      f.x >= bounds.right - f.radius ||
-      f.y <= bounds.top + f.radius ||
-      f.y >= bounds.bottom - f.radius;
     if (f.characterId && (f.memory.dash || 0) > s.tick) {
       const [dx, dy] = normalize(f.vx, f.vy);
       f.x += div(dx * f.memory.dashSteps * speed, UNIT * 100);
@@ -155,16 +158,11 @@ export function stepBattle(s: BattleState): BattleState {
       f.x += div(f.vx * speed, 100);
       f.y += div(f.vy * speed, 100);
     }
+    f.x += f.memory.impulseX || 0; f.y += f.memory.impulseY || 0;
+    f.memory.impulseX = div((f.memory.impulseX || 0) * 70, 100);
+    f.memory.impulseY = div((f.memory.impulseY || 0) * 70, 100);
     constrain(f, s.config.width, s.config.height, bounds.left, bounds.top);
-    if (
-      f.characterId &&
-      !wall &&
-      (f.x === bounds.left + f.radius ||
-        f.x === bounds.right - f.radius ||
-        f.y === bounds.top + f.radius ||
-        f.y === bounds.bottom - f.radius)
-    )
-      characterWall(s, f);
+    f.memory.distanceMoved = Math.abs(f.x - previousX) + Math.abs(f.y - previousY);
   }
   // Three deterministic solver passes address multi-body overlaps.
   resolveWeaponClashes(s);
@@ -246,6 +244,10 @@ export function captureReplayFrame(s: BattleState): ReplayFrame {
       f.facing,
     ]),
     buffs: s.fighters.map((f) => structuredClone(f.buffs)),
+    statuses: s.fighters.map((f) => structuredClone(f.statuses)),
+    constructs: structuredClone(s.constructs),
+    kitProjectiles: s.projectiles.filter(p => p.kit).map(p => ({ id: p.id, kit: p.kit, radius: p.radius || 450, returning: p.returning })),
+    combatStats: s.fighters.map((f) => [f.stats.attack, f.stats.speed, f.stats.rotation, f.stats.charge, f.stats.cooldown, f.memory.spinRate || 100]),
     projectiles: s.projectiles.map((p) => [
       p.id, p.owner, p.x, p.y, p.vx, p.vy, p.normal ?? false, p.kind,
     ]),

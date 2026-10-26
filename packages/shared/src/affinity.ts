@@ -27,7 +27,7 @@ const effect = (
   cooldown: number,
   maxUses: number,
   text: string,
-): AffinityEffect => ({ trigger, kind, value, ticks, cooldown, maxUses, text });
+): AffinityEffect => ({ trigger: trigger === "skill" ? "super" : trigger, kind, value, ticks, cooldown, maxUses, text: text.replaceAll("kỹ năng", "Super") });
 export const ITEM_AFFINITY: Record<string, AffinityEffect> = {
   item_01: effect(
     "skill",

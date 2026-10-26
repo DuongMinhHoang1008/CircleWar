@@ -39,38 +39,38 @@ const unit = (
 
 export const CHARACTER_BALANCE: Record<string, CharacterBalance> = {
   char_01: unit("tank", 285, 15, 12, 365, 29, 6400, 5, 100, 170),
-  char_02: unit("fighter", 245, 18, 7, 445, 26, 6500, 8, 100),
-  char_03: unit("controller", 220, 16, 5, 425, 27, 5100, 7, 105),
-  char_04: unit("fighter", 235, 19, 5, 495, 24, 5900, 10, 95),
-  char_05: unit("ranger", 205, 16, 4, 455, 27, 4700, 14, 95),
-  char_06: unit("support", 255, 19, 7, 435, 23, 6200, 6, 110),
-  char_07: unit("controller", 215, 14, 6, 445, 27, 4900, 8, 100),
-  char_08: unit("fighter", 250, 18, 6, 425, 27, 6100, 11, 100),
-  char_09: unit("controller", 215, 17, 5, 410, 29, 5200, 6, 115),
+  char_02: unit("fighter", 265, 21, 8, 460, 24, 6600, 8, 100),
+  char_03: unit("controller", 205, 13, 4, 425, 30, 5100, 7, 105),
+  char_04: unit("fighter", 245, 20, 6, 495, 23, 6500, 10, 95),
+  char_05: unit("ranger", 185, 15, 4, 455, 30, 4700, 14, 95),
+  char_06: unit("support", 205, 12, 4, 435, 30, 6200, 6, 110),
+  char_07: unit("controller", 245, 19, 7, 500, 23, 6500, 8, 100),
+  char_08: unit("fighter", 265, 21, 7, 445, 25, 6500, 11, 100),
+  char_09: unit("controller", 210, 15, 4, 410, 31, 5200, 6, 115),
   char_10: unit("tank", 310, 15, 10, 380, 29, 6100, 4, 100, 190),
-  char_11: unit("support", 260, 17, 9, 405, 27, 6400, 5, 115, 125),
+  char_11: unit("support", 235, 15, 7, 405, 29, 6400, 5, 115, 125),
   char_12: unit("fighter", 240, 17, 6, 455, 26, 6600, 12, 95),
   char_13: unit("support", 215, 13, 5, 435, 31, 4800, 7, 110),
   char_14: unit("controller", 220, 16, 4, 395, 30, 5000, 8, 110),
-  char_15: unit("tank", 290, 16, 13, 395, 29, 6500, 5, 100, 155),
-  char_16: unit("controller", 200, 16, 4, 465, 27, 5300, 9, 100),
-  char_17: unit("assassin", 215, 19, 4, 570, 21, 5700, 17, 95, 85),
-  char_18: unit("fighter", 250, 18, 7, 390, 30, 6100, 6, 105, 130),
+  char_15: unit("tank", 275, 14, 10, 395, 30, 6500, 5, 100, 155),
+  char_16: unit("controller", 200, 15, 4, 465, 27, 5300, 9, 100),
+  char_17: unit("assassin", 225, 21, 6, 570, 20, 6300, 17, 95, 85),
+  char_18: unit("fighter", 240, 18, 6, 390, 30, 6100, 6, 105, 130),
   char_19: unit("support", 240, 19, 6, 445, 24, 6300, 8, 105),
-  char_20: unit("support", 245, 19, 6, 460, 23, 6300, 9, 105),
-  char_21: unit("tank", 300, 14, 14, 345, 31, 6700, 4, 110, 180),
+  char_20: unit("support", 235, 18, 6, 460, 25, 6300, 9, 105),
+  char_21: unit("tank", 260, 12, 9, 345, 32, 6700, 4, 110, 180),
   char_22: unit("support", 265, 19, 8, 415, 25, 6500, 6, 110, 115),
   char_23: unit("fighter", 245, 17, 7, 435, 28, 6500, 10, 100),
-  char_24: unit("ranger", 205, 16, 4, 430, 28, 4900, 12, 100),
-  char_25: unit("tank", 295, 15, 11, 385, 28, 6500, 6, 105, 160),
+  char_24: unit("ranger", 205, 15, 4, 430, 28, 4900, 12, 100),
+  char_25: unit("tank", 300, 17, 12, 405, 26, 6800, 6, 105, 160),
   char_26: unit("assassin", 215, 18, 4, 570, 21, 5700, 18, 95, 85),
   char_27: unit("fighter", 250, 18, 7, 420, 26, 6000, 8, 100),
   char_28: unit("tank", 290, 16, 11, 375, 29, 6600, 4, 100, 145),
-  char_29: unit("ranger", 205, 16, 4, 440, 27, 5000, 9, 105, 90),
+  char_29: unit("ranger", 225, 18, 5, 440, 25, 5000, 9, 105, 90),
   char_30: unit("fighter", 245, 18, 7, 440, 26, 6500, 6, 100, 90),
-  char_31: unit("ranger", 210, 15, 4, 420, 28, 5100, 9, 100, 100),
+  char_31: unit("ranger", 205, 14, 4, 420, 30, 5100, 9, 100, 100),
   char_32: unit("controller", 225, 14, 5, 425, 29, 5200, 7, 100, 110),
-  char_33: unit("tank", 300, 15, 12, 370, 29, 6500, 5, 100, 165),
+  char_33: unit("tank", 250, 11, 9, 370, 32, 6500, 5, 100, 165),
 };
 
 // Stat + triggered-effect budget for a T1 item; scale both with current rarity.
@@ -154,38 +154,4 @@ export const ITEM_EFFECT_TEXT: Record<string, string> = {
   item_31: "Tăng sát thương và tốc độ nạp Super; Bút Chì Bạc không xuyên khiên hay đạn chặn.",
   item_32: "Tăng tốc độ và máu; cần áp sát để phát huy hiệu quả.",
   item_33: "Tăng máu và sức mạnh Super; hồi phục vẫn bị giới hạn bởi máu tối đa.",
-};
-
-export const ROLE_TEXT: Record<
-  CombatRole,
-  { skill: string; super: string }
-> = {
-  tank: {
-    skill:
-      "Mỗi 7 giây đánh 110% ATK trong tầm vũ khí và tạo khiên bằng 3% máu tối đa.",
-    super: "Đánh 150% ATK trong tầm vũ khí và nhận khiên bằng 12% máu tối đa.",
-  },
-  fighter: {
-    skill: "Mỗi 7 giây đánh 130% ATK trong tầm vũ khí.",
-    super: "Đánh 280% ATK trong tầm vũ khí. Sức mạnh Super tăng sát thương.",
-  },
-  assassin: {
-    skill: "Mỗi 7 giây đánh 150% ATK trong tầm vũ khí.",
-    super: "Đánh 320% ATK trong tầm vũ khí. Đổi độ bền lấy tốc độ và chí mạng.",
-  },
-  controller: {
-    skill:
-      "Mỗi 7 giây bắn đạn 120% ATK, tầm 260; đạn chạm làm chậm 15% trong 1 giây.",
-    super: "Bắn đạn 240% ATK, tầm 300; làm chậm 20% trong 1,5 giây khi chạm.",
-  },
-  ranger: {
-    skill: "Mỗi 7 giây bắn đạn 140% ATK, tầm 260. Có thể né hoặc chặn đạn.",
-    super: "Bắn đạn 300% ATK, tầm 300. Sức mạnh Super tăng sát thương.",
-  },
-  support: {
-    skill:
-      "Mỗi 7 giây tạo khiên 100% ATK cho đồng minh yếu nhất trong 180 (3 giây); đánh 80% ATK nếu có địch trong tầm. Đòn xa có đạn.",
-    super:
-      "Hồi 10% máu tối đa và tạo khiên 50% ATK cho đồng minh yếu nhất trong 180; đánh 160% ATK nếu có địch trong tầm. Đòn xa có đạn.",
-  },
 };

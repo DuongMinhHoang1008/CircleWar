@@ -76,6 +76,8 @@ function fixture(itemId: string, matched = true, level = 1) {
   return s;
 }
 function trigger(s: ReturnType<typeof fixture>, itemId: string, tick: number) {
+  // Projectile lifetimes elapse between isolated affinity activation windows.
+  if (tick - s.tick >= 300) s.projectiles = [];
   s.tick = tick;
   const [f, enemy] = s.fighters;
   const fx = ITEM_AFFINITY[itemId];
@@ -125,7 +127,7 @@ describe("all item affinity procs", () => {
       }
       for (let i = 1; i <= 8; i++)
         trigger(s, it.id, 1 + i * Math.max(360, fx.cooldown));
-      expect(events()).toHaveLength(fx.maxUses);
+      expect(s.fighters[0].memory["affinity:" + it.id + ":uses"]).toBe(fx.maxUses);
       expect(
         calculateStateHash(restoreBattleState(serializeBattleState(s))),
       ).toBe(calculateStateHash(s));

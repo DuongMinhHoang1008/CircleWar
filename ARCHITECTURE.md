@@ -1,5 +1,13 @@
 # Kiến trúc
 
+## Cập nhật hiện tại: engine v26
+
+Xem [CHARACTER_KITS_V26.md](docs/CHARACTER_KITS_V26.md): 33 bộ nhân vật, ba biến hình; KitCombatServices tách cơ chế khỏi class/race. Release 2026.10.26.2 dùng hai trục tăng trưởng riêng, construct có HP, đạn/vùng riêng và replay v26.
+
+## Nền tảng engine v25
+
+Xem [COMBAT_V25.md](docs/COMBAT_V25.md) cho hợp đồng `CombatStatus`, giới hạn cân bằng, đòn xa theo hướng xoay, dữ liệu replay và phân tích trận đấu. Source release `2026.10.26.1` đồng bộ các tính năng ngoài combat của bản web `.22.1`; các mục v24 trở về trước bên dưới là lịch sử kiến trúc.
+
 ## Phân lớp
 
 - `packages/shared/src/balance.ts`: sáu lớp, 20 vật phẩm catalog cùng legacy modifiers, economy prices/capacities và reward pure function.

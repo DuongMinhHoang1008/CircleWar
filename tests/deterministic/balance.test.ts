@@ -15,6 +15,7 @@ import {
 } from "../../packages/shared/src/balance";
 import {
   createBattle,
+  tickStatuses,
   serializeBattleState,
   restoreBattleState,
 } from "../../packages/battle-engine/src/index";
@@ -67,7 +68,7 @@ describe("rarity-normalized combat balance", () => {
       expect(stats.hp).toBeGreaterThan(0);
       expect(stats.cooldown).toBeGreaterThanOrEqual(8);
       expect(stats.defense).toBeLessThanOrEqual(60);
-      expect(c.skill[1]).toContain("7 giây");
+      expect(c.skill[1]).toContain("10 giây");
     }
   });
   it("uses the same rarity budget for printed and evolved cards, including max-level GOD", () => {
@@ -117,16 +118,15 @@ describe("rarity-normalized combat balance", () => {
     const hp = f.hp;
     characterDamage(s, f, t, 10, true, 0);
     expect(f.hp).toBeLessThan(hp);
-    expect(t.buffs.some((b) => b.kind === "burnDot")).toBe(true);
+    expect(t.statuses.some((b) => b.kind === "burn")).toBe(true);
     const afterHit = t.hp;
-    s.tick = 30;
-    characterCombat(s);
+    for (let tick = 1; tick <= 30; tick++) { s.tick = tick; tickStatuses(s); }
     expect(t.hp).toBeLessThan(afterHit);
     expect(s.events.length).toBeLessThan(10);
   });
   it("makes superPower equipment improve the real Super damage", () => {
     const fire = (item?: string) => {
-      const s = duel(load("char_12", item));
+      const s = duel(load("char_28", item));
       const [f, t] = s.fighters;
       t.x = f.x + 6500;
       f.angle = 16;

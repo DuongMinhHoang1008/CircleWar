@@ -1,0 +1,14 @@
+{
+  "release": "2026.10.26.1",
+  "guaranteedLegendary": "Huyền thoại",
+  "persistedBossPity": 0,
+  "records": 1,
+  "kills": 4,
+  "ticks": 903,
+  "desktop": true,
+  "mobile": true,
+  "exportJson": true,
+  "reloadPersistence": true,
+  "abortedBattleNotRecorded": true,
+  "pageErrors": []
+}

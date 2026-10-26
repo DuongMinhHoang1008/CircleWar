@@ -2,6 +2,9 @@ import type { BattleState, Fighter } from "./types";
 import { DIRECTIONS, div, normalize, random, UNIT } from "./math";
 import { capsuleHit } from "./physics";
 import { safeBounds, type ArenaBounds } from "./bounds";
+import { applyStatus, statusDamage, attackCooldown } from "./statuses";
+import { alignedRangedTarget, isRanged } from "./weapons";
+import { retainCombatEvents } from "./events";
 import {
   isClashProtected,
   reverseWeaponSpin,
@@ -22,7 +25,7 @@ export function damage(
     isClashProtected(target, s.tick)
   )
     return false;
-  let amount = Math.max(1, Math.min(300, div(raw * (100 - Math.min(60, target.stats.defense)), 100)));
+  let amount = Math.max(1, Math.min(300, div(statusDamage(source, s.tick, raw) * (100 - Math.min(60, target.stats.defense)), 100)));
   const absorbed = Math.min(target.shield, amount);
   target.shield -= absorbed;
   amount -= absorbed;
@@ -51,10 +54,9 @@ export function damage(
     });
   }
   if (effects) {
-    if (source.classId === "frost") target.slowUntil = s.tick + 30;
+    if (source.classId === "frost") applyStatus(s, source, target, "frozen", 25, 30);
     if (source.stats.burn) {
-      target.burnUntil = s.tick + 60;
-      target.burnSource = source.id;
+      applyStatus(s, source, target, "burn", source.stats.burn, 60);
     }
     if (source.classId === "berserker" && source.superUntil > s.tick)
       source.hp = Math.min(
@@ -94,11 +96,6 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
   const charge = s.fighters.map(() => 0);
   for (const f of s.fighters) {
     if (f.hp <= 0) continue;
-    if (f.burnUntil > s.tick && s.tick % 15 === 0) {
-      const src = s.fighters[f.burnSource];
-      if (src)
-        damage(s, src, f, src.stats.burn + f.stats.defense, charge, false);
-    }
     if (f.hp <= 0) continue;
     if (f.energy >= 100 && f.superUntil <= s.tick) {
       f.energy = 0;
@@ -122,35 +119,10 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
     }
     const active = f.superUntil > s.tick;
     rotateWeaponAngle(f, active ? 2 : 1);
-    if (f.classId === "ranger") {
-      if (
-        s.tick %
-          (active
-            ? Math.max(4, div(f.stats.cooldown, 2))
-            : f.stats.cooldown) ===
-        0
-      ) {
-        const targets = s.fighters
-          .filter((t) => t.hp > 0 && t.team !== f.team)
-          .sort(
-            (a, b) =>
-              (a.x - f.x) ** 2 +
-                (a.y - f.y) ** 2 -
-                ((b.x - f.x) ** 2 + (b.y - f.y) ** 2) || a.id - b.id,
-          );
-        if (targets[0]) {
-          const [nx, ny] = normalize(targets[0].x - f.x, targets[0].y - f.y);
-          let best = 0,
-            dot = -Infinity;
-          DIRECTIONS.forEach((d, i) => {
-            const v = nx * d[0] + ny * d[1];
-            if (v > dot) {
-              best = i;
-              dot = v;
-            }
-          });
-          shoot(s, f, best);
-        }
+    if (isRanged(f)) {
+      if (f.nextAttack <= s.tick && alignedRangedTarget(s, f) && s.projectiles.length < 240) {
+        shoot(s, f, f.memory.shotAngle);
+        f.nextAttack = s.tick + attackCooldown(f, s.tick);
       }
     } else {
       const count =
@@ -173,7 +145,7 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
           if (capsuleHit(ax, ay, bx, by, t.x, t.y, t.radius + 500)) {
             if (isClashProtected(t, s.tick)) continue;
             f.cooldowns[w + ":" + t.id] =
-              s.tick + Math.max(8, f.stats.cooldown);
+              s.tick + attackCooldown(f, s.tick);
             f.hits++;
             let hit = f.stats.attack;
             if (f.classId === "swordsman" && f.hits % 4 === 0)
@@ -233,5 +205,5 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
   s.zones = s.zones.filter((z) => z.until > s.tick);
   for (const f of s.fighters) f.energy = Math.min(100, f.energy + charge[f.id]);
   // Only a bounded recent visual feed is persisted; combat totals live on fighters.
-  s.events = s.events.slice(-80);
+  retainCombatEvents(s);
 }

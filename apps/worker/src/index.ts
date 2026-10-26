@@ -14,6 +14,7 @@ import {
 import { hash } from "../../../packages/battle-engine/src/index";
 import { CHARACTER_IDS, CATALOG_ITEMS, type CharacterId } from "../../../packages/shared/src/catalog";
 import { addCardXp, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "../../../packages/shared/src/progression";
+import { BOSS_PITY_LIMIT, normalizeBossPity } from "../../../packages/shared/src/packs";
 interface Env {
   ROOMS: DurableObjectNamespace<Room>;
   PROFILES: DurableObjectNamespace<Profile>;
@@ -161,6 +162,7 @@ export default {
 } satisfies ExportedHandler<Env>;
 
 interface GlobalProfile {
+  bossPacksSinceHighRarity?: number;
   cards: { characterId: CharacterId; level: number; xp: number }[];
   itemCards: { itemId: string; level: number; xp: number }[];
   team: CharacterId[];
@@ -191,7 +193,7 @@ function normalizeProfile(raw: Partial<GlobalProfile>): GlobalProfile {
     const itemId = values.find((value) => owned.has(value) && !assigned.has(value));
     if (itemId) { equipment[characterId] = [itemId]; assigned.add(itemId); }
   }
-  return { ...starter, ...raw, team, cards, itemCards, equipment, lastPull, packsSinceRare: Number.isInteger(raw.packsSinceRare) ? Math.max(0, raw.packsSinceRare!) : 0, packsSinceHighRarity: Number.isInteger(raw.packsSinceHighRarity) ? Math.max(0, Math.min(99, raw.packsSinceHighRarity!)) : 0, missions: raw.missions || starter.missions, claimedMissions: raw.claimedMissions || [], processedMatches: raw.processedMatches || [] };
+  return { ...starter, ...raw, team, cards, itemCards, equipment, lastPull, packsSinceRare: Number.isInteger(raw.packsSinceRare) ? Math.max(0, raw.packsSinceRare!) : 0, bossPacksSinceHighRarity: normalizeBossPity(raw.bossPacksSinceHighRarity), packsSinceHighRarity: Number.isInteger(raw.packsSinceHighRarity) ? Math.max(0, Math.min(99, raw.packsSinceHighRarity!)) : 0, missions: raw.missions || starter.missions, claimedMissions: raw.claimedMissions || [], processedMatches: raw.processedMatches || [] };
 }
 function validProfile(raw: unknown): raw is GlobalProfile {
   if (!raw || typeof raw !== "object") return false;
@@ -211,11 +213,12 @@ function validProfile(raw: unknown): raw is GlobalProfile {
     Array.isArray(p.claimedMissions) && p.claimedMissions.every((m) => ["draw", "win", "campaign"].includes(m)) &&
     Number.isInteger(p.campaignStage) && p.campaignStage! >= 0 && Array.isArray(p.processedMatches) && p.processedMatches.length <= 5000 && p.processedMatches.every((key) => typeof key === "string" && key.length <= 128) &&
     (p.packsSinceRare === undefined || (Number.isInteger(p.packsSinceRare) && p.packsSinceRare >= 0 && p.packsSinceRare <= 19)) &&
+    (p.bossPacksSinceHighRarity === undefined || (Number.isInteger(p.bossPacksSinceHighRarity) && p.bossPacksSinceHighRarity >= 0 && p.bossPacksSinceHighRarity < BOSS_PITY_LIMIT)) &&
     (p.packsSinceHighRarity === undefined || (Number.isInteger(p.packsSinceHighRarity) && p.packsSinceHighRarity >= 0 && p.packsSinceHighRarity <= 99)) &&
     (p.lastPull === undefined || (typeof p.lastPull.id === "string" && (p.lastPull.tier.startsWith("T") || p.lastPull.tier === "RAC" || p.lastPull.tier === "GOD")));
 }
 function starterProfile(): GlobalProfile {
-  return { cards: [{ characterId: "char_01", level: 1, xp: 0 }], itemCards: [], equipment: {}, team: ["char_01"], packs: 50, bossPacks: 0, lastPackAt: Date.now(), missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0 };
+  return { cards: [{ characterId: "char_01", level: 1, xp: 0 }], itemCards: [], equipment: {}, team: ["char_01"], packs: 50, bossPacks: 0, lastPackAt: Date.now(), missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0, bossPacksSinceHighRarity: 0 };
 }
 function accrue(profile: GlobalProfile, now = Date.now()) {
   const elapsed = Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000);

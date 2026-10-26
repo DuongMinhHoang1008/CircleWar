@@ -86,7 +86,7 @@ const result = {
 };
 mkdirSync("reports", { recursive: true });
 writeFileSync(
-  "reports/deployment-2026-10-21.json",
+  "reports/deployment-2026-10-26.json",
   JSON.stringify(result, null, 2),
 );
 console.log(JSON.stringify(result, null, 2));

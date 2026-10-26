@@ -24,6 +24,11 @@ const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 try {
   const errors: string[] = [];
+  const kitAssets = new Set<string>();
+  page.on("response", (response) => {
+    const match = response.url().match(/\/art-v26\/(weapons|objects|constructs|vfx)\.webp$/);
+    if (match && response.status() === 200) kitAssets.add(match[1]);
+  });
   page.on("pageerror", (error) => {
     errors.push(error.message);
     console.error(error.stack);
@@ -78,7 +83,7 @@ try {
   );
   assert.equal((await manifest.json()).version, CURRENT_RELEASE_VERSION);
   for (const id of [31, 32, 33]) {
-    const asset = await page.request.get(
+    const asset: import("playwright").APIResponse = await page.request.get(
       web.replace(/\/$/, "") + "/weapons/char_" + id + ".svg",
     );
     assert.equal(asset.status(), 200);
@@ -109,11 +114,14 @@ try {
   );
   assert.equal(atlas.status(), 200);
   assert.equal(((await atlas.text()).match(/<svg x=/g) || []).length, 64);
+  await page.waitForFunction(() => performance.getEntriesByType("resource")
+    .filter((entry) => /\/art-v26\/(weapons|objects|constructs|vfx)\.webp$/.test(entry.name)).length === 4);
+  assert.equal(kitAssets.size, 4, "Arena must load all generated v26 atlases");
   mkdirSync("reports", { recursive: true });
-  await page.screenshot({ path: "reports/deployment-v24.png", fullPage: true });
+  await page.screenshot({ path: "reports/deployment-v26.png", fullPage: true });
   await navigate("Multiplayer");
   assert.equal(await page.getByLabel("Backend URL").inputValue(), api);
-  await page.getByLabel("Tên của bạn").fill("Deployment smoke v24");
+  await page.getByLabel("Tên của bạn").fill("Deployment smoke v26");
   const roomResponse = page.waitForResponse(
     (response) =>
       response.url() === `${api}/api/rooms` &&
@@ -128,16 +136,18 @@ try {
   assert.ok(socketReceived, "Production room WebSocket must receive state");
   assert.deepEqual(errors, []);
   writeFileSync(
-    "reports/production-browser-v24.json",
+    "reports/production-browser-v26.json",
     JSON.stringify(
       {
         version: CURRENT_RELEASE_VERSION,
+        time: new Date().toISOString(),
         web,
         api,
         centeredPopup: true,
         verticalWeapons: true,
         profileRestored: true,
         websocket: socketReceived,
+        generatedAtlases: [...kitAssets].sort(),
         errors,
       },
       null,
@@ -160,7 +170,7 @@ try {
   });
   assert.equal(leave.status, 200);
   console.log(
-    "PASS: production API/CORS, persisted profile, room/WebSocket, 20s shrink, square arena, team colors and 64-frame VFX; no browser errors.",
+    "PASS: production API/CORS, persisted profile, room/WebSocket, 20s shrink, square arena, team colors and generated v26 atlases; no browser errors.",
   );
 } catch (error) {
   mkdirSync("reports", { recursive: true });

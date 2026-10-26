@@ -10,6 +10,7 @@ export function roundTempo(tick: number) {
     haste: 100 + stacks * 8,
     charge: 100 + stacks * 5,
     superPower: 100 + stacks * 10,
+    spin: 100 + stacks * 4,
   };
 }
 
@@ -25,6 +26,7 @@ export function applyRoundTempo(s: BattleState) {
     f.stats.speed = Math.min(900, div(base.speed * tempo.speed, 100));
     f.stats.cooldown = Math.max(8, div(base.cooldown * 100, tempo.haste));
     f.stats.charge = Math.min(300, div(base.charge * tempo.charge, 100));
+    f.memory.spinRate = tempo.spin;
     f.stats.superPower = Math.min(
       300,
       div(base.superPower * tempo.superPower, 100),
@@ -33,6 +35,7 @@ export function applyRoundTempo(s: BattleState) {
     f.vx = div(f.vx * f.stats.speed, previousSpeed);
     f.vy = div(f.vy * f.stats.speed, previousSpeed);
     // Shorten pending melee cooldowns as well as future attacks.
+    if (f.nextAttack > s.tick) f.nextAttack = s.tick + Math.max(1, div((f.nextAttack - s.tick) * f.stats.cooldown, previousCooldown));
     for (const key of Object.keys(f.cooldowns)) {
       const remaining = f.cooldowns[key] - s.tick;
       if (remaining > 0)

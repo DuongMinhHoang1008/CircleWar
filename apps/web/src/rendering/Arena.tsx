@@ -14,7 +14,6 @@ import {
   createBattle,
   ENGINE_VERSION,
   safeBounds,
-  roundTempo,
   weaponCount,
   weaponReach,
   stepBattle,
@@ -24,6 +23,7 @@ import {
 } from "../../../../packages/battle-engine/src/index";
 import { CHARACTERS } from "../../../../packages/shared/src/balance";
 import type { ReplayInfo } from "../../../../packages/shared/src/room";
+import { characterKit } from "../../../../packages/shared/src/character-kits";
 import { DIRECTIONS } from "../../../../packages/battle-engine/src/math";
 import {
   character,
@@ -33,11 +33,26 @@ import {
   isTransformedCharacter,
   type CharacterId,
 } from "../../../../packages/shared/src/catalog";
-import { avatar, Portrait, weaponArtUrl, weaponAtlasUrl, weaponFrame } from "../GameCatalog";
+import {
+  avatar,
+  Portrait,
+  weaponArtUrl,
+  weaponAtlasUrl,
+  weaponFrame,
+} from "../GameCatalog";
 import type { Fighter } from "../../../../packages/battle-engine/src/types";
+import { loadKitArt, characterFxFamily } from "./kit-art";
 import { TEAM_COLORS } from "./team-colors";
-import { loadCombatFx, loadCharacterFx, characterFxColor, isCombatFx, type CombatFxKind, type CharacterFxFrames } from "./combat-fx";
-const colors = TEAM_COLORS.map(color => color.value);
+import {
+  loadCombatFx,
+  loadCharacterFx,
+  characterFxColor,
+  isCombatFx,
+  type CombatFxKind,
+  type CharacterFxFrames,
+} from "./combat-fx";
+import { createBattleRecorder, type BattleSummary } from "../battleAnalytics";
+const colors = TEAM_COLORS.map((color) => color.value);
 const fxArt = {
   slash: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="M14 94Q49 18 112 24 82 43 59 70 39 91 14 94Z" fill="#ffe5a0" fill-opacity=".82"/><path d="M18 96Q57 44 109 25" fill="none" stroke="#fff8d6" stroke-width="7" stroke-linecap="round"/><path d="m32 73 9 2-7 8m33-34 8 2-7 7m19-24 8 2-7 7" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="m19 24 4 9 9 4-9 4-4 9-4-9-9-4 9-4zM103 79l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#fff4c5"/></svg>`,
   shatter: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path d="m56 53 9-38 13 35-10 11zM66 69l36-21-20 33-17-3zM57 70l-8 41-13-35 11-12zM48 60 13 43l38 3 7 10zM75 81l23 26-35-16-1-9zM44 49 30 16l24 27-5 8zM54 79l-7 31-8-24z" fill="#ff7989" stroke="#ffe8bc" stroke-width="3" stroke-linejoin="round"/><path d="m29 69-9 9m77-42 10-8m-51 69-2 13" stroke="#fff5d9" stroke-width="4" stroke-linecap="round"/></svg>`,
@@ -190,8 +205,10 @@ function characterFxSvg(id: CharacterId, kind: "skill" | "super" | "item") {
   const art = characterFxArt[id] || {
     color: "#78b9ff",
     light: "#fff0bd",
-    skill: '<path d="M64 18 76 50l34 14-34 14-12 32-12-32-34-14 34-14z" fill="currentColor"/>',
-    super: '<path d="M64 8 80 43l38 5-28 26 7 39-33-20-33 20 7-39L20 48l38-5z" fill="currentColor"/>',
+    skill:
+      '<path d="M64 18 76 50l34 14-34 14-12 32-12-32-34-14 34-14z" fill="currentColor"/>',
+    super:
+      '<path d="M64 8 80 43l38 5-28 26 7 39-33-20-33 20 7-39L20 48l38-5z" fill="currentColor"/>',
   };
   const superMode = kind === "super",
     itemMode = kind === "item";
@@ -250,7 +267,20 @@ function replayStateAt(
     fighter.supers = from[14];
     fighter.facing = (t < 0.5 ? from[15] : to[15]) || 1;
     fighter.buffs = structuredClone(a.buffs[i] || []);
+    fighter.statuses = structuredClone(a.statuses?.[i] || []);
+    const combatStats = a.combatStats?.[i];
+    if (combatStats) {
+      [
+        fighter.stats.attack,
+        fighter.stats.speed,
+        fighter.stats.rotation,
+        fighter.stats.charge,
+        fighter.stats.cooldown,
+        fighter.memory.spinRate,
+      ] = combatStats;
+    }
   }
+  state.constructs = structuredClone(a.constructs || []);
   const nextProjectiles = new Map(b.projectiles.map((p) => [p[0], p]));
   state.projectiles = a.projectiles.map((p) => {
     const q = nextProjectiles.get(p[0]) || p;
@@ -268,6 +298,14 @@ function replayStateAt(
       hit: [],
     };
   });
+  for (const extra of a.kitProjectiles || []) {
+    const projectile = state.projectiles.find((p) => p.id === extra.id);
+    if (projectile) {
+      projectile.kit = extra.kit;
+      projectile.radius = extra.radius;
+      projectile.returning = extra.returning;
+    }
+  }
   state.zones = structuredClone(a.zones);
   state.pending = structuredClone(a.pending);
   state.events = structuredClone(a.events);
@@ -285,6 +323,7 @@ export function Arena({
   onError,
   onInspect,
   onFinished,
+  onBattleComplete,
   label,
   highlightTeamId,
   watchedTeamId,
@@ -300,6 +339,7 @@ export function Arena({
   onError: (s: string) => void;
   onInspect?: (fighter: Fighter, tick: number) => void;
   onFinished?: (teamId: string) => void;
+  onBattleComplete?: (summary: BattleSummary) => void;
   label?: string;
   highlightTeamId?: string;
   watchedTeamId?: string;
@@ -312,6 +352,7 @@ export function Arena({
       offset,
       onInspect,
       onFinished,
+      onBattleComplete,
       loadReplayChunk,
       officialResult,
       highlightTeamId,
@@ -324,6 +365,7 @@ export function Arena({
     offset,
     onInspect,
     onFinished,
+    onBattleComplete,
     loadReplayChunk,
     officialResult,
     highlightTeamId,
@@ -354,9 +396,11 @@ export function Arena({
     const faces: (Sprite | undefined)[] = [],
       masks: (Graphics | undefined)[] = [];
     const weapons: Sprite[][] = [];
-    const viewWidth = config.width / 100, viewHeight = config.height / 100;
+    const viewWidth = config.width / 100,
+      viewHeight = config.height / 100;
     const battle = createBattle(config, seed);
     let state: BattleState = battle;
+    const recorder = createBattleRecorder();
     let started = performance.now(),
       last = started,
       hudTime = 0,
@@ -383,6 +427,11 @@ export function Arena({
       loading.add(index);
       try {
         const received = await options.current.loadReplayChunk(index);
+        recorder.replay(
+          received,
+          battle.fighters,
+          options.current.highlightTeamId,
+        );
         frames = [...frames, ...received].sort((a, b) => a.tick - b.tick);
         frames = frames.filter(
           (f, i) => i === 0 || f.tick !== frames[i - 1].tick,
@@ -427,6 +476,8 @@ export function Arena({
         return;
       }
       mount.current!.appendChild(instance.canvas);
+      const kitArt = await loadKitArt().catch(() => undefined);
+      if (disposed) return;
       const fxTextures = {} as Record<FxKind, Texture>;
       const characterFxTextures = {} as Record<
         CharacterId,
@@ -439,6 +490,15 @@ export function Arena({
       );
       await Promise.all(
         CHARACTER_IDS.map(async (id) => {
+          if (kitArt) {
+            const frames = kitArt.fx[characterFxFamily(id)];
+            characterFxTextures[id] = {
+              skill: frames[0],
+              super: frames[0],
+              item: frames[0],
+            };
+            return;
+          }
           const [skill, superFx, item] = await Promise.all([
             Assets.load<Texture>(fxUrl(characterFxSvg(id, "skill"))),
             Assets.load<Texture>(fxUrl(characterFxSvg(id, "super"))),
@@ -448,13 +508,44 @@ export function Arena({
         }),
       );
       if (disposed) return;
-      const animatedFx = await loadCombatFx().catch(() => ({
-        impactBurst: [fxTextures.slash], superBurst: [fxTextures.zone],
-        burnLoop: [fxTextures.bolt], slowLoop: [fxTextures.zone],
-        passiveBurst: [fxTextures.utility], healBurst: [fxTextures.heal],
-        shieldBurst: [fxTextures.shield], projectile: [fxTextures.bolt],
-      }));
-      const personalAnimatedFx = await loadCharacterFx().catch(() => ({} as CharacterFxFrames));
+      const animatedFx =
+        kitArt?.combat ??
+        (await loadCombatFx().catch(() => ({
+          impactBurst: [fxTextures.slash],
+          superBurst: [fxTextures.zone],
+          burnLoop: [fxTextures.bolt],
+          slowLoop: [fxTextures.zone],
+          passiveBurst: [fxTextures.utility],
+          healBurst: [fxTextures.heal],
+          shieldBurst: [fxTextures.shield],
+          projectile: [fxTextures.bolt],
+        })));
+      const personalAnimatedFx: CharacterFxFrames = kitArt
+        ? Object.fromEntries(
+            CHARACTER_IDS.map((id) => [
+              id,
+              {
+                skill: kitArt.fx[characterFxFamily(id)],
+                super: kitArt.fx[characterFxFamily(id)],
+              },
+            ]),
+          )
+        : await loadCharacterFx().catch(() => ({}) as CharacterFxFrames);
+      const generatedFx = kitArt
+        ? {
+            slash: kitArt.fx.slash,
+            shatter: kitArt.fx.slash,
+            clash: kitArt.fx.slash,
+            bolt: kitArt.fx.frost,
+            zone: kitArt.fx.aura,
+            warn: kitArt.fx.aura,
+            utility: kitArt.fx.aura,
+            heal: kitArt.fx.aura,
+            shield: kitArt.fx.aura,
+            bond: kitArt.fx.aura,
+            group: kitArt.fx.aura,
+          }
+        : undefined;
       if (disposed) return;
       const textureForEffect = (kind: EffectKind, characterId?: string) => {
         if (isCombatFx(kind)) return animatedFx[kind][0];
@@ -467,8 +558,12 @@ export function Arena({
             ? (characterId as CharacterId)
             : undefined;
           if (id) {
-            const frames = personalAnimatedFx[id]?.[kind === "characterSuper" ? "super" : "skill"];
-            if (frames?.length) return frames[Math.floor(state.tick / 3) % frames.length];
+            const frames =
+              personalAnimatedFx[id]?.[
+                kind === "characterSuper" ? "super" : "skill"
+              ];
+            if (frames?.length)
+              return frames[Math.floor(state.tick / 3) % frames.length];
             const personal = characterFxTextures[id];
             return kind === "characterSkill"
               ? personal.skill
@@ -478,7 +573,7 @@ export function Arena({
           }
           return fxTextures.utility;
         }
-        return fxTextures[kind];
+        return generatedFx?.[kind]?.[0] || fxTextures[kind];
       };
       const g = new Graphics();
       instance.stage.addChild(g);
@@ -489,13 +584,15 @@ export function Arena({
         instance.stage.addChild(sprite);
         return sprite;
       });
-      const statusNodes = state.fighters.map(() => Array.from({ length: 3 }, () => {
-        const sprite = new Sprite(animatedFx.passiveBurst[0]);
-        sprite.anchor.set(0.5);
-        sprite.visible = false;
-        instance.stage.addChild(sprite);
-        return sprite;
-      }));
+      const statusNodes = state.fighters.map(() =>
+        Array.from({ length: 3 }, () => {
+          const sprite = new Sprite(animatedFx.passiveBurst[0]);
+          sprite.anchor.set(0.5);
+          sprite.visible = false;
+          instance.stage.addChild(sprite);
+          return sprite;
+        }),
+      );
       for (const f of state.fighters) {
         const label = new Text({
           text: f.boss ? "BOSS" : CHARACTERS[f.classId].short,
@@ -514,7 +611,12 @@ export function Arena({
         state.fighters.map(async (f, i) => {
           if (!f.characterId) return;
           try {
-            const texture = await Assets.load<Texture>(avatar(f.characterId, isTransformedCharacter(f.characterId, f.equipment)));
+            const texture = await Assets.load<Texture>(
+              avatar(
+                f.characterId,
+                isTransformedCharacter(f.characterId, f.equipment),
+              ),
+            );
             if (disposed) return;
             const crops = [
               [0.23, 0, 0.5],
@@ -540,9 +642,20 @@ export function Arena({
             ];
             const w = texture.width,
               h = texture.height,
-              sourceCrop = ({ char_31: [.23, 0, .56], char_32: [.25, .06, .55], char_33: [.32, .03, .48] } as Record<string, number[]>)[f.characterId] || crops[Number(f.characterId.slice(-2)) - 1],
+              sourceCrop =
+                (
+                  {
+                    char_31: [0.23, 0, 0.56],
+                    char_32: [0.25, 0.06, 0.55],
+                    char_33: [0.32, 0.03, 0.48],
+                  } as Record<string, number[]>
+                )[f.characterId] || crops[Number(f.characterId.slice(-2)) - 1],
               side = Math.min(w, h),
-              crop = sourceCrop || [(w - side) / (2 * w), (h - side) / (2 * h), side / w];
+              crop = sourceCrop || [
+                (w - side) / (2 * w),
+                (h - side) / (2 * h),
+                side / w,
+              ];
             const size = Math.min(
               w * crop[2],
               h * (1 - crop[1]),
@@ -576,35 +689,66 @@ export function Arena({
         const frames = new Map<string, Texture>();
         for (const f of state.fighters) {
           if (!f.characterId) continue;
+          const kitWeapon =
+            kitArt?.weapons[characterKit(f.characterId, f.equipment)?.id || ""];
+          if (kitWeapon && kitArt) {
+            weapons[f.id] = Array.from({ length: weaponCount(f) }, (_, w) => {
+              const texture =
+                w === 1
+                  ? f.characterId === "char_15"
+                    ? kitArt.objects.shield
+                    : kitArt.objects.chicken
+                  : kitWeapon;
+              const sprite = new Sprite(texture);
+              sprite.anchor.set(w === 1 ? 0.5 : 0, 0.5);
+              instance.stage.addChild(sprite);
+              return sprite;
+            });
+            continue;
+          }
           const index = Number(f.characterId.slice(-2)) - 1;
           if (!frames.has(f.characterId)) {
             if (index >= 20) {
-              const art = await Assets.load<Texture>(weaponArtUrl(f.characterId));
+              const art = await Assets.load<Texture>(
+                weaponArtUrl(f.characterId),
+              );
               if (index >= 25) {
-                const inset = Math.round(art.width * 20 / 256);
-                frames.set(f.characterId, new Texture({ source: art.source, frame: new Rectangle(inset, inset, art.width - inset * 2, art.height - inset * 2) }));
+                const inset = Math.round((art.width * 20) / 256);
+                frames.set(
+                  f.characterId,
+                  new Texture({
+                    source: art.source,
+                    frame: new Rectangle(
+                      inset,
+                      inset,
+                      art.width - inset * 2,
+                      art.height - inset * 2,
+                    ),
+                  }),
+                );
               } else frames.set(f.characterId, art);
             } else {
               const atlas = await Assets.load<Texture>(weaponAtlasUrl());
               const [x, y, width, height] = weaponFrame(f.characterId);
-              frames.set(f.characterId, new Texture({
-                source: atlas.source,
-                frame: new Rectangle(x, y, width, height),
-              }));
+              frames.set(
+                f.characterId,
+                new Texture({
+                  source: atlas.source,
+                  frame: new Rectangle(x, y, width, height),
+                }),
+              );
             }
           }
-          weapons[f.id] = Array.from(
-            { length: weaponCount(f) },
-            () => {
-              const sprite = new Sprite(frames.get(f.characterId!)!);
-              // Expansion art is drawn vertically; the brush (#24) points down.
-              if (index >= 25) sprite.anchor.set(0.5, 1);
-              else if (index >= 20) sprite.anchor.set(0.5, index === 23 ? 0.08 : 0.92);
-              else sprite.anchor.set(0.12, 0.5);
-              instance.stage.addChild(sprite);
-              return sprite;
-            },
-          );
+          weapons[f.id] = Array.from({ length: weaponCount(f) }, () => {
+            const sprite = new Sprite(frames.get(f.characterId!)!);
+            // Expansion art is drawn vertically; the brush (#24) points down.
+            if (index >= 25) sprite.anchor.set(0.5, 1);
+            else if (index >= 20)
+              sprite.anchor.set(0.5, index === 23 ? 0.08 : 0.92);
+            else sprite.anchor.set(0.12, 0.5);
+            instance.stage.addChild(sprite);
+            return sprite;
+          });
         }
       } catch {
         /* Keep the collision-aligned vector weapon when the atlas is unavailable. */
@@ -613,7 +757,9 @@ export function Arena({
       for (const f of state.fighters)
         if (f.characterId) {
           const label = labels[f.id];
-          label.text = f.boss ? "BOSS" : `${config.teams.findIndex((t) => t.id === f.team) + 1}.${f.slot + 1}`;
+          label.text = f.boss
+            ? "BOSS"
+            : `${config.teams.findIndex((t) => t.id === f.team) + 1}.${f.slot + 1}`;
           label.style.fontSize = f.boss ? 12 : 8;
           label.style.fill = f.boss ? 0xffd272 : 0xffffff;
           label.style.stroke = { color: 0x151018, width: 2 };
@@ -642,8 +788,13 @@ export function Arena({
         return sprite;
       });
       const effectData = Array.from({ length: effectNodes.length }, () => ({
-        active: false, tick: 0, life: 24, size: 1, rotation: 0,
-        kind: "utility" as EffectKind, characterId: undefined as string | undefined,
+        active: false,
+        tick: 0,
+        life: 24,
+        size: 1,
+        rotation: 0,
+        kind: "utility" as EffectKind,
+        characterId: undefined as string | undefined,
       }));
       let effectCursor = 0,
         lastFxTick = state.tick;
@@ -666,26 +817,35 @@ export function Arena({
         );
         sprite.visible = true;
         sprite.alpha = 1;
-        sprite.scale.set(0.42 * size);
+        sprite.scale.set((0.42 * size * 128) / sprite.texture.width);
         sprite.rotation = rotation;
         const fx = effectData[index];
         fx.active = true;
         fx.tick = tick;
         fx.life =
-            kind === "clash"
-              ? 16
-              : kind === "shatter"
-                ? 36
-                : kind === "characterSuper"
-                  ? 48
-                  : 24;
+          kind === "clash"
+            ? 16
+            : kind === "shatter"
+              ? 36
+              : kind === "characterSuper"
+                ? 48
+                : 24;
         fx.size = size;
         fx.rotation = rotation;
         fx.kind = kind;
         fx.characterId = characterId;
       };
-      const zoneNodes = Array.from({ length: 80 }, () => {
+      const zoneNodes = Array.from({ length: 120 }, () => {
         const sprite = new Sprite(fxTextures.zone);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      });
+      const constructNodes = Array.from({ length: 64 }, () => {
+        const sprite = new Sprite(
+          kitArt?.constructs.minion || fxTextures.utility,
+        );
         sprite.anchor.set(0.5);
         sprite.visible = false;
         instance.stage.addChild(sprite);
@@ -700,6 +860,13 @@ export function Arena({
       });
       const projectileNodes = Array.from({ length: 240 }, () => {
         const sprite = new Sprite(fxTextures.bolt);
+        sprite.anchor.set(0.5);
+        sprite.visible = false;
+        instance.stage.addChild(sprite);
+        return sprite;
+      });
+      const rocketAttachments = Array.from({ length: 240 }, () => {
+        const sprite = new Sprite(kitArt?.objects.rocket || fxTextures.bolt);
         sprite.anchor.set(0.5);
         sprite.visible = false;
         instance.stage.addChild(sprite);
@@ -761,8 +928,16 @@ export function Arena({
           state = replayStateAt(battle, frames, target, replay.totalTicks);
         } else {
           let budget = 180;
-          while (!state.finished && state.tick < target && budget-- > 0)
+          while (!state.finished && state.tick < target && budget-- > 0) {
+            const previousTick = state.tick;
             stepBattle(state);
+            recorder.observe(
+              state.events,
+              state.fighters,
+              options.current.highlightTeamId,
+              previousTick,
+            );
+          }
           if (replay?.format === 0) {
             const checkpoint = replay.checkpoints.find(
               (c) => c.tick === state.tick,
@@ -787,10 +962,16 @@ export function Arena({
             target = state.fighters[e.target];
           if (!source || !target) continue;
           if (e.type === "hit") {
-            const dx = source.x - target.x, dy = source.y - target.y;
+            const dx = source.x - target.x,
+              dy = source.y - target.y;
             const length = Math.max(1, Math.hypot(dx, dy));
-            burst("impactBurst", target.x + dx / length * target.radius * 1.3,
-              target.y + dy / length * target.radius * 1.3, e.tick, 0.8);
+            burst(
+              "impactBurst",
+              target.x + (dx / length) * target.radius * 1.3,
+              target.y + (dy / length) * target.radius * 1.3,
+              e.tick,
+              0.8,
+            );
             burst(
               "slash",
               target.x,
@@ -800,6 +981,16 @@ export function Arena({
               (source.angle * Math.PI) / 16,
             );
             burst("shatter", target.x, target.y, e.tick, 0.06);
+          } else if (e.type.startsWith("kit:explosion:")) {
+            burst(
+              e.type.endsWith("balloon") ? "characterSuper" : "superBurst",
+              e.x ?? target.x,
+              e.y ?? target.y,
+              e.tick,
+              Math.min(4.5, e.amount / 45),
+              0,
+              source.characterId,
+            );
           } else if (e.type === "clash") {
             const x = e.x ?? (source.x + target.x) / 2,
               y = e.y ?? (source.y + target.y) / 2;
@@ -807,26 +998,56 @@ export function Arena({
           } else if (e.type === "kill") {
             burst("shatter", target.x, target.y, e.tick, 1.25);
           } else if (e.type === "super") {
-            if (!personalAnimatedFx[source.characterId || ""]?.super) burst("superBurst", source.x, source.y, e.tick, 1.4);
+            if (!personalAnimatedFx[source.characterId || ""]?.super)
+              burst("superBurst", source.x, source.y, e.tick, 1.4);
             burst(
               "characterSuper",
               source.x,
               source.y,
               e.tick,
-              personalAnimatedFx[source.characterId || ""]?.super ? 1 : source.characterId === "char_20" ? 0.8 : 0.65,
+              personalAnimatedFx[source.characterId || ""]?.super
+                ? 1
+                : source.characterId === "char_20"
+                  ? 0.8
+                  : 0.65,
               0,
               source.characterId,
             );
           } else if (e.type === "heal") {
-            burst("healBurst", target.x, target.y - target.radius * 1.7, e.tick, 1.05);
+            burst(
+              "healBurst",
+              target.x,
+              target.y - target.radius * 1.7,
+              e.tick,
+              1.05,
+            );
           } else if (e.type === "shield") {
             burst("shieldBurst", target.x, target.y, e.tick, 1.05);
           } else if (e.type === "radiation" || e.type === "impact:radiation") {
-            burst("characterSuper", target.x, target.y, e.tick, e.type === "impact:radiation" ? .9 : .4, 0, "char_31");
+            burst(
+              "characterSuper",
+              target.x,
+              target.y,
+              e.tick,
+              e.type === "impact:radiation" ? 0.9 : 0.4,
+              0,
+              "char_31",
+            );
           } else if (e.type.startsWith("passive:")) {
-            burst(personalAnimatedFx[source.characterId || ""]?.skill ? "characterSkill" : "passiveBurst", source.x, source.y, e.tick, 0.75, 0, source.characterId);
+            burst(
+              personalAnimatedFx[source.characterId || ""]?.skill
+                ? "characterSkill"
+                : "passiveBurst",
+              source.x,
+              source.y,
+              e.tick,
+              0.75,
+              0,
+              source.characterId,
+            );
           } else if (e.type.startsWith("skill:")) {
-            if (!personalAnimatedFx[source.characterId || ""]?.skill) burst("passiveBurst", source.x, source.y, e.tick, 0.6);
+            if (!personalAnimatedFx[source.characterId || ""]?.skill)
+              burst("passiveBurst", source.x, source.y, e.tick, 0.6);
             burst(
               "characterSkill",
               source.x,
@@ -840,8 +1061,13 @@ export function Arena({
             burst("bond", source.x, source.y, e.tick, 0.85);
           } else if (e.type.startsWith("group:")) {
             burst("group", source.x, source.y, e.tick, 0.85);
-          } else if (e.type.startsWith("item:") || e.type.startsWith("affinity:")) {
-            const itemId = e.type.startsWith("affinity:") ? source.characterId : CHARACTER_IDS[Number(e.type.slice(5)) - 1];
+          } else if (
+            e.type.startsWith("item:") ||
+            e.type.startsWith("affinity:")
+          ) {
+            const itemId = e.type.startsWith("affinity:")
+              ? source.characterId
+              : CHARACTER_IDS[Number(e.type.slice(5)) - 1];
             burst(
               itemId ? "characterItem" : "utility",
               target.x,
@@ -864,8 +1090,12 @@ export function Arena({
             .lineTo(viewWidth, y)
             .stroke({ color: 0x393334, width: 1, alpha: 0.45 });
         const bounds = safeBounds(state);
-        const shrinking = state.tick > Math.min(900, config.shrinkSeconds * 15) && state.tick < config.shrinkSeconds * 30;
-        const wallPulse = shrinking ? 0.5 + Math.sin(state.tick * 0.22) * 0.5 : 0;
+        const shrinking =
+          state.tick > Math.min(900, config.shrinkSeconds * 15) &&
+          state.tick < config.shrinkSeconds * 30;
+        const wallPulse = shrinking
+          ? 0.5 + Math.sin(state.tick * 0.22) * 0.5
+          : 0;
         const inset = bounds.left * sx;
         const insetY = bounds.top * sy;
         if (inset > 0 || insetY > 0) {
@@ -877,7 +1107,11 @@ export function Arena({
         }
         // The visible edge matches the same collision bounds used by the engine.
         g.rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
-          .stroke({ color: 0xf6ad13, width: 10 + wallPulse * 4, alpha: 0.09 + wallPulse * 0.12 })
+          .stroke({
+            color: 0xf6ad13,
+            width: 10 + wallPulse * 4,
+            alpha: 0.09 + wallPulse * 0.12,
+          })
           .rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
           .stroke({ color: 0xf6ad13, width: 5, alpha: 0.25 })
           .rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
@@ -890,6 +1124,36 @@ export function Arena({
           }
           sprite.visible = true;
           const owner = state.fighters[z.owner];
+          if (z.kit) {
+            const tint =
+              z.kit === "deadline"
+                ? 0xff8676
+                : z.kit === "rose"
+                  ? 0xff78b6
+                  : z.kit === "soup"
+                    ? 0xff9448
+                    : z.kit === "vortex"
+                      ? 0x9ce9ff
+                      : z.kit === "paint"
+                        ? 0xb49aff
+                        : z.kit === "flag"
+                          ? 0xffdb75
+                          : 0x8ddd77;
+            const warning = state.tick < (z.start || 0);
+            g.circle(z.x * sx, z.y * sy, (z.radius || 50) * 100 * sx)
+              .fill({ color: tint, alpha: warning ? 0.025 : 0.07 })
+              .stroke({
+                color: warning ? 0xffedaa : tint,
+                width: warning ? 2.2 : 1.2,
+                alpha: 0.65,
+              });
+            if (!kitArt && z.kit === "flag")
+              g.moveTo(z.x * sx, z.y * sy + 10)
+                .lineTo(z.x * sx, z.y * sy - 18)
+                .lineTo(z.x * sx + 17, z.y * sy - 10)
+                .lineTo(z.x * sx, z.y * sy - 3)
+                .stroke({ color: tint, width: 3 });
+          }
           sprite.texture = owner?.characterId
             ? textureForEffect(
                 z.super ? "characterSuper" : "characterSkill",
@@ -914,11 +1178,135 @@ export function Arena({
             sprite.rotation = state.tick * 0.012;
             if (z.territory) {
               const warning = state.tick < (z.start || 0);
-              g.circle(z.x * sx, z.y * sy, (z.radius || 0) * 100 * sx).fill({ color: 0x8ddd77, alpha: warning ? .035 : .055 }).stroke({ color: warning ? 0xffe08d : 0x98e889, width: warning ? 2 : 1.5, alpha: .65 });
+              g.circle(z.x * sx, z.y * sy, (z.radius || 0) * 100 * sx)
+                .fill({ color: 0x8ddd77, alpha: warning ? 0.035 : 0.055 })
+                .stroke({
+                  color: warning ? 0xffe08d : 0x98e889,
+                  width: warning ? 2 : 1.5,
+                  alpha: 0.65,
+                });
             }
           }
           sprite.alpha = z.trap ? 0.2 : z.super ? 0.24 : 0.14;
+          if (kitArt && z.kit) {
+            sprite.texture =
+              z.kit === "vortex"
+                ? kitArt.fx.wind[Math.floor(state.tick / 3) % 6]
+                : z.kit === "deadline"
+                  ? kitArt.objects.deadline
+                  : z.kit === "fruit"
+                    ? kitArt.objects.fruitField
+                    : z.kit === "slipper"
+                      ? kitArt.objects.slipper
+                      : kitArt.constructs[z.kit] || kitArt.objects.roseField;
+            const size = (z.radius || 50) * 200 * sx;
+            sprite.width =
+              z.kit === "flag" ? 48 : z.kit === "slipper" ? size * 0.5 : size;
+            sprite.height =
+              (sprite.width * sprite.texture.height) / sprite.texture.width;
+            sprite.rotation = z.kit === "vortex" ? state.tick * 0.025 : 0;
+            sprite.alpha =
+              state.tick < (z.start || 0)
+                ? 0.18
+                : z.kit === "flag" || z.kit === "slipper"
+                  ? 0.9
+                  : z.kit === "vortex"
+                    ? 0.42
+                    : 0.48;
+          }
         });
+        constructNodes.forEach((sprite, i) => {
+          const c = state.constructs[i];
+          sprite.visible = !!kitArt && !!c && c.hp > 0;
+          if (!sprite.visible || !kitArt || !c) return;
+          sprite.texture = kitArt.constructs[c.kind];
+          sprite.position.set(
+            c.x * sx,
+            c.y * sy +
+              (c.kind === "turret"
+                ? 0
+                : Math.sin(state.tick * 0.22 + c.id) * 1.5),
+          );
+          sprite.width = c.radius * sx * 3;
+          sprite.height =
+            (sprite.width * sprite.texture.height) / sprite.texture.width;
+          sprite.rotation = 0;
+          if (c.kind === "turret") {
+            let nearest = Infinity;
+            for (const t of state.fighters)
+              if (t.hp > 0 && t.team !== state.fighters[c.owner]?.team) {
+                const d = (t.x - c.x) ** 2 + (t.y - c.y) ** 2;
+                if (d < nearest) {
+                  nearest = d;
+                  sprite.rotation = Math.atan2(t.y - c.y, t.x - c.x);
+                }
+              }
+          } else
+            sprite.scale.x = Math.abs(sprite.scale.x) * (c.vx < 0 ? -1 : 1);
+        });
+        for (const c of state.constructs) {
+          if (c.hp <= 0) continue;
+          const owner = state.fighters[c.owner],
+            color =
+              colors[
+                config.teams.findIndex((t) => t.id === owner?.team) %
+                  colors.length
+              ] || 0xffffff;
+          const x = c.x * sx,
+            y = c.y * sy,
+            r = c.radius * sx;
+          if (!kitArt && c.kind === "turret") {
+            g.roundRect(x - r, y - r, r * 2, r * 2, 4)
+              .fill(0x28394b)
+              .stroke({ color, width: 2 });
+            g.moveTo(x, y)
+              .lineTo(x + r * 1.7, y - r * 0.5)
+              .stroke({ color: 0xa8d8ff, width: 4 });
+          } else if (!kitArt) {
+            g.circle(x, y, r)
+              .fill(c.kind === "giant" ? 0xb8a0ff : 0xb5e28d)
+              .stroke({ color, width: 2 });
+            g.circle(x - r * 0.3, y - r * 0.1, 2)
+              .circle(x + r * 0.3, y - r * 0.1, 2)
+              .fill(0x172132);
+          }
+          g.rect(x - r, y - r - 7, r * 2, 3)
+            .fill(0x232323)
+            .rect(x - r, y - r - 7, (r * 2 * c.hp) / c.maxHp, 3)
+            .fill(color);
+        }
+        for (const e of state.events) {
+          const age = state.tick - e.tick,
+            source = state.fighters[e.source];
+          if (age < 0 || age > 12 || !source) continue;
+          if (e.type === "kit:beam" && e.x !== undefined && e.y !== undefined)
+            g.moveTo(source.x * sx, source.y * sy)
+              .lineTo(e.x * sx, e.y * sy)
+              .stroke({
+                color: source.characterId === "char_06" ? 0x91eeff : 0xff6475,
+                width: Math.max(3, e.amount * sx * 100),
+                alpha: 0.75 * (1 - age / 13),
+              });
+          if (e.type === "kit:explosion:rocket" && e.amount > 600)
+            g.rect(0, 0, config.width * sx, config.height * sy).fill({
+              color: 0xff9b40,
+              alpha: 0.16 * (1 - age / 13),
+            });
+          if (
+            e.type.startsWith("kit:explosion:") &&
+            e.x !== undefined &&
+            e.y !== undefined
+          )
+            g.circle(
+              e.x * sx,
+              e.y * sy,
+              e.amount * 100 * sx * (0.4 + age / 18),
+            ).stroke({
+              color: 0xffc16c,
+              width: 3,
+              alpha: 0.8 * (1 - age / 13),
+            });
+        }
         warningNodes.forEach((sprite, i) => {
           const p = state.pending[i];
           if (!p) {
@@ -926,7 +1314,7 @@ export function Arena({
             return;
           }
           const owner = state.fighters[p.owner];
-          if (!owner || owner.hp <= 0) {
+          if (!owner) {
             sprite.visible = false;
             return;
           }
@@ -950,8 +1338,9 @@ export function Arena({
             fx.active = false;
             return;
           }
-          const swell =
-            isCombatFx(fx.kind) ? 0.65 + progress * 0.25 : fx.kind === "shatter"
+          const swell = isCombatFx(fx.kind)
+            ? 0.65 + progress * 0.25
+            : fx.kind === "shatter"
               ? 0.45 + progress * 1.8
               : fx.kind === "clash"
                 ? 0.34 + progress * 0.55
@@ -962,18 +1351,45 @@ export function Arena({
           sprite.alpha = Math.max(
             0,
             (fx.kind === "slash" || fx.kind === "shatter" ? 0.58 : 1) *
-              (isCombatFx(fx.kind) ? Math.min(1, (1 - progress) * 2.5) : 1 - progress),
+              (isCombatFx(fx.kind)
+                ? Math.min(1, (1 - progress) * 2.5)
+                : 1 - progress),
           );
-          sprite.scale.set(swell * fx.size);
+          sprite.scale.set((swell * fx.size * 128) / sprite.texture.width);
           if (isCombatFx(fx.kind)) {
             const frames = animatedFx[fx.kind];
-            sprite.texture = frames[Math.min(frames.length - 1, Math.floor(progress * frames.length))];
-          } else if (fx.kind === "characterSkill" || fx.kind === "characterSuper" || fx.kind === "characterItem") {
-            const frames = personalAnimatedFx[fx.characterId || ""]?.[fx.kind === "characterSuper" ? "super" : "skill"];
-            if (frames?.length) sprite.texture = frames[Math.min(frames.length - 1, Math.floor(progress * frames.length))];
+            sprite.texture =
+              frames[
+                Math.min(
+                  frames.length - 1,
+                  Math.floor(progress * frames.length),
+                )
+              ];
+          } else if (
+            fx.kind === "characterSkill" ||
+            fx.kind === "characterSuper" ||
+            fx.kind === "characterItem"
+          ) {
+            const frames =
+              personalAnimatedFx[fx.characterId || ""]?.[
+                fx.kind === "characterSuper" ? "super" : "skill"
+              ];
+            if (frames?.length)
+              sprite.texture =
+                frames[
+                  Math.min(
+                    frames.length - 1,
+                    Math.floor(progress * frames.length),
+                  )
+                ];
           }
-          sprite.rotation =
-            isCombatFx(fx.kind) ? fx.rotation : fx.rotation + progress * (fx.kind === "shatter" ? 1.6 : 0.55);
+          if (generatedFx && fx.kind in generatedFx) {
+            const frames = generatedFx[fx.kind as FxKind];
+            sprite.texture = frames[Math.min(5, Math.floor(progress * 6))];
+          }
+          sprite.rotation = isCombatFx(fx.kind)
+            ? fx.rotation
+            : fx.rotation + progress * (fx.kind === "shatter" ? 1.6 : 0.55);
         });
         const shown = state.events
           .filter(
@@ -1013,20 +1429,25 @@ export function Arena({
                           ? "Ghép Đôi Vá Nóng"
                           : FRIEND_GROUPS.find((g) => g.id === e.type.slice(6))
                               ?.name || "Hội bạn")
-                      : e.type.startsWith("affinity:") ? "✦ HỢP CẠ!" : e.type === "item:01"
-                        ? "TÍCH!"
-                        : e.type === "item:15"
-                          ? "MÁT RỒI!"
-                          : e.type === "item:18"
-                            ? "TỰ TIN!"
-                            : e.type === "item:20"
-                              ? "THẾ CỜ VƯỜN HỒNG"
-                              : "HIỆU ỨNG ĐỒ";
+                      : e.type.startsWith("affinity:")
+                        ? "✦ HỢP CẠ!"
+                        : e.type === "item:01"
+                          ? "TÍCH!"
+                          : e.type === "item:15"
+                            ? "MÁT RỒI!"
+                            : e.type === "item:18"
+                              ? "TỰ TIN!"
+                              : e.type === "item:20"
+                                ? "THẾ CỜ VƯỜN HỒNG"
+                                : "HIỆU ỨNG ĐỒ";
           text.text = label;
           text.position.set(
             Math.max(
               70,
-              Math.min(viewWidth - 70, (e.type === "clash" ? (e.x ?? f.x) : f.x) * sx),
+              Math.min(
+                viewWidth - 70,
+                (e.type === "clash" ? (e.x ?? f.x) : f.x) * sx,
+              ),
             ),
             Math.max(
               20,
@@ -1047,21 +1468,84 @@ export function Arena({
               ];
           labels[i].visible = f.hp > 0;
           if (f.hp > 0 && f.characterId === "char_22") {
-            g.circle(x, y, 160 * 100 * sx).stroke({ color: 0xc8b3ff, width: 1.2, alpha: .3 });
+            g.circle(x, y, 160 * 100 * sx).stroke({
+              color: 0xc8b3ff,
+              width: 1.2,
+              alpha: 0.3,
+            });
           }
-          let burning = f.burnUntil > state.tick, buffed = false, radiated = false;
+          let burning = f.burnUntil > state.tick,
+            buffed = false,
+            radiated = false,
+            paralyzed = false;
+          for (const effect of f.statuses) {
+            if (effect.until <= state.tick) continue;
+            if (
+              effect.kind === "burn" ||
+              effect.kind === "poison" ||
+              effect.kind === "bleeding" ||
+              effect.kind === "radiation"
+            ) {
+              burning = true;
+              if (effect.kind === "poison" || effect.kind === "radiation")
+                radiated = true;
+            }
+            if (
+              effect.kind === "rage" ||
+              effect.kind === "blessing" ||
+              effect.kind === "introvert"
+            )
+              buffed = true;
+            if (
+              effect.kind === "paralyzed" ||
+              effect.kind === "stunned" ||
+              effect.kind === "myopia" ||
+              effect.kind === "pressure" ||
+              effect.kind === "diabetes"
+            )
+              paralyzed = true;
+          }
           for (const buff of f.buffs) {
             if (buff.until <= state.tick) continue;
-            if (buff.kind === "burnDot" || buff.kind === "dot" || buff.kind === "soupDot") burning = true;
-            if (buff.kind === "radiation") { burning = true; radiated = true; }
-            if (buff.kind === "attack" || buff.kind === "bonus" || buff.kind === "electric" || buff.kind === "envelope" || buff.kind === "haste") buffed = true;
+            if (
+              buff.kind === "burnDot" ||
+              buff.kind === "dot" ||
+              buff.kind === "soupDot"
+            )
+              burning = true;
+            if (buff.kind === "radiation") {
+              burning = true;
+              radiated = true;
+            }
+            if (
+              buff.kind === "attack" ||
+              buff.kind === "bonus" ||
+              buff.kind === "electric" ||
+              buff.kind === "envelope" ||
+              buff.kind === "haste"
+            )
+              buffed = true;
           }
           for (let slot = 0; slot < 3; slot++) {
             const icon = statusNodes[i][slot];
             icon.tint = slot === 0 && radiated ? 0xbfea60 : 0xffffff;
-            icon.visible = f.hp > 0 && !options.current.low && (slot === 0 ? burning : slot === 1 ? f.slowUntil > state.tick : buffed);
+            icon.visible =
+              f.hp > 0 &&
+              !options.current.low &&
+              (slot === 0
+                ? burning
+                : slot === 1
+                  ? f.slowUntil > state.tick || paralyzed
+                  : buffed);
             if (!icon.visible) continue;
-            const frames = animatedFx[slot === 0 ? "burnLoop" : slot === 1 ? "slowLoop" : "passiveBurst"];
+            const frames =
+              animatedFx[
+                slot === 0
+                  ? "burnLoop"
+                  : slot === 1
+                    ? "slowLoop"
+                    : "passiveBurst"
+              ];
             icon.texture = frames[Math.floor(state.tick / 3) % frames.length];
             icon.position.set(x - 20 + slot * 20, y + visualRadius + 17);
             icon.width = icon.height = 19;
@@ -1096,17 +1580,37 @@ export function Arena({
               masks[i]!.circle(x, y, visualRadius * 0.98).fill(0xffffff);
             }
           }
+          const rack = weapons[i];
+          if (rack) for (const weapon of rack) weapon.visible = f.hp > 0;
           if (f.hp <= 0) return;
           labels[i].position.set(
             f.boss ? x : x + (f.characterId ? visualRadius : 0),
-            f.boss ? y - visualRadius - 29 : y + (f.characterId ? visualRadius : 0),
+            f.boss
+              ? y - visualRadius - 29
+              : y + (f.characterId ? visualRadius : 0),
           );
-          if (f.boss) g.circle(x, y, visualRadius + 6).stroke({ color: 0xffca68, width: 3, alpha: .85 });
+          if (f.boss)
+            g.circle(x, y, visualRadius + 6).stroke({
+              color: 0xffca68,
+              width: 3,
+              alpha: 0.85,
+            });
           g.circle(x, y, visualRadius + 3).fill({ color, alpha: 0.18 });
           if (options.current.highlightTeamId === f.team)
-            g.circle(x, y, visualRadius + 7).stroke({ color: 0xffe18a, width: 3, alpha: 0.95 });
-          if (options.current.watchedTeamId === f.team && options.current.watchedTeamId !== options.current.highlightTeamId)
-            g.circle(x, y, visualRadius + 12).stroke({ color: 0x70d9ff, width: 2, alpha: 0.9 });
+            g.circle(x, y, visualRadius + 7).stroke({
+              color: 0xffe18a,
+              width: 3,
+              alpha: 0.95,
+            });
+          if (
+            options.current.watchedTeamId === f.team &&
+            options.current.watchedTeamId !== options.current.highlightTeamId
+          )
+            g.circle(x, y, visualRadius + 12).stroke({
+              color: 0x70d9ff,
+              width: 2,
+              alpha: 0.9,
+            });
           g.circle(x, y, visualRadius)
             .fill(CHARACTERS[f.classId].color)
             .stroke({ color, width: 3 });
@@ -1114,13 +1618,68 @@ export function Arena({
           const count = weaponCount(f);
           for (let w = 0; w < count; w++) {
             const d = DIRECTIONS[(f.angle + w * 16) % 32],
-              reach = weaponReach(state, f) * sx;
+              reach = weaponReach(state, f, w) * sx;
             const weapon = weapons[i]?.[w];
+            if (w === 1 && (number === 15 || number === 33)) {
+              if (weapon && kitArt) {
+                const cx =
+                  x +
+                  (d[0] *
+                    (number === 15 ? r + 1600 * sx : r + (reach - r) * 0.5)) /
+                    1024;
+                const cy =
+                  y +
+                  (d[1] *
+                    (number === 15 ? r + 1600 * sx : r + (reach - r) * 0.5)) /
+                    1024;
+                weapon.position.set(cx, cy);
+                weapon.width =
+                  number === 15
+                    ? 2800 *
+                      sx *
+                      (1 + Math.min(12, Math.floor(state.tick / 300)) * 0.05)
+                    : (reach - r) * 0.85;
+                weapon.height =
+                  (weapon.width * weapon.texture.height) / weapon.texture.width;
+                weapon.rotation = ((f.angle + w * 16) * Math.PI) / 16;
+                continue;
+              }
+              if (weapon) weapon.visible = false;
+              const wx =
+                  x +
+                  (d[0] * (number === 15 ? r + 1600 * sx : reach * 0.8)) / 1024,
+                wy =
+                  y +
+                  (d[1] * (number === 15 ? r + 1600 * sx : reach * 0.8)) / 1024;
+              if (number === 15)
+                g.circle(
+                  wx,
+                  wy,
+                  1400 *
+                    sx *
+                    (1 + Math.min(12, Math.floor(state.tick / 300)) * 0.05),
+                )
+                  .fill({ color: 0x78c9f5, alpha: 0.4 })
+                  .stroke({ color: 0xbdeeff, width: 2 });
+              else {
+                g.moveTo(x, y)
+                  .lineTo(wx, wy)
+                  .stroke({ color: 0xf4dfb4, width: 5 });
+                g.circle(wx, wy, 10)
+                  .fill(0xe89750)
+                  .stroke({ color: 0xffdda3, width: 1.5 });
+              }
+              continue;
+            }
             if (!options.current.low) {
               const angle = ((f.angle + w * 16) * Math.PI) / 16;
               const spin = f.memory.spinDirection || 1;
-              const trailRadius = reach * 0.92, startAngle = angle - spin * 0.55;
-              g.moveTo(x + Math.cos(startAngle) * trailRadius, y + Math.sin(startAngle) * trailRadius)
+              const trailRadius = reach * 0.92,
+                startAngle = angle - spin * 0.55;
+              g.moveTo(
+                x + Math.cos(startAngle) * trailRadius,
+                y + Math.sin(startAngle) * trailRadius,
+              )
                 .arc(x, y, trailRadius, startAngle, angle, spin < 0)
                 .stroke({ color, width: 5, alpha: 0.15 });
             }
@@ -1131,16 +1690,26 @@ export function Arena({
               );
               const length = Math.max(1, reach - r * 0.7);
               const angle = ((f.angle + w * 16) * Math.PI) / 16;
-              if (number >= 26) {
+              if (kitArt) {
+                weapon.width = length;
+                weapon.height =
+                  (length * weapon.texture.height) / weapon.texture.width;
+                weapon.rotation = angle;
+              } else if (number >= 26) {
                 // Custom #26–33 silhouettes point up, with the grip at the bottom.
                 // Rotate from that axis so the tip follows the physical weapon reach.
                 weapon.height = length / 0.95;
-                weapon.width = weapon.height * (f.classId === "ranger" || f.classId === "frost" ? 0.98 : 1.12);
+                weapon.width =
+                  weapon.height *
+                  (f.classId === "ranger" || f.classId === "frost"
+                    ? 0.98
+                    : 1.12);
                 weapon.rotation = angle + Math.PI / 2;
               } else if (number >= 21) {
                 weapon.height = length / 0.84;
                 weapon.width = Math.max(18, weapon.height * 0.5);
-                weapon.rotation = angle + (number === 24 ? -Math.PI / 2 : Math.PI / 2);
+                weapon.rotation =
+                  angle + (number === 24 ? -Math.PI / 2 : Math.PI / 2);
               } else {
                 weapon.width = length / 0.88;
                 weapon.height = Math.max(26, Math.min(46, length * 0.9));
@@ -1156,53 +1725,144 @@ export function Arena({
               });
           }
           const barWidth = f.boss ? 82 : 46;
-          g.rect(x - barWidth / 2, y - visualRadius - 13, barWidth, 5).fill(0x393334);
+          g.rect(x - barWidth / 2, y - visualRadius - 13, barWidth, 5).fill(
+            0x393334,
+          );
           g.rect(
             x - barWidth / 2,
             y - visualRadius - 13,
             (barWidth * f.hp) / f.stats.hp,
             5,
           ).fill(color);
-          g.rect(x - barWidth / 2, y - visualRadius - 7, (barWidth * f.energy) / 100, 2).fill(
-            0x9c94ff,
-          );
+          g.rect(
+            x - barWidth / 2,
+            y - visualRadius - 7,
+            (barWidth * f.energy) / 100,
+            2,
+          ).fill(0x9c94ff);
           if (f.shield > 0)
-            g.rect(x - barWidth / 2, y - visualRadius - 17, barWidth * Math.min(1, f.shield / 100), 3)
-              .fill(0x8cdbff);
+            g.rect(
+              x - barWidth / 2,
+              y - visualRadius - 17,
+              barWidth * Math.min(1, f.shield / 100),
+              3,
+            ).fill(0x8cdbff);
           if (burning)
-            g.circle(x, y, visualRadius + 5).stroke({ color: 0xff933b, width: 2, alpha: 0.75 });
+            g.circle(x, y, visualRadius + 5).stroke({
+              color: 0xff933b,
+              width: 2,
+              alpha: 0.75,
+            });
           if (f.characterId) {
-            const cd = 7 * 30;
             g.rect(
               x - 23,
               y + visualRadius + 5,
-              46 * Math.max(0, 1 - (f.skillReady - state.tick) / cd),
+              (46 * Math.min(12, Math.floor(state.tick / 300))) / 12,
               2,
             ).fill(0xffcb75);
           }
         });
         projectileNodes.forEach((sprite, i) => {
           const p = state.projectiles[i];
+          rocketAttachments[i].visible = false;
           if (!p) {
             sprite.visible = false;
             return;
           }
           sprite.visible = true;
           const owner = state.fighters[p.owner];
-          const personalFrames = personalAnimatedFx[owner?.characterId || ""]?.projectile;
+          const personalFrames =
+            personalAnimatedFx[owner?.characterId || ""]?.projectile;
           const frames = personalFrames || animatedFx.projectile;
-          sprite.texture = frames[Math.floor((state.tick + p.id) / 2) % frames.length];
-          sprite.tint = personalFrames ? 0xffffff : p.kind === "super" ? 0xffca60 : p.normal ? 0x92edff : 0xe3a4ff;
-          const trailColor = personalFrames ? characterFxColor(owner.characterId) : sprite.tint;
+          sprite.texture =
+            frames[Math.floor((state.tick + p.id) / 2) % frames.length];
+          sprite.tint = personalFrames
+            ? 0xffffff
+            : p.kind === "super"
+              ? 0xffca60
+              : p.normal
+                ? 0x92edff
+                : 0xe3a4ff;
+          const trailColor = personalFrames
+            ? characterFxColor(owner.characterId)
+            : sprite.tint;
           sprite.position.set(p.x * sx, p.y * sy);
-          sprite.width = personalFrames ? p.kind === "super" ? 55 : p.normal ? 35 : 43 : p.kind === "super" ? 38 : p.normal ? 25 : 30;
-          sprite.height = personalFrames ? p.kind === "super" ? 38 : p.normal ? 25 : 31 : p.kind === "super" ? 24 : 17;
-          sprite.rotation = Math.atan2(p.vy, p.vx);
+          sprite.width =
+            p.kit === "balloon" || p.kit === "chicken" || p.kit === "basket"
+              ? (p.radius || 700) * sx * 3
+              : personalFrames
+                ? p.kind === "super"
+                  ? 55
+                  : p.normal
+                    ? 35
+                    : 43
+                : p.kind === "super"
+                  ? 38
+                  : p.normal
+                    ? 25
+                    : 30;
+          sprite.height =
+            p.kit === "balloon" || p.kit === "basket"
+              ? sprite.width
+              : personalFrames
+                ? p.kind === "super"
+                  ? 38
+                  : p.normal
+                    ? 25
+                    : 31
+                : p.kind === "super"
+                  ? 24
+                  : 17;
+          if (kitArt && p.kit && kitArt.objects[p.kit]) {
+            sprite.texture =
+              p.kit === "shrapnel"
+                ? p.id % 3 === 0
+                  ? kitArt.objects.shield
+                  : p.id % 3 === 1
+                    ? kitArt.weapons.char_15
+                    : kitArt.objects.shrapnel
+                : kitArt.objects[p.kit];
+            sprite.tint = 0xffffff;
+            const bodySize = (p.radius || 450) * 2 * sx;
+            sprite.width =
+              p.kit === "balloon" || p.kit === "basket" || p.kit === "chicken"
+                ? Math.max(18, bodySize * 1.4)
+                : Math.max(20, bodySize * 2.3);
+            sprite.height =
+              (sprite.width * sprite.texture.height) / sprite.texture.width;
+            if (p.kit === "balloon")
+              sprite.height = Math.max(sprite.height, sprite.width * 1.15);
+          }
+          sprite.rotation =
+            p.kit === "balloon"
+              ? Math.sin(state.tick * 0.09 + p.id) * 0.08
+              : Math.atan2(p.vy, p.vx);
+          if (
+            kitArt &&
+            p.kit === "balloon" &&
+            p.kind === "super" &&
+            characterKit(owner.characterId, owner.equipment)?.id === "skyrocket"
+          ) {
+            const rocket = rocketAttachments[i];
+            rocket.visible = true;
+            rocket.position.set(p.x * sx, p.y * sy + sprite.height * 0.25);
+            rocket.width = sprite.width * 0.85;
+            rocket.height =
+              (rocket.width * rocket.texture.height) / rocket.texture.width;
+            rocket.rotation = Math.atan2(p.vy, p.vx);
+          }
           const speed = Math.max(1, Math.hypot(p.vx, p.vy));
           const trail = p.kind === "super" ? 2600 : 1800;
           g.moveTo(p.x * sx, p.y * sy)
-            .lineTo((p.x - p.vx * trail / speed) * sx, (p.y - p.vy * trail / speed) * sy)
-            .stroke({ color: trailColor, width: p.kind === "super" ? 5 : 3, alpha: 0.55 });
+            .lineTo(
+              (p.x - (p.vx * trail) / speed) * sx,
+              (p.y - (p.vy * trail) / speed) * sy,
+            )
+            .stroke({
+              color: trailColor,
+              width: p.kind === "super" ? 5 : 3,
+              alpha: 0.55,
+            });
         });
         const events = state.events.filter((e) => e.type === "kill");
         if (events.length > heard && !options.current.muted) {
@@ -1234,6 +1894,36 @@ export function Arena({
           if (state.finished && !completionReported) {
             completionReported = true;
             options.current.onFinished?.(winningTeam);
+            // Late joiners still need all event chunks for an honest complete history.
+            const completedState = state;
+            void (async () => {
+              if (replay?.format === 1)
+                for (const chunk of replay.chunks) {
+                  if (disposed) return;
+                  const received = await options.current.loadReplayChunk(
+                    chunk.index,
+                  );
+                  recorder.replay(
+                    received,
+                    battle.fighters,
+                    options.current.highlightTeamId,
+                  );
+                }
+              if (!disposed)
+                options.current.onBattleComplete?.(
+                  recorder.finish(
+                    completedState,
+                    config,
+                    winningTeam,
+                    replay?.format === 1,
+                  ),
+                );
+            })().catch(() => {
+              if (!disposed)
+                options.current.onError(
+                  "Chưa lưu được thống kê đầy đủ của trận này vì thiếu dữ liệu replay.",
+                );
+            });
           }
           setHud({
             tick: state.tick,
@@ -1251,10 +1941,10 @@ export function Arena({
                 const victim = state.fighters[e.target];
                 if (!killer || !victim) return "";
                 const killerName =
-                    character(killer.characterId)?.name ||
+                    characterKit(killer.characterId, killer.equipment)?.name ||
                     CHARACTERS[killer.classId].name,
                   victimName =
-                    character(victim.characterId)?.name ||
+                    characterKit(victim.characterId, victim.equipment)?.name ||
                     CHARACTERS[victim.classId].name,
                   killerTeam =
                     config.teams.findIndex((team) => team.id === killer.team) +
@@ -1265,9 +1955,7 @@ export function Arena({
                 return `${killerName} - Đội ${killerTeam} - Hạ gục ${victimName} - Đội ${victimTeam}`;
               })
               .filter(Boolean),
-            result: state.finished
-              ? winningTeam
-              : "",
+            result: state.finished ? winningTeam : "",
           });
           setFighters(structuredClone(state.fighters));
           hudTime = now;
@@ -1296,20 +1984,33 @@ export function Arena({
           {label || (replay ? "REPLAY CHÍNH THỨC" : "PHÒNG TẬP OFFLINE")}
         </span>
         <span>
-          {hud.alive} đội · {(hud.tick / 30).toFixed(1)}s · Tường {Math.min(30, config.shrinkSeconds / 2)}–{config.shrinkSeconds}s
+          {hud.alive} đội · {(hud.tick / 30).toFixed(1)}s · Tường{" "}
+          {Math.min(30, config.shrinkSeconds / 2)}–{config.shrinkSeconds}s
         </span>
       </div>
       <div className="team-color-legend" aria-label="Màu của từng đội">
         {config.teams.map((team, index) => {
           const color = TEAM_COLORS[index % TEAM_COLORS.length];
-          return <span key={team.id} className="team-color-key" style={{ borderColor: color.css }}>
-            <i style={{ backgroundColor: color.css }} aria-hidden="true" />
-            <b>{index + 1}. {team.name || `Đội ${index + 1}`}</b>
-            <small>{color.name}</small>
-          </span>;
+          return (
+            <span
+              key={team.id}
+              className="team-color-key"
+              style={{ borderColor: color.css }}
+            >
+              <i style={{ backgroundColor: color.css }} aria-hidden="true" />
+              <b>
+                {index + 1}. {team.name || `Đội ${index + 1}`}
+              </b>
+              <small>{color.name}</small>
+            </span>
+          );
         })}
       </div>
-      <div className="canvas-mount" style={{ aspectRatio: `${config.width}/${config.height}` }} ref={mount} />
+      <div
+        className="canvas-mount"
+        style={{ aspectRatio: `${config.width}/${config.height}` }}
+        ref={mount}
+      />
       <div className="arena-bottom">
         <span>
           {hud.hash
@@ -1320,7 +2021,7 @@ export function Arena({
           {import.meta.env.DEV
             ? `${hud.fps} FPS · tick ${hud.tick}`
             : "30 ticks/s"}
-          {` · Nhịp +${roundTempo(hud.tick).attack - 100}% ATK / +${roundTempo(hud.tick).speed - 100}% tốc độ`}
+          {` · Tăng trưởng riêng ${Math.min(12, Math.floor(hud.tick / 300))}/12 tầng`}
         </span>
       </div>
       <div className="kill-feed">
@@ -1335,12 +2036,18 @@ export function Arena({
             key={f.id}
             onClick={() => onInspect?.(f, hud.tick)}
           >
-            {f.characterId && <Portrait id={f.characterId} />}
+            {f.characterId && (
+              <Portrait
+                id={f.characterId}
+                transformed={isTransformedCharacter(f.characterId, f.equipment)}
+              />
+            )}
             <span>
               Đội {config.teams.findIndex((t) => t.id === f.team) + 1} · Slot{" "}
               {f.slot + 1}
               <br />
-              {character(f.characterId)?.name || CHARACTERS[f.classId].name}
+              {characterKit(f.characterId, f.equipment)?.name ||
+                CHARACTERS[f.classId].name}
               <br />
               {f.hp} HP · {f.energy}⚡
             </span>

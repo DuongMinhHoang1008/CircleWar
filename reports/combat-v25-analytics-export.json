@@ -1,0 +1,97 @@
+{
+  "exportedAt": "2026-10-26T04:48:37.776Z",
+  "records": [
+    {
+      "version": "chaos-integer-v25",
+      "seed": 51085,
+      "ticks": 903,
+      "winner": "team-player",
+      "stage": 1,
+      "units": [
+        {
+          "id": 0,
+          "team": "team-player",
+          "teamName": "Challenger",
+          "characterId": "char_05",
+          "level": 10,
+          "equipment": [],
+          "equipmentLevels": {}
+        },
+        {
+          "id": 1,
+          "team": "team-player",
+          "teamName": "Challenger",
+          "characterId": "char_12",
+          "level": 10,
+          "equipment": [],
+          "equipmentLevels": {}
+        },
+        {
+          "id": 2,
+          "team": "team-player",
+          "teamName": "Challenger",
+          "characterId": "char_13",
+          "level": 10,
+          "equipment": [],
+          "equipmentLevels": {}
+        },
+        {
+          "id": 3,
+          "team": "team-rival",
+          "teamName": "Đối thủ ải 1",
+          "characterId": "char_01",
+          "level": 1,
+          "equipment": [],
+          "equipmentLevels": {}
+        },
+        {
+          "id": 4,
+          "team": "team-rival",
+          "teamName": "Đối thủ ải 1",
+          "characterId": "char_02",
+          "level": 1,
+          "equipment": [],
+          "equipmentLevels": {}
+        },
+        {
+          "id": 5,
+          "team": "team-rival",
+          "teamName": "Đối thủ ải 1",
+          "characterId": "char_03",
+          "level": 1,
+          "equipment": [],
+          "equipmentLevels": {}
+        }
+      ],
+      "kills": [
+        {
+          "tick": 630,
+          "source": 1,
+          "target": 4
+        },
+        {
+          "tick": 641,
+          "source": 3,
+          "target": 1
+        },
+        {
+          "tick": 780,
+          "source": 0,
+          "target": 5
+        },
+        {
+          "tick": 903,
+          "source": 0,
+          "target": 3
+        }
+      ],
+      "tactics": {
+        "bonds": 0,
+        "groups": 2
+      },
+      "mode": "campaign",
+      "id": "e45ee91e-e745-4f2f-8f31-1e6de5dbf260",
+      "savedAt": 1792990116905
+    }
+  ]
+}
