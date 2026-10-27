@@ -1,3 +1,4 @@
+import { projectileTargets, isConstruct, projectileHitsConstruct, hitConstruct } from "./constructs";
 import type { BattleState, Fighter } from "./types";
 import { DIRECTIONS, div, normalize, random, UNIT } from "./math";
 import { capsuleHit } from "./physics";
@@ -5,6 +6,8 @@ import { safeBounds, type ArenaBounds } from "./bounds";
 import { applyStatus, statusDamage, attackCooldown } from "./statuses";
 import { alignedRangedTarget, isRanged } from "./weapons";
 import { retainCombatEvents } from "./events";
+import { kitMeleeConstructs } from "./kit-combat";
+import { closingTempo } from "./pacing";
 import {
   isClashProtected,
   reverseWeaponSpin,
@@ -25,7 +28,7 @@ export function damage(
     isClashProtected(target, s.tick)
   )
     return false;
-  let amount = Math.max(1, Math.min(300, div(statusDamage(source, s.tick, raw) * (100 - Math.min(60, target.stats.defense)), 100)));
+  let amount = Math.max(1, Math.min(300, div(statusDamage(source, s.tick, raw) * closingTempo(s.tick, s.config.shrinkSeconds).damage * (100 - Math.min(60, target.stats.defense)), 10000)));
   const absorbed = Math.min(target.shield, amount);
   target.shield -= absorbed;
   amount -= absorbed;
@@ -61,7 +64,7 @@ export function damage(
     if (source.classId === "berserker" && source.superUntil > s.tick)
       source.hp = Math.min(
         source.stats.hp,
-        source.hp + Math.min(8, div(amount, 4)),
+        source.hp + div(Math.min(8, div(amount, 4)) * closingTempo(s.tick, s.config.shrinkSeconds).recovery, 100),
       );
     if (target.stats.thorns && target.hp > 0) {
       const reflected = Math.min(6, target.stats.thorns, source.hp);
@@ -135,6 +138,7 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
           ay = f.y + div(d[1] * f.radius, UNIT),
           bx = f.x + div(d[0] * reach, UNIT),
           by = f.y + div(d[1] * reach, UNIT);
+        kitMeleeConstructs(s, f, ax, ay, bx, by, attackCooldown(f, s.tick));
         for (const t of s.fighters) {
           if (
             t.hp <= 0 ||
@@ -183,7 +187,17 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
       p.life = 0;
       continue;
     }
-    for (const t of s.fighters) {
+    for (const t of projectileTargets(s, p, ox, oy)) {
+      if (isConstruct(t)) {
+        const hitId = -t.id - 1;
+        if (p.life > 0 && !p.hit.includes(hitId) && projectileHitsConstruct(s, f, t, p, ox, oy)) {
+          hitConstruct(s, f, t, div(f.stats.attack * (p.power || 100), 100), p.push || 180);
+          if (p.normal) reverseWeaponSpin(f, s.tick);
+          p.hit.push(hitId);
+          if (p.pierce-- <= 0) p.life = 0;
+        }
+        continue;
+      }
       if (p.life <= 0 || t.hp <= 0 || t.team === f.team || p.hit.includes(t.id))
         continue;
       if (capsuleHit(ox, oy, p.x, p.y, t.x, t.y, t.radius + 450)) {

@@ -43,9 +43,9 @@ describe("weapon clashes", () => {
     expect(state.events.filter((event) => event.type === "clash")).toHaveLength(
       1,
     );
-    expect(a.angle).toBe(16);
-    expect(b.angle).toBe(0);
-    expect([a.facing, b.facing]).toEqual(facing.map((direction) => -direction));
+    expect(a.angle).toBe(0);
+    expect(b.angle).toBe(16);
+    expect([a.facing, b.facing]).toEqual(facing);
     expect([a.memory.spinDirection, b.memory.spinDirection]).toEqual([-1, -1]);
     expect([a.hp, b.hp]).toEqual(hp);
 

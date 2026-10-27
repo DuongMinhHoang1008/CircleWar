@@ -50,6 +50,9 @@ import {
 } from "../../../packages/shared/src/catalog";
 import { CatalogLibrary, InfoPopup, Portrait, ItemSprite, TeamChoices, type Inspect } from "./GameCatalog";
 import { addCardXp, cardEffectiveEvolution, cardEvolution, cardTotalXp, dailyQuestDay, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "../../../packages/shared/src/progression";
+import { claimMail, deliverMail, queuedPackCount, updateMail, welcomeMail, type GiftMail } from "../../../packages/shared/src/mailbox";
+import { MailboxPage } from "./MailboxPage";
+import { normalizePackResult, comparePackResults } from "./packResults";
 interface GlobalProfile {
   cards: { characterId: CharacterId; level: number; xp: number }[];
   itemCards: { itemId: string; level: number; xp: number }[];
@@ -67,7 +70,8 @@ interface GlobalProfile {
   packsSinceHighRarity: number;
   bossPacksSinceHighRarity: number;
   updateRewardVersion?: string;
-  lastPull?: { kind: "character" | "item"; id: string; tier: string; rarity: string; duplicate?: boolean; xpGained?: number; oldXp?: number; experience?: number; oldLevel?: number; level?: number; leveledUp?: boolean; batchCount?: number; evolved?: boolean; oldTier?: string; packKind?: PackKind };
+  mailbox?: GiftMail[];
+  lastPull?: { kind: "character" | "item"; id: string; tier: string; rarity: string; duplicate?: boolean; xpGained?: number; oldXp?: number; experience?: number; oldLevel?: number; level?: number; leveledUp?: boolean; batchCount?: number; evolved?: boolean; oldTier?: string; baseTier?: string; evolvedTier?: string; packKind?: PackKind };
 }
 interface TradeView {
   code: string;
@@ -85,9 +89,8 @@ const PROFILE_ID_KEY = "circlewar-profile-id-v1";
 const PROFILE_TOKEN_KEY = "circlewar-profile-token-v1";
 const UPDATE_REWARD_KEY = "circlewar-update-reward-version-v1";
 // Bump version on each release so each player receives that release's gift once.
-const UPDATE_REWARD = { version: CURRENT_RELEASE_VERSION, packs: 50, characterIds: [] as CharacterId[], itemIds: [] as string[] };
 const NAVIGATION_GROUPS = [
-  { title: "Bộ sưu tập", items: [["packs", "Mở thẻ"], ["inventory", "Kho đồ"], ["training", "Luyện bài"], ["trade", "Trao đổi bài"]] },
+  { title: "Bộ sưu tập", items: [["packs", "Mở thẻ"], ["mailbox", "Hòm thư"], ["inventory", "Kho đồ"], ["training", "Luyện bài"], ["trade", "Trao đổi bài"]] },
   { title: "Chiến đấu", items: [["campaign", "Đi ải"], ["simulation", "Mô phỏng"], ["multiplayer", "Multiplayer"]] },
   { title: "Tra cứu", items: [["catalog", "Catalog"], ["analytics", "Phân tích số liệu"], ["help", "Cách chơi"]] },
   { title: "Cộng đồng & cập nhật", items: [["feedback", "Góp ý"], ["patchNotes", "Patch notes"]] },
@@ -116,7 +119,8 @@ function newProfile(): GlobalProfile {
     itemCards: [],
     team: ["char_01"],
     equipment: {},
-    packs: 50,
+    packs: 0,
+    mailbox: [welcomeMail(now)],
     bossPacks: 0,
     lastPackAt: now,
     missions: { draw: 0, win: 0, campaign: 0 },
@@ -135,13 +139,17 @@ function newProfile(): GlobalProfile {
 function newProfileDefaults(): GlobalProfile {
   return {
     cards: [{ characterId: "char_01", level: 1, xp: 0 }],
-    itemCards: [], team: ["char_01"], equipment: {}, packs: 50, bossPacks: 0, lastPackAt: Date.now(),
+    itemCards: [], team: ["char_01"], equipment: {}, packs: 0, bossPacks: 0, lastPackAt: Date.now(), mailbox: [],
     missions: { draw: 0, win: 0, campaign: 0 }, claimedMissions: [], missionDay: dailyQuestDay(),
     campaignStage: 0, processedMatches: [], packsSinceRare: 0, packsSinceHighRarity: 0, bossPacksSinceHighRarity: 0,
   };
 }
 function PackRates({ kind }: { kind: PackKind }) {
   return <div className="pack-rates" aria-label={kind === "boss" ? "Tỉ lệ Pack Boss" : "Tỉ lệ pack thường"}><b>Tỉ lệ cơ bản mỗi lần mở</b><dl>{Object.entries(PACK_ODDS[kind]).map(([tier, chance]) => <div key={tier}><dt>{tierRarity(tier)}</dt><dd>{chance.toLocaleString("vi-VN")}%</dd></div>)}</dl><small>Áp dụng chung cho nhân vật và vật phẩm, phân đều trong mỗi bậc. Card Rác nằm trong nhóm Thường; GOD chỉ nhận qua tiến hóa. Bậc hết card chưa đạt Lv.10 sẽ ưu tiên bậc cao hơn còn khả dụng, nếu không còn thì dùng bậc cao nhất còn lại.</small>{kind === "normal" && <small>Bảo hiểm: sau 19 pack liên tiếp chỉ ra Thường, pack thứ 20 có Hiếm 85% · Sử thi 13% · Huyền thoại 2%. Sau 99 pack chưa ra Sử thi trở lên, pack thứ 100 bảo đảm bậc cao nhất còn khả dụng. Khi cả hai cùng tới hạn, ưu tiên bảo hiểm 100 pack.</small>}{kind === "boss" && <small>Bảo hiểm riêng: sau 49 Pack Boss chưa ra Huyền thoại, pack thứ 50 bảo đảm Huyền thoại. Sử thi không đặt lại bộ đếm; không ảnh hưởng bảo hiểm pack thường.</small>}</div>;
+}
+function EvolutionBadge({ baseTier, tier, justEvolved }: { baseTier: string; tier?: string; justEvolved?: boolean }) {
+  if (!tier || tier === baseTier) return null;
+  return <span className="reveal-evolution-badge">↑ {justEvolved ? "Vừa tiến hóa" : "Trong kho"}: {tierRarity(tier)}</span>;
 }
 function ExperienceBar({ level, xp }: { level: number; xp: number }) {
   const required = xpForNextLevel(level);
@@ -225,7 +233,7 @@ function App() {
   const [profileOnline, setProfileOnline] = useState(false);
   const [profileRoomSynced, setProfileRoomSynced] = useState(false);
   const profileSaveQueue = useRef<Promise<void>>(Promise.resolve());
-  const [screen, setScreen] = useState<"arena" | "simulation" | "multiplayer" | "packs" | "inventory" | "training" | "campaign" | "catalog" | "trade" | "feedback" | "patchNotes" | "analytics">("packs");
+  const [screen, setScreen] = useState<"arena" | "simulation" | "multiplayer" | "packs" | "mailbox" | "inventory" | "training" | "campaign" | "catalog" | "trade" | "feedback" | "patchNotes" | "analytics">("packs");
   const [navOpen, setNavOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
@@ -245,10 +253,10 @@ function App() {
     document.addEventListener("keydown", keydown);
     return () => { document.body.style.overflow = overflow; document.removeEventListener("keydown", keydown); menuButtonRef.current?.focus(); };
   }, [navOpen]);
-  const [lastPull, setLastPull] = useState<NonNullable<GlobalProfile["lastPull"]> | null>(profile.lastPull || null);
+  const [lastPull, setLastPull] = useState<NonNullable<GlobalProfile["lastPull"]> | null>(() => profile.lastPull ? normalizePackResult(profile.lastPull) : null);
   const [openingPack, setOpeningPack] = useState(false);
   const [pullSequence, setPullSequence] = useState(0);
-  const [batchPulls, setBatchPulls] = useState<NonNullable<GlobalProfile["lastPull"]>[]>(() => readProfileJournal<GlobalProfile, DrawReceipt>(localStorage)?.receipt?.pulls || []);
+  const [batchPulls, setBatchPulls] = useState<NonNullable<GlobalProfile["lastPull"]>[]>(() => (readProfileJournal<GlobalProfile, DrawReceipt>(localStorage)?.receipt?.pulls || []).map(normalizePackResult).sort(comparePackResults));
   const [packPulls, setPackPulls] = useState<NonNullable<GlobalProfile["lastPull"]>[]>([]);
   const [unpackOpened, setUnpackOpened] = useState(0);
   const [revealPhase, setRevealPhase] = useState<"idle" | "pack" | "unpack" | "flash" | "pop" | "slide" | "details">("idle");
@@ -540,30 +548,27 @@ function App() {
     if (room?.phase !== "LOBBY" || !me || me.ready) return Promise.resolve();
     return act(profileSyncAction());
   }
-  const queuedPacks = Math.min(PACK_CAPACITY, profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000));
+  const queuedPacks = queuedPackCount(profile, now);
+  const pendingMailCount = (profile.mailbox || []).filter(mail => mail.claimedAt === undefined).length;
   const packWait = queuedPacks >= PACK_CAPACITY ? 0 : Math.max(0, 60_000 - ((now - profile.lastPackAt) % 60_000));
   const eligiblePackCards = ROSTER.filter((entry) => (profile.cards.find((card) => card.characterId === entry.id)?.level || 0) < 10).length
     + CATALOG_ITEMS.filter((entry) => (profile.itemCards.find((card) => card.itemId === entry.id)?.level || 0) < 10).length;
   useEffect(() => {
-    if (!profileReady || profile.updateRewardVersion === UPDATE_REWARD.version || localStorage.getItem(UPDATE_REWARD_KEY) === UPDATE_REWARD.version) return;
-    if (!UPDATE_REWARD.packs && !UPDATE_REWARD.characterIds.length && !UPDATE_REWARD.itemIds.length) return;
-    const cards = [...profile.cards];
-    for (const characterId of UPDATE_REWARD.characterIds) {
-      const existing = cards.find((card) => card.characterId === characterId);
-      if (existing) Object.assign(existing, addCardXp(existing, DUPLICATE_CARD_XP));
-      else cards.push({ characterId, level: 1, xp: 0 });
-    }
-    const itemCards = [...profile.itemCards];
-    for (const itemId of UPDATE_REWARD.itemIds) {
-      const existing = itemCards.find((card) => card.itemId === itemId);
-      if (existing) Object.assign(existing, addCardXp(existing, DUPLICATE_CARD_XP));
-      else itemCards.push({ itemId, level: 1, xp: 0 });
-    }
-    const packs = Math.min(PACK_CAPACITY, queuedPacks + UPDATE_REWARD.packs);
-    saveProfile({ ...profile, cards, itemCards, packs, updateRewardVersion: UPDATE_REWARD.version, lastPackAt: packs >= PACK_CAPACITY ? now : profile.lastPackAt });
-    localStorage.setItem(UPDATE_REWARD_KEY, UPDATE_REWARD.version);
+    if (!profileReady || profile.updateRewardVersion === CURRENT_RELEASE_VERSION || localStorage.getItem(UPDATE_REWARD_KEY) === CURRENT_RELEASE_VERSION) return;
+    const delivered = deliverMail(profile, updateMail(CURRENT_RELEASE_VERSION));
+    saveProfile({ ...delivered, updateRewardVersion: CURRENT_RELEASE_VERSION });
+    localStorage.setItem(UPDATE_REWARD_KEY, CURRENT_RELEASE_VERSION);
     setUpdateGiftOpen(true);
   }, [profileReady]);
+  function claimGiftMail(id: string) {
+    if (!profileReady) return;
+    try {
+      // Read the committed profile so a rapid second click cannot claim twice.
+      const current = readLocalProfile<GlobalProfile>(localStorage) || profile;
+      const next = claimMail(current, id, Date.now());
+      if (next !== current) saveProfile(next);
+    } catch (error) { report(error instanceof Error ? error.message : "Không nhận được quà."); }
+  }
   function openPack(count = 1, packKind: PackKind = "normal") {
     const amount = Math.min(count, packKind === "boss" ? profile.bossPacks || 0 : queuedPacks);
     if (amount <= 0 || openingPack || eligiblePackCards <= 0) return;
@@ -616,8 +621,8 @@ function App() {
           evolved = cardEvolution(pulled.tier, level).tierIndex > cardEvolution(pulled.tier, oldLevel).tierIndex;
         } else itemCards.push({ itemId: pulled.id, level: 1, xp: 0 });
       }
-      const displayTier = isDuplicate ? cardEvolution(pulled.tier, level).tier : pulled.tier;
-      pulledResult = { ...pulled, packKind, tier: displayTier, rarity: tierRarity(displayTier), duplicate: isDuplicate, xpGained, oldXp, experience, oldLevel, level, leveledUp, evolved, oldTier: cardEvolution(pulled.tier, oldLevel).tier };
+      const evolvedTier = pulled.kind === "character" ? cardEffectiveEvolution(pulled.tier, level, isTransformedCharacter(pulled.id as CharacterId, profile.equipment[pulled.id] || [])).tier : cardEvolution(pulled.tier, level).tier;
+      pulledResult = { ...pulled, packKind, baseTier: pulled.tier, evolvedTier, tier: pulled.tier, rarity: tierRarity(pulled.tier), duplicate: isDuplicate, xpGained, oldXp, experience, oldLevel, level, leveledUp, evolved, oldTier: cardEvolution(pulled.tier, oldLevel).tier };
       pulledCards.push({ ...pulledResult });
       if (evolved) evolvedPull = pulledResult;
     }
@@ -631,6 +636,8 @@ function App() {
         xpGained: (previous.xpGained || 0) + (pull.xpGained || 0),
         oldXp: previous.oldXp,
         oldLevel: previous.oldLevel,
+        oldTier: previous.oldTier,
+        evolved: previous.evolved || pull.evolved,
         leveledUp: (pull.level || 1) > (previous.oldLevel || previous.level || 1),
       } : { ...pull });
     }
@@ -639,7 +646,7 @@ function App() {
       setOpeningPack(false);
       return;
     }
-    const displayPulls = [...uniquePulls.values()].sort((a, b) => rarityRank(b.tier) - rarityRank(a.tier) || a.id.localeCompare(b.id));
+    const displayPulls = [...uniquePulls.values()].sort(comparePackResults);
     const remainingPacks = queuedPacks - (packKind === "normal" ? openedCount : 0);
     const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
     const next: GlobalProfile = {
@@ -1200,8 +1207,9 @@ function App() {
           </span>
         </a>
         <button ref={menuButtonRef} className="navigation-toggle" aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="app-navigation" onClick={() => setNavOpen(open => !open)}><span aria-hidden="true">☰</span><b>Menu</b><small>{NAVIGATION_GROUPS.flatMap(group => [...group.items]).find(([page]) => page === screen)?.[1] || "Đấu trường"}</small></button>
-        <button className="icon" onClick={() => setMuted(!muted)}>
-          {muted ? "Âm thanh: Tắt" : "Âm thanh: Bật"}
+        <button className="mailbox-shortcut" aria-label={`Hòm thư${pendingMailCount ? `, ${pendingMailCount} quà chờ nhận` : ""}`} onClick={() => setScreen("mailbox")}><span className="mailbox-shortcut-icon" aria-hidden="true">✉</span><span className="mailbox-shortcut-label">Hòm thư</span>{pendingMailCount > 0 && <b>{pendingMailCount}</b>}</button>
+        <button className="icon" aria-label={muted ? "Âm thanh: Tắt" : "Âm thanh: Bật"} onClick={() => setMuted(!muted)}>
+          <span className="audio-long">{muted ? "Âm thanh: Tắt" : "Âm thanh: Bật"}</span><span className="audio-short" aria-hidden="true">{muted ? "♪̸" : "♪"}</span>
         </button>
       </header>
       {navOpen && <div className="navigation-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setNavOpen(false); }}>
@@ -1211,15 +1219,15 @@ function App() {
             if (page === "help") setHelp(value => !value);
             else { setScreen(page); if (page === "simulation") { setOffline(true); setSimulationMode(true); } if (page === "multiplayer") { setOffline(false); setSimulationMode(false); } }
             setNavOpen(false);
-          }}><span>{label}</span>{page === "packs" && <small>{queuedPacks}</small>}{page === "patchNotes" && <small>MỚI</small>}</button>)}</section>)}</nav>
+          }}><span>{label}</span>{page === "packs" && <small>{queuedPacks}</small>}{page === "mailbox" && pendingMailCount > 0 && <small>{pendingMailCount}</small>}{page === "patchNotes" && <small>MỚI</small>}</button>)}</section>)}</nav>
           <div className="drawer-version">v{CURRENT_RELEASE_VERSION}</div>
         </aside>
       </div>}
       <main>
         <div className="page-title">
           <div className="eyebrow">BOUNCE. BATTLE. SURVIVE.</div>
-          <h1>{screen === "analytics" ? "Phân tích số liệu." : screen === "packs" ? "Mở thẻ." : screen === "inventory" ? "Kho đồ." : screen === "training" ? "Luyện bài." : screen === "trade" ? "Trao đổi bài." : screen === "patchNotes" ? "Patch notes." : screen === "feedback" ? "Gửi góp ý." : screen === "campaign" ? "Đi ải." : screen === "catalog" ? "Catalog." : screen === "simulation" ? "Mô phỏng." : screen === "multiplayer" ? "Đấu trường." : <>Mỗi vòng đấu.<br /><span>Một quyết định mới.</span></>}</h1>
-          <p>{screen === "analytics" ? "Theo dõi hiệu quả đội hình qua các trận đã hoàn tất." : screen === "packs" ? "Mỗi pack mở ra một thẻ nhân vật hoặc vật phẩm." : screen === "inventory" ? "Xây team, trang bị và xem chi tiết bộ sưu tập thẻ." : screen === "training" ? "Hy sinh thẻ dư để truyền EXP cho thẻ bạn muốn nâng." : screen === "trade" ? "Tạo phiên, chọn thẻ muốn đổi và xác nhận cùng người chơi khác." : screen === "campaign" ? "Vượt ải trong trận cục bộ để kiếm thêm pack." : screen === "catalog" ? "Tra cứu nhân vật, vật phẩm, kỹ năng và liên kết." : screen === "patchNotes" ? "Theo dõi thay đổi, cải tiến và cân bằng qua từng phiên bản." : screen === "feedback" ? "Gửi ý kiến và báo lỗi cho đội phát triển." : "Xây đội hình. Xem hỗn loạn bùng nổ."}</p>
+          <h1>{screen === "mailbox" ? "Hòm thư." : screen === "analytics" ? "Phân tích số liệu." : screen === "packs" ? "Mở thẻ." : screen === "inventory" ? "Kho đồ." : screen === "training" ? "Luyện bài." : screen === "trade" ? "Trao đổi bài." : screen === "patchNotes" ? "Patch notes." : screen === "feedback" ? "Gửi góp ý." : screen === "campaign" ? "Đi ải." : screen === "catalog" ? "Catalog." : screen === "simulation" ? "Mô phỏng." : screen === "multiplayer" ? "Đấu trường." : <>Mỗi vòng đấu.<br /><span>Một quyết định mới.</span></>}</h1>
+          <p>{screen === "mailbox" ? "Quà tân thủ, quà cập nhật và những lời nhắn từ RiseOn." : screen === "analytics" ? "Theo dõi hiệu quả đội hình qua các trận đã hoàn tất." : screen === "packs" ? "Mỗi pack mở ra một thẻ nhân vật hoặc vật phẩm." : screen === "inventory" ? "Xây team, trang bị và xem chi tiết bộ sưu tập thẻ." : screen === "training" ? "Hy sinh thẻ dư để truyền EXP cho thẻ bạn muốn nâng." : screen === "trade" ? "Tạo phiên, chọn thẻ muốn đổi và xác nhận cùng người chơi khác." : screen === "campaign" ? "Vượt ải trong trận cục bộ để kiếm thêm pack." : screen === "catalog" ? "Tra cứu nhân vật, vật phẩm, kỹ năng và liên kết." : screen === "patchNotes" ? "Theo dõi thay đổi, cải tiến và cân bằng qua từng phiên bản." : screen === "feedback" ? "Gửi ý kiến và báo lỗi cho đội phát triển." : "Xây đội hình. Xem hỗn loạn bùng nổ."}</p>
         </div>
         {help && (
           <section className="notice">
@@ -1236,7 +1244,7 @@ function App() {
           </div>
         )}
         {availableUpdate && <div className="release-refresh" role="status"><span>Đã có bản cập nhật v{availableUpdate}. Refresh trang để nhận thay đổi và quà cập nhật.</span><button disabled={openingPack} onClick={async () => { await profileSaveQueue.current.catch(() => {}); window.location.reload(); }}>Refresh trang</button></div>}
-        {screen === "analytics" ? <BattleAnalyticsPage records={battleRecords} equipment={profile.team.map(characterId => ({ characterId, classId: character(characterId)!.base as ClassId, level: profile.cards.find(card => card.characterId === characterId)?.level || 1, equipment: profile.equipment[characterId] || [], equipmentLevels: Object.fromEntries((profile.equipment[characterId] || []).map(id => [id, profile.itemCards.find(card => card.itemId === id)?.level || 1])) }))} /> : screen === "patchNotes" ? <PatchNotesPage /> : screen === "feedback" ? <section className="profile-screen feedback-screen"><div className="panel-title"><h2>Gửi feedback</h2><b>Phản hồi trực tiếp</b></div><p className="muted">Mô tả góp ý hoặc lỗi bạn gặp. Ứng dụng email sẽ mở sẵn nội dung để bạn gửi đến đội phát triển.</p><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const subject = encodeURIComponent(`[CircleWar Feedback] ${String(form.get("topic") || "Góp ý")}`); const body = encodeURIComponent(`Người chơi: ${name}\nLoại: ${String(form.get("kind") || "Góp ý")}\n\n${String(form.get("message") || "")}`); window.location.href = `mailto:hoangls1008@gmail.com?subject=${subject}&body=${body}`; }}><label>Chủ đề<input name="topic" required maxLength={100} placeholder="Ví dụ: Pack bị lỗi" /></label><label>Loại phản hồi<select name="kind"><option>Góp ý</option><option>Báo lỗi</option><option>Cân bằng thẻ</option></select></label><label>Nội dung<textarea name="message" required minLength={10} maxLength={3000} rows={7} placeholder="Mô tả chi tiết để đội phát triển dễ xử lý…" /></label><button className="primary" type="submit">Soạn email feedback</button></form></section> : screen === "catalog" ? <section className="catalog-page"><CatalogLibrary inspect={setInfo} initialOpen /></section> : screen === "trade" ? <section className="profile-screen trade-screen">
+        {screen === "mailbox" ? <MailboxPage mails={profile.mailbox || []} queued={queuedPacks} ready={profileReady} onClaim={claimGiftMail} onOpenPacks={() => setScreen("packs")} /> : screen === "analytics" ? <BattleAnalyticsPage records={battleRecords} equipment={profile.team.map(characterId => ({ characterId, classId: character(characterId)!.base as ClassId, level: profile.cards.find(card => card.characterId === characterId)?.level || 1, equipment: profile.equipment[characterId] || [], equipmentLevels: Object.fromEntries((profile.equipment[characterId] || []).map(id => [id, profile.itemCards.find(card => card.itemId === id)?.level || 1])) }))} /> : screen === "patchNotes" ? <PatchNotesPage /> : screen === "feedback" ? <section className="profile-screen feedback-screen"><div className="panel-title"><h2>Gửi feedback</h2><b>Phản hồi trực tiếp</b></div><p className="muted">Mô tả góp ý hoặc lỗi bạn gặp. Ứng dụng email sẽ mở sẵn nội dung để bạn gửi đến đội phát triển.</p><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const subject = encodeURIComponent(`[CircleWar Feedback] ${String(form.get("topic") || "Góp ý")}`); const body = encodeURIComponent(`Người chơi: ${name}\nLoại: ${String(form.get("kind") || "Góp ý")}\n\n${String(form.get("message") || "")}`); window.location.href = `mailto:hoangls1008@gmail.com?subject=${subject}&body=${body}`; }}><label>Chủ đề<input name="topic" required maxLength={100} placeholder="Ví dụ: Pack bị lỗi" /></label><label>Loại phản hồi<select name="kind"><option>Góp ý</option><option>Báo lỗi</option><option>Cân bằng thẻ</option></select></label><label>Nội dung<textarea name="message" required minLength={10} maxLength={3000} rows={7} placeholder="Mô tả chi tiết để đội phát triển dễ xử lý…" /></label><button className="primary" type="submit">Soạn email feedback</button></form></section> : screen === "catalog" ? <section className="catalog-page"><CatalogLibrary inspect={setInfo} initialOpen /></section> : screen === "trade" ? <section className="profile-screen trade-screen">
           {!tradeSession ? <div className="trade-lobby panel">
             <div className="panel-title"><h2>Tạo hoặc tham gia phiên</h2><b>{profileOnline ? "Hồ sơ đã kết nối" : "Cần kết nối máy chủ"}</b></div>
             {!profileOnline && <p className="muted">{!api ? "Backend URL chưa được cấu hình. Trong tab Multiplayer, nhập HTTPS URL của Cloudflare Worker để bật hồ sơ và trao đổi." : "Trao đổi cần máy chủ hồ sơ. Kiểm tra Backend URL, HTTPS và ALLOWED_ORIGINS của Worker nếu không kết nối được."}</p>}
@@ -2263,13 +2271,13 @@ function App() {
             <header><span>CÁC LỚP PACK 3D · TIẾN VÀO TỪNG LỚP</span><strong>{unpackOpened} / {lastPull.batchCount} PACK</strong></header>
             <PackAnimationBoundary key={pullSequence} onFailure={skipReveal}><PackOpeningScene pulls={packPulls} openedCount={unpackOpened} /></PackAnimationBoundary>
             <p>Camera tiến xuyên qua chồng pack; từng lớp vào tâm khung hình rồi mở với luồng sáng rarity.</p>
-          </section> : <section className="reveal-batch"><header><span>ĐÃ MỞ {lastPull.batchCount} PACK</span><strong>{batchPulls.length} THẺ KHÁC NHAU</strong></header><div className="reveal-batch-grid">{batchPulls.map((pull, index) => { const c = pull.kind === "character" ? character(pull.id) : undefined; const it = pull.kind === "item" ? itemInfo(pull.id) : undefined; return <article className={`reveal-batch-card tier-${pull.tier.toLowerCase()} ${pull.evolved ? "evolved" : ""}`} key={`${pull.kind}-${pull.id}-${index}`} style={{ "--batch-delay": `${index * 55}ms` } as React.CSSProperties}><span className="reveal-batch-tier">{pull.evolved ? `${tierRarity(pull.oldTier || "")} → ` : ""}{tierRarity(pull.tier)}</span><div className="reveal-batch-art">{pull.kind === "character" ? <Portrait id={pull.id as CharacterId} /> : <ItemSprite id={pull.id} />}</div><b>{c?.name || it?.name}</b><small>{pull.rarity} · {pull.kind === "character" ? "Nhân vật" : "Vật phẩm"}</small>{pull.duplicate && <em>{pull.leveledUp ? `Lv.${pull.oldLevel} → Lv.${pull.level}` : `+${pull.xpGained || 0} EXP`}</em>}</article>; })}</div><button className="primary" onClick={closeReveal}>Tiếp tục</button></section> : <div className={`reveal-stage ${revealPhase === "pack" ? "opening-single" : ""}`}>
+          </section> : <section className="reveal-batch"><header><span>ĐÃ MỞ {lastPull.batchCount} PACK</span><strong>{batchPulls.length} THẺ KHÁC NHAU</strong></header><div className="reveal-batch-grid">{batchPulls.map((pull, index) => { const c = pull.kind === "character" ? character(pull.id) : undefined; const it = pull.kind === "item" ? itemInfo(pull.id) : undefined; return <article className={`reveal-batch-card tier-${pull.tier.toLowerCase()} ${pull.evolved ? "evolved" : ""}`} key={`${pull.kind}-${pull.id}-${index}`} style={{ "--batch-delay": `${index * 55}ms` } as React.CSSProperties}><span className="reveal-batch-tier">{tierRarity(pull.tier)}</span><div className="reveal-batch-art">{pull.kind === "character" ? <Portrait id={pull.id as CharacterId} /> : <ItemSprite id={pull.id} />}</div><b>{c?.name || it?.name}</b><small>{pull.rarity} · {pull.kind === "character" ? "Nhân vật" : "Vật phẩm"}</small><EvolutionBadge baseTier={pull.tier} tier={pull.evolvedTier} justEvolved={pull.evolved} />{pull.duplicate && <em>{pull.leveledUp ? `Lv.${pull.oldLevel} → Lv.${pull.level}` : `+${pull.xpGained || 0} EXP`}</em>}</article>; })}</div><button className="primary" onClick={closeReveal}>Tiếp tục</button></section> : <div className={`reveal-stage ${revealPhase === "pack" ? "opening-single" : ""}`}>
             <div className="reveal-impact" aria-hidden="true" />
             <PackArtwork className="reveal-booster" kind={lastPull.packKind} />
             <article key={pullSequence} className={`reveal-card tier-${lastPull.tier.toLowerCase()} ${lastPull.evolved ? "evolved" : ""}`}>
-              <div className="reveal-card-top"><span>{lastPull.evolved ? `TIẾN HÓA ${tierRarity(lastPull.oldTier || "")} → ${lastPull.rarity}` : lastPull.batchCount && lastPull.batchCount > 1 ? `ĐÃ MỞ ${lastPull.batchCount} PACK · KẾT QUẢ CUỐI` : "RISEON · CARD COLLECTION"}</span><b>{lastPull.rarity}</b></div>
+              <div className="reveal-card-top"><span>{lastPull.evolved ? `TIẾN HÓA ${tierRarity(lastPull.oldTier || "")} → ${tierRarity(lastPull.evolvedTier || lastPull.tier)}` : lastPull.batchCount && lastPull.batchCount > 1 ? `ĐÃ MỞ ${lastPull.batchCount} PACK · KẾT QUẢ CUỐI` : "RISEON · CARD COLLECTION"}</span><b>{lastPull.rarity}</b></div>
               {lastPull.evolved && <strong className="evolution-banner">TIẾN HÓA!</strong>}
-              <div className="reveal-card-art">{lastPull.kind === "character" ? <Portrait id={lastPull.id as CharacterId} /> : <ItemSprite id={lastPull.id} />}</div>
+              <div className="reveal-card-art">{lastPull.kind === "character" ? <Portrait id={lastPull.id as CharacterId} /> : <ItemSprite id={lastPull.id} />}<EvolutionBadge baseTier={lastPull.tier} tier={lastPull.evolvedTier} /></div>
               <div className="reveal-card-name"><b>{revealCharacter?.name || revealItem?.name}</b><span>{lastPull.rarity} · {lastPull.kind === "character" ? "Nhân vật" : "Vật phẩm"}</span></div>
               <div className="reveal-card-shine" />
             </article>
@@ -2278,9 +2286,9 @@ function App() {
               <h2>{revealCharacter?.name || revealItem?.name}</h2>
               {revealCharacter?.role && <p className="reveal-role">{revealCharacter.role}</p>}
               {revealItem?.effectName && <p className="reveal-role">{revealItem.effectName}</p>}
-              <p>{lastPull.evolved ? `Thẻ đã tiến hóa từ ${tierRarity(lastPull.oldTier || "")} lên ${lastPull.rarity}. Chỉ số chiến đấu được cải thiện theo cấp.` : revealDescription}</p>
+              <p>{lastPull.evolved ? `Thẻ đã tiến hóa từ ${tierRarity(lastPull.oldTier || "")} lên ${tierRarity(lastPull.evolvedTier || lastPull.tier)}. Chỉ số chiến đấu được cải thiện theo cấp.` : revealDescription}</p>
               {revealCharacter?.skill?.[0] && <div className="reveal-skill"><b>{revealCharacter.skill[0]}</b><span>{revealCharacter.skill[1]}</span></div>}
-              {lastPull.duplicate && <div className={`reveal-xp ${lastPull.leveledUp ? "level-up" : ""}`}><div className="reveal-xp-label"><b>THẺ TRÙNG · +{lastPull.xpGained || 0} EXP</b><span>Lv.{lastPull.oldLevel} → Lv.{lastPull.level}</span></div><div className="xp-track reveal-xp-track"><i style={{ "--xp-from": `${Math.min(100, ((lastPull.oldXp || 0) / Math.max(1, xpForNextLevel(lastPull.oldLevel || 1))) * 100)}%`, "--xp-to": `${lastPull.leveledUp ? 100 : Math.min(100, ((lastPull.experience || 0) / Math.max(1, xpForNextLevel(lastPull.level || 1))) * 100)}%`, width: `${lastPull.leveledUp ? 100 : Math.min(100, ((lastPull.experience || 0) / Math.max(1, xpForNextLevel(lastPull.level || 1))) * 100)}%` } as React.CSSProperties} /></div>{lastPull.evolved && <strong className="level-up-label">TIẾN HÓA · {lastPull.rarity}</strong>}{lastPull.leveledUp ? <strong className="level-up-label">LEVEL UP!</strong> : lastPull.level === 10 ? <strong className="level-up-label">LEVEL MAX</strong> : <small>EXP {lastPull.experience || 0}/{Math.max(1, xpForNextLevel(lastPull.level || 1))}</small>}</div>}
+              {lastPull.duplicate && <div className={`reveal-xp ${lastPull.leveledUp ? "level-up" : ""}`}><div className="reveal-xp-label"><b>THẺ TRÙNG · +{lastPull.xpGained || 0} EXP</b><span>Lv.{lastPull.oldLevel} → Lv.{lastPull.level}</span></div><div className="xp-track reveal-xp-track"><i style={{ "--xp-from": `${Math.min(100, ((lastPull.oldXp || 0) / Math.max(1, xpForNextLevel(lastPull.oldLevel || 1))) * 100)}%`, "--xp-to": `${lastPull.leveledUp ? 100 : Math.min(100, ((lastPull.experience || 0) / Math.max(1, xpForNextLevel(lastPull.level || 1))) * 100)}%`, width: `${lastPull.leveledUp ? 100 : Math.min(100, ((lastPull.experience || 0) / Math.max(1, xpForNextLevel(lastPull.level || 1))) * 100)}%` } as React.CSSProperties} /></div>{lastPull.evolved && <strong className="level-up-label">TIẾN HÓA · {tierRarity(lastPull.evolvedTier || lastPull.tier)}</strong>}{lastPull.leveledUp ? <strong className="level-up-label">LEVEL UP!</strong> : lastPull.level === 10 ? <strong className="level-up-label">LEVEL MAX</strong> : <small>EXP {lastPull.experience || 0}/{Math.max(1, xpForNextLevel(lastPull.level || 1))}</small>}</div>}
               <button className="primary" onClick={closeReveal}>Tiếp tục</button>
             </section>
           </div>}
@@ -2291,8 +2299,8 @@ function App() {
           <span>Made for the chaos.</span>
         </footer>
       </main>
-      {welcomeGiftOpen && <CenteredModal titleId="gift-title" onClose={dismissWelcomeGift}><span className="eyebrow">WELCOME · RISEON TCG</span><h2 id="gift-title">Quà tân thủ của bạn</h2><p>Chào mừng đến với RiseOn! Bạn đã nhận <strong>50 pack tân thủ</strong> để bắt đầu bộ sưu tập.</p><button className="primary" onClick={dismissWelcomeGift}>Bắt đầu sưu tầm</button></CenteredModal>}
-      {updateGiftOpen && !welcomeGiftOpen && <CenteredModal titleId="update-gift-title" onClose={() => setUpdateGiftOpen(false)}><span className="eyebrow">RISEON · CẬP NHẬT MỚI</span><h2 id="update-gift-title">Cập nhật v{CURRENT_RELEASE_VERSION}</h2><p>Hệ thống vừa cập nhật. Vui lòng refresh page để áp dụng đầy đủ phiên bản mới. Bạn đã nhận <strong>{UPDATE_REWARD.packs} pack</strong> quà cập nhật.</p><button className="primary" onClick={async () => { await profileSaveQueue.current.catch(() => {}); window.location.reload(); }}>Refresh trang</button><button onClick={() => { setUpdateGiftOpen(false); setScreen("patchNotes"); }}>Xem patch notes</button></CenteredModal>}
+      {welcomeGiftOpen && <CenteredModal titleId="gift-title" onClose={dismissWelcomeGift}><span className="eyebrow">WELCOME · RISEON TCG</span><h2 id="gift-title">Quà tân thủ của bạn</h2><p>Chào mừng đến với RiseOn! Hệ thống đã gửi <strong>50 pack tân thủ</strong> vào Hòm thư. Nhận quà khi hàng chờ pack còn đủ chỗ.</p><button className="primary" onClick={() => { dismissWelcomeGift(); setScreen("mailbox"); }}>Mở hòm thư</button></CenteredModal>}
+      {updateGiftOpen && !welcomeGiftOpen && <CenteredModal titleId="update-gift-title" onClose={() => setUpdateGiftOpen(false)}><span className="eyebrow">RISEON · CẬP NHẬT MỚI</span><h2 id="update-gift-title">Cập nhật v{CURRENT_RELEASE_VERSION}</h2><p>Hệ thống vừa cập nhật phiên bản mới. Quà cập nhật <strong>50 pack</strong> đang chờ trong Hòm thư. Chỉ nhận được khi hàng chờ còn đủ 50 chỗ trống.</p><button className="primary" onClick={() => { setUpdateGiftOpen(false); setScreen("mailbox"); }}>Mở hòm thư</button><button onClick={() => { setUpdateGiftOpen(false); setScreen("patchNotes"); }}>Xem patch notes</button></CenteredModal>}
       {matchRewards[0] && !welcomeGiftOpen && !updateGiftOpen && !openingPack && <MatchRewardPopup key={matchRewards[0].id} reward={matchRewards[0]} onClose={() => setMatchRewards(current => current.slice(1))} />}
       <InfoPopup info={info?.kind === "item" ? { ...info, itemLevel: info.itemLevel ?? info.loadout?.equipmentLevels?.[info.id] ?? profile.itemCards.find(card => card.itemId === info.id)?.level ?? 1 } : info} close={() => setInfo(null)} inspect={setInfo} />
     </div>

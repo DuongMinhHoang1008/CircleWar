@@ -2,6 +2,12 @@ import type { BattleState, Fighter } from "./types";
 import { characterKit } from "../../shared/src/character-kits";
 import { DIRECTIONS, div, UNIT } from "./math";
 import { capsuleHit } from "./physics";
+import {
+  combatTargets,
+  targetTeam,
+  isConstruct,
+  type CombatTarget,
+} from "./constructs";
 
 export const isRanged = (f: Fighter) => {
   const kit = characterKit(f.characterId, f.equipment);
@@ -45,13 +51,14 @@ export function alignedRangedTarget(
   for (let step = steps ? 1 : 0; step <= steps; step++) {
     const angle = (previous + step * direction + 64) % 32;
     const d = DIRECTIONS[angle];
-    let target: Fighter | undefined,
+    let target: CombatTarget | undefined,
       closest = Infinity;
-    for (const other of s.fighters) {
+    for (const other of combatTargets(s)) {
       if (
         other.hp <= 0 ||
         other === f ||
-        (!allowAllies && other.team === f.team)
+        (targetTeam(s, other) === f.team &&
+          (!allowAllies || isConstruct(other)))
       )
         continue;
       const dx = other.x - f.x,

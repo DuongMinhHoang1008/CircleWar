@@ -36,7 +36,7 @@ it("shrinking walls contain the full circle and reflect each edge without damage
 });
 it("a shrinking-wall tick causes no HP loss and blocks projectiles", () => {
   const s = createBattle(debugConfig(2), 8);
-  s.tick = 1199; // Old storm damage used to trigger on tick 1200.
+  s.tick = 449; // During shrinking, before the separate late-game pressure phase.
   const [a, b] = s.fighters;
   Object.assign(a, { x: 1000, y: 36000, vx: -400, vy: 0 });
   Object.assign(b, { x: 100000, y: 36000, vx: 400, vy: 0 });

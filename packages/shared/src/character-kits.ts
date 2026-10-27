@@ -165,8 +165,8 @@ export const CHARACTER_KITS: Record<string, CharacterKit> = {
     "char_14",
     "Hộp Quà Nghiêm Túc",
     false,
-    "Đánh cận chiến; tự gọi một đệ nhỏ mỗi 4 giây dù không tấn công. Tối đa hai đệ nhỏ, có HP và bị phá được.",
-    "Gọi một đệ khổng lồ tồn tại 10 giây, có HP và Damage riêng. Đệ tiếp tục hoạt động sau khi chủ chết đến hết lifetime hoặc bị phá; không tính là nhân vật sống để kéo dài round.",
+    "Đánh cận chiến; tự gọi một đệ nhỏ mỗi 4 giây dù không tấn công. Tối đa hai đệ nhỏ, chuyển động bi-a và nảy khi va chạm; có HP, bị vũ khí đánh và xạ thủ chọn làm mục tiêu.",
+    "Gọi một đệ khổng lồ tồn tại 10 giây, có HP và Damage riêng, chuyển động bi-a như đệ nhỏ. Đệ tiếp tục hoạt động sau khi chủ chết đến hết lifetime hoặc bị phá; không tính là nhân vật sống để kéo dài round.",
     ["summonHp", "summonDamage"],
   ),
   char_15: kit(

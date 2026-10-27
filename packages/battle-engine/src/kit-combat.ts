@@ -4,6 +4,8 @@ import { safeBounds } from "./bounds";
 import { capsuleHit } from "./physics";
 import { applyStatus, statusPower, type StatusKind } from "./statuses";
 import { alignedRangedTarget } from "./weapons";
+import { CONSTRUCT_BALANCE, nearestOpponent, isConstruct, projectileTargets, projectileHitsConstruct, hitConstruct } from "./constructs";
+import { reverseWeaponSpin } from "./weapon-clash";
 import type {
   BattleState,
   Fighter,
@@ -393,11 +395,12 @@ function summon(s: BattleState, f: Fighter, kind: Construct["kind"]) {
   const g = growth(s, f),
     angle = (f.angle + 8 + count * 8) % 32,
     d = DIRECTIONS[angle];
+  const summonStats = CONSTRUCT_BALANCE[kind];
   const hp = Math.max(
-    20,
+    summonStats.minHp,
     div(
       f.baseStats.hp *
-        (kind === "giant" ? 45 : kind === "turret" ? 35 : 6) *
+        summonStats.hpPercent *
         g.summonHp,
       10000,
     ),
@@ -406,7 +409,7 @@ function summon(s: BattleState, f: Fighter, kind: Construct["kind"]) {
     1,
     div(
       f.baseStats.attack *
-        (kind === "giant" ? 50 : kind === "turret" ? 45 : 15) *
+        summonStats.damagePercent *
         g.summonDamage,
       10000,
     ),
@@ -425,8 +428,8 @@ function summon(s: BattleState, f: Fighter, kind: Construct["kind"]) {
       bounds.top + radius,
       Math.min(bounds.bottom - radius, f.y + div(d[1] * 5000, UNIT)),
     ),
-    vx: 0,
-    vy: 0,
+    vx: div(d[0] * summonStats.speed, UNIT),
+    vy: div(d[1] * summonStats.speed, UNIT),
     radius,
     hp,
     maxHp: hp,
@@ -1267,24 +1270,26 @@ export function tickKitProjectiles(s: BattleState, ctx: KitCombatServices) {
       continue;
     }
     if ((p.armedAfter || 0) > p.age) continue;
-    if (p.kit !== "balloon" && p.kit !== "chicken")
-      for (const c of s.constructs) {
-        if (
-          c.hp <= 0 ||
-          s.fighters[c.owner]?.team === f.team ||
-          !capsuleHit(ox, oy, p.x, p.y, c.x, c.y, c.radius + (p.radius || 450))
-        )
-          continue;
-        c.hp = Math.max(0, c.hp - div(f.stats.attack * (p.power || 100), 100));
-        plantImpact(s, f, p);
-        if (p.kit === "basket" || (p.kit === "rocket" && p.superShot))
-          explode(s, f, p, ctx);
-        p.life = 0;
-        event(s, f, "kit:construct-hit", s.fighters[c.owner], c.id);
-        break;
+    for (const t of projectileTargets(s, p, ox, oy)) {
+      if (isConstruct(t)) {
+        const hitId = -t.id - 1;
+        if (p.life <= 0 || p.hit.includes(hitId) || (p.onHitReady?.[hitId] || 0) > s.tick || !projectileHitsConstruct(s, f, t, p, ox, oy)) continue;
+        const explosive = p.kit === "basket" || p.kit === "balloon" || (p.kit === "rocket" && p.superShot);
+        if (explosive) { explode(s, f, p, ctx); p.life = 0; }
+        else {
+          hitConstruct(s, f, t, div(f.stats.attack * (p.power || 100), 100), p.push || 180);
+          if (p.normal) reverseWeaponSpin(f, s.tick);
+          plantImpact(s, f, p);
+          if (p.kit === "rose" || p.kit === "slipper") p.life = 0;
+          else if (p.kit === "fruit" && (p.bounces || 0) > 0) {
+            p.bounces!--; p.vx = -p.vx; p.vy = -p.vy;
+            p.onHitReady ||= {}; p.onHitReady[hitId] = s.tick + 12;
+            event(s, f, "kit:bounce");
+            break;
+          } else { p.hit.push(hitId); if (p.pierce-- <= 0) p.life = 0; }
+        }
+        continue;
       }
-    if (p.life <= 0) continue;
-    for (const t of s.fighters) {
       if (
         t.hp <= 0 ||
         p.life <= 0 ||
@@ -1473,7 +1478,6 @@ export function tickKitFields(s: BattleState, ctx: KitCombatServices) {
 }
 
 export function tickConstructs(s: BattleState, ctx: KitCombatServices) {
-  const bounds = safeBounds(s);
   for (const c of s.constructs) {
     const f = s.fighters[c.owner];
     if (!f || c.until <= s.tick) {
@@ -1481,32 +1485,8 @@ export function tickConstructs(s: BattleState, ctx: KitCombatServices) {
       continue;
     }
     if (c.hp <= 0) continue;
-    let target: Fighter | undefined,
-      best = (c.kind === "turret" ? 22000 : 100000) ** 2;
-    for (const t of s.fighters)
-      if (t.hp > 0 && t.team !== f.team) {
-        const d = distance(c, t);
-        if (d < best) {
-          best = d;
-          target = t;
-        }
-      }
+    const target = nearestOpponent(s, c, f.team, c.kind === "turret" ? 22000 : 100000);
     if (!target) continue;
-    if (c.kind !== "turret") {
-      const [dx, dy] = normalize(target.x - c.x, target.y - c.y);
-      c.vx = div(dx * 380, UNIT);
-      c.vy = div(dy * 380, UNIT);
-      c.x += c.vx;
-      c.y += c.vy;
-    }
-    c.x = Math.max(
-      bounds.left + c.radius,
-      Math.min(bounds.right - c.radius, c.x),
-    );
-    c.y = Math.max(
-      bounds.top + c.radius,
-      Math.min(bounds.bottom - c.radius, c.y),
-    );
     if (
       c.nextAttack > s.tick ||
       (c.kind !== "turret" &&
@@ -1525,6 +1505,14 @@ export function tickConstructs(s: BattleState, ctx: KitCombatServices) {
       if (!p) continue;
       p.x = c.x;
       p.y = c.y;
+    } else if (isConstruct(target)) {
+      const dealt = Math.min(target.hp, c.damage);
+      target.hp -= dealt;
+      const [dx, dy] = normalize(target.x - c.x, target.y - c.y);
+      if (target.kind !== "turret") {
+        target.vx += div(dx * 120, UNIT);
+        target.vy += div(dy * 120, UNIT);
+      }
     } else ctx.damage(s, f, target, c.damage);
     c.nextAttack = s.tick + (c.kind === "giant" ? 26 : 30);
   }
@@ -1556,8 +1544,8 @@ export function kitMeleeConstructs(
       !capsuleHit(ax, ay, bx, by, c.x, c.y, c.radius + 500)
     )
       continue;
-    c.hp = Math.max(0, c.hp - f.stats.attack);
+    hitConstruct(s, f, c, f.stats.attack);
+    reverseWeaponSpin(f, s.tick);
     f.cooldowns[key] = s.tick + cooldown;
-    event(s, f, "kit:construct-hit", s.fighters[c.owner], c.id);
   }
 }

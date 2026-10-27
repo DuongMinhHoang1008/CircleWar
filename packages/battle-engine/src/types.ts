@@ -1,7 +1,7 @@
 import type { Loadout, Stats } from "../../shared/src/balance";
 import type { TeamChoice } from "../../shared/src/catalog";
 import type { CombatStatus } from "./statuses";
-export const ENGINE_VERSION = "chaos-integer-v26";
+export const ENGINE_VERSION = "chaos-integer-v29";
 export const TICK_RATE = 30;
 export interface BattleConfig {
   campaign?: { stage: number; enemyTeamId: string };

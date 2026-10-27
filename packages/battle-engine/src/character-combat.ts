@@ -1,3 +1,4 @@
+import { projectileTargets, isConstruct, projectileHitsConstruct, hitConstruct } from "./constructs";
 import {
   character,
   BONDS,
@@ -14,6 +15,7 @@ import type { BattleState, Fighter } from "./types";
 import { div, normalize, UNIT, DIRECTIONS, random } from "./math";
 import { capsuleHit } from "./physics";
 import { safeBounds } from "./bounds";
+import { closingTempo, applyClosingTempo } from "./pacing";
 
 import { itemMultiplier } from "../../shared/src/balance";
 import { ITEM_AFFINITY, type AffinityTrigger } from "../../shared/src/affinity";
@@ -148,7 +150,7 @@ function shield(
   ticks: number,
 ) {
   if (f.hp <= 0) return;
-  const amount = Math.max(0, Math.min(n, 100 - f.shield));
+  const amount = Math.max(0, Math.min(div(n * closingTempo(s.tick, s.config.shrinkSeconds).recovery, 100), 100 - f.shield));
   if (!amount) return;
   f.shields.push({ amount, until: s.tick + ticks, source: source.id });
   f.shield += amount;
@@ -156,11 +158,10 @@ function shield(
 }
 function heal(s: BattleState, source: Fighter, f: Fighter, n: number) {
   if (f.hp <= 0) return 0;
-  const fatigue = Math.max(35, 100 - Math.max(0, div(s.tick - 1800, 90)) * 3);
   const amount = Math.max(
     0,
     Math.min(
-      div(n * healingRate(f, s.tick) * fatigue, 10000),
+      div(n * healingRate(f, s.tick, s.config.shrinkSeconds), 100),
       f.stats.hp - f.hp,
     ),
   );
@@ -244,8 +245,8 @@ export function characterDamage(
     Math.min(
       300,
       div(
-        statusDamage(f, s.tick, raw) * (100 - Math.min(60, t.stats.defense)),
-        100,
+        statusDamage(f, s.tick, raw) * (f.team === t.team ? 100 : closingTempo(s.tick, s.config.shrinkSeconds).damage) * (100 - Math.min(60, t.stats.defense)),
+        10000,
       ),
     ),
   );
@@ -790,6 +791,7 @@ export function beforeCharacterTick(s: BattleState) {
     f.stats.crit = Math.min(65, f.stats.crit);
     f.stats.reach = Math.min(9000, f.stats.reach);
     applyKitStats(s, f);
+    applyClosingTempo(s, f);
     f.vx = div(f.vx * f.stats.speed, oldSpeed);
     f.vy = div(f.vy * f.stats.speed, oldSpeed);
     if (f.stats.cooldown !== oldCooldown) {
@@ -1152,7 +1154,17 @@ export function characterCombat(s: BattleState) {
       p.y > bounds.bottom - 450
     )
       p.life = 0;
-    for (const t of s.fighters) {
+    for (const t of projectileTargets(s, p, ox, oy)) {
+      if (isConstruct(t)) {
+        const hitId = -t.id - 1;
+        if (p.life > 0 && !p.hit.includes(hitId) && projectileHitsConstruct(s, f, t, p, ox, oy)) {
+          hitConstruct(s, f, t, div(f.stats.attack * (p.power || 100), 100), p.push || 180);
+          if (p.normal) reverseWeaponSpin(f, s.tick);
+          p.hit.push(hitId);
+          if (p.pierce-- <= 0) p.life = 0;
+        }
+        continue;
+      }
       if (p.life <= 0 || t.hp <= 0 || t.team === f.team || p.hit.includes(t.id))
         continue;
       if (capsuleHit(ox, oy, p.x, p.y, t.x, t.y, t.radius + 450)) {

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { chromium } from "playwright";
 import { CURRENT_RELEASE_VERSION } from "../../apps/web/src/PatchNotes";
+import { ENGINE_VERSION } from "../../packages/battle-engine/src/index";
 
 const web = process.env.TEST_WEB;
 const api = process.env.TEST_API;
@@ -10,6 +11,9 @@ assert.ok(
   "Set TEST_WEB and TEST_API to the deployment being verified",
 );
 const origin = new URL(web).origin;
+const engineTag = ENGINE_VERSION.replace("chaos-integer-", "");
+const reportDir = process.env.TEST_REPORT_DIR || "reports";
+mkdirSync(reportDir, { recursive: true });
 const health = await fetch(`${api}/health`);
 assert.equal(health.status, 200);
 assert.equal(((await health.json()) as { ok: boolean }).ok, true);
@@ -47,7 +51,7 @@ try {
       .click();
     await page
       .locator(".drawer-nav")
-      .getByRole("button", { name, exact: true })
+      .getByRole("button", { name: name === "Hòm thư" ? /^Hòm thư/ : name, exact: true })
       .click();
   }
   let socketReceived = false;
@@ -89,6 +93,24 @@ try {
     assert.equal(asset.status(), 200);
     assert.match(await asset.text(), /rotate\(-90 128 128\)/);
   }
+  await navigate("Hòm thư");
+  const welcome = page.getByRole("article", { name: "Quà tân thủ", exact: true });
+  await welcome.waitFor();
+  const claimed = page.waitForResponse(response =>
+    response.url().startsWith(`${api}/api/profiles/`) &&
+    response.request().method() === "POST" &&
+    response.request().postDataJSON()?.type === "SAVE" &&
+    response.request().postDataJSON()?.profile?.mailbox?.some((mail: { id: string; claimedAt?: number }) => mail.id === "welcome" && mail.claimedAt !== undefined),
+  );
+  await welcome.getByRole("button", { name: "Nhận quà", exact: true }).click();
+  assert.equal((await claimed).status(), 200);
+  await page.getByRole("tab", { name: /Đã nhận/ }).click();
+  await welcome.getByRole("button", { name: "Đã nhận", exact: true }).waitFor();
+  assert.equal(await welcome.getByRole("button", { name: "Đã nhận", exact: true }).isDisabled(), true);
+  await page.reload();
+  await navigate("Hòm thư");
+  await page.getByRole("tab", { name: /Đã nhận/ }).click();
+  await welcome.getByRole("button", { name: "Đã nhận", exact: true }).waitFor();
   await navigate("Trao đổi bài");
   await page.getByText("Hồ sơ đã kết nối", { exact: true }).waitFor();
   await page.reload();
@@ -119,11 +141,10 @@ try {
   for (let n = 0; n < 100 && kitAssets.size < 4; n++)
     await new Promise((resolve) => setTimeout(resolve, 100));
   assert.equal(kitAssets.size, 4, "Arena must load all generated v26 atlases");
-  mkdirSync("reports", { recursive: true });
-  await page.screenshot({ path: "reports/deployment-v26.png", fullPage: true });
+  await page.screenshot({ path: `${reportDir}/deployment-${engineTag}.png`, fullPage: true });
   await navigate("Multiplayer");
   assert.equal(await page.getByLabel("Backend URL").inputValue(), api);
-  await page.getByLabel("Tên của bạn").fill("Deployment smoke v26");
+  await page.getByLabel("Tên của bạn").fill(`Deployment smoke ${engineTag}`);
   const roomResponse = page.waitForResponse(
     (response) =>
       response.url() === `${api}/api/rooms` &&
@@ -138,16 +159,18 @@ try {
   assert.ok(socketReceived, "Production room WebSocket must receive state");
   assert.deepEqual(errors, []);
   writeFileSync(
-    "reports/production-browser-v26.json",
+    `${reportDir}/production-browser-${engineTag}.json`,
     JSON.stringify(
       {
         version: CURRENT_RELEASE_VERSION,
+        engine: ENGINE_VERSION,
         time: new Date().toISOString(),
         web,
         api,
         centeredPopup: true,
         verticalWeapons: true,
         profileRestored: true,
+        mailboxClaimPersisted: true,
         websocket: socketReceived,
         generatedAtlases: [...kitAssets].sort(),
         errors,
@@ -172,12 +195,11 @@ try {
   });
   assert.equal(leave.status, 200);
   console.log(
-    "PASS: production API/CORS, persisted profile, room/WebSocket, 20s shrink, square arena, team colors and generated v26 atlases; no browser errors.",
+    "PASS: API/CORS, persisted mailbox claim/profile, room/WebSocket, 20s shrink, square arena, team colors and generated atlases; no browser errors.",
   );
 } catch (error) {
-  mkdirSync("reports", { recursive: true });
   await page.screenshot({
-    path: "reports/deployment-failure.png",
+    path: `${reportDir}/deployment-failure.png`,
     fullPage: true,
   });
   console.error((await page.locator("body").innerText()).slice(0, 4500));

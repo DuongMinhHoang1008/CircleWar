@@ -1,5 +1,14 @@
 # Kiểm thử
 
+## v29 — 27/10/2026: hòm thư, vật lý đệ/trụ và đội hình ải
+
+- Release `2026.10.27.1`, engine `chaos-integer-v29`. TypeScript, frontend production build và Worker dry-run pass; 251/251 unit tests pass.
+- Kiểm tra hòm thư và lưu lịch sử nhận quà, rarity gốc khi mở pack, va chạm/đạn với đệ và trụ cố định, đổi chiều clash tức thì và nhịp quyết đấu cuối trận.
+- `campaign-tactics.ts`: 512 trận offline, tám lối đánh ở cùng Lv.10, bốn seed và đổi hai phía xuất phát. Mỗi đội địch được lấy mẫu có counter thắng ít nhất 4/8; hiệu quả khác nhau theo build. Đây là mẫu kiểm tra, không phải tỉ lệ thắng người chơi thật. Kết quả ghi vào `test-results/campaign-tactics.json`.
+- `campaign-browser.ts`: 30 cấu hình ải (đội 1/2/3 người, gồm boss và ải vượt trần cấp) trùng giữa Node/Chromium; sáu trận hoàn tất có hash giống nhau, không lỗi trình duyệt.
+- `constructs-browser.ts`: parity qua toàn bộ trận cho năm cấu hình, kiểm tra mặt nạ tròn và trụ bất động trong replay.
+- `deployment-smoke.ts` kiểm tra thêm nhận thư tân thủ, lưu lịch sử và tải lại. Đặt `TEST_REPORT_DIR` để chuyển báo cáo local vào thư mục riêng.
+
 ## v26 — 26/10/2026: 33 nhân vật và ba dạng biến hình
 
 - Release 2026.10.26.2, engine chaos-integer-v26. Chi tiết tại [CHARACTER_KITS_V26.md](docs/CHARACTER_KITS_V26.md).

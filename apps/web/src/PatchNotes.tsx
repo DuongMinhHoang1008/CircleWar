@@ -1,6 +1,18 @@
 import React from "react";
 
 export const PATCH_NOTES = [{
+  version: "2026.10.27.1",
+  date: "2026-10-27",
+  title: "Hòm thư và quà hệ thống",
+  summary: "Nhận quà tân thủ và quà cập nhật trong Hòm thư khi hàng chờ pack còn đủ chỗ.",
+  sections: [
+    { title: "Quà trong Hòm thư", entries: ["Quà tân thủ và quà cập nhật được gửi thành thư, không cộng thẳng vào hàng chờ pack. Nhận toàn bộ quà của một thư khi còn đủ chỗ; quà tiếp tục được giữ nếu hàng chờ chưa đủ.", "Thư đã nhận được lưu trong lịch sử, không thể nhận lại. Quà đã phát trước khi có Hòm thư không được phát thêm lần nữa."] },
+    { title: "Mở thẻ", entries: ["Kết quả mở pack sắp xếp và tô màu theo rarity gốc. Thẻ đã tiến hóa trong kho có dấu riêng ghi bậc hiện tại, không làm thay đổi rarity của lần mở."] },
+    { title: "Đội hình đi ải", entries: ["Đội địch luân phiên tám lối đánh: áp sát, trụ và đệ, khống chế, sát thương theo thời gian, giảm hồi phục, hỗ trợ chủ lực, đẩy kéo và biến hình. Giữ hạt nhân lối đánh khi đi đội một hoặc hai người.", "Trang bị được đưa vào từng bước; từ ải 31 tăng yêu cầu phối hợp, từ ải 61 cả ba quân cùng phục vụ lối đánh của đội. Các ải cao ưu tiên liên kết và cách phối trang bị tốt hơn, không tăng chỉ số ẩn ở ải thường.", "Giữ giới hạn Lv.10, một vật phẩm mỗi nhân vật, boss mỗi năm ải, phần thưởng và thông tin trước ải."] },
+    { title: "Quyết đấu cuối trận", entries: ["Từ lúc tường bo bắt đầu thu, mọi bộ kỹ năng đều tăng dần sát thương, tốc độ di chuyển, tốc độ đánh và tốc độ xoay. Các hiệu ứng này chỉ áp dụng trong trận hiện tại.", "Sau khi bo khép, hồi máu và khiên mới giảm 10% mỗi giây, về 0 sau 10 giây; áp dụng cả hồi phục định kỳ như Hướng Nội.", "Nếu trận còn kéo dài sau khi bo khép 3 giây, áp lực bo gây mất HP theo phần trăm HP tối đa mỗi giây, xuyên giáp và khiên, tăng dần từ 3% lên tối đa 15%. Đấu trường hiển thị rõ giai đoạn quyết đấu và áp lực bo."] },
+    { title: "Đấu trường", entries: ["Đệ nhỏ và đệ khổng lồ của Hộp Quà Nghiêm Túc có khung hình tròn, viền màu đội và thanh máu rõ ràng. Đệ chuyển động bi-a theo quán tính, không truy đuổi. Tăng HP, sát thương và tốc độ cho cả đệ nhỏ lẫn đệ lớn để bù việc bỏ truy đuổi.", "Đệ và trụ có collider, bị vũ khí đánh và được xạ thủ chọn làm mục tiêu. Đệ nảy khi va chạm; trụ hình tròn luôn đứng yên, chỉ làm thực thể khác bật ra. Vật thể phía trước có thể chắn đạn cho vật thể phía sau.", "Clash đảo chiều quay ngay tại điểm chạm, không lật vũ khí 180°. Trận mới dùng engine v29."] },
+  ],
+}, {
   version: "2026.10.26.2",
   date: "2026-10-26",
   title: "36 bộ chiến đấu riêng",

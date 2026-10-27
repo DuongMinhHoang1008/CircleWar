@@ -1,11 +1,19 @@
 import type { Fighter } from "./types";
 import { clamp, div, isqrt, normalize, UNIT, DIRECTIONS } from "./math";
+export type CollisionBody = Pick<
+  Fighter,
+  "id" | "x" | "y" | "vx" | "vy" | "radius" | "hp"
+> & {
+  fixed?: boolean;
+  stats: Pick<Fighter["stats"], "speed" | "mass" | "bounce">;
+};
 export function constrain(
-  f: Fighter,
+  f: CollisionBody,
   width: number,
   height: number,
   inset = 0,
   insetY = inset,
+  unstick = true,
 ) {
   const left = inset + f.radius,
     right = width - inset - f.radius;
@@ -33,7 +41,7 @@ export function constrain(
     f.vx = div(f.vx * max, speed);
     f.vy = div(f.vy * max, speed);
   }
-  if (speed < 120) {
+  if (unstick && speed < 120) {
     const d = DIRECTIONS[(f.id * 7) % 32];
     f.vx = div(d[0] * max, UNIT);
     f.vy = div(d[1] * max, UNIT);
@@ -44,7 +52,8 @@ export function constrain(
   if (f.y === top) f.vy = Math.abs(f.vy);
   if (f.y === bottom) f.vy = -Math.abs(f.vy);
 }
-export function collide(a: Fighter, b: Fighter) {
+export function collide(a: CollisionBody, b: CollisionBody) {
+  if (a.fixed && b.fixed) return;
   let dx = b.x - a.x,
     dy = b.y - a.y;
   const radius = a.radius + b.radius;
@@ -64,7 +73,11 @@ export function collide(a: Fighter, b: Fighter) {
   const [nx, ny] = normalize(dx, dy),
     total = a.stats.mass + b.stats.mass;
   const overlap = radius - isqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
-  const correctionA = div((overlap + 2) * b.stats.mass, total),
+  const correctionA = a.fixed
+      ? 0
+      : b.fixed
+        ? overlap + 2
+        : div((overlap + 2) * b.stats.mass, total),
     correctionB = overlap + 2 - correctionA;
   a.x -= div(nx * correctionA, UNIT);
   a.y -= div(ny * correctionA, UNIT);
@@ -74,14 +87,21 @@ export function collide(a: Fighter, b: Fighter) {
   if (relative >= 0) return;
   const restitution = clamp(div(a.stats.bounce + b.stats.bounce, 2), 80, 115);
   const impulse = div(-relative * (100 + restitution), 100);
-  const ia = div(impulse * b.stats.mass, total),
-    ib = div(impulse * a.stats.mass, total);
+  const ia = a.fixed
+      ? 0
+      : b.fixed
+        ? impulse
+        : div(impulse * b.stats.mass, total),
+    ib = b.fixed ? 0 : a.fixed ? impulse : div(impulse * a.stats.mass, total);
   a.vx -= div(nx * ia, UNIT);
   a.vy -= div(ny * ia, UNIT);
   b.vx += div(nx * ib, UNIT);
   b.vy += div(ny * ib, UNIT);
 }
-export function pairs(fighters: Fighter[], cell = 15000): [number, number][] {
+export function pairs(
+  fighters: CollisionBody[],
+  cell = 15000,
+): [number, number][] {
   const grid = new Map<string, number[]>();
   const result: [number, number][] = [];
   for (let i = 0; i < fighters.length; i++) {

@@ -5,9 +5,10 @@ import { combat } from "./combat";
 import { DIRECTIONS, div, hash, random, UNIT, normalize } from "./math";
 import { collide, constrain, pairs } from "./physics";
 import { safeBounds } from "./bounds";
-import { applyRoundTempo } from "./pacing";
+import { applyRoundTempo, applyArenaPressure } from "./pacing";
 import { statusPower, tickStatuses } from "./statuses";
 import { resolveWeaponClashes } from "./weapon-clash";
+import { moveConstructs, resolveConstructCollisions } from "./constructs";
 import { ROSTER, type CharacterId } from "../../shared/src/catalog";
 import {
   initializeCharacters,
@@ -164,6 +165,7 @@ export function stepBattle(s: BattleState): BattleState {
     constrain(f, s.config.width, s.config.height, bounds.left, bounds.top);
     f.memory.distanceMoved = Math.abs(f.x - previousX) + Math.abs(f.y - previousY);
   }
+  moveConstructs(s);
   // Three deterministic solver passes address multi-body overlaps.
   resolveWeaponClashes(s);
   for (let pass = 0; pass < 3; pass++) {
@@ -175,12 +177,15 @@ export function stepBattle(s: BattleState): BattleState {
       if (f.hp > 0)
         constrain(f, s.config.width, s.config.height, bounds.left, bounds.top);
   }
+  resolveConstructCollisions(s);
   if (s.fighters.some((f) => f.characterId)) characterCombat(s);
   else combat(s, bounds);
+  resolveConstructCollisions(s);
   // Knockback can change velocity, but cannot leave a body beyond the moving wall.
   for (const f of s.fighters)
     if (f.hp > 0)
       constrain(f, s.config.width, s.config.height, bounds.left, bounds.top);
+  applyArenaPressure(s);
   let alive = 0;
   for (const t of s.config.teams) {
     if (s.fighters.some((f) => f.team === t.id && f.hp > 0)) alive++;

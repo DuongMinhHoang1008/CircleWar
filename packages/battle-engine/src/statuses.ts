@@ -1,5 +1,6 @@
 import { div } from "./math";
 import { TICK_RATE, type BattleState, type Fighter } from "./types";
+import { closingTempo } from "./pacing";
 
 export type StatusKind =
   | "burn"
@@ -144,14 +145,15 @@ export const statusDamage = (f: Fighter, tick: number, raw: number) =>
     10000,
   );
 
-export function healingRate(f: Fighter, tick: number) {
+export function healingRate(f: Fighter, tick: number, shrinkSeconds?: number) {
   let radiation = statusPower(f, "radiation", tick);
   for (const buff of f.buffs)
     if (buff.kind === "radiation" && buff.until > tick) radiation += buff.value;
-  return Math.max(
+  const rate = Math.max(
     35,
     100 - Math.min(3, radiation) * 8 - statusPower(f, "diabetes", tick),
   );
+  return shrinkSeconds === undefined ? rate : div(rate * closingTempo(tick, shrinkSeconds).recovery, 100);
 }
 
 /** Runs before movement/attacks. Fixed-point carries avoid fractional HP and frame allocations. */
@@ -178,7 +180,7 @@ export function tickStatuses(s: BattleState) {
         effect.kind === "poison" ? 1 : effect.kind === "burn" ? 3 : 2;
       let rate = 100;
       if (effect.kind === "blessing" || effect.kind === "introvert")
-        rate = healingRate(target, s.tick);
+        rate = healingRate(target, s.tick, s.config.shrinkSeconds);
       const power =
         effect.kind === "introvert"
           ? Math.max(1, div(target.baseStats.hp, 100))

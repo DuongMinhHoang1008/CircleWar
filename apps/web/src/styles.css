@@ -649,6 +649,9 @@ header nav button small { display: inline-grid; min-width: 18px; height: 18px; p
 .reveal-batch-card.tier-t1 { --batch-glow: #f2f4f7; }.reveal-batch-card.tier-t2 { --batch-glow: #61b8ff; }.reveal-batch-card.tier-t3 { --batch-glow: #d274ff; }.reveal-batch-card.tier-t4 { --batch-glow: #ffc24f; }.reveal-batch-card.tier-god { --batch-glow: #ff4b55; }
 .reveal-batch-card.tier-rac { --batch-glow: #92949a; }
 .reveal-batch-tier { align-self: flex-end; color: var(--batch-glow); font-size: 9px; font-weight: 900; }
+.reveal-evolution-badge { display: inline-block; max-width: 100%; padding: 5px 8px; border: 1px solid #d7c29866; border-radius: 6px; background: #302a20; color: #f0dcb2; font-size: 10px; line-height: 1.4; text-align: center; }
+.reveal-card-art { position: relative; }
+.reveal-card-art > .reveal-evolution-badge { position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 2; }
 .reveal-batch-art { width: 100%; height: 112px; display: grid; place-items: center; overflow: hidden; border-radius: 8px; background: #090b10a8; }
 .reveal-batch-art img { width: 82px; height: 82px; object-fit: contain; border-radius: 8px; }
 .reveal-batch-card > b { max-width: 100%; overflow: hidden; color: #fff; font-size: 12px; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
@@ -1513,6 +1516,8 @@ input[type="checkbox"] {
 }
 
 .team-color-legend { display:flex; flex-wrap:wrap; gap:6px; padding:10px 12px; background:#191619; }
+.arena-closing { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; padding: 9px 12px; border-top: 1px solid #e2ae5433; color: #e8c787; background: #3a291c; font-size: 11px; line-height: 1.5; }
+.arena-closing b { font-size: 10px; letter-spacing: .07em; }.arena-closing.critical { color: #ffbdb2; background: #402128; border-color: #ee726055; }
 .team-color-key { display:flex; align-items:center; gap:6px; padding:5px 8px; border:1px solid; border-radius:7px; font-size:11px; min-width:0; }
 .team-color-key i { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
 .team-color-key b { max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

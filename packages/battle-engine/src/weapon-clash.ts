@@ -135,13 +135,9 @@ export function resolveWeaponClashes(s: BattleState) {
       b.memory.clashTick = s.tick;
       if (firstClashA) {
         reverseWeaponSpin(a, s.tick);
-        a.angle = (a.angle + 16) % 32;
-        a.facing *= -1;
       }
       if (firstClashB) {
         reverseWeaponSpin(b, s.tick);
-        b.angle = (b.angle + 16) % 32;
-        b.facing *= -1;
       }
       s.events.push({
         tick: s.tick,
