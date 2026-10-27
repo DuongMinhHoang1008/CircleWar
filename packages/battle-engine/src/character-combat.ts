@@ -1,4 +1,9 @@
-import { projectileTargets, isConstruct, projectileHitsConstruct, hitConstruct } from "./constructs";
+import {
+  projectileTargets,
+  isConstruct,
+  projectileHitsConstruct,
+  hitConstruct,
+} from "./constructs";
 import {
   character,
   BONDS,
@@ -16,6 +21,15 @@ import { div, normalize, UNIT, DIRECTIONS, random } from "./math";
 import { capsuleHit } from "./physics";
 import { safeBounds } from "./bounds";
 import { closingTempo, applyClosingTempo } from "./pacing";
+import {
+  recordHealing,
+  recordShielding,
+  recordAbsorption,
+  recordDamage,
+  recordEffect,
+  buffOwner,
+  recordEffectTick,
+} from "./metrics";
 
 import { itemMultiplier } from "../../shared/src/balance";
 import { ITEM_AFFINITY, type AffinityTrigger } from "../../shared/src/affinity";
@@ -134,6 +148,7 @@ function buff(
     return;
   }
   const existing = f.buffs.find((b) => b.kind === kind && b.source === source);
+  recordEffect(buffOwner(s, source), f, `buff:${kind}`, kind !== "slow");
   if (existing) {
     existing.value = value;
     existing.until = s.tick + ticks;
@@ -150,22 +165,46 @@ function shield(
   ticks: number,
 ) {
   if (f.hp <= 0) return;
-  const amount = Math.max(0, Math.min(div(n * closingTempo(s.tick, s.config.shrinkSeconds).recovery, 100), 100 - f.shield));
+  const amount = Math.max(
+    0,
+    Math.min(
+      div(n * closingTempo(s.tick, s.config.shrinkSeconds).recovery, 100),
+      100 - f.shield,
+    ),
+  );
   if (!amount) return;
   f.shields.push({ amount, until: s.tick + ticks, source: source.id });
   f.shield += amount;
-  event(s, "shield", source, f, amount);
+  recordShielding(source, f, amount);
+  s.events.push({
+    tick: s.tick,
+    type: "shield",
+    source: source.id,
+    target: f.id,
+    amount,
+    shieldKind: ticks >= 900000 ? "temporaryHp" : "shield",
+  });
 }
 function heal(s: BattleState, source: Fighter, f: Fighter, n: number) {
   if (f.hp <= 0) return 0;
   const amount = Math.max(
     0,
     Math.min(
-      div(n * healingRate(f, s.tick, s.config.shrinkSeconds), 100),
+      div(
+        n *
+          healingRate(
+            f,
+            s.tick,
+            s.config.shrinkSeconds,
+            source !== f && source.team === f.team,
+          ),
+        100,
+      ),
       f.stats.hp - f.hp,
     ),
   );
   f.hp += amount;
+  recordHealing(source, f, amount);
   if (amount) event(s, "heal", source, f, amount);
   return amount;
 }
@@ -245,7 +284,11 @@ export function characterDamage(
     Math.min(
       300,
       div(
-        statusDamage(f, s.tick, raw) * (f.team === t.team ? 100 : closingTempo(s.tick, s.config.shrinkSeconds).damage) * (100 - Math.min(60, t.stats.defense)),
+        statusDamage(f, s.tick, raw) *
+          (f.team === t.team
+            ? 100
+            : closingTempo(s.tick, s.config.shrinkSeconds).damage) *
+          (100 - Math.min(60, t.stats.defense)),
         10000,
       ),
     ),
@@ -258,13 +301,17 @@ export function characterDamage(
   for (const layer of t.shields) {
     const used = Math.min(layer.amount, remain);
     layer.amount -= used;
+    recordAbsorption(s.fighters[layer.source], t, used);
     remain -= used;
   }
   t.shields = t.shields.filter((l) => l.amount > 0);
+  recordAbsorption(t, t, remain);
   amount = Math.min(t.hp, amount);
   t.hp -= amount;
   t.taken += amount;
   if (f.team !== t.team) f.dealt += amount;
+  if (amount + absorbed > 0) s.lastDamageTick = s.tick;
+  recordDamage(f, t, amount);
   if ((amount || absorbed) && f.team !== t.team) {
     energy(s, f, div((amount + absorbed + 3) * f.stats.charge, 160));
     energy(s, t, div((amount + absorbed + 4) * t.stats.charge, 240));
@@ -630,6 +677,7 @@ export function initializeCharacters(s: BattleState) {
   for (const f of s.fighters) {
     if (!f.characterId) continue;
     if (f.stats.shield > 0) {
+      recordShielding(f, f, f.stats.shield);
       f.shields.push({
         amount: f.stats.shield,
         until: Number.MAX_SAFE_INTEGER,
@@ -640,7 +688,7 @@ export function initializeCharacters(s: BattleState) {
     f.skillReady = Number.MAX_SAFE_INTEGER;
     f.memory.nextFlag = 120;
     f.memory.nextStock = 90;
-    if (f.characterId === "char_14") f.memory.nextSummon = 120;
+    if (f.characterId === "char_14") f.memory.nextSummon = 90;
     if (f.characterId === "char_25") {
       f.memory.assets = 100;
       shield(s, f, f, div(f.baseStats.hp, 10), 900000);
@@ -716,6 +764,20 @@ export function beforeCharacterTick(s: BattleState) {
     );
     synergyAttack += Math.max(0, ...fields.map((z) => z.auraAttack || 0));
     synergyHaste += Math.max(0, ...fields.map((z) => z.auraHaste || 0));
+    for (const stat of ["auraAttack", "auraHaste"] as const) {
+      const strongest = fields.reduce<(typeof fields)[number] | undefined>(
+        (best, zone) => ((zone[stat] || 0) > (best?.[stat] || 0) ? zone : best),
+        undefined,
+      );
+      if (strongest)
+        recordEffectTick(
+          s,
+          s.fighters[strongest.owner],
+          f,
+          `field:${stat}`,
+          "buff",
+        );
+    }
     for (const { trait, members } of contexts.get(f.team)!.traits) {
       const count = members.length;
       if (count >= 2 && members.includes(f)) {
@@ -1157,8 +1219,18 @@ export function characterCombat(s: BattleState) {
     for (const t of projectileTargets(s, p, ox, oy)) {
       if (isConstruct(t)) {
         const hitId = -t.id - 1;
-        if (p.life > 0 && !p.hit.includes(hitId) && projectileHitsConstruct(s, f, t, p, ox, oy)) {
-          hitConstruct(s, f, t, div(f.stats.attack * (p.power || 100), 100), p.push || 180);
+        if (
+          p.life > 0 &&
+          !p.hit.includes(hitId) &&
+          projectileHitsConstruct(s, f, t, p, ox, oy)
+        ) {
+          hitConstruct(
+            s,
+            f,
+            t,
+            div(f.stats.attack * (p.power || 100), 100),
+            p.push || 180,
+          );
           if (p.normal) reverseWeaponSpin(f, s.tick);
           p.hit.push(hitId);
           if (p.pierce-- <= 0) p.life = 0;

@@ -3,6 +3,8 @@ import {
   createBattle,
   debugConfig,
   captureReplayFrame,
+  applyStatus,
+  tickStatuses,
 } from "../../packages/battle-engine/src/index";
 import {
   ANALYTICS_KEY,
@@ -42,6 +44,77 @@ function record(): BattleRecord {
   };
 }
 describe("battle analytics", () => {
+  it("saves authoritative HP damage and keeps old records outside damage averages", () => {
+    const state = createBattle(debugConfig(2), 1),
+      recorder = createBattleRecorder();
+    state.fighters[0].dealt = 120;
+    state.fighters[1].taken = 120;
+    const summary = recorder.finish(state, state.config, "a");
+    expect(summary.units[0].combat).toEqual({ damage: 120, taken: 0 });
+    const entry: BattleRecord = {
+      ...summary,
+      id: "damage",
+      mode: "simulation",
+      savedAt: 2,
+    };
+    const old: BattleRecord = {
+      ...entry,
+      id: "old",
+      units: entry.units.map(({ combat, ...unit }) => unit),
+    };
+    const row = characterMetrics([entry, old]).find(
+      (r) => r.id === summary.units[0].characterId,
+    )!;
+    expect(row).toMatchObject({ damage: 120, damageGames: 1 });
+    const storage = memory();
+    saveBattleRecord(storage, entry);
+    expect(readBattleRecords(storage)[0].units[0].combat?.damage).toBe(120);
+    storage.setItem(
+      ANALYTICS_KEY,
+      JSON.stringify([
+        {
+          ...entry,
+          units: [{ ...entry.units[0], combat: { damage: -1, taken: 0 } }],
+        },
+      ]),
+    );
+    expect(readBattleRecords(storage)).toEqual([]);
+  });
+  it("uses cumulative replay snapshots despite duplicate or out-of-order chunks", () => {
+    const state = createBattle(debugConfig(2), 1),
+      recorder = createBattleRecorder();
+    const early = captureReplayFrame(state);
+    state.tick = 30;
+    state.fighters[0].dealt = 900;
+    state.fighters[1].taken = 900;
+    const final = captureReplayFrame(state);
+    recorder.replay([final, early, final], state.fighters);
+    expect(
+      recorder.finish(state, state.config, "a", true).units[0].combat?.damage,
+    ).toBe(900);
+    const legacy = createBattleRecorder();
+    const { damageStats, ...old } = early;
+    legacy.replay([old], state.fighters);
+    expect(
+      legacy.finish(state, state.config, "a", true).units[0].combat,
+    ).toBeUndefined();
+  });
+  it("tags periodic damage by its actual status source", () => {
+    for (const kind of ["burn", "poison", "bleeding", "radiation"] as const) {
+      const state = createBattle(debugConfig(2), 1);
+      const [source, target] = state.fighters;
+      applyStatus(state, source, target, kind, 10, 120);
+      for (let tick = 1; tick <= 60; tick++) {
+        state.tick = tick;
+        target.memory.distanceMoved = 100;
+        tickStatuses(state);
+      }
+      expect(
+        state.events.some((e) => e.type === "hit" && e.damageType === kind),
+        kind,
+      ).toBe(true);
+    }
+  });
   it("retains kill and synergy events through bursts larger than the visual feed", () => {
     const state = createBattle(debugConfig(2), 10);
     state.events.push(

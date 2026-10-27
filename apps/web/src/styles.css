@@ -1567,3 +1567,7 @@ input[type="checkbox"] {
 .pack-rates dd { margin: 5px 0 0; font-weight: 700; color: #ffe5a2; }
 .pack-rates small { display: block; line-height: 1.6; margin-top: 8px; color: #c7c9d1; }
 @media (max-width: 440px) { .pack-rates dl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.fighter-damage { display: block; margin-top: 5px; color: #edc88d; font-size: 10px; line-height: 1.5; }
+
+.fighter-support { display: block; color: #9de9c1; font-size: 10px; line-height: 1.5; margin-top: 3px; }

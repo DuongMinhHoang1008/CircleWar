@@ -4,7 +4,6 @@ import {
   debugConfig,
   stepBattle,
   closingTempo,
-  applyArenaPressure,
   calculateStateHash,
   serializeBattleState,
   restoreBattleState,
@@ -51,6 +50,15 @@ function guardianDuel(
 }
 
 describe("closing combat phase", () => {
+  it("breaks flat parallel movement without applying environmental damage", () => {
+    const config = debugConfig(2);
+    config.teams = ["char_17", "char_12", "char_05", "char_08", "char_07", "char_32"].map((id, index) => ({ id: `team-${index}`, loadouts: [{ characterId: id as CharacterId, classId: character(id)!.base as Loadout["classId"], level: 10, equipment: [`item_${["04", "03", "19", "14", "17", "32"][index]}`], equipmentLevels: { [`item_${["04", "03", "19", "14", "17", "32"][index]}`]: 10 } }] }));
+    config.width = config.height = 72000; config.shrinkSeconds = 20;
+    const state = createBattle(config, 65374);
+    while (!state.finished && state.tick < 1800) stepBattle(state);
+    expect(state.finished).toBe(true);
+    expect(state.events.some(e => e.type === "arena:pressure")).toBe(false);
+  });
   it("follows the wall schedule, ramps safely, and leaves opening combat alone", () => {
     for (const seconds of [1, 20, 60]) {
       const end = seconds * 30,
@@ -59,18 +67,15 @@ describe("closing combat phase", () => {
         active: false,
         damage: 100,
         recovery: 100,
-        pressure: 0,
       });
-      expect(closingTempo(end + 89, seconds).pressure).toBe(0);
-      expect(closingTempo(end + 90, seconds).pressure).toBe(3);
       expect(closingTempo(end + 300, seconds).recovery).toBe(0);
       expect(closingTempo(end + 100000, seconds)).toMatchObject({
         damage: 400,
-        haste: 200,
-        speed: 135,
-        spin: 200,
+        haste: 250,
+        speed: 160,
+        spin: 250,
+        charge: 200,
         recovery: 0,
-        pressure: 15,
       });
     }
   });
@@ -117,57 +122,9 @@ describe("closing combat phase", () => {
     expect(f.hp).toBe(hp);
   });
 
-  it("applies pressure once per second through shields without farming damage, kills or energy", () => {
-    const s = guardianDuel(),
-      f = s.fighters[0];
-    f.shield = 100;
-    f.shields = [{ amount: 100, until: 9999, source: f.id }];
-    const hp = f.hp,
-      energy = f.energy;
-    s.tick = 689;
-    applyArenaPressure(s);
-    expect(f.hp).toBe(hp);
-    s.tick = 690;
-    applyArenaPressure(s);
-    expect(f.hp).toBe(hp - Math.max(1, Math.trunc(f.stats.hp * 0.03)));
-    expect(f.shield).toBe(100);
-    expect(f.energy).toBe(energy);
-    expect(
-      s.fighters.every((unit) => unit.dealt === 0 && unit.kills === 0),
-    ).toBe(true);
-    expect(
-      s.events.some(
-        (event) => event.type === "arena:pressure" && event.source === -1,
-      ),
-    ).toBe(true);
-    const after = f.hp;
-    s.tick++;
-    applyArenaPressure(s);
-    expect(f.hp).toBe(after);
-    f.hp = 1;
-    s.tick = 720;
-    applyArenaPressure(s);
-    expect(f.hp).toBe(0);
-    expect(f.deadAt).toBe(720);
-    expect(
-      s.events.some(
-        (event) =>
-          event.type === "kill" && event.source === -1 && event.target === f.id,
-      ),
-    ).toBe(true);
-  });
-
-  it("does not damage the winning team after the last opponent falls", () => {
-    const s = guardianDuel();
-    s.tick = 900;
-    s.fighters[1].hp = 0;
-    const hp = s.fighters[0].hp;
-    applyArenaPressure(s);
-    expect(s.fighters[0].hp).toBe(hp);
-  });
-
-  it("ends nonattacking stalemates through actual HP loss instead of a time-based winner", () => {
+  it("never subtracts HP or declares a winner from the wall alone", () => {
     const s = createBattle(debugConfig(2), 9);
+    const hp = s.fighters.map((f) => f.hp);
     for (const f of s.fighters) {
       f.stats.attack = f.baseStats.attack = 0;
       f.stats.rotation = f.baseStats.rotation = 0;
@@ -175,11 +132,12 @@ describe("closing combat phase", () => {
       f.shield = 10000;
     }
     while (!s.finished && s.tick <= 1500) stepBattle(s);
-    expect(s.finished).toBe(true);
-    expect(s.fighters.some((f) => f.hp === 0)).toBe(true);
+    expect(s.finished).toBe(false);
+    expect(s.fighters.map((f) => f.hp)).toEqual(hp);
+    expect(s.events.some((e) => e.type === "arena:pressure")).toBe(false);
   });
 
-  it("finishes guardian mirrors with tank items and preserves a checkpoint across pressure activation", () => {
+  it("finishes guardian mirrors with tank items and preserves a checkpoint through closing tempo", () => {
     for (const id of ROSTER.filter((c) => c.base === "guardian").map(
       (c) => c.id,
     )) {
@@ -192,7 +150,7 @@ describe("closing combat phase", () => {
             20,
             level + id.length,
           );
-          while (!s.finished && s.tick < 1500) stepBattle(s);
+          while (!s.finished && s.tick < 1800) stepBattle(s);
           expect(s.finished, `${id} Lv.${level} ${item || "no item"}`).toBe(
             true,
           );

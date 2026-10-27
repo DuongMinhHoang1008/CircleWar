@@ -1,6 +1,5 @@
-import { div } from "./math";
+import { div, normalize, UNIT } from "./math";
 import { TICK_RATE, type BattleState, type Fighter } from "./types";
-import { retainCombatEvents } from "./events";
 
 /** A shared closing phase for every kit, tied to the configured wall schedule. */
 export function closingTempo(tick: number, shrinkSeconds: number) {
@@ -11,11 +10,11 @@ export function closingTempo(tick: number, shrinkSeconds: number) {
   return {
     active: tick > start,
     damage: 100 + Math.min(300, (shrinking + overtime) * 8),
-    speed: 100 + Math.min(35, shrinking + overtime),
-    haste: 100 + Math.min(100, (shrinking + overtime) * 3),
-    spin: 100 + Math.min(100, (shrinking + overtime) * 3),
+    speed: 100 + Math.min(60, (shrinking + overtime) * 2),
+    haste: 100 + Math.min(150, (shrinking + overtime) * 4),
+    spin: 100 + Math.min(150, (shrinking + overtime) * 4),
+    charge: 100 + Math.min(100, (shrinking + overtime) * 3),
     recovery: Math.max(0, 100 - overtime * 10),
-    pressure: overtime >= 3 ? Math.min(15, 3 + div(overtime - 3, 2)) : 0,
   };
 }
 
@@ -24,47 +23,11 @@ export function applyClosingTempo(s: BattleState, f: Fighter) {
   const tempo = closingTempo(s.tick, s.config.shrinkSeconds);
   f.stats.speed = Math.min(900, div(f.stats.speed * tempo.speed, 100));
   f.stats.cooldown = Math.max(8, div(f.stats.cooldown * 100, tempo.haste));
+  f.stats.charge = Math.min(400, div(f.stats.charge * tempo.charge, 100));
   f.memory.spinRate = Math.min(
     400,
     div((f.memory.spinRate || 100) * tempo.spin, 100),
   );
-}
-
-/** Late wall pressure bypasses armor/shields and never grants combat energy or kills. */
-export function applyArenaPressure(s: BattleState) {
-  if (s.tick % TICK_RATE !== 0) return;
-  const percent = closingTempo(s.tick, s.config.shrinkSeconds).pressure;
-  if (
-    !percent ||
-    new Set(s.fighters.filter((f) => f.hp > 0).map((f) => f.team)).size <= 1
-  )
-    return;
-  for (const f of s.fighters) {
-    if (f.hp <= 0) continue;
-    const amount = Math.min(f.hp, Math.max(1, div(f.stats.hp * percent, 100)));
-    f.hp -= amount;
-    f.taken += amount;
-    s.events.push({
-      tick: s.tick,
-      type: "arena:pressure",
-      source: -1,
-      target: f.id,
-      amount,
-      x: f.x,
-      y: f.y,
-    });
-    if (!f.hp) {
-      f.deadAt = s.tick;
-      s.events.push({
-        tick: s.tick,
-        type: "kill",
-        source: -1,
-        target: f.id,
-        amount,
-      });
-    }
-  }
-  retainCombatEvents(s);
 }
 
 export function roundTempo(tick: number) {
@@ -78,6 +41,22 @@ export function roundTempo(tick: number) {
     superPower: 100 + stacks * 10,
     spin: 100 + stacks * 4,
   };
+}
+
+/** A tiny angle change breaks parallel billiard lanes, without chasing or HP loss. */
+export function stirStalledCombat(s: BattleState) {
+  if (s.tick <= s.config.shrinkSeconds * TICK_RATE || s.tick % 90 !== 0 || s.tick - (s.lastDamageTick || 0) < 450) return;
+  for (const fighter of s.fighters) {
+    if (fighter.hp <= 0 || fighter.stats.speed <= 0) continue;
+    const minimum = Math.max(1, div(fighter.stats.speed, 8));
+    let { vx, vy } = fighter;
+    if (Math.abs(vx) < minimum) vx = (fighter.x < s.config.width / 2 ? 1 : -1) * minimum;
+    if (Math.abs(vy) < minimum) vy = (fighter.y < s.config.height / 2 ? 1 : -1) * minimum;
+    if (vx === fighter.vx && vy === fighter.vy) continue;
+    const [dx, dy] = normalize(vx, vy);
+    fighter.vx = div(dx * fighter.stats.speed, UNIT);
+    fighter.vy = div(dy * fighter.stats.speed, UNIT);
+  }
 }
 
 export function applyRoundTempo(s: BattleState) {

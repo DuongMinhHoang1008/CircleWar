@@ -5,7 +5,8 @@ import { combat } from "./combat";
 import { DIRECTIONS, div, hash, random, UNIT, normalize } from "./math";
 import { collide, constrain, pairs } from "./physics";
 import { safeBounds } from "./bounds";
-import { applyRoundTempo, applyArenaPressure } from "./pacing";
+import { applyRoundTempo, stirStalledCombat } from "./pacing";
+import { emptyCombatMetrics, combatMetrics, recordActiveEffects } from "./metrics";
 import { statusPower, tickStatuses } from "./statuses";
 import { resolveWeaponClashes } from "./weapon-clash";
 import { moveConstructs, resolveConstructCollisions } from "./constructs";
@@ -27,6 +28,7 @@ export * from "./types";
 export * from "./math";
 export * from "./bounds";
 export * from "./pacing";
+export * from "./metrics";
 export * from "./weapons";
 export * from "./statuses";
 export function createBattle(config: BattleConfig, seed: number): BattleState {
@@ -120,6 +122,7 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
       burnSource: 0,
       hits: 0,
       dealt: 0,
+      metrics: emptyCombatMetrics(),
       taken: 0,
       kills: 0,
       supers: 0,
@@ -137,6 +140,8 @@ export function stepBattle(s: BattleState): BattleState {
   applyRoundTempo(s);
   beforeCharacterTick(s);
   tickStatuses(s);
+  recordActiveEffects(s);
+  stirStalledCombat(s);
   const bounds = safeBounds(s);
   for (const f of s.fighters) {
     if (f.hp <= 0) continue;
@@ -185,7 +190,6 @@ export function stepBattle(s: BattleState): BattleState {
   for (const f of s.fighters)
     if (f.hp > 0)
       constrain(f, s.config.width, s.config.height, bounds.left, bounds.top);
-  applyArenaPressure(s);
   let alive = 0;
   for (const t of s.config.teams) {
     if (s.fighters.some((f) => f.team === t.id && f.hp > 0)) alive++;
@@ -253,6 +257,8 @@ export function captureReplayFrame(s: BattleState): ReplayFrame {
     constructs: structuredClone(s.constructs),
     kitProjectiles: s.projectiles.filter(p => p.kit).map(p => ({ id: p.id, kit: p.kit, radius: p.radius || 450, returning: p.returning })),
     combatStats: s.fighters.map((f) => [f.stats.attack, f.stats.speed, f.stats.rotation, f.stats.charge, f.stats.cooldown, f.memory.spinRate || 100]),
+    damageStats: s.fighters.map((f) => [f.dealt, f.taken]),
+    supportStats: s.fighters.map((f) => structuredClone(combatMetrics(f))),
     projectiles: s.projectiles.map((p) => [
       p.id, p.owner, p.x, p.y, p.vx, p.vy, p.normal ?? false, p.kind,
     ]),

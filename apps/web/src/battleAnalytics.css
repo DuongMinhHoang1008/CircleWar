@@ -94,3 +94,38 @@
     padding: 10px 8px;
   }
 }
+
+.audit-role {
+  display: block;
+  color: #aebbd1;
+  font-size: 11px;
+  margin-top: 5px;
+}
+.analytics-support-note {
+  max-width: 850px;
+}
+.audit-changes li {
+  margin: 9px 0;
+  line-height: 1.6;
+}
+.audit-comparisons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 215px), 1fr));
+  gap: 12px;
+}
+.audit-comparisons article {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid #ffffff20;
+  border-radius: 12px;
+  background: #ffffff06;
+}
+.audit-comparisons span {
+  font-size: 12px;
+  color: #aebbd1;
+}
+.audit-comparisons strong {
+  color: #b5e5cd;
+  font-size: 23px;
+}

@@ -12,6 +12,8 @@ import {
   type BattleRecord,
 } from "./battleAnalytics";
 import "./battleAnalytics.css";
+import { STATUS_RULES } from "../../../packages/battle-engine/src/statuses";
+import type { CombatMetrics } from "../../../packages/battle-engine/src/types";
 
 const MODE_LABELS: Record<BattleMode, string> = {
   campaign: "Đi ải",
@@ -20,6 +22,72 @@ const MODE_LABELS: Record<BattleMode, string> = {
 };
 const name = (id: string) =>
   character(id)?.name || CHARACTERS[id as ClassId]?.name || id;
+const damageText = (value?: number) =>
+  value === undefined
+    ? "—"
+    : value.toLocaleString("vi-VN", { maximumFractionDigits: 1 });
+const effectName = (kind: string) =>
+  (STATUS_RULES as Record<string, { label: string }>)[kind]?.label ||
+  (
+    {
+      "aura:attack": "Aura sát thương",
+      "field:auraAttack": "Vùng tăng sát thương",
+      "field:auraHaste": "Vùng tăng nhịp đánh",
+      "buff:haste": "Tăng nhịp đánh",
+      "buff:armor": "Tăng giáp",
+      "buff:attack": "Tăng sát thương",
+      "buff:speed": "Tăng di chuyển",
+      "buff:reach": "Tăng tầm đánh",
+      "buff:bonus": "Đòn cường hóa",
+      "buff:deliverySpeed": "Tăng di chuyển",
+      "buff:slow": "Làm chậm",
+    } as Record<string, string>
+  )[kind] ||
+  "Hiệu ứng hỗ trợ";
+function SupportDetails({ support }: { support?: CombatMetrics }) {
+  if (!support) return <span>Hỗ trợ: —</span>;
+  const effects = [
+    ...new Set([
+      ...Object.keys(support.effects),
+      ...Object.keys(support.effectTicks),
+    ]),
+  ];
+  return (
+    <>
+      <span>
+        Hồi đồng đội: {damageText(support.allyHealing)} · Tự hồi:{" "}
+        {damageText(support.healing - support.allyHealing)}
+      </span>
+      <span>
+        Khiên tạo ĐĐ: {damageText(support.allyShielding)} · Đã đỡ ĐĐ:{" "}
+        {damageText(support.allyShieldAbsorbed)}
+      </span>
+      <span>
+        Buff ĐĐ: {damageText(support.buffsApplied)} · Debuff:{" "}
+        {damageText(support.debuffsApplied)} · Khống chế:{" "}
+        {damageText(support.controlTicks / 30)}s
+      </span>
+      <details className="analytics-effects">
+        <summary>Hiệu ứng đã gây</summary>
+        {effects.length ? (
+          <ul>
+            {effects.map((kind) => (
+              <li key={kind}>
+                {effectName(kind)} ·{" "}
+                {support.effects[kind] === undefined
+                  ? "Duy trì"
+                  : `${support.effects[kind]} lượt`}{" "}
+                · {damageText((support.effectTicks[kind] || 0) / 30)}s
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>Chưa có hiệu ứng.</p>
+        )}
+      </details>
+    </>
+  );
+}
 const gear = (unit: {
   equipment: string[];
   equipmentLevels?: Record<string, number>;
@@ -159,6 +227,26 @@ export function BattleAnalyticsPage({
           <span>NHÂN VẬT THAM GIA</span>
           <strong>{metrics.length}</strong>
         </div>
+        <div>
+          <span>SÁT THƯƠNG GÂY RA</span>
+          <strong>
+            {damageText(
+              metrics.some((row) => row.damageGames)
+                ? metrics.reduce((total, row) => total + row.damage, 0)
+                : undefined,
+            )}
+          </strong>
+        </div>
+        <div>
+          <span>SÁT THƯƠNG NHẬN VÀO</span>
+          <strong>
+            {damageText(
+              metrics.some((row) => row.damageGames)
+                ? metrics.reduce((total, row) => total + row.taken, 0)
+                : undefined,
+            )}
+          </strong>
+        </div>
       </div>
       <h3>Trang bị đang sử dụng</h3>
       <div className="analytics-current">
@@ -194,6 +282,10 @@ export function BattleAnalyticsPage({
                     "Tỉ lệ thắng",
                     "Hạ gục",
                     "Bị hạ",
+                    "ST gây ra",
+                    "ST nhận vào",
+                    "ST gây/trận",
+                    "Sống tới cuối",
                   ].map((label) => (
                     <th key={label}>{label}</th>
                   ))}
@@ -213,8 +305,74 @@ export function BattleAnalyticsPage({
                     </td>
                     <td>{row.kills}</td>
                     <td>{row.deaths}</td>
+                    <td>
+                      {damageText(row.damageGames ? row.damage : undefined)}
+                    </td>
+                    <td>
+                      {damageText(row.damageGames ? row.taken : undefined)}
+                    </td>
+                    <td>
+                      {damageText(
+                        row.damageGames
+                          ? row.damage / row.damageGames
+                          : undefined,
+                      )}
+                    </td>
+                    <td>
+                      {row.survivalGames
+                        ? `${damageText((100 * row.survivors) / row.survivalGames)}%`
+                        : "—"}
+                    </td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+          <h3>Hiệu ứng và hỗ trợ</h3>
+          <p className="muted analytics-support-note">
+            Trung bình mỗi lượt ra sân có dữ liệu. Hồi máu tính lượng thực nhận;
+            khiên đã đỡ tính phần sát thương thực sự bị lớp khiên hấp thụ. ĐĐ =
+            đồng đội, tách khỏi bản thân. Lượt hiệu ứng gồm các lần áp dụng hoặc
+            làm mới thành công; thời gian khống chế gộp trạng thái chồng nhau
+            của cùng nguồn trên một mục tiêu.
+          </p>
+          <div className="analytics-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  {[
+                    "Nhân vật",
+                    "Hồi ĐĐ",
+                    "Khiên tạo ĐĐ",
+                    "Khiên đỡ ĐĐ",
+                    "Buff ĐĐ",
+                    "Debuff",
+                    "Khống chế (s)",
+                    "Buff ĐĐ (s)",
+                  ].map((label) => (
+                    <th key={label}>{label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.map((row) => {
+                  const avg = (value: number) =>
+                    damageText(
+                      row.supportGames ? value / row.supportGames : undefined,
+                    );
+                  return (
+                    <tr key={row.id}>
+                      <td>{name(row.id)}</td>
+                      <td>{avg(row.support.allyHealing)}</td>
+                      <td>{avg(row.support.allyShielding)}</td>
+                      <td>{avg(row.support.allyShieldAbsorbed)}</td>
+                      <td>{avg(row.support.buffsApplied)}</td>
+                      <td>{avg(row.support.debuffsApplied)}</td>
+                      <td>{avg(row.support.controlTicks / 30)}</td>
+                      <td>{avg(row.support.allyBuffTicks / 30)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -283,6 +441,19 @@ export function BattleAnalyticsPage({
                         {unit.team === record.winner ? "Thắng" : "Thua"}
                       </small>
                       <span>{gear(unit)}</span>
+                      <span>
+                        ST gây: {damageText(unit.combat?.damage)} · ST nhận:{" "}
+                        {damageText(unit.combat?.taken)}
+                      </span>
+                      <span>
+                        Sống tới cuối:{" "}
+                        {unit.survived === undefined
+                          ? "—"
+                          : unit.survived
+                            ? "Có"
+                            : "Không"}
+                      </span>
+                      <SupportDetails support={unit.support} />
                     </article>
                   ))}
                 </div>

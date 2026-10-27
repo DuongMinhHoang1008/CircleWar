@@ -1,6 +1,17 @@
 import React from "react";
 
 export const PATCH_NOTES = [{
+  version: "2026.10.27.2",
+  date: "2026-10-27",
+  title: "Cân bằng nhân vật và số liệu chiến đấu",
+  summary: "Điều chỉnh sức mạnh 33 nhân vật, thêm thống kê hỗ trợ và tùy chỉnh hiển thị. Bo tăng nhịp chiến đấu, không tự trừ HP.",
+  sections: [
+    { title: "Cân bằng nhân vật", entries: ["Giảm khả năng tự chống chịu của Hổ, thời gian né của Ship Nhanh, laser Fu Di và áp lực diện rộng của Jake, Ủn, Skyrocket. Tăng chỉ số, tầm đánh và nhịp đánh cho các quân cận chiến yếu.", "Đệ Hộp Quà ra sớm hơn, bền và đánh tốt hơn; giữ chuyển động bi-a và trụ đứng yên. Mâm Quả hồi máu thực cho đồng đội, Cờ tăng khả năng buff/bảo vệ; Wacom biến hình xuyên hai mục tiêu nhưng ngừng nảy sau khi trúng người.", "Thêm báo cáo Cân bằng nhân vật: kết quả trước/sau cùng bộ mẫu, thắng/thua, sống tới cuối, damage và hỗ trợ; mặc định mở đấu đội Lv.10. Đã kiểm tra 15.312 trận mô phỏng, gồm bộ seed kiểm chứng riêng, không có trận quá giới hạn 180 giây."] },
+    { title: "Thống kê hỗ trợ và hiệu ứng", entries: ["Lưu lượng hồi máu, tạo khiên, khiên thực hấp thụ, số lượt buff/debuff, thời gian khống chế và thời gian buff đồng đội. Tách hỗ trợ đồng đội khỏi tự hồi/tự buff; không tính phần hồi dư.", "Lịch sử từng trận có số lượt và thời gian từng hiệu ứng đã gây; thống kê sống tới cuối độc lập với thắng đội. Dữ liệu theo replay thực và có trong JSON xuất; lịch sử cũ thiếu trường mới hiển thị —."] },
+    { title: "Hiển thị và số liệu", entries: ["Thêm Cài đặt cho hiệu ứng, số damage, hồi phục/khiên, giảm hiệu ứng và âm thanh; tự lưu trên trình duyệt. Số damage mặc định tắt và có thể bật riêng khi VFX tắt.", "Số damage dùng màu và nhãn riêng cho đòn đánh, Burn, Poison, Bleeding và phóng xạ; các nguồn khác nhau không gộp chung. Tên trạng thái hiện tại mục tiêu khi hiệu ứng được áp dụng.", "Hồi phục hiện HP +… xanh ngọc, khiên +… xanh dương và máu ảo +… tím; tính đúng lượng thực nhận, không hiện phần hồi dư. Có công tắc riêng cho số hồi phục/khiên.", "Hiện sát thương gây/nhận dưới từng nhân vật và lưu trong Phân tích số liệu, gồm tổng, trung bình và lịch sử từng trận. Sát thương tính theo HP thực tế; lịch sử cũ chưa có dữ liệu hiển thị dấu —."] },
+    { title: "Nhịp cuối trận", entries: ["Bỏ hoàn toàn việc bo tự trừ HP. Khi bo thu, tăng dần sát thương, di chuyển, nhịp đánh/bắn, tốc độ xoay và nạp Super; chỉ giao tranh mới hạ được đối thủ.", "Tăng trần bổ sung do bo: di chuyển +60%, nhịp đánh/xoay +150%, nạp Super +100%. Giữ giảm hồi phục sau khi bo khép; hồi máu từ đồng đội còn tối thiểu 35% hệ số nhịp trận, vẫn chịu giảm hồi phục từ trạng thái. Sau bo, nếu không có sát thương trong 15 giây, điều chỉnh nhỏ góc chuyển động gần ngang/dọc để tránh hai quân chạy song song mãi. Trận mới dùng engine v31."] },
+  ],
+}, {
   version: "2026.10.27.1",
   date: "2026-10-27",
   title: "Hòm thư và quà hệ thống",

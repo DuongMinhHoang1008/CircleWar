@@ -1,9 +1,9 @@
 {
-  "code": "A7YZYQUQ",
+  "code": "7L8SESFU",
   "players": 20,
   "actions": 27,
-  "websocketEvents": 33,
-  "replayFrames": 275,
+  "websocketEvents": 32,
+  "replayFrames": 217,
   "checks": [
     "room creation",
     "20 joins",
@@ -15,8 +15,8 @@
     "recorded replay chunks and checksums",
     "WebSocket reconnect"
   ],
-  "replayChunks": 8,
-  "replayCompressedBytes": 82000,
-  "replayStoredBase64Bytes": 109336,
-  "ticks": 820
+  "replayChunks": 7,
+  "replayCompressedBytes": 81130,
+  "replayStoredBase64Bytes": 108176,
+  "ticks": 646
 }

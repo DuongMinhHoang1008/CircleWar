@@ -12,27 +12,27 @@ import { div, normalize, UNIT, DIRECTIONS } from "./math";
 export type CombatTarget = Fighter | Construct;
 export const CONSTRUCT_BALANCE = {
   minion: {
-    speed: 440,
+    speed: 480,
     mass: 85,
     bounce: 110,
-    hpPercent: 12,
-    damagePercent: 25,
-    minHp: 35,
+    hpPercent: 15,
+    damagePercent: 35,
+    minHp: 42,
   },
   giant: {
     speed: 360,
     mass: 200,
     bounce: 105,
-    hpPercent: 60,
-    damagePercent: 70,
+    hpPercent: 70,
+    damagePercent: 90,
     minHp: 35,
   },
   turret: {
     speed: 0,
     mass: 250,
     bounce: 100,
-    hpPercent: 35,
-    damagePercent: 45,
+    hpPercent: 40,
+    damagePercent: 50,
     minHp: 20,
   },
 } as const;

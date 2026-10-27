@@ -1,5 +1,16 @@
 # Kiểm thử
 
+## v31 — 27/10/2026: thống kê hỗ trợ và cân bằng toàn roster
+
+- Release local `2026.10.27.2`, engine `chaos-integer-v31`. Thêm số damage theo nguồn, hồi HP/khiên/máu ảo, cài đặt lưu trên trình duyệt (damage mặc định tắt), số liệu hỗ trợ và sống tới cuối trong lịch sử/replay/JSON.
+- **267/267 tests pass** trên 28 file; TypeScript, Vite production build và Worker dry-run pass. Frontend vẫn có cảnh báo bundle lớn đã có từ trước.
+- Audit sau cân bằng: **15.312 trận**, 0 trận chưa kết thúc trong giới hạn 180 giây. 12.408 trận gốc gồm solo Lv1/Lv10 có/không đồ, 3v3 với đồng đội đối chứng và FFA luân phiên đủ sáu vị trí; 2.904 trận Lv10 với seed offset 7919 kiểm chứng riêng. Các lượt seed kiểm chứng không dùng để chọn thông số trong vòng hiệu chỉnh. Chi tiết trước/sau và support: [báo cáo](reports/roster-balance-v31.md), [CSV](reports/roster-balance-v31.csv), [JSON đầy đủ](reports/roster-balance-v31.json).
+- Chạy `npx tsx tests/performance/roster-audit.ts` để tái tạo cả mẫu gốc/kiểm chứng và báo cáo. `--aggregate-only` tổng hợp các phase đã có trong `test-results`; không chạy mô phỏng mới. `roster-report.ts` chỉ tổng hợp lại báo cáo. Baseline trước cân bằng lưu riêng trong `roster-balance-v31-before.json`.
+- 450 mẫu hộ vệ đối đầu: trung vị 32,87 giây, P95 40,63 giây, tối đa 53,9 giây, không kẹt. Bỏ sát thương môi trường; tăng nhịp bo và chỉnh góc rất nhỏ sau 15 giây không giao tranh để tránh quỹ đạo song song. Đây là mẫu offline, không phải win rate hay thời lượng người chơi thật.
+- Kiểm tra trình duyệt `settings-browser.ts` và `support-browser.ts`: công tắc độc lập, damage mặc định tắt, phân màu nguồn, số hồi/khiên, lịch sử hỗ trợ/hiệu ứng, xuất JSON, báo cáo đủ 33 nhân vật, desktop/mobile. `campaign-browser.ts`: 30 cấu hình và sáu trận hoàn tất trùng hash Node/Chrome. `campaign-tactics.ts`: 512 mẫu đội hình cùng cấp, mọi đối thủ được lấy mẫu có counter.
+- `tests/integration/local.ts`: 20 người chơi trên Worker local pass, gồm xác thực, quyền host, draw idempotency, replay nén/checksum và WebSocket reconnect; 217 frame trong 7 chunk, 81.130 byte nén. Kết quả trong `reports/integration.json`.
+- Không thay đổi cách hiển thị thông tin entry ải hoặc tăng chỉ số ẩn cho ải thường. Local web `http://127.0.0.1:5173`, Worker `http://127.0.0.1:8787`.
+
 ## v29 — 27/10/2026: hòm thư, vật lý đệ/trụ và đội hình ải
 
 - Release `2026.10.27.1`, engine `chaos-integer-v29`. TypeScript, frontend production build và Worker dry-run pass; 251/251 unit tests pass.

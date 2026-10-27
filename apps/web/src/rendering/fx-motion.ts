@@ -6,6 +6,7 @@ export const ARENA_LAYERS = {
   bodies: 30,
   portraits: 40,
   hud: 50,
+  damage: 60,
 } as const;
 
 const clamp = (value: number) => Math.max(0, Math.min(1, value));

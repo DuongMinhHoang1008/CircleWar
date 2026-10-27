@@ -1,6 +1,7 @@
 import { div } from "./math";
 import { TICK_RATE, type BattleState, type Fighter } from "./types";
 import { closingTempo } from "./pacing";
+import { recordEffect, recordHealing, recordDamage } from "./metrics";
 
 export type StatusKind =
   | "burn"
@@ -31,7 +32,7 @@ export const STATUS_RULES = {
   paralyzed: { label: "Paralyzed", power: 25, cap: 40, duration: 60 },
   blessing: { label: "Blessing", power: 4, cap: 30, duration: 90 },
   rage: { label: "Rage", power: 20, cap: 50, duration: 90 },
-  introvert: { label: "Hướng Nội", power: 25, cap: 25, duration: 60 },
+  introvert: { label: "Hướng Nội", power: 15, cap: 15, duration: 60 },
   diabetes: { label: "Tiểu Đường", power: 35, cap: 35, duration: 90 },
   myopia: { label: "Cận Thị", power: 30, cap: 35, duration: 90 },
   bleeding: { label: "Bleeding", power: 4, cap: 20, duration: 90 },
@@ -130,6 +131,7 @@ export function applyStatus(
       target: target.id,
       amount: power,
     });
+  recordEffect(source, target, kind, beneficial);
   return true;
 }
 
@@ -145,7 +147,12 @@ export const statusDamage = (f: Fighter, tick: number, raw: number) =>
     10000,
   );
 
-export function healingRate(f: Fighter, tick: number, shrinkSeconds?: number) {
+export function healingRate(
+  f: Fighter,
+  tick: number,
+  shrinkSeconds?: number,
+  fromAlly = false,
+) {
   let radiation = statusPower(f, "radiation", tick);
   for (const buff of f.buffs)
     if (buff.kind === "radiation" && buff.until > tick) radiation += buff.value;
@@ -153,7 +160,16 @@ export function healingRate(f: Fighter, tick: number, shrinkSeconds?: number) {
     35,
     100 - Math.min(3, radiation) * 8 - statusPower(f, "diabetes", tick),
   );
-  return shrinkSeconds === undefined ? rate : div(rate * closingTempo(tick, shrinkSeconds).recovery, 100);
+  return shrinkSeconds === undefined
+    ? rate
+    : div(
+        rate *
+          Math.max(
+            fromAlly ? 35 : 0,
+            closingTempo(tick, shrinkSeconds).recovery,
+          ),
+        100,
+      );
 }
 
 /** Runs before movement/attacks. Fixed-point carries avoid fractional HP and frame allocations. */
@@ -180,10 +196,16 @@ export function tickStatuses(s: BattleState) {
         effect.kind === "poison" ? 1 : effect.kind === "burn" ? 3 : 2;
       let rate = 100;
       if (effect.kind === "blessing" || effect.kind === "introvert")
-        rate = healingRate(target, s.tick, s.config.shrinkSeconds);
+        rate = healingRate(
+          target,
+          s.tick,
+          s.config.shrinkSeconds,
+          effect.source !== target.id &&
+            s.fighters[effect.source]?.team === target.team,
+        );
       const power =
         effect.kind === "introvert"
-          ? Math.max(1, div(target.baseStats.hp, 100))
+          ? Math.max(1, div(target.baseStats.hp * 8, 1000))
           : effect.kind === "radiation"
             ? effect.power * 2
             : effect.power;
@@ -196,6 +218,7 @@ export function tickStatuses(s: BattleState) {
       if (effect.kind === "blessing" || effect.kind === "introvert") {
         const healing = Math.min(target.stats.hp - target.hp, amount);
         target.hp += healing;
+        recordHealing(s.fighters[effect.source], target, healing);
         if (healing)
           s.events.push({
             tick: s.tick,
@@ -208,14 +231,17 @@ export function tickStatuses(s: BattleState) {
         const damage = Math.min(target.hp, amount),
           source = s.fighters[effect.source];
         target.hp -= damage;
+        if (damage > 0) s.lastDamageTick = s.tick;
         target.taken += damage;
         if (source && source.team !== target.team) source.dealt += damage;
+        recordDamage(source, target, damage, effect.kind);
         s.events.push({
           tick: s.tick,
           type: "hit",
           source: effect.source,
           target: target.id,
           amount: damage,
+          damageType: effect.kind,
         });
         if (!target.hp) {
           target.deadAt = s.tick;

@@ -3,7 +3,9 @@ import type {
   BattleState,
   Fighter,
   ReplayFrame,
+  CombatMetrics,
 } from "../../../packages/battle-engine/src/types";
+import { emptyCombatMetrics } from "../../../packages/battle-engine/src/metrics";
 
 export const ANALYTICS_KEY = "circlewar-battle-analytics-v1";
 export const ANALYTICS_LIMIT = 200;
@@ -16,6 +18,10 @@ export interface BattleUnit {
   level: number;
   equipment: string[];
   equipmentLevels: Record<string, number>;
+  combat?: { damage: number; taken: number };
+  support?: CombatMetrics;
+  survived?: boolean;
+  aliveTicks?: number;
 }
 export interface BattleSummary {
   version: string;
@@ -39,6 +45,14 @@ export function createBattleRecorder() {
   const seen = new Set<string>(),
     kills: BattleSummary["kills"] = [];
   const tactics = { bonds: 0, groups: 0 };
+  const damageSnapshots = new Map<
+    number,
+    { tick: number; damage: number; taken: number }
+  >();
+  const supportSnapshots = new Map<
+    number,
+    { tick: number; metrics: CombatMetrics }
+  >();
   return {
     observe(
       events: BattleState["events"],
@@ -76,7 +90,28 @@ export function createBattleRecorder() {
       fighters: Pick<Fighter, "id" | "team">[],
       team?: string,
     ) {
-      for (const frame of frames) this.observe(frame.events, fighters, team);
+      for (const frame of frames) {
+        this.observe(frame.events, fighters, team);
+        frame.damageStats?.forEach(([damage, taken], index) => {
+          const id = fighters[index]?.id;
+          if (
+            id !== undefined &&
+            frame.tick >= (damageSnapshots.get(id)?.tick ?? -1)
+          )
+            damageSnapshots.set(id, { tick: frame.tick, damage, taken });
+        });
+        frame.supportStats?.forEach((metrics, index) => {
+          const id = fighters[index]?.id;
+          if (
+            id !== undefined &&
+            frame.tick >= (supportSnapshots.get(id)?.tick ?? -1)
+          )
+            supportSnapshots.set(id, {
+              tick: frame.tick,
+              metrics: structuredClone(metrics),
+            });
+        });
+      }
     },
     finish(
       state: BattleState,
@@ -98,6 +133,21 @@ export function createBattleRecorder() {
           level: f.level,
           equipment: [...f.equipment],
           equipmentLevels: { ...f.equipmentLevels },
+          survived: f.hp > 0,
+          aliveTicks: f.deadAt < 0 ? state.tick : f.deadAt,
+          support: hideSeed
+            ? supportSnapshots.get(f.id)?.metrics
+            : f.metrics
+              ? structuredClone(f.metrics)
+              : undefined,
+          combat: hideSeed
+            ? damageSnapshots.has(f.id)
+              ? {
+                  damage: damageSnapshots.get(f.id)!.damage,
+                  taken: damageSnapshots.get(f.id)!.taken,
+                }
+              : undefined
+            : { damage: f.dealt, taken: f.taken },
         })),
         kills: [...kills].sort(
           (a, b) =>
@@ -128,6 +178,18 @@ function validRecord(value: unknown): value is BattleRecord {
         Number.isInteger(unit.id) &&
         typeof unit.characterId === "string" &&
         typeof unit.team === "string" &&
+        (unit.survived === undefined || typeof unit.survived === "boolean") &&
+        (unit.aliveTicks === undefined ||
+          (Number.isSafeInteger(unit.aliveTicks) &&
+            unit.aliveTicks >= 0 &&
+            unit.aliveTicks <= record.ticks)) &&
+        (unit.support === undefined || validSupport(unit.support)) &&
+        (unit.combat === undefined ||
+          (!!unit.combat &&
+            Number.isSafeInteger(unit.combat.damage) &&
+            unit.combat.damage >= 0 &&
+            Number.isSafeInteger(unit.combat.taken) &&
+            unit.combat.taken >= 0)) &&
         Number.isInteger(unit.level) &&
         Array.isArray(unit.equipment) &&
         unit.equipment.every((id) => typeof id === "string"),
@@ -152,6 +214,21 @@ export function readBattleRecords(storage: Storage): BattleRecord[] {
     return [];
   }
 }
+function validSupport(value: CombatMetrics) {
+  if (!value || typeof value !== "object") return false;
+  return Object.entries(emptyCombatMetrics()).every(([key, initial]) => {
+    const item = value[key as keyof CombatMetrics];
+    return typeof initial === "number"
+      ? Number.isSafeInteger(item) && (item as number) >= 0
+      : !!item &&
+          typeof item === "object" &&
+          !Array.isArray(item) &&
+          Object.keys(item).length <= 100 &&
+          Object.values(item).every(
+            (amount) => Number.isSafeInteger(amount) && amount >= 0,
+          );
+  });
+}
 export function saveBattleRecord(storage: Storage, record: BattleRecord) {
   const previous = readBattleRecords(storage);
   if (previous.some((item) => item.id === record.id)) return previous;
@@ -162,7 +239,20 @@ export function saveBattleRecord(storage: Storage, record: BattleRecord) {
 export function characterMetrics(records: BattleRecord[]) {
   const rows = new Map<
     string,
-    { id: string; games: number; wins: number; kills: number; deaths: number }
+    {
+      id: string;
+      games: number;
+      wins: number;
+      kills: number;
+      deaths: number;
+      damage: number;
+      taken: number;
+      damageGames: number;
+      survivors: number;
+      survivalGames: number;
+      support: CombatMetrics;
+      supportGames: number;
+    }
   >();
   for (const record of records)
     for (const unit of record.units) {
@@ -172,8 +262,39 @@ export function characterMetrics(records: BattleRecord[]) {
         wins: 0,
         kills: 0,
         deaths: 0,
+        damage: 0,
+        taken: 0,
+        damageGames: 0,
+        survivors: 0,
+        survivalGames: 0,
+        support: emptyCombatMetrics(),
+        supportGames: 0,
       };
       row.games++;
+      if (unit.survived !== undefined) {
+        row.survivalGames++;
+        row.survivors += Number(unit.survived);
+      }
+      if (unit.support) {
+        row.supportGames++;
+        for (const key of Object.keys(
+          unit.support,
+        ) as (keyof CombatMetrics)[]) {
+          const amount = unit.support[key];
+          if (typeof amount === "number")
+            (row.support[key] as number) += amount;
+          else {
+            const into = row.support[key] as Record<string, number>;
+            for (const [kind, count] of Object.entries(amount))
+              into[kind] = (into[kind] || 0) + count;
+          }
+        }
+      }
+      if (unit.combat) {
+        row.damage += unit.combat.damage;
+        row.taken += unit.combat.taken;
+        row.damageGames++;
+      }
       if (unit.team === record.winner) row.wins++;
       for (const kill of record.kills) {
         if (

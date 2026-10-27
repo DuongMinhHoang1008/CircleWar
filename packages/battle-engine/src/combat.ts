@@ -1,4 +1,9 @@
-import { projectileTargets, isConstruct, projectileHitsConstruct, hitConstruct } from "./constructs";
+import {
+  projectileTargets,
+  isConstruct,
+  projectileHitsConstruct,
+  hitConstruct,
+} from "./constructs";
 import type { BattleState, Fighter } from "./types";
 import { DIRECTIONS, div, normalize, random, UNIT } from "./math";
 import { capsuleHit } from "./physics";
@@ -8,6 +13,7 @@ import { alignedRangedTarget, isRanged } from "./weapons";
 import { retainCombatEvents } from "./events";
 import { kitMeleeConstructs } from "./kit-combat";
 import { closingTempo } from "./pacing";
+import { recordAbsorption, recordDamage, recordHealing } from "./metrics";
 import {
   isClashProtected,
   reverseWeaponSpin,
@@ -28,15 +34,35 @@ export function damage(
     isClashProtected(target, s.tick)
   )
     return false;
-  let amount = Math.max(1, Math.min(300, div(statusDamage(source, s.tick, raw) * closingTempo(s.tick, s.config.shrinkSeconds).damage * (100 - Math.min(60, target.stats.defense)), 10000)));
+  let amount = Math.max(
+    1,
+    Math.min(
+      300,
+      div(
+        statusDamage(source, s.tick, raw) *
+          closingTempo(s.tick, s.config.shrinkSeconds).damage *
+          (100 - Math.min(60, target.stats.defense)),
+        10000,
+      ),
+    ),
+  );
   const absorbed = Math.min(target.shield, amount);
   target.shield -= absorbed;
+  recordAbsorption(target, target, absorbed);
   amount -= absorbed;
   amount = Math.min(target.hp, amount);
   target.hp -= amount;
   target.taken += amount;
   source.dealt += amount;
-  s.events.push({ tick: s.tick, type: "hit", source: source.id, target: target.id, amount });
+  if (amount + absorbed > 0) s.lastDamageTick = s.tick;
+  recordDamage(source, target, amount);
+  s.events.push({
+    tick: s.tick,
+    type: "hit",
+    source: source.id,
+    target: target.id,
+    amount,
+  });
   charge[source.id] = Math.min(
     12,
     charge[source.id] + div((amount + 3) * source.stats.charge, 100),
@@ -57,15 +83,24 @@ export function damage(
     });
   }
   if (effects) {
-    if (source.classId === "frost") applyStatus(s, source, target, "frozen", 25, 30);
+    if (source.classId === "frost")
+      applyStatus(s, source, target, "frozen", 25, 30);
     if (source.stats.burn) {
       applyStatus(s, source, target, "burn", source.stats.burn, 60);
     }
-    if (source.classId === "berserker" && source.superUntil > s.tick)
+    if (source.classId === "berserker" && source.superUntil > s.tick) {
+      const before = source.hp;
       source.hp = Math.min(
         source.stats.hp,
-        source.hp + div(Math.min(8, div(amount, 4)) * closingTempo(s.tick, s.config.shrinkSeconds).recovery, 100),
+        source.hp +
+          div(
+            Math.min(8, div(amount, 4)) *
+              closingTempo(s.tick, s.config.shrinkSeconds).recovery,
+            100,
+          ),
       );
+      recordHealing(source, source, source.hp - before);
+    }
     if (target.stats.thorns && target.hp > 0) {
       const reflected = Math.min(6, target.stats.thorns, source.hp);
       if (!isClashProtected(source, s.tick)) {
@@ -123,7 +158,11 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
     const active = f.superUntil > s.tick;
     rotateWeaponAngle(f, active ? 2 : 1);
     if (isRanged(f)) {
-      if (f.nextAttack <= s.tick && alignedRangedTarget(s, f) && s.projectiles.length < 240) {
+      if (
+        f.nextAttack <= s.tick &&
+        alignedRangedTarget(s, f) &&
+        s.projectiles.length < 240
+      ) {
         shoot(s, f, f.memory.shotAngle);
         f.nextAttack = s.tick + attackCooldown(f, s.tick);
       }
@@ -148,8 +187,7 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
             continue;
           if (capsuleHit(ax, ay, bx, by, t.x, t.y, t.radius + 500)) {
             if (isClashProtected(t, s.tick)) continue;
-            f.cooldowns[w + ":" + t.id] =
-              s.tick + attackCooldown(f, s.tick);
+            f.cooldowns[w + ":" + t.id] = s.tick + attackCooldown(f, s.tick);
             f.hits++;
             let hit = f.stats.attack;
             if (f.classId === "swordsman" && f.hits % 4 === 0)
@@ -190,8 +228,18 @@ export function combat(s: BattleState, bounds: ArenaBounds = safeBounds(s)) {
     for (const t of projectileTargets(s, p, ox, oy)) {
       if (isConstruct(t)) {
         const hitId = -t.id - 1;
-        if (p.life > 0 && !p.hit.includes(hitId) && projectileHitsConstruct(s, f, t, p, ox, oy)) {
-          hitConstruct(s, f, t, div(f.stats.attack * (p.power || 100), 100), p.push || 180);
+        if (
+          p.life > 0 &&
+          !p.hit.includes(hitId) &&
+          projectileHitsConstruct(s, f, t, p, ox, oy)
+        ) {
+          hitConstruct(
+            s,
+            f,
+            t,
+            div(f.stats.attack * (p.power || 100), 100),
+            p.push || 180,
+          );
           if (p.normal) reverseWeaponSpin(f, s.tick);
           p.hit.push(hitId);
           if (p.pierce-- <= 0) p.life = 0;

@@ -4,8 +4,16 @@ import { safeBounds } from "./bounds";
 import { capsuleHit } from "./physics";
 import { applyStatus, statusPower, type StatusKind } from "./statuses";
 import { alignedRangedTarget } from "./weapons";
-import { CONSTRUCT_BALANCE, nearestOpponent, isConstruct, projectileTargets, projectileHitsConstruct, hitConstruct } from "./constructs";
+import {
+  CONSTRUCT_BALANCE,
+  nearestOpponent,
+  isConstruct,
+  projectileTargets,
+  projectileHitsConstruct,
+  hitConstruct,
+} from "./constructs";
 import { reverseWeaponSpin } from "./weapon-clash";
+import { recordEffectTick } from "./metrics";
 import type {
   BattleState,
   Fighter,
@@ -340,20 +348,20 @@ export function applyKitStats(s: BattleState, f: Fighter) {
   if ((name === "char_08" && live) || (name === "char_27" && live)) {
     f.stats.attack = Math.min(
       300,
-      div(f.stats.attack * (name === "char_08" ? 130 : 125), 100),
+      div(f.stats.attack * (name === "char_08" ? 130 : 145), 100),
     );
     f.stats.speed = Math.min(900, div(f.stats.speed * 120, 100));
   }
   if ((f.memory.fleeUntil || 0) > s.tick)
     f.stats.speed = Math.min(900, div(f.stats.speed * 125, 100));
   if (name === "char_17" && live)
-    f.stats.speed = Math.min(900, div(f.stats.speed * 160, 100));
+    f.stats.speed = Math.min(900, div(f.stats.speed * 145, 100));
   if (name === "char_10" && live)
     f.stats.speed = Math.min(900, div(f.stats.speed * 170, 100));
   if (name === "wacom")
     f.stats.cooldown = Math.ceil((f.stats.cooldown * 130) / 100);
   if (name === "char_27" && live)
-    f.stats.cooldown = Math.max(8, div(f.stats.cooldown * 100, 130));
+    f.stats.cooldown = Math.max(8, div(f.stats.cooldown * 100, 140));
   if (name === "char_23")
     f.stats.reach = Math.min(
       11000,
@@ -363,6 +371,7 @@ export function applyKitStats(s: BattleState, f: Fighter) {
 }
 export function kitAura(s: BattleState, f: Fighter) {
   let strongest = 0;
+  let giver: Fighter | undefined;
   for (const other of s.fighters)
     if (
       other !== f &&
@@ -372,8 +381,12 @@ export function kitAura(s: BattleState, f: Fighter) {
     ) {
       const g = growth(s, other);
       if (within(other, f, div(160 * g.auraRange, 100)))
-        strongest = Math.max(strongest, div(12 * g.buffPower, 100));
+        if (div(12 * g.buffPower, 100) > strongest) {
+          strongest = div(12 * g.buffPower, 100);
+          giver = other;
+        }
     }
+  if (giver) recordEffectTick(s, giver, f, "aura:attack", "buff");
   return strongest;
 }
 
@@ -398,21 +411,11 @@ function summon(s: BattleState, f: Fighter, kind: Construct["kind"]) {
   const summonStats = CONSTRUCT_BALANCE[kind];
   const hp = Math.max(
     summonStats.minHp,
-    div(
-      f.baseStats.hp *
-        summonStats.hpPercent *
-        g.summonHp,
-      10000,
-    ),
+    div(f.baseStats.hp * summonStats.hpPercent * g.summonHp, 10000),
   );
   const damage = Math.max(
     1,
-    div(
-      f.baseStats.attack *
-        summonStats.damagePercent *
-        g.summonDamage,
-      10000,
-    ),
+    div(f.baseStats.attack * summonStats.damagePercent * g.summonDamage, 10000),
   );
   const bounds = safeBounds(s),
     radius = kind === "giant" ? 1900 : 1100;
@@ -469,7 +472,7 @@ export function kitNormalHit(
     for (let layer = 0; layer < g.shieldCount; layer++)
       ctx.shield(s, f, f, Math.max(3, div(f.baseStats.hp * 4, 100)), 60);
   }
-  if (name === "char_16" && proc()) applyStatus(s, f, target, "frozen", 25, 60);
+  if (name === "char_16" && proc()) applyStatus(s, f, target, "frozen", 20, 45);
   if (name === "char_18" && proc()) applyStatus(s, f, target, "burn", 5, 90);
   if (name === "char_24" && proc()) randomDebuff(s, f, target);
   if (name === "char_27") applyStatus(s, f, target, "burn", proc() ? 6 : 3, 90);
@@ -482,20 +485,20 @@ export function kitNormalHit(
   )
     directLoss(s, f, Math.max(1, div(f.stats.attack, 5)));
   if (name === "fu_di" && (f.memory.laserReady || 0) <= s.tick && proc()) {
-    f.memory.laserReady = s.tick + 30;
-    beam(s, f, target, 60, 12, 260, ctx);
+    f.memory.laserReady = s.tick + 42;
+    beam(s, f, target, 45, 12, 260, ctx);
   }
 
   if (name === "char_33" && (f.memory.chickenReady || 0) <= s.tick && proc()) {
     if (
-      emit(s, f, kitAim(f, target), "chicken", 70, {
+      emit(s, f, kitAim(f, target), "chicken", 55, {
         life: 110,
         returnAfter: 20,
-        heal: div(f.baseStats.hp * 3 * g.heal, 10000),
+        heal: div(f.baseStats.hp * 2 * g.heal, 10000),
         pierce: 3,
       })
     )
-      f.memory.chickenReady = s.tick + 60;
+      f.memory.chickenReady = s.tick + 75;
   }
 }
 function directLoss(s: BattleState, f: Fighter, amount: number) {
@@ -682,6 +685,7 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
           if (t.team === f.team) {
             applyStatus(s, f, t, "rage", 10, 90);
             applyStatus(s, f, t, "blessing", 3, 90);
+            ctx.shield(s, f, t, Math.max(6, div(f.baseStats.hp * 5, 100)), 90);
             ctx.buff(s, t, "haste", 110, 90, -8100 - f.id);
           } else if (within(f, t, 180)) {
             applyStatus(s, f, t, "pressure", 20, 90);
@@ -716,15 +720,15 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
       success = radial("shrapnel", 8, 90, { push: 350 });
       break;
     case "char_16":
-      success = field(s, f, "paint", target.x, target.y, 160, 120, 35, {
+      success = field(s, f, "paint", target.x, target.y, 150, 120, 35, {
         start: 15,
         super: true,
       });
       break;
     case "char_17":
-      dash(s, f, target, 60, 1400);
-      f.memory.evadeUntil = s.tick + 60;
-      duration = 60;
+      dash(s, f, target, 42, 1400);
+      f.memory.evadeUntil = s.tick + 42;
+      duration = 42;
       break;
     case "char_18":
       success = field(s, f, "soup", f.x, f.y, 125, 120, 30, {
@@ -753,8 +757,8 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
       }
       break;
     case "char_21":
-      success = radial("air", 8, 110, { push: 700 });
-      if (success) ctx.shield(s, f, f, div(f.baseStats.hp * 12, 100), 90);
+      success = radial("air", 8, 95, { push: 700 });
+      if (success) ctx.shield(s, f, f, div(f.baseStats.hp * 10, 100), 90);
       break;
     case "char_22":
       for (const t of s.fighters)
@@ -797,7 +801,7 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
       applyStatus(s, f, f, "burn", 3, 90, true);
       break;
     case "fu_di":
-      beam(s, f, target, 210, 55, 340, ctx);
+      beam(s, f, target, 180, 45, 300, ctx);
       break;
     case "char_29":
       f.memory.burstLeft = 8;
@@ -817,7 +821,7 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
       });
       break;
     case "skyrocket":
-      success = radial("balloon", 3, 70, {
+      success = radial("balloon", 3, 60, {
         life: 120,
         radius: 1100,
         armedAfter: 8,
@@ -826,7 +830,7 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
       });
       break;
     case "char_31":
-      success = shot("rocket", 220, {
+      success = shot("rocket", 190, {
         radius: 1400,
         friendlyScale: 50,
         selfScale: 50,
@@ -841,17 +845,17 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
         target.y,
         div(175 * g.blastRadius, 100),
         120,
-        div(35 * g.dot, 100),
+        div(30 * g.dot, 100),
         { start: 15, super: true },
       );
       break;
     case "char_33":
-      success = shot("chicken", 160, {
+      success = shot("chicken", 125, {
         life: 130,
         returnAfter: 28,
         radius: 1500,
-        pierce: 8,
-        heal: div(f.baseStats.hp * 5 * g.heal, 10000),
+        pierce: 5,
+        heal: div(f.baseStats.hp * 4 * g.heal, 10000),
       });
       break;
   }
@@ -880,6 +884,7 @@ export function kitShoot(s: BattleState, f: Fighter) {
   switch (name) {
     case "char_03":
       kind = "fruit";
+      power = 90;
       options.bounces = g.bounces;
       options.life = 85;
       break;
@@ -894,6 +899,7 @@ export function kitShoot(s: BattleState, f: Fighter) {
       break;
     case "char_13":
       kind = "buffFruit";
+      options.pierce = 2;
       break;
     case "char_16":
       kind = "ink";
@@ -917,6 +923,7 @@ export function kitShoot(s: BattleState, f: Fighter) {
     case "wacom":
       kind = "wacom";
       power = 60;
+      options.pierce = 1;
       options.bounces = g.bounces;
       options.life = 70;
       break;
@@ -989,7 +996,7 @@ export function kitTick(s: BattleState, f: Fighter, ctx: KitCombatServices) {
     if (summon(s, f, "minion")) f.memory.nextSummon = s.tick + 120;
   }
   if (name === "char_11" && (f.memory.nextFlag || 0) <= s.tick) {
-    if (field(s, f, "flag", f.x, f.y, 85, div(120 * g.duration, 100), 0))
+    if (field(s, f, "flag", f.x, f.y, 100, div(120 * g.duration, 100), 0))
       f.memory.nextFlag = s.tick + Math.max(60, div(12000, g.haste));
   }
   if (name === "char_25" && (f.memory.nextStock || 0) <= s.tick) {
@@ -1035,6 +1042,7 @@ export function kitTick(s: BattleState, f: Fighter, ctx: KitCombatServices) {
         superShot: true,
         life: 70,
         bounces: name === "wacom" ? g.bounces : 0,
+        pierce: name === "wacom" ? 1 : 0,
         friendlyScale: name === "char_29" ? div(35 * g.friendlySafety, 100) : 0,
         selfScale: reflected ? 35 : 0,
         target: reflected ? f.id : undefined,
@@ -1067,7 +1075,7 @@ function plantImpact(s: BattleState, f: Fighter, p: Projectile) {
       p.y,
       div(55 * g.blastRadius, 100),
       75,
-      div(20 * g.dot, 100),
+      div(18 * g.dot, 100),
     );
 }
 function explode(
@@ -1111,7 +1119,7 @@ function explode(
     if (!scale) continue;
     const power =
       p.kit === "rocket" && p.superShot && !within(p, t, 130)
-        ? div((p.power || 220) * 80, 220)
+        ? div((p.power || 190) * 50, 190)
         : p.kit === "basket" && t.id !== main
           ? 60
           : p.power || 100;
@@ -1142,7 +1150,7 @@ function explode(
           div(
             f.stats.attack *
               (p.kit === "rocket" && p.superShot && !within(p, c, 130)
-                ? div((p.power || 220) * 80, 220)
+                ? div((p.power || 190) * 50, 190)
                 : p.power || 100),
             100,
           ),
@@ -1273,20 +1281,43 @@ export function tickKitProjectiles(s: BattleState, ctx: KitCombatServices) {
     for (const t of projectileTargets(s, p, ox, oy)) {
       if (isConstruct(t)) {
         const hitId = -t.id - 1;
-        if (p.life <= 0 || p.hit.includes(hitId) || (p.onHitReady?.[hitId] || 0) > s.tick || !projectileHitsConstruct(s, f, t, p, ox, oy)) continue;
-        const explosive = p.kit === "basket" || p.kit === "balloon" || (p.kit === "rocket" && p.superShot);
-        if (explosive) { explode(s, f, p, ctx); p.life = 0; }
-        else {
-          hitConstruct(s, f, t, div(f.stats.attack * (p.power || 100), 100), p.push || 180);
+        if (
+          p.life <= 0 ||
+          p.hit.includes(hitId) ||
+          (p.onHitReady?.[hitId] || 0) > s.tick ||
+          !projectileHitsConstruct(s, f, t, p, ox, oy)
+        )
+          continue;
+        const explosive =
+          p.kit === "basket" ||
+          p.kit === "balloon" ||
+          (p.kit === "rocket" && p.superShot);
+        if (explosive) {
+          explode(s, f, p, ctx);
+          p.life = 0;
+        } else {
+          hitConstruct(
+            s,
+            f,
+            t,
+            div(f.stats.attack * (p.power || 100), 100),
+            p.push || 180,
+          );
           if (p.normal) reverseWeaponSpin(f, s.tick);
           plantImpact(s, f, p);
           if (p.kit === "rose" || p.kit === "slipper") p.life = 0;
           else if (p.kit === "fruit" && (p.bounces || 0) > 0) {
-            p.bounces!--; p.vx = -p.vx; p.vy = -p.vy;
-            p.onHitReady ||= {}; p.onHitReady[hitId] = s.tick + 12;
+            p.bounces!--;
+            p.vx = -p.vx;
+            p.vy = -p.vy;
+            p.onHitReady ||= {};
+            p.onHitReady[hitId] = s.tick + 12;
             event(s, f, "kit:bounce");
             break;
-          } else { p.hit.push(hitId); if (p.pierce-- <= 0) p.life = 0; }
+          } else {
+            p.hit.push(hitId);
+            if (p.pierce-- <= 0) p.life = 0;
+          }
         }
         continue;
       }
@@ -1334,7 +1365,11 @@ export function tickKitProjectiles(s: BattleState, ctx: KitCombatServices) {
             t,
             Math.max(1, div(t.baseStats.hp * 2 * growth(s, f).heal, 10000)),
           );
-        else if (p.kit !== "rose") gift(s, f, t, ctx, !!p.superShot);
+        else if (p.kit !== "rose") {
+          gift(s, f, t, ctx, !!p.superShot);
+          if (p.kit === "buffFruit")
+            ctx.heal(s, f, t, Math.max(1, div(f.stats.attack * 65, 100)));
+        }
       } else {
         const scale = self
           ? p.selfScale || 0
@@ -1390,6 +1425,7 @@ export function tickKitProjectiles(s: BattleState, ctx: KitCombatServices) {
         break;
       } else {
         p.hit.push(t.id);
+        if (p.kit === "wacom" && id(f) === "wacom") p.bounces = 0;
         if (p.pierce-- <= 0) p.life = 0;
       }
     }
@@ -1454,13 +1490,17 @@ export function tickKitFields(s: BattleState, ctx: KitCombatServices) {
         ["rose", "flag", "fruit", "soup"].includes(z.kit)
       ) {
         if (z.kit !== "soup")
-          applyStatus(s, f, t, "rage", z.kit === "flag" ? 6 : 8, 6);
+          applyStatus(s, f, t, "rage", z.kit === "flag" ? 10 : 8, 6);
         if (pulse && ready) {
           ctx.heal(
             s,
             f,
             t,
-            z.kit === "soup" ? Math.max(1, div(f.baseStats.hp, 100)) : 3,
+            z.kit === "soup"
+              ? Math.max(1, div(f.baseStats.hp, 100))
+              : z.kit === "flag"
+                ? 5
+                : 3,
           );
           t.cooldowns[key] = s.tick + 15;
         }
@@ -1485,12 +1525,18 @@ export function tickConstructs(s: BattleState, ctx: KitCombatServices) {
       continue;
     }
     if (c.hp <= 0) continue;
-    const target = nearestOpponent(s, c, f.team, c.kind === "turret" ? 22000 : 100000);
+    const target = nearestOpponent(
+      s,
+      c,
+      f.team,
+      c.kind === "turret" ? 22000 : 100000,
+    );
     if (!target) continue;
     if (
       c.nextAttack > s.tick ||
       (c.kind !== "turret" &&
-        distance(c, target) > (c.radius + target.radius + 1000) ** 2)
+        distance(c, target) >
+          (c.radius + target.radius + (c.kind === "giant" ? 2000 : 1600)) ** 2)
     )
       continue;
     if (c.kind === "turret") {
@@ -1514,7 +1560,7 @@ export function tickConstructs(s: BattleState, ctx: KitCombatServices) {
         target.vy += div(dy * 120, UNIT);
       }
     } else ctx.damage(s, f, target, c.damage);
-    c.nextAttack = s.tick + (c.kind === "giant" ? 26 : 30);
+    c.nextAttack = s.tick + (c.kind === "turret" ? 30 : 24);
   }
   let write = 0;
   for (const c of s.constructs) {

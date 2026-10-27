@@ -1,8 +1,15 @@
 import type { Loadout, Stats } from "../../shared/src/balance";
 import type { TeamChoice } from "../../shared/src/catalog";
 import type { CombatStatus } from "./statuses";
-export const ENGINE_VERSION = "chaos-integer-v29";
+export const ENGINE_VERSION = "chaos-integer-v31";
+export type DamageType = "direct" | "burn" | "poison" | "bleeding" | "radiation";
 export const TICK_RATE = 30;
+export interface CombatMetrics {
+  healing: number; allyHealing: number; shielding: number; allyShielding: number;
+  shieldAbsorbed: number; allyShieldAbsorbed: number; buffsApplied: number; debuffsApplied: number;
+  selfEffects: number; controlTicks: number; allyBuffTicks: number; friendlyDamage: number;
+  effects: Record<string, number>; effectTicks: Record<string, number>; damageByType: Partial<Record<DamageType, number>>;
+}
 export interface BattleConfig {
   campaign?: { stage: number; enemyTeamId: string };
   teams: { id: string; name?: string; loadouts: Loadout[]; choice?: TeamChoice }[];
@@ -11,6 +18,7 @@ export interface BattleConfig {
   height: number;
 }
 export interface Fighter {
+  metrics?: CombatMetrics;
   boss?: boolean;
   id: number;
   team: string;
@@ -116,6 +124,7 @@ export interface Construct {
   hp: number; maxHp: number; damage: number; until: number; nextAttack: number;
 }
 export interface BattleState {
+  lastDamageTick?: number;
   version: string;
   config: BattleConfig;
   seed: number;
@@ -135,6 +144,8 @@ export interface BattleState {
     source: number;
     target: number;
     amount: number;
+    damageType?: DamageType;
+    shieldKind?: "shield" | "temporaryHp";
     x?: number;
     y?: number;
   }[];
@@ -177,6 +188,9 @@ export interface ReplayFrame {
   statuses?: CombatStatus[][];
   /** attack, speed, rotation, charge, cooldown, effective spin percentage */
   combatStats?: [number, number, number, number, number, number][];
+  /** Cumulative hostile HP damage dealt and all HP damage taken; optional on older recordings. */
+  damageStats?: [number, number][];
+  supportStats?: CombatMetrics[];
   constructs?: Construct[];
   kitProjectiles?: { id: number; kit: Projectile["kit"]; radius: number; returning?: boolean }[];
   /** id, owner, x, y; optional visual metadata keeps older frames readable. */

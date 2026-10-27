@@ -1,0 +1,122 @@
+.settings-page {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 42px);
+  border: 1px solid #ffffff21;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #26232a, #16191e);
+}
+.settings-heading > span {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: #edca87;
+  font-weight: 700;
+}
+.settings-heading h2 {
+  margin: 12px 0;
+  font-size: clamp(24px, 4vw, 35px);
+}
+.settings-heading p {
+  color: #aeb0b9;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.settings-options {
+  margin-top: 24px;
+}
+.settings-option {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 0;
+  margin: 0;
+  border-top: 1px solid #ffffff16;
+  cursor: pointer;
+}
+.settings-option-copy {
+  display: grid;
+  gap: 8px;
+}
+.settings-option-copy b {
+  color: #f4eadd;
+  font-size: 15px;
+}
+.settings-option-copy > span {
+  max-width: 570px;
+  color: #aeb0b9;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.settings-toggle {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 28px;
+  flex: 0 0 48px;
+}
+.settings-toggle input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+.settings-toggle > span {
+  position: absolute;
+  inset: 0;
+  border-radius: 30px;
+  background: #3a3c46;
+  border: 1px solid #ffffff20;
+  transition: background 0.18s;
+}
+.settings-toggle > span::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: #afb3be;
+  transition:
+    transform 0.18s,
+    background 0.18s;
+}
+.settings-toggle input:checked + span {
+  background: #c8a36a;
+}
+.settings-toggle input:checked + span::after {
+  background: #fff5df;
+  transform: translateX(20px);
+}
+.settings-toggle input:focus-visible + span {
+  outline: 2px solid #ffe8b8;
+  outline-offset: 4px;
+}
+.settings-option.disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.settings-option.disabled input {
+  cursor: default;
+}
+@media (prefers-reduced-motion: reduce) {
+  .settings-toggle > span,
+  .settings-toggle > span::after {
+    transition: none;
+  }
+}
+
+.settings-damage-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 12px;
+}
+.settings-damage-colors small {
+  font-size: 11px;
+  font-weight: 700;
+}

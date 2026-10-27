@@ -79,28 +79,28 @@ describe("v26 kit interactions", () => {
     advance(s, 18);
     expect(statusPower(enemy, "burn", s.tick)).toBe(5);
   });
-  it("Gift Box summons on a four-second timer without making any attacks", () => {
+  it("Gift Box starts at three seconds then summons every four seconds without attacks", () => {
     const s = fixture("char_14"),
       f = s.fighters[0];
-    s.tick = 119;
+    s.tick = 89;
     characterCombat(s);
     expect(s.constructs).toHaveLength(0);
-    s.tick = 120;
+    s.tick = 90;
     characterCombat(s);
     expect(s.constructs.filter((c) => c.kind === "minion")).toHaveLength(1);
     expect(f.hits).toBe(0);
-    s.tick = 240;
+    s.tick = 210;
     characterCombat(s);
     expect(s.constructs.filter((c) => c.kind === "minion")).toHaveLength(2);
-    s.tick = 360;
+    s.tick = 330;
     characterCombat(s);
     expect(s.constructs.filter((c) => c.kind === "minion")).toHaveLength(2);
     f.hp = 0;
     f.deadAt = s.tick;
-    s.tick = 480;
+    s.tick = 450;
     characterCombat(s);
     expect(s.constructs.filter((c) => c.kind === "minion")).toHaveLength(2);
-    expect(f.memory.nextSummon).toBe(480);
+    expect(f.memory.nextSummon).toBe(450);
   });
   it("a normal projectile hits after its owner dies and may earn a posthumous kill", () => {
     const s = fixture("char_05"),

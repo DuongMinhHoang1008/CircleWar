@@ -1,5 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  collectDamageNumbers,
+  collectConstructDamageNumbers,
+  damageNumberMotion,
+  DAMAGE_NUMBER_LIFE,
+  DAMAGE_NUMBER_LIMIT,
+  DAMAGE_PALETTE,
+  SUPPORT_PALETTE,
+  COMBAT_PALETTE,
+  COMBAT_NUMBER_TYPES,
+  collectSupportNumbers,
+  isRecoveryNumber,
+  type DamageNumber,
+} from "./damage-numbers";
+import {
   Application,
   Graphics,
   Text,
@@ -19,6 +33,7 @@ import {
   weaponReach,
   stepBattle,
   closingTempo,
+  STATUS_RULES,
   type ReplayFrame,
   type BattleConfig,
   type BattleState,
@@ -288,6 +303,8 @@ function replayStateAt(
     fighter.facing = (t < 0.5 ? from[15] : to[15]) || 1;
     fighter.buffs = structuredClone(a.buffs[i] || []);
     fighter.statuses = structuredClone(a.statuses?.[i] || []);
+    if (a.damageStats?.[i]) [fighter.dealt, fighter.taken] = a.damageStats[i];
+    fighter.metrics = a.supportStats?.[i] ? structuredClone(a.supportStats[i]) : undefined;
     const combatStats = a.combatStats?.[i];
     if (combatStats) {
       [
@@ -348,6 +365,9 @@ export function Arena({
   offset = 0,
   muted,
   low,
+  showEffects = true,
+  showDamage = false,
+  showRecovery = true,
   onError,
   onInspect,
   onFinished,
@@ -364,6 +384,9 @@ export function Arena({
   offset?: number;
   muted: boolean;
   low: boolean;
+  showEffects?: boolean;
+  showDamage?: boolean;
+  showRecovery?: boolean;
   onError: (s: string) => void;
   onInspect?: (fighter: Fighter, tick: number) => void;
   onFinished?: (teamId: string) => void;
@@ -376,6 +399,9 @@ export function Arena({
     options = useRef({
       muted,
       low,
+      showEffects,
+      showDamage,
+      showRecovery,
       onError,
       offset,
       onInspect,
@@ -389,6 +415,9 @@ export function Arena({
   options.current = {
     muted,
     low,
+    showEffects,
+    showDamage,
+    showRecovery,
     onError,
     offset,
     onInspect,
@@ -400,6 +429,7 @@ export function Arena({
     watchedTeamId,
   };
   const [fighters, setFighters] = useState<Fighter[]>([]);
+  const [hasDamageStats, setHasDamageStats] = useState(replay?.format !== 1);
   const [hud, setHud] = useState({
     tick: 0,
     alive: 0,
@@ -616,13 +646,34 @@ export function Arena({
       const bodyGraphics = new Graphics();
       const constructGraphics = new Graphics();
       const hudGraphics = new Graphics();
-      const trails = new Graphics();
-      const particles = new Graphics();
-      const ambientFx = new Graphics();
+      const trails = new Graphics({ label: "weapon-trails" });
+      const particles = new Graphics({ label: "effect-particles" });
+      const ambientFx = new Graphics({ label: "ambient-effects" });
       layers.ground.addChild(g);
       layers.combat.addChild(trails);
       layers.bodies.addChild(constructGraphics, bodyGraphics);
       layers.hud.addChild(hudGraphics);
+      const damageNodes = Array.from({ length: DAMAGE_NUMBER_LIMIT }, () => {
+        const text = new Text({
+          label: "damage-number",
+          text: "",
+          style: {
+            fontFamily: "Arial",
+            fontSize: 18,
+            fontWeight: "900",
+            fill: 0xffefbc,
+            stroke: { color: 0x20161a, width: 4, join: "round" },
+          },
+        });
+        text.anchor.set(0.5, 1);
+        text.visible = false;
+        layers.damage.addChild(text);
+        return text;
+      });
+      let damagePopups: DamageNumber[] = [];
+      let constructHealth = new Map(
+        state.constructs.map((c) => [c.id, { ...c }]),
+      );
       const statusNodes = state.fighters.map(() =>
         Array.from({ length: 3 }, () => {
           const sprite = new Sprite(animatedFx.passiveBurst[0]);
@@ -870,6 +921,7 @@ export function Arena({
         rotation = 0,
         characterId?: string,
       ) => {
+        if (!options.current.showEffects) return;
         const index = effectCursor++ % effectNodes.length;
         const sprite = effectNodes[index];
         sprite.texture = textureForEffect(kind, characterId);
@@ -1115,6 +1167,80 @@ export function Arena({
             : current;
         };
         const clashed = new Set<number>();
+        const effects = options.current.showEffects;
+        trails.visible = particles.visible = ambientFx.visible = effects;
+        damagePopups = damagePopups.filter(
+          (p) =>
+            visualTick - p.tick < DAMAGE_NUMBER_LIFE &&
+            (isRecoveryNumber(p.type)
+              ? options.current.showRecovery
+              : options.current.showDamage),
+        );
+        if (options.current.showDamage || options.current.showRecovery) {
+          const incoming = [
+            ...(options.current.showDamage
+              ? collectDamageNumbers(
+                  state.events,
+                  state.fighters,
+                  lastFxTick,
+                  state.tick,
+                )
+              : []),
+            ...(options.current.showDamage
+              ? collectConstructDamageNumbers(
+                  state.events,
+                  state.constructs,
+                  constructHealth,
+                  lastFxTick,
+                  state.tick,
+                )
+              : []),
+            ...(options.current.showRecovery
+              ? collectSupportNumbers(
+                  state.events,
+                  state.fighters,
+                  lastFxTick,
+                  state.tick,
+                )
+              : []),
+          ];
+          for (const popup of incoming) {
+            const existing = damagePopups.find((p) => p.key === popup.key);
+            if (existing) existing.amount += popup.amount;
+            else damagePopups.push(popup);
+          }
+          damagePopups = damagePopups.slice(-DAMAGE_NUMBER_LIMIT);
+        }
+        constructHealth = new Map(
+          state.constructs.map((c) => [c.id, { ...c }]),
+        );
+        damageNodes.forEach((text, i) => {
+          const popup = damagePopups[i];
+          text.visible = !!popup;
+          if (!popup) return;
+          const motion = damageNumberMotion(
+            visualTick - popup.tick,
+            popup.lane,
+          );
+          const palette = COMBAT_PALETTE[popup.type];
+          text.text = `${popup.type === "direct" ? "" : palette.label + " "}${isRecoveryNumber(popup.type) ? "+" : "−"}${popup.amount}`;
+          text.style.fill = palette.color;
+          text.style.fontSize =
+            popup.type === "direct" ? (popup.amount >= 60 ? 22 : 18) : 15;
+          text.position.set(
+            Math.max(28, Math.min(viewWidth - 28, popup.x * sx + motion.x)),
+            Math.max(
+              28,
+              Math.max(46, popup.y * sy - popup.radius * sy - 19) -
+                motion.rise -
+                (popup.type === "direct"
+                  ? 0
+                  : COMBAT_NUMBER_TYPES.indexOf(popup.type) * 12),
+            ),
+          );
+          text.alpha = motion.alpha;
+          text.scale.set(motion.scale);
+        });
         for (const e of state.events) {
           if (e.tick <= lastFxTick || e.tick > state.tick) continue;
           const source = state.fighters[e.source],
@@ -1277,11 +1403,7 @@ export function Arena({
         const shrinking =
           state.tick > Math.min(900, config.shrinkSeconds * 15) &&
           state.tick < config.shrinkSeconds * 30;
-        const pressure = closingTempo(
-          state.tick,
-          config.shrinkSeconds,
-        ).pressure;
-        const wallColor = pressure ? 0xff6d69 : 0xf6ad13;
+        const wallColor = 0xf6ad13;
         const wallPulse = shrinking
           ? 0.5 + Math.sin(state.tick * 0.22) * 0.5
           : 0;
@@ -1304,7 +1426,7 @@ export function Arena({
           .rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
           .stroke({ color: wallColor, width: 5, alpha: 0.25 })
           .rect(inset, insetY, viewWidth - 2 * inset, viewHeight - 2 * insetY)
-          .stroke({ color: pressure ? 0xff9385 : 0xf9de0b, width: 2 });
+          .stroke({ color: 0xf9de0b, width: 2 });
         zoneNodes.forEach((sprite, i) => {
           const z = state.zones[i];
           if (!z) {
@@ -1436,7 +1558,11 @@ export function Arena({
                 0xb5f3ff,
                 0.22,
               );
-            } else if (state.tick >= (z.start || 0) && !options.current.low) {
+            } else if (
+              effects &&
+              state.tick >= (z.start || 0) &&
+              !options.current.low
+            ) {
               const radius = (z.radius || 50) * 100 * sx;
               const phase = (visualTick * 0.018 + i * 0.37) % 1;
               g.circle(
@@ -1540,7 +1666,7 @@ export function Arena({
         for (const e of state.events) {
           const age = visualTick - e.tick,
             source = state.fighters[e.source];
-          if (age < 0 || age > 12 || !source) continue;
+          if (!effects || age < 0 || age > 12 || !source) continue;
           if (e.type === "kit:beam" && e.x !== undefined && e.y !== undefined)
             g.moveTo(source.x * sx, source.y * sy)
               .lineTo(e.x * sx, e.y * sy)
@@ -1587,6 +1713,11 @@ export function Arena({
         });
         effectNodes.forEach((sprite, i) => {
           const fx = effectData[i];
+          if (!effects) {
+            sprite.visible = effectBlends[i].visible = false;
+            fx.active = false;
+            return;
+          }
           if (!fx.active) return;
           const blend = effectBlends[i];
           const progress = (visualTick - fx.tick) / fx.life;
@@ -1714,17 +1845,21 @@ export function Arena({
                 e.type.startsWith("bond:") ||
                 e.type.startsWith("item:") ||
                 e.type.startsWith("affinity:") ||
+                e.type.startsWith("status:") ||
                 e.type.startsWith("group:")),
           )
           .slice(-10);
         callouts.forEach((text, i) => {
           const e = shown[i];
-          text.visible = !!e;
+          text.visible = effects && !!e;
           if (!e) return;
-          const f = state.fighters[e.source],
-            c = character(f.characterId),
+          const f =
+              state.fighters[
+                e.type.startsWith("status:") ? e.target : e.source
+              ],
             age = visualTick - e.tick;
           if (!f) return;
+          const c = character(f.characterId);
           let label =
             e.type === "clash"
               ? "⚔ CLASH!"
@@ -1754,6 +1889,17 @@ export function Arena({
                                 ? "THẾ CỜ VƯỜN HỒNG"
                                 : "HIỆU ỨNG ĐỒ";
           text.text = label;
+          const status = e.type.startsWith("status:")
+            ? (e.type.slice(7) as keyof typeof STATUS_RULES)
+            : undefined;
+          if (status && STATUS_RULES[status])
+            text.text = STATUS_RULES[status].label;
+          text.style.fill =
+            status && status in DAMAGE_PALETTE
+              ? DAMAGE_PALETTE[status as keyof typeof DAMAGE_PALETTE].color
+              : status === "blessing"
+                ? SUPPORT_PALETTE.heal.color
+                : 0xffe28b;
           text.position.set(
             Math.max(
               70,
@@ -1859,6 +2005,7 @@ export function Arena({
             icon.tint = slot === 0 && radiated ? 0xbfea60 : 0xffffff;
             icon.visible =
               f.hp > 0 &&
+              options.current.showEffects &&
               !options.current.low &&
               (slot === 0
                 ? burning && radiated
@@ -1892,7 +2039,7 @@ export function Arena({
                   ? "characterSkill"
                   : null;
           // Persistent auras are living outlines, never a scaled explosion texture.
-          if (f.hp > 0 && !options.current.low) {
+          if (effects && f.hp > 0 && !options.current.low) {
             const fireActive =
               f.burnUntil > state.tick ||
               f.statuses.some(
@@ -1936,7 +2083,10 @@ export function Arena({
               const hit = hitImpulses.get(f.id);
               const hitAge = hit ? visualTick - hit.tick : 100;
               const recoil =
-                !options.current.low && hitAge >= 0 && hitAge < 6
+                options.current.showEffects &&
+                !options.current.low &&
+                hitAge >= 0 &&
+                hitAge < 6
                   ? (1 - hitAge / 6) ** 2
                   : 0;
               const squash =
@@ -2050,7 +2200,11 @@ export function Arena({
               }
               continue;
             }
-            if (!options.current.low && Math.abs(heading.velocity) > 0.01) {
+            if (
+              options.current.showEffects &&
+              !options.current.low &&
+              Math.abs(heading.velocity) > 0.01
+            ) {
               const angle = renderAngle;
               const spin = Math.sign(heading.velocity) || 1;
               const trailRadius = reach * 0.92,
@@ -2292,7 +2446,10 @@ export function Arena({
         heard = events.length;
         const shakeAge = visualTick - shakeAt;
         const shake =
-          !options.current.low && shakeAge >= 0 && shakeAge < 10
+          options.current.showEffects &&
+          !options.current.low &&
+          shakeAge >= 0 &&
+          shakeAge < 10
             ? shakeAmount * (1 - shakeAge / 10) ** 2
             : 0;
         instance.stage.position.set(
@@ -2376,6 +2533,12 @@ export function Arena({
             result: state.finished ? winningTeam : "",
           });
           setFighters(structuredClone(state.fighters));
+          setHasDamageStats(
+            replay?.format !== 1 ||
+              frames.some(
+                (frame) => frame.tick <= state.tick && !!frame.damageStats,
+              ),
+          );
           hudTime = now;
         }
         last = now;
@@ -2408,23 +2571,16 @@ export function Arena({
         </span>
       </div>
       {closing.active && !hud.result && (
-        <div
-          className={`arena-closing ${closing.pressure ? "critical" : ""}`}
-          role="status"
-        >
+        <div className="arena-closing" role="status">
           <b>
-            {closing.pressure
-              ? "ÁP LỰC BO"
-              : hud.tick >= config.shrinkSeconds * 30
-                ? "QUYẾT ĐẤU"
-                : "BO ĐANG THU"}
+            {hud.tick >= config.shrinkSeconds * 30
+              ? "QUYẾT ĐẤU"
+              : "BO ĐANG THU"}
           </b>
           <span>
             Sát thương ×{(closing.damage / 100).toFixed(1)} · Hồi máu/khiên còn{" "}
             {closing.recovery}%
-            {closing.pressure
-              ? ` · Mất ${closing.pressure}% HP tối đa/giây, xuyên khiên`
-              : ""}
+            {` · Di chuyển ×${(closing.speed / 100).toFixed(1)} · Nhịp đánh/xoay ×${(closing.haste / 100).toFixed(1)}`}
           </span>
         </div>
       )}
@@ -2490,6 +2646,12 @@ export function Arena({
                 CHARACTERS[f.classId].name}
               <br />
               {f.hp} HP · {f.energy}⚡
+              <small className="fighter-damage">
+                ST gây: {hasDamageStats ? f.dealt.toLocaleString("vi-VN") : "—"}{" "}
+                · ST nhận:{" "}
+                {hasDamageStats ? f.taken.toLocaleString("vi-VN") : "—"}
+              </small>
+              {f.metrics && <small className="fighter-support">Hồi ĐĐ: {f.metrics.allyHealing.toLocaleString("vi-VN")} · Đỡ ĐĐ: {f.metrics.allyShieldAbsorbed.toLocaleString("vi-VN")} · KC: {(f.metrics.controlTicks / 30).toFixed(1)}s</small>}
             </span>
           </button>
         ))}
