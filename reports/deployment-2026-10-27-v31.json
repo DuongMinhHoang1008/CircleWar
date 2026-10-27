@@ -1,0 +1,24 @@
+{
+  "time": "2026-10-27T10:45:58.452615+00:00",
+  "status": "PASS",
+  "commit": "489e53733a3ae285817e82efc7a4d650b94dd82a",
+  "release": "2026.10.27.2",
+  "engine": "chaos-integer-v31",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "pagesDeployment": "https://6b3165ac.riseon-ultimate-battle.pages.dev",
+  "workerVersion": "4fe83438-3e66-4aef-b36e-199c68b387b8",
+  "checks": [
+    "267 tests",
+    "typecheck and production build",
+    "15312 roster simulations with held-out seeds",
+    "512 campaign samples",
+    "20-player local Worker integration",
+    "production health and CORS",
+    "production mailbox/profile persistence",
+    "production room and WebSocket",
+    "production settings persistence and damage default off",
+    "33-character balance report and mobile layout",
+    "no browser page errors"
+  ]
+}

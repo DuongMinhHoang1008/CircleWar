@@ -6,13 +6,14 @@ Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không 
 
 - Website: https://riseon-ultimate-battle.pages.dev
 - API: https://circle-chaos.circle-chaos.workers.dev
-- Engine: `chaos-integer-v29`, giao diện v`2026.10.27.1`, triển khai ngày 27/10/2026 từ commit `9a0fa6e` trên `main`.
-- Worker version: `f907f292-2cba-427c-b709-389c890ff76e`.
-- Pages deployment: https://bbc93a86.riseon-ultimate-battle.pages.dev.
-- Bản này gồm hòm thư quà tân thủ/cập nhật với giới hạn hàng chờ, rarity gốc ở kết quả mở pack, VFX nhiều lớp và clash đổi chiều ngay. Đệ chuyển động bi-a có collider; trụ tròn đứng yên. Quyết đấu cuối trận tăng nhịp và áp lực bo. Đi ải có tám lối đánh với cách phối đội/trang bị tăng dần; giữ nguyên thông tin trước ải, chỉ số thường và quy tắc boss.
-- Trước deploy: 251/251 tests, typecheck, frontend production build và Worker dry-run pass. Mẫu 512 trận ải cùng Lv.10 trên hai phía xuất phát có counter và khác biệt theo build; không phải win rate người chơi thật. Node/Chromium sinh cùng 30 cấu hình ải và sáu hash trận hoàn tất. Chi tiết tại `TESTING.md`.
-- Browser smoke trên origin production pass: release mới, health/CORS, nhận thư tân thủ và lưu lịch sử qua reload, hồ sơ kết nối lại, popup căn giữa desktop/mobile, mô phỏng sân vuông/20 giây, màu đội và bốn atlas tải 200; không page error. Phòng/WebSocket thử hoạt động và được rời sau kiểm tra. Báo cáo `reports/production-browser-v29.json` và `reports/deployment-2026-10-27.json`. Ảnh local ở `test-results/production-v29/deployment-v29.png`.
-- Vòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng; giữ hồ sơ/bộ sưu tập, chủ phòng mở trận mới qua REMATCH. Replay format 1 đã hoàn thành vẫn được đọc từ frame lưu sẵn; không xác nhận tương thích mọi bản replay lịch sử. Các báo cáo v26 trong `reports/` là kết quả triển khai trước.
+- Engine: `chaos-integer-v31`, giao diện v`2026.10.27.2`, triển khai ngày 27/10/2026 từ commit `489e537` trên `main`.
+- Worker version: `4fe83438-3e66-4aef-b36e-199c68b387b8`.
+- Pages deployment: https://6b3165ac.riseon-ultimate-battle.pages.dev.
+- Bản này cân bằng roster, tăng hiệu quả đệ và hỗ trợ, giảm các bộ chiêu vượt trội; thêm thống kê hồi máu/khiên/buff/debuff/khống chế/sống tới cuối. Cài đặt tự lưu, số damage mặc định tắt, màu riêng theo nguồn damage và số HP/khiên/máu ảo. Bo chỉ tăng nhịp, không tự trừ HP; giữ thông tin entry ải.
+- Trước deploy: 267/267 tests, typecheck, production frontend build và Worker dry-run pass. Audit 15.312 trận mô phỏng gồm seed kiểm chứng riêng, 0 trận quá 180 giây; 512 mẫu ải có counter. Multiplayer 20 người local, replay nén/checksum và WebSocket reconnect pass. Chi tiết tại `TESTING.md` và `reports/roster-balance-v31.md`.
+- Browser smoke production pass: release, API/CORS, hồ sơ và nhận thư lưu qua reload, phòng/WebSocket, sân vuông/20 giây và bốn atlas tải thành công; không page error. Báo cáo `reports/production-browser-v31.json`. Phòng thử được rời sau kiểm tra.
+- Cài đặt production có năm công tắc, damage mặc định tắt và thay đổi lưu qua reload; báo cáo cân bằng đủ 33 nhân vật, năm so sánh trước/sau, mặc định đấu đội Lv.10 và không tràn ngang mobile. Báo cáo `reports/production-settings-v31.json`; metadata triển khai `reports/deployment-2026-10-27-v31.json`.
+- Vòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng; giữ hồ sơ/bộ sưu tập, chủ phòng mở trận mới qua REMATCH. Replay format 1 đã hoàn thành vẫn được đọc từ frame lưu sẵn. Báo cáo v29 trong `reports/` được giữ làm lịch sử.
 
 Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:
 

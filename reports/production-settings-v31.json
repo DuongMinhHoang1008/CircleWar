@@ -1,0 +1,18 @@
+{
+  "time": "2026-10-27T10:45:48.227Z",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "release": "2026.10.27.2",
+  "engine": "chaos-integer-v31",
+  "battles": 15312,
+  "checks": [
+    "five settings switches",
+    "damage disabled by default",
+    "recovery and effects enabled",
+    "preference persisted after reload",
+    "33 characters and five comparisons",
+    "Lv10 team report selected by default",
+    "mobile width",
+    "no browser errors"
+  ],
+  "errors": []
+}

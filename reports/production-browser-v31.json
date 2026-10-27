@@ -1,0 +1,19 @@
+{
+  "version": "2026.10.27.2",
+  "engine": "chaos-integer-v31",
+  "time": "2026-10-27T10:43:12.122Z",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "centeredPopup": true,
+  "verticalWeapons": true,
+  "profileRestored": true,
+  "mailboxClaimPersisted": true,
+  "websocket": true,
+  "generatedAtlases": [
+    "constructs",
+    "objects",
+    "vfx",
+    "weapons"
+  ],
+  "errors": []
+}
