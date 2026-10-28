@@ -23,6 +23,22 @@ function ready(s: RoomState) {
     s = applyAction(s, p.id, { type: "READY", ready: true }, 100);
   return applyAction(s, s.host, { type: "START" }, 100);
 }
+it.each(["pvp", "campaign"] as const)(
+  "rolls a new server seed for %s rematches and rounds",
+  (mode) => {
+    let s = lobby(mode === "campaign" ? 1 : 2);
+    if (mode === "campaign") s.mode = "campaign";
+    s = ready(s);
+    const firstSeed = s.simulation!.seed;
+    s.phase = "FINISHED";
+    s = applyAction(s, s.host, { type: "REMATCH" }, 200);
+    s = ready(s);
+    expect(s.simulation!.seed).not.toBe(firstSeed);
+    const rematchSeed = s.simulation!.seed;
+    lock(s, 300);
+    expect(s.simulation!.seed).not.toBe(rematchSeed);
+  },
+);
 it("migrates an existing lobby timer into a wall schedule", () => {
   let s = lobby();
   const legacy = s.settings as unknown as Record<string, unknown>;
@@ -64,11 +80,20 @@ it("cancels an incompatible persisted round without changing collections or rewa
   expect(cancelled.results).toEqual([]);
   expect(cancelled.replayFrames).toEqual([]);
   expect(cancelled.deadline).toBe(0);
-  expect(cancelled.players).toEqual(players.map((p) => ({ ...p, ready: false })));
+  expect(cancelled.players).toEqual(
+    players.map((p) => ({ ...p, ready: false })),
+  );
   expect(original.simulation?.version).toBe("chaos-integer-v24");
   settle(cancelled, original.deadline + 1);
-  expect(cancelled.players).toEqual(players.map((p) => ({ ...p, ready: false })));
-  const rematch = applyAction(cancelled, cancelled.host, { type: "REMATCH" }, 200);
+  expect(cancelled.players).toEqual(
+    players.map((p) => ({ ...p, ready: false })),
+  );
+  const rematch = applyAction(
+    cancelled,
+    cancelled.host,
+    { type: "REMATCH" },
+    200,
+  );
   const restarted = ready(rematch);
   expect(restarted.phase).toBe("SIMULATING");
   expect(restarted.simulation?.version).not.toBe("chaos-integer-v24");

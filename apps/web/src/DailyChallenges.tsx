@@ -70,7 +70,7 @@ export function DailyChallenges({
         <div className="section-heading">
           <h2>Đội của bạn</h2>
           <span className="saved-team-note">
-            Tự lưu riêng cho thử thách {opponent + 1}
+            Tự lưu · dùng chung cho cả 3 thử thách
           </span>
         </div>
         <TeamSummary units={team} inspect={inspect} />

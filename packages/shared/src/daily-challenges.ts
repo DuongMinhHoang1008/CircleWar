@@ -50,6 +50,28 @@ export interface DailyChallengeProgress {
   selected: number;
   teams: Record<string, Loadout[]>;
 }
+/** Read old per-opponent saves, preferring the most recently selected build. */
+export function savedDailyTeam(
+  progress?: DailyChallengeProgress,
+  day = challengeDay(),
+): Loadout[] {
+  if (progress?.day === day)
+    for (const id of [String(progress.selected), "0", "1", "2"])
+      try {
+        if (progress.teams[id]) return legalDailyTeam(progress.teams[id], day);
+      } catch {}
+  return defaultDailyTeam(day);
+}
+
+/** Keep the existing profile format compatible while sharing one build across all opponents. */
+export function saveDailyTeam(
+  team: Loadout[],
+  selected: number,
+  day = challengeDay(),
+): DailyChallengeProgress {
+  const legal = legalDailyTeam(team, day);
+  return { day, selected, teams: { "0": legal, "1": legal, "2": legal } };
+}
 export function validDailyProgress(v: DailyChallengeProgress) {
   if (
     !v ||

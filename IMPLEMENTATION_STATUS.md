@@ -1,8 +1,8 @@
 # Trạng thái triển khai
 
-## Hiện hành — 2026.10.28.1 / engine v34
+## Hiện hành — 2026.10.28.2 / engine v34
 
-Đã hoàn tất bản local: Kho đồ tinh gọn; thử thách ngày với pool 9 nhân vật và đội tự lưu; viễn chinh roguelike 12 tầng, một lần thua mất run; tổng thưởng 150 pack + 15 Pack Boss + 1 Rương chọn Sử thi/ngày, pack dư vào Hòm thư; hành trình đủ 33 nhân vật và 99 Bí kỹ; Cộng hưởng liên kết. Qua 413 tests, TypeScript, build frontend/Worker dry-run và các luồng trình duyệt desktop/mobile. Thiết kế và giới hạn playtest tại [bản 28/10](docs/ADVENTURE_V2_2026-10-28.md). Trạng thái production được ghi tại [DEPLOYMENT.md](DEPLOYMENT.md).
+Đã hoàn tất: Kho đồ tinh gọn; thử thách ngày với pool 9 nhân vật và một đội tự lưu dùng chung cho ba đối thủ; seed mới cho mỗi lần bắt đầu/đấu lại trong đi ải, thử thách, bài tập và mô phỏng; viễn chinh roguelike 12 tầng, một lần thua mất run; tổng thưởng 150 pack + 15 Pack Boss + 1 Rương chọn Sử thi/ngày, pack dư vào Hòm thư; hành trình đủ 33 nhân vật và 99 Bí kỹ; Cộng hưởng liên kết. Qua 417 tests, TypeScript, build frontend/Worker dry-run và các luồng trình duyệt desktop/mobile. Thiết kế và giới hạn playtest tại [bản 28/10](docs/ADVENTURE_V2_2026-10-28.md). Trạng thái production được ghi tại [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Hiện hành — 2026.10.27.4 / engine v32
 

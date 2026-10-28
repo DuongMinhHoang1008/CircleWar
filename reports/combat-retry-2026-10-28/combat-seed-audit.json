@@ -1,0 +1,56 @@
+{
+  "ok": true,
+  "time": "2026-10-28T08:42:14.327416+00:00",
+  "target": "http://127.0.0.1:5173/",
+  "modes": {
+    "campaign": {
+      "newStart": "fresh random seed",
+      "postBattleRetry": "fresh random seed",
+      "sameStageAfterNavigation": "fresh random seed",
+      "verified": "browser"
+    },
+    "daily": {
+      "newStart": "fresh random seed",
+      "postBattleRetry": "fresh random seed",
+      "sharedTeam": "all three opponents, including equipment and mastery",
+      "verified": "browser and shared profile validation tests"
+    },
+    "tutorial": {
+      "newStart": "fresh random seed",
+      "postBattleRetry": "fresh random seed",
+      "verified": "browser"
+    },
+    "simulation": {
+      "enterMode": "fresh random seed",
+      "runNewSimulation": "fresh random seed",
+      "manualSeedInput": "preserved",
+      "verified": "browser"
+    },
+    "multiplayerAndServerCampaign": {
+      "rematch": "advances persisted room RNG",
+      "nextRound": "advances persisted room RNG",
+      "verified": "tests/backend/room.test.ts"
+    },
+    "roguelike": {
+      "newRun": "random run seed",
+      "newFloor": "seed derived from run and node",
+      "resumePendingBattle": "same saved seed",
+      "verified": "browser resume plus tests for distinct runs and all combat floors"
+    },
+    "replay": {
+      "behavior": "same saved seed, no duplicate rewards or mastery",
+      "verified": "browser"
+    },
+    "buildComparison": {
+      "behavior": "same seed for each pair of builds for controlled comparison",
+      "verified": "source review"
+    }
+  },
+  "checks": {
+    "fullSuiteBeforeServerRegressionAddition": "415 tests in 33 files passed",
+    "serverRegressionAddition": "2 additional tests passed; full room, adventure and seed test files passed",
+    "typecheck": "passed",
+    "productionFrontendBuild": "passed",
+    "browserReport": "reports/combat-retry-2026-10-28/adventure-v2-browser.json"
+  }
+}

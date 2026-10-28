@@ -12,11 +12,7 @@ import {
   dailyEnemies,
   challengeDay,
 } from "../../packages/shared/src/daily-challenges";
-import {
-  adventureConfig,
-  loanUnit,
-  stableSeed,
-} from "../../packages/shared/src/adventure";
+import { adventureConfig, loanUnit } from "../../packages/shared/src/adventure";
 import {
   createBattle,
   stepBattle,
@@ -27,6 +23,7 @@ import {
   starterChoices,
   enterNode,
   beginRunBattle,
+  runBattleSeed,
   settleRunBattle,
   takeLoot,
   runMap,
@@ -49,7 +46,7 @@ function winningTeam() {
         );
         const state = createBattle(
           adventureConfig(team, dailyEnemies(day, 0)),
-          stableSeed(`daily:${day}:0`),
+          123456,
         );
         for (let i = 0; i < 5400 && !state.finished; i++) stepBattle(state);
         if (
@@ -94,6 +91,18 @@ async function makePage(profile: ReturnType<typeof base> | object) {
     viewport: { width: 1440, height: 1000 },
   });
   page.on("pageerror", (e) => errors.push(e.message));
+  await page.addInitScript(() => {
+    const random = crypto.getRandomValues.bind(crypto);
+    crypto.getRandomValues = ((array: Uint32Array) => {
+      if (array instanceof Uint32Array && array.length === 1) {
+        const count = Number(sessionStorage.getItem("test-seed-draws") || 0);
+        sessionStorage.setItem("test-seed-draws", String(count + 1));
+        array[0] = 123456 + count;
+        return array;
+      }
+      return random(array);
+    }) as typeof crypto.getRandomValues;
+  });
   await page.addInitScript(
     ({ profile, release }) => {
       if (localStorage.getItem("adventure-v2-ready")) return;
@@ -159,7 +168,7 @@ try {
   await page.getByRole("tab", { name: /Thử thách 1/ }).click();
   assert.deepEqual(
     (await saved(page)).experience.dailyChallenge.teams["0"],
-    team,
+    second,
   );
   await page.getByRole("tab", { name: /Thử thách 2/ }).click();
   assert.equal(
@@ -174,6 +183,19 @@ try {
     (await saved(page)).experience.dailyChallenge.teams["1"],
     second,
   );
+  await page.getByRole("tab", { name: /Thử thách 1/ }).click();
+  await page.getByRole("tab", { name: /Thử thách 3/ }).click();
+  assert.deepEqual(
+    (await saved(page)).experience.dailyChallenge.teams["2"],
+    second,
+  );
+  await page.reload();
+  await nav(page, "Thử thách ngày");
+  await page.getByText(/Chọn đội trong pool hôm nay/).click();
+  for (let i = 0; i < team.length; i++)
+    await page
+      .getByRole("combobox", { name: `Đồ cho mượn ${i + 1}`, exact: true })
+      .selectOption(team[i].equipment[0] || "");
   await page.getByRole("tab", { name: /Thử thách 1/ }).click();
   await page.screenshot({
     path: `${reportDir}/daily-challenge-desktop.png`,
@@ -223,6 +245,30 @@ try {
     (await saved(page)).experience.mastery,
     won.experience.mastery,
   );
+  const firstSeed = await page.evaluate(
+    () =>
+      JSON.parse(localStorage.getItem("circlewar-battle-analytics-v1")!)[0]
+        .seed,
+  );
+  assert.equal(firstSeed, 123456);
+  assert.equal(
+    await page.evaluate(() =>
+      Number(sessionStorage.getItem("test-seed-draws")),
+    ),
+    1,
+  );
+  await page
+    .getByRole("button", { name: "Đấu lại · trận mới", exact: true })
+    .click();
+  await page.locator(".battle-debrief").waitFor({ timeout: 90000 });
+  const retrySeed = await page.evaluate(
+    () =>
+      JSON.parse(localStorage.getItem("circlewar-battle-analytics-v1")!)[0]
+        .seed,
+  );
+  assert.equal(retrySeed, 123457);
+  assert.notEqual(retrySeed, firstSeed);
+  assert.deepEqual((await saved(page)).rewardReceipts, won.rewardReceipts);
   // Dismiss the remaining persistent notifications before inspecting other screens.
   while (
     await page
@@ -257,6 +303,89 @@ try {
     });
   }
   await page.close();
+  console.log(
+    "PASS: shared daily team, fresh retry seed and unchanged replay seed",
+  );
+
+  const campaign = await makePage({
+    ...base(),
+    experience: {
+      ...experienceOf({}),
+      mastery: Object.fromEntries(ROSTER.map((c) => [c.id, 20])),
+    },
+  });
+  await nav(campaign, "Đi ải");
+  await campaign.getByText(/Bản đồ chiến dịch/).click();
+  await campaign.locator(".stage-grid button").first().click();
+  await campaign
+    .getByRole("button", { name: "Bắt đầu ải 1 →", exact: true })
+    .click();
+  await campaign.getByRole("button", { name: "2×", exact: true }).click();
+  await campaign.locator(".battle-debrief").waitFor({ timeout: 90000 });
+  const campaignSeed = () =>
+    campaign.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("circlewar-battle-analytics-v1")!)[0]
+          .seed,
+    );
+  assert.equal(await campaignSeed(), 123456);
+  await campaign
+    .getByText("Xem lại & thử nghiệm đội hình", { exact: true })
+    .click();
+  await campaign
+    .getByRole("button", { name: "Đấu lại · trận mới", exact: true })
+    .click();
+  await campaign.locator(".battle-debrief").waitFor({ timeout: 90000 });
+  assert.equal(await campaignSeed(), 123457);
+  await campaign
+    .getByRole("navigation", { name: "Điều hướng chính" })
+    .getByRole("button", { name: "Kho đồ", exact: true })
+    .click();
+  await nav(campaign, "Đi ải");
+  await campaign.getByText(/Bản đồ chiến dịch/).click();
+  await campaign.locator(".stage-grid button").first().click();
+  await campaign
+    .getByRole("button", { name: "Bắt đầu ải 1 →", exact: true })
+    .click();
+  await campaign.locator(".battle-debrief").waitFor({ timeout: 90000 });
+  assert.equal(await campaignSeed(), 123458);
+  console.log(
+    "PASS: campaign retry and restarting the same stage after navigation use fresh seeds",
+  );
+
+  await nav(campaign, "Làm quen");
+  await campaign
+    .getByRole("button", { name: "Thử một cách khác", exact: true })
+    .click();
+  await campaign
+    .getByRole("combobox", { name: "Đồ cho mượn 1", exact: true })
+    .selectOption("item_01");
+  await campaign
+    .getByRole("button", { name: "Đánh thử · miễn phí", exact: true })
+    .click();
+  await campaign.getByRole("button", { name: "2×", exact: true }).click();
+  await campaign.locator(".battle-debrief").waitFor({ timeout: 90000 });
+  assert.equal(await campaignSeed(), 123459);
+  await campaign
+    .getByText("Xem lại & thử nghiệm đội hình", { exact: true })
+    .click();
+  await campaign
+    .getByRole("button", { name: "Đấu lại · trận mới", exact: true })
+    .click();
+  await campaign.locator(".battle-debrief").waitFor({ timeout: 90000 });
+  assert.equal(await campaignSeed(), 123460);
+  await nav(campaign, "Mô phỏng");
+  const simulationSeed = campaign.getByLabel("Battle seed", { exact: true });
+  assert.equal(await simulationSeed.inputValue(), "123461");
+  await campaign
+    .getByRole("button", { name: "Chạy mô phỏng ↗", exact: true })
+    .click();
+  assert.equal(await simulationSeed.inputValue(), "123462");
+  await nav(campaign, "Đi ải");
+  await nav(campaign, "Mô phỏng");
+  assert.equal(await simulationSeed.inputValue(), "123463");
+  console.log("PASS: tutorial retries and simulation starts use fresh seeds");
+  await campaign.close();
 
   // A persisted shop is a separate fixture; none of the player's collection is consumed.
   let run = createRun("shop-test", 52, starterChoices(52)[0]);
@@ -356,8 +485,16 @@ try {
   assert.equal((await saved(death)).experience.roguelike, undefined);
   assert.equal((await saved(death)).experience.lastRun.reason, "defeat");
   assert.equal(
+    await death.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("circlewar-battle-analytics-v1")!)[0]
+          .seed,
+    ),
+    runBattleSeed(pending),
+  );
+  assert.equal(
     await death
-      .getByRole("button", { name: "Thử lại cùng điều kiện", exact: true })
+      .getByRole("button", { name: "Đấu lại · trận mới", exact: true })
       .count(),
     0,
   );
@@ -413,7 +550,12 @@ try {
         version: CURRENT_RELEASE_VERSION,
         time: new Date().toISOString(),
         dailyPool: 9,
-        savedTeamsPerOpponent: true,
+        sharedTeamAcrossOpponents: true,
+        freshRetrySeed: true,
+        freshCampaignSeedAfterRetryAndNavigation: true,
+        freshTutorialSeed: true,
+        freshSimulationSeedOnStartAndReentry: true,
+        replayPreservesSeed: true,
         dailyWinAutoMail: true,
         unlockNotification: true,
         replayNoDuplicate: true,
@@ -437,6 +579,14 @@ try {
     ),
   );
   console.log("Daily, roguelike, mastery and inbox browser checks passed");
+} catch (error) {
+  const pages = browser.contexts().flatMap((context) => context.pages());
+  const current = pages.at(-1);
+  if (current)
+    await current
+      .screenshot({ path: `${reportDir}/failure.png`, fullPage: true })
+      .catch(() => {});
+  throw error;
 } finally {
   await browser.close();
 }

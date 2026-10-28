@@ -1,6 +1,13 @@
 import React from "react";
 
 export const PATCH_NOTES = [{
+  version: "2026.10.28.2", date: "2026-10-28", title: "Trận mới đổi seed và đội thử thách dùng chung",
+  summary: "Đấu lại có diễn biến mới; giữ nguyên đội khi chuyển giữa ba thử thách ngày.",
+  sections: [
+    { title: "Seed combat", entries: ["Đi ải, thử thách ngày và bài tập tạo seed ngẫu nhiên mỗi lần bắt đầu hoặc đấu lại. Mô phỏng đổi seed khi vào chế độ và khi chạy ván mới. Multiplayer tiếp tục sinh seed mới từ server cho mỗi vòng và trận.", "Xem lại trận và tiếp tục trận viễn chinh đang dở giữ seed đã lưu. Các tầng và run mới có seed riêng."] },
+    { title: "Đội thử thách ngày", entries: ["Một đội hình dùng chung cho cả ba đối thủ, gồm nhân vật, trang bị, Bí kỹ và mục tiêu Bí kỹ. Tự lưu khi chỉnh sửa, chuyển đối thủ và kết thúc trận; tải lại trang vẫn giữ đội.", "Với hồ sơ cũ, ưu tiên đội của thử thách đang chọn rồi dùng cho cả ba đối thủ."] },
+  ],
+}, {
   version: "2026.10.28.1", date: "2026-10-28", title: "Thử thách ngày, viễn chinh roguelike và Cộng hưởng",
   summary: "Kho đồ gọn hơn, đội thử thách tự lưu, tháp 12 tầng và hành trình đủ 33 nhân vật.",
   sections: [

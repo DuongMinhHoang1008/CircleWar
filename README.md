@@ -1,8 +1,8 @@
 # RiseOn Ultimate TCG
 
-## Phiên bản 2026.10.28.1 — 2026-10-28
+## Phiên bản 2026.10.28.2 — 2026-10-28
 
-Thử thách ngày dùng pool 9 nhân vật, tự lưu đội theo từng đối thủ; mục xếp hạng đã được bỏ khỏi giao diện. Viễn chinh roguelike có 12 tầng, shop, nâng cấp, chiêu mộ, HP giữ giữa trận và thua là mất run. Vượt đủ tháp nhận tổng 150 pack + 15 Pack Boss + 1 Rương chọn Sử thi mỗi ngày; pack dư vào Hòm thư. Cả 33 nhân vật có hành trình và thông báo mở Bí kỹ; liên kết có Cộng hưởng đặc trưng. Xem [thiết kế, thưởng và kiểm chứng](docs/ADVENTURE_V2_2026-10-28.md).
+Thử thách ngày dùng pool 9 nhân vật, tự lưu một đội dùng chung cho cả ba đối thủ; mục xếp hạng đã được bỏ khỏi giao diện. Đi ải, thử thách ngày, bài tập và mô phỏng đổi seed mỗi trận mới; replay và trận viễn chinh đang dở giữ seed đã lưu. Viễn chinh roguelike có 12 tầng, shop, nâng cấp, chiêu mộ, HP giữ giữa trận và thua là mất run. Vượt đủ tháp nhận tổng 150 pack + 15 Pack Boss + 1 Rương chọn Sử thi mỗi ngày; pack dư vào Hòm thư. Cả 33 nhân vật có hành trình và thông báo mở Bí kỹ; liên kết có Cộng hưởng đặc trưng. Xem [thiết kế, thưởng và kiểm chứng](docs/ADVENTURE_V2_2026-10-28.md).
 
 Web auto-battler sưu tập thẻ với 33 nhân vật và 33 vật phẩm, đội tối đa ba quân. Trang **Hành trình** dẫn đến đi ải, thử thách ngày Lv.10 cho mượn, tháp viễn chinh roguelike và hành trình nhân vật. Kho đồ có năm preset, tìm/lọc, khóa thẻ và so sánh trang bị. Thưởng vượt hàng chờ được giữ để nhận sau; trận cục bộ có pause/tăng tốc và replay.
 

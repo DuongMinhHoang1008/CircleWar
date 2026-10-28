@@ -4,10 +4,12 @@ Bản `2026.10.28.1` đã triển khai [production](https://riseon-ultimate-batt
 
 ## Thử thách ngày
 
+Sửa tiếp ngày 28/10 sau triển khai: đi ải, thử thách ngày và bài tập sinh seed mới mỗi lần bắt đầu hoặc đấu lại. Mô phỏng sinh seed ngẫu nhiên khi vào chế độ hoặc chạy ván mới; vẫn nhập seed thủ công được. Multiplayer đã tiến RNG của phòng cho mỗi vòng và trận mới. Xem replay và tiếp tục trận viễn chinh đang dở giữ seed đã lưu; các tầng và run viễn chinh khác dùng seed khác. Phòng so sánh build giữ cùng bộ seed cho hai đội để đối chiếu có ý nghĩa.
+
 - Thay giao diện thử thách tuần bằng ba đối thủ mỗi ngày. Bỏ tab thi đấu xếp hạng; API xếp hạng cũ vẫn giữ để tương thích dữ liệu.
-- Đổi ngày lúc **00:00 giờ Việt Nam (UTC+7)**, không phụ thuộc múi giờ thiết bị. Hạt giống, pool và đối thủ cố định trong ngày.
+- Đổi ngày lúc **00:00 giờ Việt Nam (UTC+7)**, không phụ thuộc múi giờ thiết bị. Pool và đối thủ cố định trong ngày; mỗi lần bắt đầu hoặc đấu lại tạo seed combat mới.
 - Pool gồm 9 nhân vật, có nhiều vai trò. Nhân vật và trang bị cho mượn Lv.10; không thể gửi quân ngoài pool hoặc cấp tự nhập.
-- Mỗi đối thủ có đội hình riêng, gồm quân, trang bị, Bí kỹ và mục tiêu Bí kỹ. Tự lưu khi sửa, trước trận và sau khi kết thúc cả thắng lẫn thua. Tải lại/đổi trang không làm mất cấu hình.
+- Một đội hình dùng chung cho cả ba đối thủ, gồm quân, trang bị, Bí kỹ và mục tiêu Bí kỹ. Tự lưu khi sửa, chuyển đối thủ, trước trận và sau khi kết thúc cả thắng lẫn thua. Tải lại/đổi trang không làm mất cấu hình. Hồ sơ cũ ưu tiên đội của đối thủ đang chọn rồi đồng bộ cho cả ba.
 - Thắng lần đầu từng đối thủ tăng tiến độ; đánh lại và xem replay không phát trùng phần thưởng. Các mốc tự cộng khi đạt.
 - Thưởng ngày: mốc 1 là 5 pack, mốc 2 là 8 pack + 1 Pack Boss, mốc 3 là 12 pack + 1 Pack Boss.
 

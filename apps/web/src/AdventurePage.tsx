@@ -22,7 +22,6 @@ import {
 } from "../../../packages/shared/src/campaign";
 import {
   TUTORIALS,
-  stableSeed,
   loanUnit,
   adventureConfig,
   type Contract,
@@ -60,7 +59,8 @@ import { RoguelikeScreen } from "./RoguelikeScreen";
 import {
   challengeDay,
   dailyPool,
-  defaultDailyTeam,
+  savedDailyTeam,
+  saveDailyTeam,
   legalDailyTeam,
   dailyEnemies,
 } from "../../../packages/shared/src/daily-challenges";
@@ -81,6 +81,7 @@ import {
   settleRunBattle,
   type RoguelikeRun,
 } from "../../../packages/shared/src/roguelike";
+import { freshBattleSeed } from "./battleSeed";
 
 export interface AdventureProfile extends CollectionProfile, MailboxProfile {
   choiceChests?: number;
@@ -130,18 +131,7 @@ export function AdventurePage({
     [tutorial, setTutorial] = useState(0),
     [team, setTeam] = useState<Loadout[]>(() => {
       if (mode === "challenges") {
-        const saved = experience.dailyChallenge;
-        try {
-          if (
-            saved?.day === challengeDay() &&
-            saved.teams[String(saved.selected)]
-          )
-            return legalDailyTeam(
-              saved.teams[String(saved.selected)],
-              saved.day,
-            );
-        } catch {}
-        return defaultDailyTeam();
+        return savedDailyTeam(experience.dailyChallenge);
       }
       return [loanUnit("char_01"), loanUnit("char_11"), loanUnit("char_15")];
     }),
@@ -250,14 +240,19 @@ export function AdventurePage({
   function updateExperience(next: Experience) {
     onSave({ ...profile, experience: next });
   }
-  function start(next: Battle) {
+  function start(next: Omit<Battle, "seed"> & { seed?: number }) {
+    if (next.kind === "expedition" && next.seed === undefined)
+      throw Error("Thiếu seed của trận viễn chinh đang lưu.");
     journeyEvent("battle_start", {
       mode: next.kind,
       stage: next.stage || 0,
       retry: !!summary,
     });
     settled.current = "";
-    setBattle(next);
+    setBattle({
+      ...next,
+      seed: next.kind === "expedition" ? next.seed! : freshBattleSeed(),
+    });
     setSummary(null);
     setReplay(false);
   }
@@ -281,15 +276,7 @@ export function AdventurePage({
     const saved = profileRef.current.experience?.dailyChallenge;
     const selected = saved?.day === day ? saved.selected : 0;
     setOpponent(selected);
-    try {
-      setTeam(
-        saved?.day === day && saved.teams[String(selected)]
-          ? legalDailyTeam(saved.teams[String(selected)], day)
-          : defaultDailyTeam(day),
-      );
-    } catch {
-      setTeam(defaultDailyTeam(day));
-    }
+    setTeam(savedDailyTeam(saved, day));
   }, [mode, day]);
   function changeLoanTeam(next: Loadout[], selected = opponent) {
     if (mode !== "challenges") {
@@ -305,19 +292,11 @@ export function AdventurePage({
     const legal = legalDailyTeam(cleaned, day),
       current = profileRef.current,
       exp = experienceOf(current);
-    const daily =
-      exp.dailyChallenge?.day === day
-        ? exp.dailyChallenge
-        : { day, selected, teams: {} };
     const updated = {
       ...current,
       experience: {
         ...exp,
-        dailyChallenge: {
-          ...daily,
-          selected,
-          teams: { ...daily.teams, [String(selected)]: legal },
-        },
+        dailyChallenge: saveDailyTeam(legal, selected, day),
       },
     };
     profileRef.current = updated;
@@ -325,10 +304,8 @@ export function AdventurePage({
     setTeam(legal);
   }
   function selectOpponent(n: number) {
-    const saved = experienceOf(profileRef.current).dailyChallenge;
-    const next = saved?.day === day ? saved.teams[String(n)] : undefined;
     setOpponent(n);
-    changeLoanTeam(next || defaultDailyTeam(day), n);
+    changeLoanTeam(team, n);
   }
   function updateRun(run: RoguelikeRun) {
     const current = profileRef.current,
@@ -451,21 +428,15 @@ export function AdventurePage({
         index = battle.opponent || 0;
       const daily =
         exp.dailyChallenge?.day === battleDay ? exp.dailyChallenge : undefined;
-      // Save the exact build that finished this opponent, regardless of victory or defeat.
+      // Preserve the completed build for every opponent, on both victory and defeat.
       if (!exp.dailyChallenge || daily)
         exp = {
           ...exp,
-          dailyChallenge: {
-            day: battleDay,
-            selected: index,
-            teams: {
-              ...(daily?.teams || {}),
-              [String(index)]: legalDailyTeam(
-                battle.config.teams[0].loadouts,
-                battleDay,
-              ),
-            },
-          },
+          dailyChallenge: saveDailyTeam(
+            battle.config.teams[0].loadouts,
+            index,
+            battleDay,
+          ),
         };
       if (won)
         exp = {
@@ -539,7 +510,6 @@ export function AdventurePage({
     config.campaign = { stage: encounter.stage, enemyTeamId: "team-rival" };
     start({
       config,
-      seed: stableSeed(`campaign:${encounter.stage}:${replayKey}`),
       kind: "campaign",
       stage: encounter.stage,
     });
@@ -648,19 +618,7 @@ export function AdventurePage({
                         })
                       }
                     >
-                      Thử lại cùng điều kiện
-                    </button>
-                  )}
-                  {battle.kind !== "expedition" && (
-                    <button
-                      onClick={() =>
-                        start({
-                          ...battle,
-                          seed: stableSeed(`${battle.seed}:next`),
-                        })
-                      }
-                    >
-                      Thử trận biến thể
+                      Đấu lại · trận mới
                     </button>
                   )}
                 </div>
@@ -822,7 +780,6 @@ export function AdventurePage({
               start({
                 kind: "tutorial",
                 tutorial,
-                seed: 700 + tutorial,
                 config: adventureConfig(team, [
                   loanUnit("char_02", "", 1),
                   loanUnit("char_03", "", 1),
@@ -862,7 +819,6 @@ export function AdventurePage({
                 day,
                 opponent,
                 config: adventureConfig(legal, dailyEnemies(day, opponent)),
-                seed: stableSeed(`daily:${day}:${opponent}`),
               });
             } catch (e) {
               onError((e as Error).message);

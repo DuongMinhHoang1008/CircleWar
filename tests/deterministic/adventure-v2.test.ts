@@ -6,6 +6,8 @@ import {
   legalDailyTeam,
   defaultDailyTeam,
   validDailyProgress,
+  savedDailyTeam,
+  saveDailyTeam,
 } from "../../packages/shared/src/daily-challenges";
 import {
   ROSTER,
@@ -92,6 +94,31 @@ function firstWin() {
   return takeLoot(victory(enterNode(fresh(), "1:0")), undefined);
 }
 describe("daily challenges", () => {
+  it("shares the full build across opponents and migrates the last selected legacy team", () => {
+    const day = challengeDay(now),
+      original = defaultDailyTeam(day),
+      changed = [...original].reverse();
+    changed[0] = {
+      ...changed[0],
+      equipment: ["item_01"],
+      equipmentLevels: { item_01: 10 },
+    };
+    const legacy = { day, selected: 1, teams: { "0": original, "1": changed } };
+    expect(savedDailyTeam(legacy, day)).toEqual(legalDailyTeam(changed, day));
+    const shared = saveDailyTeam(savedDailyTeam(legacy, day), 2, day);
+    expect(validDailyProgress(shared)).toBe(true);
+    for (const selected of [0, 1, 2]) {
+      expect(shared.teams[String(selected)]).toEqual(
+        legalDailyTeam(changed, day),
+      );
+      expect(savedDailyTeam({ ...shared, selected }, day)).toEqual(
+        shared.teams["0"],
+      );
+    }
+    expect(savedDailyTeam(shared, "2026-10-29")).toEqual(
+      defaultDailyTeam("2026-10-29"),
+    );
+  });
   it("rotates at midnight Vietnam and keeps a deterministic, restricted nine-character pool", () => {
     const before = Date.parse("2026-10-28T16:59:59Z"),
       after = before + 1000;
@@ -203,6 +230,9 @@ describe("roguelike state and economy", () => {
     expect(runBattleSeed(active)).toBe(
       runBattleSeed(JSON.parse(JSON.stringify(active))),
     );
+    expect(runBattleSeed(beginRunBattle(enterNode(fresh(53), "1:0")))).not.toBe(
+      runBattleSeed(active),
+    );
     expect(runBattleConfig(active)).toEqual(
       runBattleConfig(JSON.parse(JSON.stringify(active))),
     );
@@ -274,6 +304,7 @@ describe("roguelike state and economy", () => {
   });
   it("can complete every floor with valid checkpoints and pays only at recorded milestones", () => {
     let r = fresh();
+    const battleSeeds = new Set<number>();
     while (r.floor < 12) {
       const floor = r.floor + 1,
         id = [3, 9, 11].includes(floor) ? `${floor}:1` : `${floor}:0`;
@@ -286,6 +317,8 @@ describe("roguelike state and economy", () => {
             true,
             r.team.map((characterId) => ({ characterId, hp: 90, maxHp: 100 })),
           );
+        expect(battleSeeds.has(runBattleSeed(active))).toBe(false);
+        battleSeeds.add(runBattleSeed(active));
         if (floor === 12) {
           expect(result.end?.won).toBe(true);
           expect(result.run).toBeUndefined();

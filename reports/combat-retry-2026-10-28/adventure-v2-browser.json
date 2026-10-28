@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "web": "http://127.0.0.1:5173/",
+  "version": "2026.10.28.1",
+  "time": "2026-10-28T08:41:39.245Z",
+  "dailyPool": 9,
+  "sharedTeamAcrossOpponents": true,
+  "freshRetrySeed": true,
+  "freshCampaignSeedAfterRetryAndNavigation": true,
+  "freshTutorialSeed": true,
+  "freshSimulationSeedOnStartAndReentry": true,
+  "replayPreservesSeed": true,
+  "dailyWinAutoMail": true,
+  "unlockNotification": true,
+  "replayNoDuplicate": true,
+  "fullJourneys": 33,
+  "shopPersisted": true,
+  "recruitmentAndDismissal": true,
+  "battleResume": true,
+  "singleLossDestroysRun": true,
+  "completeRunReward": {
+    "packs": 150,
+    "bossPacks": 15,
+    "choiceChests": 1,
+    "overflowMailed": true,
+    "reloadIdempotent": true
+  },
+  "mobileWidths": [
+    360,
+    390
+  ],
+  "errors": []
+}

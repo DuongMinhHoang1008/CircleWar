@@ -38,6 +38,7 @@ import { PACK_ODDS, packDrawPool, nextBossPity, normalizeBossPity, type PackKind
 import { BattleAnalyticsPage } from "./BattleAnalyticsPage";
 import { readBattleRecords, saveBattleRecord, type BattleMode, type BattleSummary } from "./battleAnalytics";
 import { Arena } from "./rendering/Arena";
+import { freshBattleSeed } from "./battleSeed";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "../../../packages/shared/src/arena";
 import "./styles.css";
 import "./catalog.css";
@@ -1147,7 +1148,7 @@ function App() {
           <div className="drawer-heading"><div><b>RISEON</b><small>ULTIMATE TCG</small></div><button aria-label="Đóng menu" onClick={() => setNavOpen(false)}>×</button></div>
           <nav className="drawer-nav" aria-label="Các chế độ">{NAVIGATION_GROUPS.map(group => <section className="drawer-group" key={group.title}><h2>{group.title}</h2>{group.items.map(([page, label]) => <button key={page} aria-label={label} className={screen === page ? "active" : ""} aria-current={screen === page ? "page" : undefined} onClick={() => {
             if (page === "help") setHelp(value => !value);
-            else { setScreen(page); if (page === "simulation") { setOffline(true); setSimulationMode(true); } if (page === "multiplayer") { setOffline(false); setSimulationMode(false); } }
+            else { setScreen(page); if (page === "simulation") { setSeed(freshBattleSeed()); setOffline(true); setSimulationMode(true); } if (page === "multiplayer") { setOffline(false); setSimulationMode(false); } }
             setNavOpen(false);
           }}><span>{label}</span>{page === "packs" && <small>{queuedPacks}</small>}{page === "mailbox" && pendingMailCount > 0 && <small>{pendingMailCount}</small>}{page === "patchNotes" && <small>MỚI</small>}</button>)}</section>)}</nav>
           <div className="drawer-version">v{CURRENT_RELEASE_VERSION}</div>
@@ -1432,7 +1433,7 @@ function App() {
                 </label>
                 <button
                   className="primary wide"
-                  onClick={() => setSeed((s) => (s + 1) >>> 0)}
+                  onClick={() => setSeed(freshBattleSeed())}
                 >
                   {simulationMode ? "Chạy mô phỏng ↗" : "Bắt đầu trận mới ↗"}
                 </button>
