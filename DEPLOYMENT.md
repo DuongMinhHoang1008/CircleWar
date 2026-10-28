@@ -6,13 +6,14 @@ Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không 
 
 - Website: https://riseon-ultimate-battle.pages.dev
 - API: https://circle-chaos.circle-chaos.workers.dev
-- Engine: `chaos-integer-v34`, giao diện v`2026.10.28.1`, triển khai ngày 28/10/2026 từ commit `6c4bc6186aaa749d6d738655f801878b958afba0` trên `main`.
-- Worker version: `3853e7a2-1eae-403b-8627-9b94bbed9ec8`.
-- Pages deployment: https://e5adcb53.riseon-ultimate-battle.pages.dev.
-- Bản này tinh gọn Kho đồ, bỏ giao diện xếp hạng, thêm thử thách ngày với pool chín quân và đội hình lưu riêng; viễn chinh roguelike 12 tầng, hành trình đủ 33 nhân vật và hiệu ứng Cộng hưởng. Tổng thưởng vượt 12 tầng là 150 Pack thường, 15 Pack Boss và một Rương chọn Sử thi; phần dư chuyển Hòm thư. Chi tiết và giới hạn cân bằng tại `docs/ADVENTURE_V2_2026-10-28.md`.
-- Trước deploy: 413/413 tests trong 32 file, typecheck, production frontend build và Worker dry-run pass. Kiểm tra trình duyệt local cho Kho đồ, thử thách, viễn chinh và hành trình nhân vật pass.
-- Browser smoke production pass: release, API/CORS, hồ sơ và nhận thư lưu qua reload, phòng/WebSocket, sân vuông/20 giây và bốn atlas tải thành công; không page error. Báo cáo `reports/production-browser-v34.json`. Phòng thử được rời sau kiểm tra.
-- Kiểm tra tính năng trên production pass: pool chín quân, cấu hình từng đối thủ lưu qua reload, thắng tự gửi thư và báo mở Bí kỹ, replay không phát trùng thưởng, đủ 33 hành trình; cửa hàng/chiêu mộ/bỏ quân, tiếp tục trận sau reload, thua mất run, thưởng 150/15/1 không nhận trùng và không tràn ngang mobile 360/390px. Báo cáo và ảnh tại `reports/production-2026-10-28-v34/`; metadata tại `reports/deployment-2026-10-28-v34.json`. Các fixture dùng hồ sơ thử riêng.
+- Engine: `chaos-integer-v34`, giao diện v`2026.10.28.2`, triển khai ngày 28/10/2026 từ commit `52c6e1d40f2833c25faf3848928391ed959fdf87` trên `main`.
+- Worker version: `9e525ba8-c0de-417c-857b-f005cdd0cd71`.
+- Pages deployment: https://36764f09.riseon-ultimate-battle.pages.dev.
+- Đi ải, thử thách ngày và bài tập đổi seed mỗi lần bắt đầu/đấu lại; mô phỏng sinh seed ngẫu nhiên khi vào chế độ và chạy ván mới. Multiplayer tiến RNG mỗi vòng/trận; replay và trận viễn chinh đang dở giữ seed đã lưu. Đội thử thách ngày dùng chung cả ba đối thủ, gồm trang bị và Bí kỹ, giữ qua reload.
+- Giữ Kho đồ tinh gọn, viễn chinh roguelike 12 tầng, hành trình đủ 33 nhân vật và hiệu ứng Cộng hưởng. Tổng thưởng vượt 12 tầng là 150 Pack thường, 15 Pack Boss và một Rương chọn Sử thi; phần dư chuyển Hòm thư. Chi tiết và giới hạn cân bằng tại `docs/ADVENTURE_V2_2026-10-28.md`.
+- Trước deploy: 417/417 tests trong 33 file, typecheck, production frontend build và Worker dry-run pass. Kiểm tra trình duyệt local cho seed combat, đội dùng chung, replay, viễn chinh và hành trình nhân vật pass; báo cáo tại `reports/combat-retry-2026-10-28/`.
+- Browser smoke production pass: release, API/CORS, hồ sơ và nhận thư lưu qua reload, phòng/WebSocket, sân vuông/20 giây và bốn atlas tải thành công; không page error. Báo cáo `reports/production-2026-10-28-2/production-browser-v34.json`. Phòng thử được rời sau kiểm tra.
+- Báo cáo kiểm tra tính năng và ảnh production tại `reports/production-2026-10-28-2/`; metadata tại `reports/deployment-2026-10-28-2.json`. Các fixture dùng hồ sơ thử riêng. Báo cáo bản trước vẫn lưu tại `reports/production-2026-10-28-v34/`.
 - Vòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng; giữ hồ sơ/bộ sưu tập, chủ phòng mở trận mới qua REMATCH. Replay format 1 đã hoàn thành vẫn được đọc từ frame lưu sẵn. Báo cáo các phiên bản trước trong `reports/` được giữ làm lịch sử.
 
 Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:

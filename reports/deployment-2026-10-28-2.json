@@ -1,0 +1,32 @@
+{
+  "time": "2026-10-28T08:52:13.582192+00:00",
+  "status": "PASS",
+  "commit": "52c6e1d40f2833c25faf3848928391ed959fdf87",
+  "release": "2026.10.28.2",
+  "engine": "chaos-integer-v34",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "pagesDeployment": "https://36764f09.riseon-ultimate-battle.pages.dev",
+  "workerVersion": "9e525ba8-c0de-417c-857b-f005cdd0cd71",
+  "checks": [
+    "417 tests across 33 files",
+    "typecheck, production frontend build and Worker dry-run",
+    "production release, API/CORS, persisted mailbox claim and profile reload",
+    "production room and WebSocket",
+    "production daily shared team across all three opponents and reload",
+    "production daily retry gets a fresh seed, replay preserves the seed without duplicate rewards",
+    "production campaign retry and starting the same stage after navigation get fresh seeds",
+    "production tutorial retries get fresh seeds",
+    "production simulation start and reentry get fresh seeds",
+    "server regression tests for distinct multiplayer and campaign seeds on rematch and next round",
+    "production roguelike resume preserves the saved battle seed; defeat destroys the run",
+    "roguelike unit tests for distinct seeds across combat floors and runs",
+    "production all 33 character journeys, overflow mail, mastery unlock notifications and reward idempotency",
+    "production mobile widths 360 and 390 without horizontal overflow",
+    "no browser page errors"
+  ],
+  "reports": [
+    "reports/production-2026-10-28-2/production-browser-v34.json",
+    "reports/production-2026-10-28-2/adventure-v2-browser.json"
+  ]
+}

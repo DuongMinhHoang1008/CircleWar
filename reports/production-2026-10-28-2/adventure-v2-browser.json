@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "web": "https://riseon-ultimate-battle.pages.dev/",
+  "version": "2026.10.28.2",
+  "time": "2026-10-28T08:51:46.675Z",
+  "dailyPool": 9,
+  "sharedTeamAcrossOpponents": true,
+  "freshRetrySeed": true,
+  "freshCampaignSeedAfterRetryAndNavigation": true,
+  "freshTutorialSeed": true,
+  "freshSimulationSeedOnStartAndReentry": true,
+  "replayPreservesSeed": true,
+  "dailyWinAutoMail": true,
+  "unlockNotification": true,
+  "replayNoDuplicate": true,
+  "fullJourneys": 33,
+  "shopPersisted": true,
+  "recruitmentAndDismissal": true,
+  "battleResume": true,
+  "singleLossDestroysRun": true,
+  "completeRunReward": {
+    "packs": 150,
+    "bossPacks": 15,
+    "choiceChests": 1,
+    "overflowMailed": true,
+    "reloadIdempotent": true
+  },
+  "mobileWidths": [
+    360,
+    390
+  ],
+  "errors": []
+}
