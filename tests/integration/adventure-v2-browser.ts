@@ -34,10 +34,11 @@ import {
 } from "../../packages/shared/src/roguelike";
 import { CURRENT_RELEASE_VERSION } from "../../apps/web/src/PatchNotes";
 
-const web = "http://127.0.0.1:5173/",
+const web = process.env.TEST_WEB || "http://127.0.0.1:5173/",
   errors: string[] = [],
   day = challengeDay();
-mkdirSync("reports", { recursive: true });
+const reportDir = process.env.TEST_REPORT_DIR || "reports";
+mkdirSync(reportDir, { recursive: true });
 function winningTeam() {
   const pool = dailyPool(day);
   for (let a = 0; a < pool.length - 2; a++)
@@ -175,7 +176,7 @@ try {
   );
   await page.getByRole("tab", { name: /Thử thách 1/ }).click();
   await page.screenshot({
-    path: "reports/daily-challenge-desktop.png",
+    path: `${reportDir}/daily-challenge-desktop.png`,
     fullPage: true,
   });
   await page
@@ -238,7 +239,7 @@ try {
   await nav(page, "Hành trình nhân vật");
   assert.equal(await page.locator(".mastery-journey-card").count(), 33);
   await page.screenshot({
-    path: "reports/mastery-all-characters-desktop.png",
+    path: `${reportDir}/mastery-all-characters-desktop.png`,
     fullPage: true,
   });
   for (const width of [360, 390]) {
@@ -251,7 +252,7 @@ try {
       `daily overflow ${width}`,
     );
     await page.screenshot({
-      path: `reports/daily-challenge-mobile-${width}.png`,
+      path: `${reportDir}/daily-challenge-mobile-${width}.png`,
       fullPage: true,
     });
   }
@@ -301,7 +302,7 @@ try {
   await shop.locator(".run-team-row button").last().click();
   assert.equal((await saved(shop)).experience.roguelike.team.length, 1);
   await shop.screenshot({
-    path: "reports/roguelike-shop-desktop.png",
+    path: `${reportDir}/roguelike-shop-desktop.png`,
     fullPage: true,
   });
   for (const width of [360, 390]) {
@@ -313,7 +314,7 @@ try {
       `shop overflow ${width}`,
     );
     await shop.screenshot({
-      path: `reports/roguelike-shop-mobile-${width}.png`,
+      path: `${reportDir}/roguelike-shop-mobile-${width}.png`,
       fullPage: true,
     });
   }
@@ -369,7 +370,7 @@ try {
   assert.equal((await saved(death)).itemCards.length, 33);
   await death.setViewportSize({ width: 390, height: 844 });
   await death.screenshot({
-    path: "reports/roguelike-defeat-mobile.png",
+    path: `${reportDir}/roguelike-defeat-mobile.png`,
     fullPage: true,
   });
   const payout = await makePage({
@@ -390,7 +391,7 @@ try {
   );
   await payout.getByText(/Thưởng vượt tầng hôm nay · tốt nhất/).click();
   await payout.screenshot({
-    path: "reports/roguelike-revised-rewards.png",
+    path: `${reportDir}/roguelike-revised-rewards.png`,
     fullPage: true,
   });
   await payout.reload();
@@ -404,10 +405,13 @@ try {
   await payout.close();
   assert.deepEqual(errors, []);
   writeFileSync(
-    "reports/adventure-v2-browser.json",
+    `${reportDir}/adventure-v2-browser.json`,
     JSON.stringify(
       {
         ok: true,
+        web,
+        version: CURRENT_RELEASE_VERSION,
+        time: new Date().toISOString(),
         dailyPool: 9,
         savedTeamsPerOpponent: true,
         dailyWinAutoMail: true,

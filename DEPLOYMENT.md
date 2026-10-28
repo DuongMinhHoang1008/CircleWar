@@ -6,14 +6,14 @@ Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không 
 
 - Website: https://riseon-ultimate-battle.pages.dev
 - API: https://circle-chaos.circle-chaos.workers.dev
-- Engine: `chaos-integer-v31`, giao diện v`2026.10.27.2`, triển khai ngày 27/10/2026 từ commit `489e537` trên `main`.
-- Worker version: `4fe83438-3e66-4aef-b36e-199c68b387b8`.
-- Pages deployment: https://6b3165ac.riseon-ultimate-battle.pages.dev.
-- Bản này cân bằng roster, tăng hiệu quả đệ và hỗ trợ, giảm các bộ chiêu vượt trội; thêm thống kê hồi máu/khiên/buff/debuff/khống chế/sống tới cuối. Cài đặt tự lưu, số damage mặc định tắt, màu riêng theo nguồn damage và số HP/khiên/máu ảo. Bo chỉ tăng nhịp, không tự trừ HP; giữ thông tin entry ải.
-- Trước deploy: 267/267 tests, typecheck, production frontend build và Worker dry-run pass. Audit 15.312 trận mô phỏng gồm seed kiểm chứng riêng, 0 trận quá 180 giây; 512 mẫu ải có counter. Multiplayer 20 người local, replay nén/checksum và WebSocket reconnect pass. Chi tiết tại `TESTING.md` và `reports/roster-balance-v31.md`.
-- Browser smoke production pass: release, API/CORS, hồ sơ và nhận thư lưu qua reload, phòng/WebSocket, sân vuông/20 giây và bốn atlas tải thành công; không page error. Báo cáo `reports/production-browser-v31.json`. Phòng thử được rời sau kiểm tra.
-- Cài đặt production có năm công tắc, damage mặc định tắt và thay đổi lưu qua reload; báo cáo cân bằng đủ 33 nhân vật, năm so sánh trước/sau, mặc định đấu đội Lv.10 và không tràn ngang mobile. Báo cáo `reports/production-settings-v31.json`; metadata triển khai `reports/deployment-2026-10-27-v31.json`.
-- Vòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng; giữ hồ sơ/bộ sưu tập, chủ phòng mở trận mới qua REMATCH. Replay format 1 đã hoàn thành vẫn được đọc từ frame lưu sẵn. Báo cáo v29 trong `reports/` được giữ làm lịch sử.
+- Engine: `chaos-integer-v34`, giao diện v`2026.10.28.1`, triển khai ngày 28/10/2026 từ commit `6c4bc6186aaa749d6d738655f801878b958afba0` trên `main`.
+- Worker version: `3853e7a2-1eae-403b-8627-9b94bbed9ec8`.
+- Pages deployment: https://e5adcb53.riseon-ultimate-battle.pages.dev.
+- Bản này tinh gọn Kho đồ, bỏ giao diện xếp hạng, thêm thử thách ngày với pool chín quân và đội hình lưu riêng; viễn chinh roguelike 12 tầng, hành trình đủ 33 nhân vật và hiệu ứng Cộng hưởng. Tổng thưởng vượt 12 tầng là 150 Pack thường, 15 Pack Boss và một Rương chọn Sử thi; phần dư chuyển Hòm thư. Chi tiết và giới hạn cân bằng tại `docs/ADVENTURE_V2_2026-10-28.md`.
+- Trước deploy: 413/413 tests trong 32 file, typecheck, production frontend build và Worker dry-run pass. Kiểm tra trình duyệt local cho Kho đồ, thử thách, viễn chinh và hành trình nhân vật pass.
+- Browser smoke production pass: release, API/CORS, hồ sơ và nhận thư lưu qua reload, phòng/WebSocket, sân vuông/20 giây và bốn atlas tải thành công; không page error. Báo cáo `reports/production-browser-v34.json`. Phòng thử được rời sau kiểm tra.
+- Kiểm tra tính năng trên production pass: pool chín quân, cấu hình từng đối thủ lưu qua reload, thắng tự gửi thư và báo mở Bí kỹ, replay không phát trùng thưởng, đủ 33 hành trình; cửa hàng/chiêu mộ/bỏ quân, tiếp tục trận sau reload, thua mất run, thưởng 150/15/1 không nhận trùng và không tràn ngang mobile 360/390px. Báo cáo và ảnh tại `reports/production-2026-10-28-v34/`; metadata tại `reports/deployment-2026-10-28-v34.json`. Các fixture dùng hồ sơ thử riêng.
+- Vòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng; giữ hồ sơ/bộ sưu tập, chủ phòng mở trận mới qua REMATCH. Replay format 1 đã hoàn thành vẫn được đọc từ frame lưu sẵn. Báo cáo các phiên bản trước trong `reports/` được giữ làm lịch sử.
 
 Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:
 
@@ -45,7 +45,7 @@ npm run build
 npm run deploy:worker
 ```
 
-Wrangler tạo bindings `ROOMS`, `PROFILES`, `TRADES` với các migration SQLite `v1`, `v2`, `v3`. Không đổi migration đã deploy; thêm migration mới nếu thay class. Không dùng KV-backed DO cũ vì không phù hợp Free. Worker URL dạng `https://circle-chaos.<account>.workers.dev`.
+Wrangler tạo bindings `ROOMS`, `PROFILES`, `TRADES`, `LEAGUES` với các migration SQLite `v1`, `v2`, `v3`, `v4`. Không đổi migration đã deploy; thêm migration mới nếu thay class. Không dùng KV-backed DO cũ vì không phù hợp Free. Worker URL dạng `https://circle-chaos.<account>.workers.dev`.
 
 `GET /health` trả trạng thái. Source không yêu cầu shared secret frontend hoặc API key của người dùng. Khi CI deploy Worker, dùng Cloudflare API token scope tối thiểu qua secret server-side; không đặt vào biến `VITE_*`.
 

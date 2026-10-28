@@ -1,0 +1,33 @@
+{
+  "time": "2026-10-28T08:26:06.742088+00:00",
+  "status": "PASS",
+  "commit": "6c4bc6186aaa749d6d738655f801878b958afba0",
+  "release": "2026.10.28.1",
+  "engine": "chaos-integer-v34",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "pagesDeployment": "https://e5adcb53.riseon-ultimate-battle.pages.dev",
+  "workerVersion": "3853e7a2-1eae-403b-8627-9b94bbed9ec8",
+  "checks": [
+    "413 tests across 32 files",
+    "typecheck, production frontend build and Worker dry-run",
+    "local inventory, adventure and experience browser regressions",
+    "production release, health and CORS",
+    "production persisted mailbox claim and profile reload",
+    "production room and WebSocket",
+    "production arena, shrink timing, team colors and generated atlases",
+    "production daily restricted pool and per-opponent saved teams",
+    "production auto-mailed rewards, mastery unlock notification and replay idempotency",
+    "production all 33 character journeys",
+    "production roguelike shop, recruitment, dismissal and persisted run",
+    "production pending battle resume and single defeat destroys run",
+    "production 150 normal packs, 15 boss packs and 1 choice chest with overflow mail and idempotent reload",
+    "production mobile widths 360 and 390 without horizontal overflow",
+    "no browser page errors"
+  ],
+  "reports": [
+    "reports/production-browser-v34.json",
+    "reports/production-2026-10-28-v34/adventure-v2-browser.json"
+  ],
+  "limitations": "Roguelike difficulty still needs human playtesting; conservative bot audit cleared 0 of 12 seeded runs. See docs/ADVENTURE_V2_2026-10-28.md."
+}

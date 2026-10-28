@@ -1,6 +1,6 @@
 # Thử thách ngày, tháp viễn chinh và Cộng hưởng
 
-Bản phát triển local ngày 28/10/2026. Engine `chaos-integer-v34`.
+Bản `2026.10.28.1` đã triển khai [production](https://riseon-ultimate-battle.pages.dev) ngày 28/10/2026. Engine `chaos-integer-v34`; kết quả kiểm tra triển khai tại `DEPLOYMENT.md`.
 
 ## Thử thách ngày
 

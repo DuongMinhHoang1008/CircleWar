@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "dailyPool": 9,
+  "savedTeamsPerOpponent": true,
+  "dailyWinAutoMail": true,
+  "unlockNotification": true,
+  "replayNoDuplicate": true,
+  "fullJourneys": 33,
+  "shopPersisted": true,
+  "recruitmentAndDismissal": true,
+  "battleResume": true,
+  "singleLossDestroysRun": true,
+  "completeRunReward": {
+    "packs": 150,
+    "bossPacks": 15,
+    "choiceChests": 1,
+    "overflowMailed": true,
+    "reloadIdempotent": true
+  },
+  "mobileWidths": [360, 390],
+  "errors": [],
+  "web": "https://riseon-ultimate-battle.pages.dev/",
+  "version": "2026.10.28.1",
+  "time": "2026-10-28T08:25:03.225770+00:00"
+}
