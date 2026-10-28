@@ -19,8 +19,14 @@
     "test:integration": "tsx tests/integration/local.ts",
     "test:browser": "tsx tests/integration/browser.ts",
     "test:recovery": "tsx tests/integration/recovery.ts",
+    "test:experience": "tsx tests/integration/experience-browser.ts",
+    "test:ux-rewards": "tsx tests/integration/ux-rewards-browser.ts",
+    "test:league": "tsx tests/integration/league.ts",
+    "audit:adventure": "tsx tests/performance/adventure-audit.ts",
     "build": "npm run typecheck && vite build --config apps/web/vite.config.ts && wrangler deploy --dry-run --config apps/worker/wrangler.jsonc",
-    "deploy:worker": "wrangler deploy --config apps/worker/wrangler.jsonc"
+    "deploy:worker": "wrangler deploy --config apps/worker/wrangler.jsonc",
+    "test:inventory": "tsx tests/integration/inventory-browser.ts",
+    "test:adventure-v2": "tsx tests/integration/adventure-v2-browser.ts"
   },
   "dependencies": {
     "pixi.js": "^8.10.0",

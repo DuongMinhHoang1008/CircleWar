@@ -1,0 +1,18 @@
+{
+  "release": "2026.10.27.3",
+  "engine": "chaos-integer-v32",
+  "typecheck": "passed",
+  "unitTests": { "files": 29, "passed": 276, "failed": 0 },
+  "frontendBuild": "passed",
+  "workerDryRun": "passed",
+  "experienceBrowser": "reports/experience-browser.json",
+  "leagueIntegration": "reports/league-integration.json",
+  "adventureAudit": { "report": "reports/adventure-audit.json", "battles": 576, "unfinished": 0 },
+  "productionDeployed": false,
+  "limits": [
+    "Local validation does not establish production CPU/quota or real-device UX.",
+    "Competitive attempts use guest profile identity; multiple guest profiles remain possible.",
+    "Collection/PvE compatibility saves remain separate from server-verified competitive results.",
+    "Frontend main chunk approximately 317 KB gzip."
+  ]
+}

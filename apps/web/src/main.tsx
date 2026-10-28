@@ -33,7 +33,7 @@ import { PackArtwork, PackOpeningScene, PackAnimationBoundary, unpackStepMs } fr
 import { PROFILE_KEY, acknowledgeProfile, commitLocalProfile, readLocalProfile, readProfileJournal } from "./profileStorage";
 import { CURRENT_RELEASE_VERSION, PatchNotesPage } from "./PatchNotes";
 import { CenteredModal, MatchRewardPopup, type MatchReward } from "./CenteredModal";
-import { campaignEncounter, campaignPackReward, campaignBossPackReward, isCampaignBoss, isHardCampaignBoss } from "../../../packages/shared/src/campaign";
+import { campaignPackReward, campaignBossPackReward } from "../../../packages/shared/src/campaign";
 import { PACK_ODDS, packDrawPool, nextBossPity, normalizeBossPity, type PackKind } from "../../../packages/shared/src/packs";
 import { BattleAnalyticsPage } from "./BattleAnalyticsPage";
 import { readBattleRecords, saveBattleRecord, type BattleMode, type BattleSummary } from "./battleAnalytics";
@@ -56,7 +56,23 @@ import { addCardXp, cardEffectiveEvolution, cardEvolution, cardTotalXp, dailyQue
 import { claimMail, deliverMail, queuedPackCount, updateMail, welcomeMail, type GiftMail } from "../../../packages/shared/src/mailbox";
 import { MailboxPage } from "./MailboxPage";
 import { normalizePackResult, comparePackResults } from "./packResults";
+import { AdventurePage } from "./AdventurePage";
+import { CollectionWorkspace } from "./CollectionWorkspace";
+import { SavedReplays } from "./SavedReplays";
+import { BuildLab } from "./BuildLab";
+import { ChoiceChestPanel } from "./ModeRewards";
+import { applyModeReward } from "../../../packages/shared/src/mode-rewards";
+import { journeyEvent } from "./telemetry";
+import { experienceOf, type Experience } from "../../../packages/shared/src/experience";
+import { awardPacks, claimReserve } from "../../../packages/shared/src/mailbox";
+import "./streamlined.css";
+import "./adventureExpansion.css";
+import { MasteryNotification } from "./MasteryJourney";
 interface GlobalProfile {
+  choiceChests?: number;
+  experience?: Experience;
+  rewardReserve?: number;
+  rewardReceipts?: string[];
   cards: { characterId: CharacterId; level: number; xp: number }[];
   itemCards: { itemId: string; level: number; xp: number }[];
   team: CharacterId[];
@@ -93,7 +109,8 @@ const PROFILE_TOKEN_KEY = "circlewar-profile-token-v1";
 const UPDATE_REWARD_KEY = "circlewar-update-reward-version-v1";
 // Bump version on each release so each player receives that release's gift once.
 const NAVIGATION_GROUPS = [
-  { title: "Bộ sưu tập", items: [["packs", "Mở thẻ"], ["mailbox", "Hòm thư"], ["inventory", "Kho đồ"], ["training", "Luyện bài"], ["trade", "Trao đổi bài"]] },
+  { title: "Hành trình", items: [["home", "Hành trình"], ["tutorial", "Làm quen"], ["challenges", "Thử thách ngày"], ["expedition", "Viễn chinh"], ["mastery", "Hành trình nhân vật"]] },
+  { title: "Bộ sưu tập", items: [["packs", "Mở bài"], ["mailbox", "Hòm thư"], ["inventory", "Kho đồ"], ["training", "Luyện bài"], ["trade", "Trao đổi bài"]] },
   { title: "Chiến đấu", items: [["campaign", "Đi ải"], ["simulation", "Mô phỏng"], ["multiplayer", "Multiplayer"]] },
   { title: "Tra cứu", items: [["catalog", "Catalog"], ["analytics", "Phân tích số liệu"], ["balanceAudit", "Cân bằng nhân vật"], ["help", "Cách chơi"]] },
   { title: "Cộng đồng & cập nhật", items: [["settings", "Cài đặt"], ["feedback", "Góp ý"], ["patchNotes", "Patch notes"]] },
@@ -159,6 +176,7 @@ function ExperienceBar({ level, xp }: { level: number; xp: number }) {
   return <div className="card-experience"><div className="card-experience-label"><span>Lv.{level}{level >= 10 ? " · MAX" : ""}</span><span>{level >= 10 ? "MAX" : `${xp}/${required} EXP`}</span></div><div className="xp-track"><i style={{ width: `${level >= 10 ? 100 : Math.min(100, (xp / required) * 100)}%` }} /></div></div>;
 }
 function App() {
+  useEffect(() => journeyEvent("session_open"), []);
   const [battleRecords, setBattleRecords] = useState(() => readBattleRecords(localStorage));
   function recordBattle(summary: BattleSummary, mode: BattleMode, recordId?: string) {
     try { setBattleRecords(saveBattleRecord(localStorage, { ...summary, mode, id: recordId || crypto.randomUUID(), savedAt: Date.now() })); }
@@ -214,7 +232,6 @@ function App() {
   const [updateGiftOpen, setUpdateGiftOpen] = useState(false);
   const [matchRewards, setMatchRewards] = useState<MatchReward[]>([]);
   const handledMatches = useRef(new Set<string>());
-  const settledCampaign = useRef<number | null>(null);
   const [availableUpdate, setAvailableUpdate] = useState("");
   useEffect(() => {
     if (import.meta.env.DEV) return;
@@ -235,8 +252,9 @@ function App() {
   }, []);
   const [profileOnline, setProfileOnline] = useState(false);
   const [profileRoomSynced, setProfileRoomSynced] = useState(false);
+  const [syncState, setSyncState] = useState("Đã lưu trên thiết bị");
   const profileSaveQueue = useRef<Promise<void>>(Promise.resolve());
-  const [screen, setScreen] = useState<"arena" | "simulation" | "multiplayer" | "packs" | "mailbox" | "inventory" | "training" | "campaign" | "catalog" | "trade" | "feedback" | "patchNotes" | "analytics" | "settings" | "balanceAudit">("packs");
+  const [screen, setScreen] = useState<"home" | "tutorial" | "challenges" | "expedition" | "mastery" | "arena" | "simulation" | "multiplayer" | "packs" | "mailbox" | "inventory" | "training" | "campaign" | "catalog" | "trade" | "feedback" | "patchNotes" | "analytics" | "settings" | "balanceAudit">("packs");
   const [navOpen, setNavOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
@@ -264,10 +282,6 @@ function App() {
   const [unpackOpened, setUnpackOpened] = useState(0);
   const [revealPhase, setRevealPhase] = useState<"idle" | "pack" | "unpack" | "flash" | "pop" | "slide" | "details">("idle");
   const revealTimers = useRef<number[]>([]);
-  const [selectedTeamTarget, setSelectedTeamTarget] = useState<string>(profile.team[0] || "");
-  const [campaignBattle, setCampaignBattle] = useState<{ config: BattleConfig; seed: number } | null>(null);
-  const [campaignWon, setCampaignWon] = useState<boolean | null>(null);
-  const upcomingCampaign = useMemo(() => campaignEncounter(profile.campaignStage + 1, profile.team.length), [profile.campaignStage, profile.team.length]);
   const [info, setInfo] = useState<Inspect | null>(null);
   const [trainingTarget, setTrainingTarget] = useState("");
   const [trainingSacrifice, setTrainingSacrifice] = useState<string[]>([]);
@@ -432,6 +446,7 @@ function App() {
       commitLocalProfile(localStorage, result.profile, undefined, false);
       setProfile(result.profile);
       setProfileOnline(true);
+      setSyncState("Đã đồng bộ");
       setProfileReady(true);
     }).catch((error) => {
       if (active) {
@@ -521,7 +536,10 @@ function App() {
     return run(() => conn.current!.action(action));
   }
   function saveProfile(next: GlobalProfile, receipt?: DrawReceipt) {
+    const teamLocked = !offline && room && room.phase !== "FINISHED" && (room.phase !== "LOBBY" || me?.ready);
+    if (teamLocked && (JSON.stringify(next.team) !== JSON.stringify(profile.team) || JSON.stringify(next.equipment) !== JSON.stringify(profile.equipment) || JSON.stringify(next.experience?.masteries) !== JSON.stringify(profile.experience?.masteries))) { report("Đội đang khóa trong trận hoặc đã sẵn sàng."); return; }
     const journal = commitLocalProfile(localStorage, next, receipt);
+    setSyncState(profileOnline ? "Đang đồng bộ…" : "Đã lưu trên thiết bị · chưa kết nối máy chủ");
     setProfile(next);
     if (profileReady && profileOnline) {
       profileSaveQueue.current = profileSaveQueue.current.catch(() => {}).then(async () => {
@@ -532,7 +550,8 @@ function App() {
         });
         if (!response.ok) throw Error("Không lưu được hồ sơ trên máy chủ");
         acknowledgeProfile<GlobalProfile>(localStorage, journal.revision);
-      }).catch((e) => report(e instanceof Error ? e.message : String(e)));
+        if (readProfileJournal<GlobalProfile>(localStorage)?.revision === journal.revision) setSyncState("Đã đồng bộ");
+      }).catch((e) => { setSyncState("Đã lưu trên thiết bị · cần thử đồng bộ lại"); report(e instanceof Error ? e.message : String(e)); });
     }
   }
   useEffect(() => {
@@ -543,6 +562,8 @@ function App() {
   function profileSyncAction(team = profile.team, equipment = profile.equipment, source = profile) {
     return {
       type: "SYNC_PROFILE" as const,
+      masteries: source.experience?.masteries,
+      masteryProgress: source.experience?.mastery,
       cards: source.cards,
       itemCards: source.itemCards,
       team,
@@ -712,51 +733,10 @@ function App() {
   }
   function claimMission(mission: "draw" | "win" | "campaign") {
     const goal = mission === "draw" ? 3 : 1;
-    if (profile.missions[mission] < goal || profile.claimedMissions.includes(mission) || queuedPacks >= PACK_CAPACITY) return;
-    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY ? now : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
-    const nextPacks = queuedPacks + 1;
-    saveProfile({ ...profile, packs: nextPacks, lastPackAt: nextPacks >= PACK_CAPACITY ? now : accruedAt, claimedMissions: [...profile.claimedMissions, mission] });
+    if ((mission === "win" ? Math.max(profile.missions.win, profile.missions.campaign >= 3 ? 1 : 0) : profile.missions[mission]) < goal || profile.claimedMissions.includes(mission)) return;
+    saveProfile(awardPacks({ ...profile, claimedMissions: [...profile.claimedMissions, mission] }, 1, `quest:${profile.missionDay}:${mission}`, now));
   }
-  function toggleProfileTeam(characterId: CharacterId) {
-    const includes = profile.team.includes(characterId);
-    const team = includes
-      ? profile.team.length > 1 ? profile.team.filter((id) => id !== characterId) : profile.team
-      : profile.team.length < 3 ? [...profile.team, characterId] : profile.team;
-    const equipment = { ...profile.equipment };
-    if (!team.includes(characterId)) delete equipment[characterId];
-    const next = { ...profile, team, equipment };
-    saveProfile(next);
-    if (offline) {
-      setPractice(team.map((id) => ({
-        characterId: id,
-        classId: character(id)!.base as ClassId,
-        level: profile.cards.find((card) => card.characterId === id)?.level || 1,
-        weaponRank: 1,
-        equipment: profile.equipment[id] || [],
-        equipmentLevels: Object.fromEntries((profile.equipment[id] || []).map((itemId) => [itemId, profile.itemCards.find((card) => card.itemId === itemId)?.level || 1])),
-      })));
-    } else if (room?.phase === "LOBBY" && me && !me.ready) {
-      conn.current?.action(profileSyncAction(team, equipment, next)).catch((e) => report(e.message));
-    }
-  }
-  function equipProfileItem(characterId: CharacterId, itemId: string) {
-    const owned = profile.itemCards.some((card) => card.itemId === itemId);
-    if (!owned || !profile.team.includes(characterId)) return;
-    const info = itemInfo(itemId);
-    if (!info) return;
-    const equipment = Object.fromEntries(Object.entries(profile.equipment).map(([id, items]) => [id, [...items]]));
-    const equippedOnTarget = equipment[characterId]?.[0];
-    if (equippedOnTarget === itemId) delete equipment[characterId];
-    else {
-      for (const [ownerId, items] of Object.entries(equipment)) if (items.includes(itemId)) delete equipment[ownerId];
-      if (equippedOnTarget) delete equipment[characterId];
-      equipment[characterId] = [itemId];
-    }
-    const next = { ...profile, equipment };
-    saveProfile(next);
-    if (offline) setPractice((previous) => previous.map((unit) => unit.characterId === characterId ? { ...unit, level: profile.cards.find((card) => card.characterId === characterId)?.level || 1, equipment: equipment[characterId] || [], equipmentLevels: Object.fromEntries((equipment[characterId] || []).map((id) => [id, profile.itemCards.find((card) => card.itemId === id)?.level || 1])) } : unit));
-    if (!offline && room?.phase === "LOBBY" && me && !me.ready) conn.current?.action(profileSyncAction(next.team, equipment, next)).catch((e) => report(e.message));
-  }
+
   function cardByKey(key: string) {
     const [kind, id] = key.split(":", 2);
     return kind === "character"
@@ -766,6 +746,7 @@ function App() {
         : undefined;
   }
   function canSacrifice(key: string) {
+    if (experienceOf(profile).locked.includes(key)) return false;
     if (key.startsWith("character:")) return !profile.team.includes(key.slice(10) as CharacterId) && !!cardByKey(key);
     if (key.startsWith("item:")) return !!cardByKey(key) && !Object.values(profile.equipment).some((ids) => ids.includes(key.slice(5)));
     return false;
@@ -782,6 +763,12 @@ function App() {
   const trainingEvolution = trainingPreview ? cardEvolution(trainingBaseTier, trainingPreview.level).tier : "";
   function trainCard() {
     if (!trainingPreview || !trainingMaterials.length || !trainingRecipient || trainingSacrifice.includes(trainingTarget) || !trainingSacrifice.every(canSacrifice)) return;
+    const materialNames = trainingSacrifice.map(key => key.startsWith("character:") ? character(key.slice(10))?.name : itemInfo(key.slice(5))?.name).join(", ");
+    const presetCards = experienceOf(profile).presets.filter(p => trainingSacrifice.some(key => key.startsWith("character:") ? p.team.includes(key.slice(10) as CharacterId) : Object.values(p.equipment).some(ids => ids.includes(key.slice(5)))));
+    let capacity = Math.max(0, xpForNextLevel(trainingRecipient.level) - trainingRecipient.xp);
+    for (let level = trainingRecipient.level + 1; level < 10; level++) capacity += xpForNextLevel(level);
+    const waste = Math.max(0, trainingXp - capacity);
+    if (!window.confirm(`Xóa vĩnh viễn: ${materialNames}. Nhận ${Math.min(trainingXp, capacity)} EXP hữu ích; ${waste} EXP vượt trần.${presetCards.length ? " Có thẻ thuộc preset: " + presetCards.map(p => p.name).join(", ") : ""} Tiếp tục?`)) return;
     const [targetKind, targetId] = trainingTarget.split(":", 2);
     const materialKeys = new Set(trainingSacrifice);
     const xp = trainingXp;
@@ -810,64 +797,6 @@ function App() {
       revealTimers.current = [window.setTimeout(() => setRevealPhase("pop"), 220), window.setTimeout(() => setRevealPhase("details"), 700)];
     }
   }
-  function dropInventoryCard(event: React.DragEvent, characterId: CharacterId) {
-    event.preventDefault();
-    try {
-      const payload = JSON.parse(event.dataTransfer.getData("application/json")) as { kind: string; id: string };
-      if (payload.kind === "character") toggleProfileTeam(payload.id as CharacterId);
-      if (payload.kind === "item") equipProfileItem(characterId, payload.id);
-    } catch { /* ignore invalid drag data */ }
-  }
-  function launchCampaign() {
-    const base = debugConfig(2);
-    const playerLoadouts: Loadout[] = profile.team.map((characterId) => ({
-      characterId,
-      classId: character(characterId)!.base as ClassId,
-      level: profile.cards.find((card) => card.characterId === characterId)?.level || 1,
-      weaponRank: 1,
-      equipment: profile.equipment[characterId] || [],
-      equipmentLevels: Object.fromEntries((profile.equipment[characterId] || []).map((id) => [id, profile.itemCards.find((card) => card.itemId === id)?.level || 1])),
-    }));
-    const encounter = campaignEncounter(profile.campaignStage + 1, playerLoadouts.length);
-    base.campaign = { stage: encounter.stage, enemyTeamId: "team-rival" };
-    base.teams = [
-      { id: "team-player", name, loadouts: playerLoadouts },
-      { id: "team-rival", name: encounter.boss ? `BOSS · ẢI ${encounter.stage}` : `Đối thủ ải ${encounter.stage}`, loadouts: encounter.loadouts },
-    ];
-    setCampaignWon(null);
-    settledCampaign.current = null;
-    setCampaignBattle({ config: base, seed: 51000 + profile.campaignStage * 97 + Math.floor(Math.random() * 97) });
-  }
-  function finishCampaign(winningTeam: string) {
-    if (!campaignBattle || campaignWon !== null || settledCampaign.current === campaignBattle.seed) return;
-    settledCampaign.current = campaignBattle.seed;
-    const won = winningTeam === "team-player";
-    setCampaignWon(won);
-    if (!won) return;
-    const accruedAt = profile.packs + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) >= PACK_CAPACITY
-      ? now
-      : profile.lastPackAt + Math.floor(Math.max(0, now - profile.lastPackAt) / 60_000) * 60_000;
-    const reward = campaignPackReward(campaignBattle.config.campaign!.stage);
-    const packs = Math.min(PACK_CAPACITY, queuedPacks + reward);
-    saveProfile({
-      ...profile,
-      packs,
-      bossPacks: (profile.bossPacks || 0) + campaignBossPackReward(campaignBattle.config.campaign!.stage),
-      lastPackAt: packs >= PACK_CAPACITY ? now : accruedAt,
-      campaignStage: profile.campaignStage + 1,
-      missions: { ...profile.missions, campaign: profile.missions.campaign + 1 },
-    });
-    setInfo(null);
-    setNavOpen(false);
-    setMatchRewards(current => [...current, {
-      id: `campaign:${campaignBattle.seed}`,
-      mode: "campaign",
-      stage: campaignBattle.config.campaign!.stage,
-      packs: packs - queuedPacks,
-      bossPacks: campaignBossPackReward(campaignBattle.config.campaign!.stage),
-      overflow: reward - (packs - queuedPacks),
-    }]);
-  }
   const me = room?.players.find((p) => p.id === id),
     host = room?.host === id;
   useEffect(() => {
@@ -887,7 +816,8 @@ function App() {
     const desiredTeam = JSON.stringify(profile.team);
     const currentEquipment = JSON.stringify(me.loadouts.map((unit) => ({ characterId: unit.characterId, items: unit.equipment })));
     const desiredEquipment = JSON.stringify(profile.team.map((characterId) => ({ characterId, items: profile.equipment[characterId] || [] })));
-    if (currentCards !== desiredCards || currentItems !== desiredItems || currentTeam !== desiredTeam || currentEquipment !== desiredEquipment || (me.campaignStage || 0) !== profile.campaignStage) {
+    const currentMasteries=JSON.stringify(me.loadouts.map(u=>[u.masteryId||"",u.masteryTarget||""])), desiredMasteries=JSON.stringify(profile.team.map(id=>[profile.experience?.masteries?.[id]?.id||"",profile.experience?.masteries?.[id]?.target||""]));
+    if (currentMasteries !== desiredMasteries || currentCards !== desiredCards || currentItems !== desiredItems || currentTeam !== desiredTeam || currentEquipment !== desiredEquipment || (me.campaignStage || 0) !== profile.campaignStage) {
       setProfileRoomSynced(false);
       conn.current?.action(profileSyncAction()).then(() => setProfileRoomSynced(true)).catch((e) => report(e.message));
     } else setProfileRoomSynced(true);
@@ -905,6 +835,7 @@ function App() {
       next.packs = Math.min(PACK_CAPACITY, queuedPacks + (room.mode === "campaign" ? campaignPackReward(stage) : 10));
       if (room.mode === "campaign") next.bossPacks = (profile.bossPacks || 0) + campaignBossPackReward(stage);
       next.lastPackAt = next.packs >= PACK_CAPACITY ? now : accruedAt;
+      next.rewardReserve = (profile.rewardReserve || 0) + Math.max(0, (room.mode === "campaign" ? campaignPackReward(stage) : 10) - (next.packs - queuedPacks));
       next.missions = { ...profile.missions };
       if (room.mode === "campaign") {
         next.campaignStage = profile.campaignStage + 1;
@@ -1114,14 +1045,6 @@ function App() {
     (replay.format === 0 || replay.game === room.game);
   const currentReplay = replayMatchesRoom ? replay : null;
   const config = offline ? debug : currentReplay?.config;
-  const inventoryLoadouts: Loadout[] = profile.team.map((characterId) => ({
-    characterId,
-    classId: character(characterId)!.base as ClassId,
-    level: profile.cards.find((card) => card.characterId === characterId)?.level || 1,
-    weaponRank: 1,
-    equipment: profile.equipment[characterId] || [],
-    equipmentLevels: Object.fromEntries((profile.equipment[characterId] || []).map((id) => [id, profile.itemCards.find((card) => card.itemId === id)?.level || 1])),
-  }));
   const eqArgs = { target, ...(replace >= 0 ? { replace } : {}) };
   function itemName(id: string | null) {
     return (
@@ -1186,7 +1109,7 @@ function App() {
     if (!canRearrange) setMoveSelection(null);
   }, [canRearrange, room?.round]);
   return (
-    <div className="app">
+    <div className={`app streamlined-ui screen-${screen} ${["home", "campaign", "challenges", "expedition"].includes(screen) ? "focused-layout" : ""}`}>
       <header>
         <a className="brand" href="./" aria-label="RiseOn Ultimate TCG">
           <span className="brand-mark" aria-hidden="true">
@@ -1212,6 +1135,7 @@ function App() {
             <small>ULTIMATE TCG</small>
           </span>
         </a>
+        <div className="header-resources" aria-label="Tài nguyên của bạn"><button onClick={() => setScreen("packs")} title="Pack thường"><span aria-hidden="true">▥</span><b>{queuedPacks}</b></button><button className="boss-resource" onClick={() => setScreen("packs")} title="Pack Boss"><span aria-hidden="true">✦</span><b>{profile.bossPacks || 0}</b></button></div>
         <button ref={menuButtonRef} className="navigation-toggle" aria-label="Mở menu điều hướng" aria-expanded={navOpen} aria-controls="app-navigation" onClick={() => setNavOpen(open => !open)}><span aria-hidden="true">☰</span><b>Menu</b><small>{NAVIGATION_GROUPS.flatMap(group => [...group.items]).find(([page]) => page === screen)?.[1] || "Đấu trường"}</small></button>
         <button className="mailbox-shortcut" aria-label={`Hòm thư${pendingMailCount ? `, ${pendingMailCount} quà chờ nhận` : ""}`} onClick={() => setScreen("mailbox")}><span className="mailbox-shortcut-icon" aria-hidden="true">✉</span><span className="mailbox-shortcut-label">Hòm thư</span>{pendingMailCount > 0 && <b>{pendingMailCount}</b>}</button>
         <button className="icon" aria-label={muted ? "Âm thanh: Tắt" : "Âm thanh: Bật"} onClick={() => setMuted(!muted)}>
@@ -1221,24 +1145,29 @@ function App() {
       {navOpen && <div className="navigation-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setNavOpen(false); }}>
         <aside ref={drawerRef} id="app-navigation" className="app-nav-drawer" role="dialog" aria-modal="true" aria-label="Menu điều hướng">
           <div className="drawer-heading"><div><b>RISEON</b><small>ULTIMATE TCG</small></div><button aria-label="Đóng menu" onClick={() => setNavOpen(false)}>×</button></div>
-          <nav className="drawer-nav" aria-label="Các chế độ">{NAVIGATION_GROUPS.map(group => <section className="drawer-group" key={group.title}><h2>{group.title}</h2>{group.items.map(([page, label]) => <button key={page} className={screen === page ? "active" : ""} aria-current={screen === page ? "page" : undefined} onClick={() => {
+          <nav className="drawer-nav" aria-label="Các chế độ">{NAVIGATION_GROUPS.map(group => <section className="drawer-group" key={group.title}><h2>{group.title}</h2>{group.items.map(([page, label]) => <button key={page} aria-label={label} className={screen === page ? "active" : ""} aria-current={screen === page ? "page" : undefined} onClick={() => {
             if (page === "help") setHelp(value => !value);
             else { setScreen(page); if (page === "simulation") { setOffline(true); setSimulationMode(true); } if (page === "multiplayer") { setOffline(false); setSimulationMode(false); } }
             setNavOpen(false);
           }}><span>{label}</span>{page === "packs" && <small>{queuedPacks}</small>}{page === "mailbox" && pendingMailCount > 0 && <small>{pendingMailCount}</small>}{page === "patchNotes" && <small>MỚI</small>}</button>)}</section>)}</nav>
           <div className="drawer-version">v{CURRENT_RELEASE_VERSION}</div>
+          <details className="sync-status"><summary>Trạng thái lưu trò chơi</summary><p role="status">{syncState}</p><button onClick={() => { void profileSaveQueue.current.then(() => { const current = readLocalProfile<GlobalProfile>(localStorage); if (current) saveProfile(current); }); }}>Thử đồng bộ</button></details>
         </aside>
       </div>}
+      <MasteryNotification profile={profile} onView={() => setScreen("mastery")} onDismiss={id => {
+        const current = readLocalProfile<GlobalProfile>(localStorage) || profile;
+        saveProfile({ ...current, experience: { ...experienceOf(current), masteryNotices: (experienceOf(current).masteryNotices || []).filter(key => key !== id) } });
+      }}/>
       <main>
+        <nav className="primary-navigation" aria-label="Điều hướng chính">{([["packs", "Mở bài"], ["inventory", "Kho đồ"], ["campaign", "Đi ải"], ["home", "Hành trình"], ["challenges", "Thử thách"]] as const).map(([id, label]) => <button key={id} aria-current={screen === id ? "page" : undefined} onClick={() => setScreen(id)}>{label}</button>)}</nav>
         <div className="page-title">
-          <div className="eyebrow">BOUNCE. BATTLE. SURVIVE.</div>
-          <h1>{screen === "balanceAudit" ? "Cân bằng nhân vật." : screen === "settings" ? "Cài đặt." : screen === "mailbox" ? "Hòm thư." : screen === "analytics" ? "Phân tích số liệu." : screen === "packs" ? "Mở thẻ." : screen === "inventory" ? "Kho đồ." : screen === "training" ? "Luyện bài." : screen === "trade" ? "Trao đổi bài." : screen === "patchNotes" ? "Patch notes." : screen === "feedback" ? "Gửi góp ý." : screen === "campaign" ? "Đi ải." : screen === "catalog" ? "Catalog." : screen === "simulation" ? "Mô phỏng." : screen === "multiplayer" ? "Đấu trường." : <>Mỗi vòng đấu.<br /><span>Một quyết định mới.</span></>}</h1>
-          <p>{screen === "balanceAudit" ? "Đối chiếu thắng thua, sống sót, sát thương và hỗ trợ qua mô phỏng." : screen === "settings" ? "Tùy chỉnh hiển thị và âm thanh cho trận đấu của bạn." : screen === "mailbox" ? "Quà tân thủ, quà cập nhật và những lời nhắn từ RiseOn." : screen === "analytics" ? "Theo dõi hiệu quả đội hình qua các trận đã hoàn tất." : screen === "packs" ? "Mỗi pack mở ra một thẻ nhân vật hoặc vật phẩm." : screen === "inventory" ? "Xây team, trang bị và xem chi tiết bộ sưu tập thẻ." : screen === "training" ? "Hy sinh thẻ dư để truyền EXP cho thẻ bạn muốn nâng." : screen === "trade" ? "Tạo phiên, chọn thẻ muốn đổi và xác nhận cùng người chơi khác." : screen === "campaign" ? "Vượt ải trong trận cục bộ để kiếm thêm pack." : screen === "catalog" ? "Tra cứu nhân vật, vật phẩm, kỹ năng và liên kết." : screen === "patchNotes" ? "Theo dõi thay đổi, cải tiến và cân bằng qua từng phiên bản." : screen === "feedback" ? "Gửi ý kiến và báo lỗi cho đội phát triển." : "Xây đội hình. Xem hỗn loạn bùng nổ."}</p>
+          <h1>{screen === "home" ? "Hành trình." : screen === "tutorial" ? "Làm quen." : screen === "challenges" ? "Thử thách ngày." : screen === "mastery" ? "Hành trình nhân vật." : screen === "expedition" ? "Viễn chinh." : screen === "balanceAudit" ? "Cân bằng nhân vật." : screen === "settings" ? "Cài đặt." : screen === "mailbox" ? "Hòm thư." : screen === "analytics" ? "Phân tích số liệu." : screen === "packs" ? "Mở bài." : screen === "inventory" ? "Kho đồ." : screen === "training" ? "Luyện bài." : screen === "trade" ? "Trao đổi bài." : screen === "patchNotes" ? "Patch notes." : screen === "feedback" ? "Gửi góp ý." : screen === "campaign" ? "Đi ải." : screen === "catalog" ? "Catalog." : screen === "simulation" ? "Mô phỏng." : screen === "multiplayer" ? "Đấu trường." : <>Mỗi vòng đấu.<br /><span>Một quyết định mới.</span></>}</h1>
+          {screen !== "inventory" && <p>{screen === "balanceAudit" ? "Đối chiếu thắng thua, sống sót, sát thương và hỗ trợ qua mô phỏng." : screen === "settings" ? "Tùy chỉnh hiển thị và âm thanh cho trận đấu của bạn." : screen === "mailbox" ? "Quà tân thủ, quà cập nhật và những lời nhắn từ RiseOn." : screen === "analytics" ? "Theo dõi hiệu quả đội hình qua các trận đã hoàn tất." : screen === "packs" ? "Mỗi pack mở ra một thẻ nhân vật hoặc vật phẩm." : screen === "training" ? "Hy sinh thẻ dư để truyền EXP cho thẻ bạn muốn nâng." : screen === "trade" ? "Tạo phiên, chọn thẻ muốn đổi và xác nhận cùng người chơi khác." : screen === "campaign" ? "Vượt ải trong trận cục bộ để kiếm thêm pack." : screen === "catalog" ? "Tra cứu nhân vật, vật phẩm, kỹ năng và liên kết." : screen === "patchNotes" ? "Theo dõi thay đổi, cải tiến và cân bằng qua từng phiên bản." : screen === "feedback" ? "Gửi ý kiến và báo lỗi cho đội phát triển." : "Xây đội hình. Xem hỗn loạn bùng nổ."}</p>}
         </div>
         {help && (
           <section className="notice">
-            Mở pack để nhận thẻ nhân vật hoặc vật phẩm. Trong Kho đồ, kéo nhân vật
-            vào đội (tối đa 3) và kéo vật phẩm lên nhân vật để trang bị. Tạo hoặc
+            Mở pack để nhận thẻ nhân vật hoặc vật phẩm. Trong Kho đồ, chọn thêm nhân vật
+            vào đội (tối đa 3), chọn trang bị và lưu preset để đổi build nhanh. Tạo hoặc
             tham gia phòng rồi sẵn sàng; hai đội chiến đấu trên đấu trường tròn.
             Thắng PvP nhận 10 pack, thắng ải nhận 5 pack.
           </section>
@@ -1250,7 +1179,9 @@ function App() {
           </div>
         )}
         {availableUpdate && <div className="release-refresh" role="status"><span>Đã có bản cập nhật v{availableUpdate}. Refresh trang để nhận thay đổi và quà cập nhật.</span><button disabled={openingPack} onClick={async () => { await profileSaveQueue.current.catch(() => {}); window.location.reload(); }}>Refresh trang</button></div>}
-        {screen === "balanceAudit" ? <BalanceAuditPage /> : screen === "settings" ? <SettingsPage settings={settings} onChange={setSettings} /> : screen === "mailbox" ? <MailboxPage mails={profile.mailbox || []} queued={queuedPacks} ready={profileReady} onClaim={claimGiftMail} onOpenPacks={() => setScreen("packs")} /> : screen === "analytics" ? <BattleAnalyticsPage records={battleRecords} equipment={profile.team.map(characterId => ({ characterId, classId: character(characterId)!.base as ClassId, level: profile.cards.find(card => card.characterId === characterId)?.level || 1, equipment: profile.equipment[characterId] || [], equipmentLevels: Object.fromEntries((profile.equipment[characterId] || []).map(id => [id, profile.itemCards.find(card => card.itemId === id)?.level || 1])) }))} /> : screen === "patchNotes" ? <PatchNotesPage /> : screen === "feedback" ? <section className="profile-screen feedback-screen"><div className="panel-title"><h2>Gửi feedback</h2><b>Phản hồi trực tiếp</b></div><p className="muted">Mô tả góp ý hoặc lỗi bạn gặp. Ứng dụng email sẽ mở sẵn nội dung để bạn gửi đến đội phát triển.</p><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const subject = encodeURIComponent(`[CircleWar Feedback] ${String(form.get("topic") || "Góp ý")}`); const body = encodeURIComponent(`Người chơi: ${name}\nLoại: ${String(form.get("kind") || "Góp ý")}\n\n${String(form.get("message") || "")}`); window.location.href = `mailto:hoangls1008@gmail.com?subject=${subject}&body=${body}`; }}><label>Chủ đề<input name="topic" required maxLength={100} placeholder="Ví dụ: Pack bị lỗi" /></label><label>Loại phản hồi<select name="kind"><option>Góp ý</option><option>Báo lỗi</option><option>Cân bằng thẻ</option></select></label><label>Nội dung<textarea name="message" required minLength={10} maxLength={3000} rows={7} placeholder="Mô tả chi tiết để đội phát triển dễ xử lý…" /></label><button className="primary" type="submit">Soạn email feedback</button></form></section> : screen === "catalog" ? <section className="catalog-page"><CatalogLibrary inspect={setInfo} initialOpen /></section> : screen === "trade" ? <section className="profile-screen trade-screen">
+        {screen === "analytics" && <SavedReplays records={battleRecords} settings={settings} onError={report} />}
+
+        {(["home", "campaign", "tutorial", "challenges", "mastery", "expedition"] as string[]).includes(screen) ? (profileReady ? <AdventurePage key={screen} mode={screen as "home" | "campaign" | "tutorial" | "challenges" | "mastery" | "expedition"} profile={profile} onSave={next => saveProfile({ ...profile, ...next })} settings={settings} onError={report} inspect={setInfo} onNavigate={setScreen} onRecord={summary => recordBattle(summary, screen === "campaign" ? "campaign" : "simulation")} /> : <section className="notice" role="status">Đang tải hành trình…</section>) : screen === "balanceAudit" ? <BalanceAuditPage /> : screen === "settings" ? <SettingsPage settings={settings} onChange={setSettings} /> : screen === "mailbox" ? <MailboxPage reserve={profile.rewardReserve || 0} onClaimReserve={() => saveProfile(claimReserve(readLocalProfile<GlobalProfile>(localStorage) || profile))} mails={profile.mailbox || []} queued={queuedPacks} ready={profileReady} onClaim={claimGiftMail} onOpenPacks={() => setScreen("packs")} /> : screen === "analytics" ? <BattleAnalyticsPage records={battleRecords} equipment={profile.team.map(characterId => ({ characterId, classId: character(characterId)!.base as ClassId, level: profile.cards.find(card => card.characterId === characterId)?.level || 1, equipment: profile.equipment[characterId] || [], equipmentLevels: Object.fromEntries((profile.equipment[characterId] || []).map(id => [id, profile.itemCards.find(card => card.itemId === id)?.level || 1])) }))} /> : screen === "patchNotes" ? <PatchNotesPage /> : screen === "feedback" ? <section className="profile-screen feedback-screen"><div className="panel-title"><h2>Gửi feedback</h2><b>Phản hồi trực tiếp</b></div><p className="muted">Mô tả góp ý hoặc lỗi bạn gặp. Ứng dụng email sẽ mở sẵn nội dung để bạn gửi đến đội phát triển.</p><form onSubmit={(event) => { event.preventDefault(); const form = new FormData(event.currentTarget); const subject = encodeURIComponent(`[CircleWar Feedback] ${String(form.get("topic") || "Góp ý")}`); const body = encodeURIComponent(`Người chơi: ${name}\nLoại: ${String(form.get("kind") || "Góp ý")}\n\n${String(form.get("message") || "")}`); window.location.href = `mailto:hoangls1008@gmail.com?subject=${subject}&body=${body}`; }}><label>Chủ đề<input name="topic" required maxLength={100} placeholder="Ví dụ: Pack bị lỗi" /></label><label>Loại phản hồi<select name="kind"><option>Góp ý</option><option>Báo lỗi</option><option>Cân bằng thẻ</option></select></label><label>Nội dung<textarea name="message" required minLength={10} maxLength={3000} rows={7} placeholder="Mô tả chi tiết để đội phát triển dễ xử lý…" /></label><button className="primary" type="submit">Soạn email feedback</button></form></section> : screen === "catalog" ? <section className="catalog-page"><CatalogLibrary inspect={setInfo} initialOpen /></section> : screen === "trade" ? <section className="profile-screen trade-screen">
           {!tradeSession ? <div className="trade-lobby panel">
             <div className="panel-title"><h2>Tạo hoặc tham gia phiên</h2><b>{profileOnline ? "Hồ sơ đã kết nối" : "Cần kết nối máy chủ"}</b></div>
             {!profileOnline && <p className="muted">{!api ? "Backend URL chưa được cấu hình. Trong tab Multiplayer, nhập HTTPS URL của Cloudflare Worker để bật hồ sơ và trao đổi." : "Trao đổi cần máy chủ hồ sơ. Kiểm tra Backend URL, HTTPS và ALLOWED_ORIGINS của Worker nếu không kết nối được."}</p>}
@@ -1262,21 +1193,23 @@ function App() {
             <div className="trade-players">{tradeSession.players.map((player) => <article key={player.profileId} className={`trade-player ${player.ready ? "ready" : ""}`}><header><div><b>{player.name}{player.profileId === tradeSession.host ? " · Chủ phiên" : ""}</b><small>{player.ready ? "SẴN SÀNG" : "ĐANG CHỌN BÀI"}</small></div><span>{player.offer.length} lá</span></header><div className="trade-player-offer">{player.offer.length ? player.offer.map((key) => tradeCardVisual(key)) : <small>Chưa chọn bài</small>}</div></article>)}</div>
             {tradeAnimating && tradeSession.players.length === 2 && <div className="trade-animation" role="status" aria-label="Đang chuyển bài giữa hai người chơi"><div className="trade-animation-side trade-animation-left"><b>{tradeSession.players[0].name}</b><div>{tradeSession.players[0].offer.map((key) => tradeCardVisual(key, "trade-flying-card"))}</div></div><span className="trade-animation-spark" aria-hidden="true">⇄</span><div className="trade-animation-side trade-animation-right"><b>{tradeSession.players[1].name}</b><div>{tradeSession.players[1].offer.map((key) => tradeCardVisual(key, "trade-flying-card"))}</div></div></div>}
             {!tradeSession.completed && tradeSession.players.length < 2 && <p className="trade-waiting">Đang chờ người chơi khác tham gia bằng ID phiên.</p>}
-            {!tradeSession.completed && tradeSession.players.length === 2 && <section className="trade-pick panel"><div className="panel-title"><h2>Bài muốn trao đổi</h2><b>{tradeOffer.length} lá chọn</b></div><p className="muted">Có thể chọn nhiều lá. Nhân vật trong đội và vật phẩm đang gắn bị khóa.</p><div className="trade-card-grid">{profile.cards.map((card) => { const key = `character:${card.characterId}`, inTeam = profile.team.includes(card.characterId); return <label key={key} className={`trade-card-option ${tradeOffer.includes(key) ? "selected" : ""} ${inTeam ? "locked" : ""}`}><input type="checkbox" checked={tradeOffer.includes(key)} disabled={inTeam || tradeSession.executing} onChange={() => setTradeOffer((items) => items.includes(key) ? items.filter((item) => item !== key) : [...items, key])} /><Portrait id={card.characterId} /><span><b>{character(card.characterId)?.name}</b><small>Lv.{card.level} · {card.xp} EXP{inTeam ? " · Trong đội" : ""}</small></span></label>; })}{profile.itemCards.map((card) => { const key = `item:${card.itemId}`, equipped = Object.values(profile.equipment).some((ids) => ids.includes(card.itemId)); return <label key={key} className={`trade-card-option ${tradeOffer.includes(key) ? "selected" : ""} ${equipped ? "locked" : ""}`}><input type="checkbox" checked={tradeOffer.includes(key)} disabled={equipped || tradeSession.executing} onChange={() => setTradeOffer((items) => items.includes(key) ? items.filter((item) => item !== key) : [...items, key])} /><ItemSprite id={card.itemId} /><span><b>{itemInfo(card.itemId)?.name}</b><small>Lv.{card.level} · {card.xp} EXP{equipped ? " · Đang gắn" : ""}</small></span></label>; })}</div><div className="trade-actions"><button disabled={tradeSession.executing} onClick={() => void run(async () => { const result = await tradeRequest(`/${tradeSession.code}/offer`, { offer: tradeOffer }); setTradeSession(result.trade!); })}>Cập nhật bài chọn</button><button className="primary" disabled={tradeSession.executing || !tradeSession.players.find((player) => player.profileId === profileIdentity.id)?.offer.length} onClick={() => void run(async () => { const result = await tradeRequest(`/${tradeSession.code}/ready`, { ready: !tradeSession.players.find((player) => player.profileId === profileIdentity.id)?.ready }); setTradeSession(result.trade!); })}>{tradeSession.players.find((player) => player.profileId === profileIdentity.id)?.ready ? "Hủy sẵn sàng" : "Sẵn sàng"}</button>{profileIdentity.id === tradeSession.host && tradeSession.players.length === 2 && tradeSession.players.every((player) => player.ready) && <button className="trade-execute" onClick={() => void run(async () => { const result = await tradeRequest(`/${tradeSession.code}/execute`, {}); setTradeSession(result.trade!); })}>Thực hiện trao đổi</button>}</div></section>}
+            {!tradeSession.completed && tradeSession.players.length === 2 && <section className="trade-pick panel"><div className="panel-title"><h2>Bài muốn trao đổi</h2><b>{tradeOffer.length} lá chọn</b></div><p className="muted">Có thể chọn nhiều lá. Nhân vật trong đội và vật phẩm đang gắn bị khóa.</p><div className="trade-card-grid">{profile.cards.map((card) => { const key = `character:${card.characterId}`, inTeam = profile.team.includes(card.characterId) || experienceOf(profile).locked.includes(key); return <label key={key} className={`trade-card-option ${tradeOffer.includes(key) ? "selected" : ""} ${inTeam ? "locked" : ""}`}><input type="checkbox" checked={tradeOffer.includes(key)} disabled={inTeam || tradeSession.executing} onChange={() => setTradeOffer((items) => items.includes(key) ? items.filter((item) => item !== key) : [...items, key])} /><Portrait id={card.characterId} /><span><b>{character(card.characterId)?.name}</b><small>Lv.{card.level} · {card.xp} EXP{inTeam ? " · Trong đội" : ""}</small></span></label>; })}{profile.itemCards.map((card) => { const key = `item:${card.itemId}`, equipped = Object.values(profile.equipment).some((ids) => ids.includes(card.itemId)) || experienceOf(profile).locked.includes(key); return <label key={key} className={`trade-card-option ${tradeOffer.includes(key) ? "selected" : ""} ${equipped ? "locked" : ""}`}><input type="checkbox" checked={tradeOffer.includes(key)} disabled={equipped || tradeSession.executing} onChange={() => setTradeOffer((items) => items.includes(key) ? items.filter((item) => item !== key) : [...items, key])} /><ItemSprite id={card.itemId} /><span><b>{itemInfo(card.itemId)?.name}</b><small>Lv.{card.level} · {card.xp} EXP{equipped ? " · Đang gắn" : ""}</small></span></label>; })}</div><div className="trade-actions"><button disabled={tradeSession.executing} onClick={() => void run(async () => { const result = await tradeRequest(`/${tradeSession.code}/offer`, { offer: tradeOffer }); setTradeSession(result.trade!); })}>Cập nhật bài chọn</button><button className="primary" disabled={tradeSession.executing || !tradeSession.players.find((player) => player.profileId === profileIdentity.id)?.offer.length} onClick={() => void run(async () => { const result = await tradeRequest(`/${tradeSession.code}/ready`, { ready: !tradeSession.players.find((player) => player.profileId === profileIdentity.id)?.ready }); setTradeSession(result.trade!); })}>{tradeSession.players.find((player) => player.profileId === profileIdentity.id)?.ready ? "Hủy sẵn sàng" : "Sẵn sàng"}</button>{profileIdentity.id === tradeSession.host && tradeSession.players.length === 2 && tradeSession.players.every((player) => player.ready) && <button className="trade-execute" onClick={() => void run(async () => { const result = await tradeRequest(`/${tradeSession.code}/execute`, {}); setTradeSession(result.trade!); })}>Thực hiện trao đổi</button>}</div></section>}
             {tradeSession.completed && <div className="trade-complete">Trao đổi hoàn tất. Các lá bài đã được cập nhật vào Kho đồ; lá trùng nhận được cộng 150 EXP như khi roll (lá Lv.MAX không nhận thêm EXP).</div>}
           </>}
         </section> : screen === "packs" || screen === "inventory" || screen === "training" || screen === "campaign" ? <section className={`profile-screen ${screen}`}>
           {screen === "packs" && <>
+            <ChoiceChestPanel profile={profile} onSave={saveProfile} onError={report} />
             <section className="pack-hero">
               <div className="pack-hero-copy">
-                <span className="pack-eyebrow">RISEON · COLLECTOR SERIES</span>
-                <h2>Mở thẻ.<br /><em>Viết nên huyền thoại.</em></h2>
-                <p>Mỗi pack hé lộ một nhân vật hoặc vật phẩm. Sưu tầm, nâng cấp và tạo đội hình của riêng bạn.</p>
+
+                <h2>Pack thường</h2>
+                <p>Mỗi pack nhận 1 thẻ nhân vật hoặc vật phẩm.</p>
                 <div className="pack-queue-card"><span>PACK ĐANG CHỜ</span><strong>{queuedPacks}<small> / {PACK_CAPACITY}</small></strong><i><b style={{ width: `${queuedPacks / PACK_CAPACITY * 100}%` }} /></i></div>
                 <div className="pack-open-options">{[1, 3, 5, 10, 20, 50, 100].map((count) => <button key={count} className={count === 1 ? "primary" : ""} disabled={!profileReady || queuedPacks < count || openingPack || eligiblePackCards <= 0} onClick={() => openPack(count)}>Mở x{count}</button>)}</div>
                 {batchPulls.length > 0 && lastPull && <button className="pack-last-result" onClick={() => setRevealPhase("details")}>Xem kết quả lần mở gần nhất · {lastPull.batchCount || 1} pack</button>}
-                <PackRates kind="normal" /><div className="pack-promise"><span>✦ 1 thẻ mỗi pack</span><span>✦ Nhân vật & vật phẩm</span><span>✦ 5 bậc hiếm · bảo đảm Hiếm mỗi 20 pack</span></div>
+                <details className="pack-rules"><summary>Tỉ lệ & bảo hiểm</summary><PackRates kind="normal" /><div className="pack-promise"><span>✦ 1 thẻ mỗi pack</span><span>✦ Nhân vật & vật phẩm</span><span>✦ 5 bậc hiếm · bảo đảm Hiếm mỗi 20 pack</span></div>
                 <div className="pack-pity-card"><div><span>THẺ BẬC CAO NHẤT CÒN LẠI</span><strong>{profile.packsSinceHighRarity || 0}<small> / 100 pack</small></strong></div><i><b style={{ width: `${Math.min(100, (profile.packsSinceHighRarity || 0) / 100 * 100)}%` }} /></i><p>Sau 99 pack chưa có Sử thi trở lên, pack thứ 100 bảo đảm thẻ bậc cao nhất còn khả dụng.</p></div>
+                </details>
                 {eligiblePackCards <= 0 && <p className="pack-no-cards">Tất cả thẻ đã đạt Lv.10, không còn thẻ đủ điều kiện để mở. Pack của bạn vẫn được giữ nguyên.</p>}
               </div>
               <div className="pack-hero-art">
@@ -1287,27 +1220,13 @@ function App() {
             </section>
             <div className="pack-recharge">{queuedPacks >= PACK_CAPACITY ? "Hàng chờ đã đầy · pack tự hồi khi còn chỗ" : `Pack tiếp theo sau ${Math.floor(packWait / 60000)}:${String(Math.floor(packWait / 1000) % 60).padStart(2, "0")} · tự hồi mỗi phút, tối đa ${PACK_CAPACITY}`}</div>
             <section className="pack-hero boss-pack-hero" aria-label="Pack Boss">
-              <div className="pack-hero-copy"><span className="pack-eyebrow">PHẦN THƯỞNG CHINH PHỤC BOSS</span><h2>Pack Boss<br /><em>Nah, I'd drop.</em></h2><p>Tỉ lệ cơ bản: Sử thi 17% · Huyền thoại 3%, gấp 10 lần pack thường (1,7% · 0,3%). Thường 66% · Hiếm 14%.</p><div className="pack-queue-card"><span>PACK BOSS ĐANG CÓ</span><strong>{profile.bossPacks || 0}</strong></div><div className="pack-open-options">{[1, 3, 5, 10].map(count => <button key={count} disabled={!profileReady || (profile.bossPacks || 0) < count || openingPack || eligiblePackCards <= 0} onClick={() => openPack(count, "boss")}>Mở Boss x{count}</button>)}</div><p>Chỉ nhận khi thắng boss: mỗi ải thứ 5 thưởng 1 pack, mỗi ải thứ 10 là boss khó thưởng 3 pack. Pack Boss không tự hồi.</p><PackRates kind="boss" /><div className="pack-pity-card"><div><span>BẢO HIỂM PACK BOSS · HUYỀN THOẠI</span><strong>{profile.bossPacksSinceHighRarity || 0}<small> / 50 pack</small></strong></div><progress max={50} value={profile.bossPacksSinceHighRarity || 0} /><p>Còn {50 - (profile.bossPacksSinceHighRarity || 0)} pack tới bảo hiểm. Chỉ Huyền thoại đặt lại bộ đếm.</p></div></div>
+              <div className="pack-hero-copy"><h2>Pack Boss</h2><p>Nhận từ boss và các mốc chinh phục.</p><div className="pack-queue-card"><span>PACK BOSS ĐANG CÓ</span><strong>{profile.bossPacks || 0}</strong></div><div className="pack-open-options">{[1, 3, 5, 10].map(count => <button key={count} disabled={!profileReady || (profile.bossPacks || 0) < count || openingPack || eligiblePackCards <= 0} onClick={() => openPack(count, "boss")}>Mở Boss x{count}</button>)}</div><details className="pack-rules"><summary>Tỉ lệ & bảo hiểm Pack Boss</summary><p>Chỉ nhận khi thắng boss: mỗi ải thứ 5 thưởng 1 pack, mỗi ải thứ 10 là boss khó thưởng 3 pack. Pack Boss không tự hồi.</p><PackRates kind="boss" /><div className="pack-pity-card"><div><span>BẢO HIỂM PACK BOSS · HUYỀN THOẠI</span><strong>{profile.bossPacksSinceHighRarity || 0}<small> / 50 pack</small></strong></div><progress max={50} value={profile.bossPacksSinceHighRarity || 0} /><p>Còn {50 - (profile.bossPacksSinceHighRarity || 0)} pack tới bảo hiểm. Chỉ Huyền thoại đặt lại bộ đếm.</p></div></details></div>
               <div className="pack-hero-art"><PackArtwork kind="boss" /><span className="pack-total-badge">{profile.bossPacks || 0} PACK BOSS</span></div>
             </section>
-            <h3>Nhiệm Vụ Hằng Ngày · tiến độ làm mới mỗi ngày · mỗi nhiệm vụ nhận 1 pack</h3>
-            {([ ["draw", "Bóc 3 thẻ"], ["win", "Thắng một trận PvP"], ["campaign", "Thắng một ải"] ] as const).map(([mission, label]) => { const goal = mission === "draw" ? 3 : 1; const progress = Math.min(goal, profile.missions[mission]); const claimed = profile.claimedMissions.includes(mission); return <div className="mission-row" key={mission}><span>{label} · {progress}/{goal}</span><button disabled={!profileReady || claimed || progress < goal || queuedPacks >= PACK_CAPACITY} onClick={() => claimMission(mission)}>{claimed ? "Đã nhận" : "Nhận pack"}</button></div>; })}
+            <h3>Nhiệm Vụ Hằng Ngày · mỗi nhiệm vụ nhận 1 pack</h3><p>Làm mới lúc {new Date(new Date().setUTCHours(24, 0, 0, 0)).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })} theo giờ thiết bị. Thưởng khi đầy kho chuyển vào Hòm thư.</p>
+            {([ ["draw", "Bóc 3 thẻ"], ["win", "Thắng 1 PvP hoặc 3 ải"], ["campaign", "Thắng một ải"] ] as const).map(([mission, label]) => { const goal = mission === "draw" ? 3 : 1; const progress = Math.min(goal, mission === "win" ? Math.max(profile.missions.win, profile.missions.campaign >= 3 ? 1 : 0) : profile.missions[mission]); const claimed = profile.claimedMissions.includes(mission); return <div className="mission-row" key={mission}><span>{label} · {progress}/{goal}</span><button disabled={!profileReady || claimed || progress < goal} onClick={() => claimMission(mission)}>{claimed ? "Đã nhận" : "Nhận pack"}</button></div>; })}
           </>}
-          {screen === "inventory" && <div className="inventory-workspace">
-            <div className="inventory-columns">
-            <div className="inventory-team-panel">
-              <div className="panel-title"><h2>Đội hình của tôi</h2><b>{profile.team.length}/3</b></div>
-              <p className="muted">Kéo thẻ nhân vật vào đội, hoặc mở chi tiết thẻ trong Kho đồ để thêm. Mỗi nhân vật chỉ gắn được một vật phẩm.</p>
-              <div className="team-drop-grid">{Array.from({ length: 3 }, (_, index) => { const characterId = profile.team[index]; const c = character(characterId); const card = profile.cards.find(x => x.characterId === characterId); const transformed = isTransformedCharacter(characterId, profile.equipment[characterId || ""] || []); const rarity = c ? cardEffectiveEvolution(c.tier, card?.level || 1, transformed).tier : "T1"; return <div key={index} className={`team-drop ${characterId ? "filled" : "empty"} ${selectedTeamTarget === characterId ? "selected" : ""}`} onDragOver={(e) => e.preventDefault()} onDrop={(e) => characterId ? dropInventoryCard(e, characterId) : (() => { e.preventDefault(); try { const d = JSON.parse(e.dataTransfer.getData("application/json")); if (d.kind === "character") toggleProfileTeam(d.id as CharacterId); } catch {} })()} onClick={() => characterId && setSelectedTeamTarget(characterId)}>{characterId && c ? <><Portrait id={characterId as CharacterId} transformed={transformed} /><b>{transformed ? ({ char_28: "Người Máy Đỉnh Cao Fu Di", char_29: "Siêu Chiến Binh Wacom", char_30: "Skyrocket Dog" } as Record<string,string>)[characterId] : c.name}</b><small className={`rarity-label tier-${rarity.toLowerCase()}`}>{tierRarity(rarity)} · Lv.{card?.level || 1}</small><div className="equipped-items">{(profile.equipment[characterId] || []).map(id => <span className="equipped-item-chip" key={id}><ItemSprite id={id} />{itemInfo(id)?.name}<button className="unequip-item" aria-label={`Gỡ ${itemInfo(id)?.name || "vật phẩm"} khỏi ${c.name}`} title="Gỡ vật phẩm" onClick={(e) => { e.stopPropagation(); equipProfileItem(characterId, id); }}>×</button></span>)}</div><button onClick={(e) => { e.stopPropagation(); toggleProfileTeam(characterId as CharacterId); }}>Bỏ khỏi đội</button></> : <span>Ô đội trống · kéo thẻ vào</span>}</div>; })}</div>
-              <TeamChoices loadouts={inventoryLoadouts} choice={{}} onChange={() => {}} disabled inspect={setInfo} />
-            </div><div className="inventory-cards-panel">
-              <div className="panel-title"><h2>Thẻ sở hữu</h2><b>{profile.cards.length} nhân vật · {profile.itemCards.length} vật phẩm</b></div>
-              <div className="inventory-target"><span>Vật phẩm sẽ gắn vào:</span><select aria-label="Chọn nhân vật để gắn vật phẩm" value={selectedTeamTarget} onChange={e => setSelectedTeamTarget(e.target.value)}>{profile.team.map(id => <option key={id} value={id}>{character(id)?.name}</option>)}</select></div>
-              <h3>Nhân vật</h3><div className="card-collection">{profile.cards.map(card => { const c = character(card.characterId); if (!c) return null; const transformed = isTransformedCharacter(card.characterId, profile.equipment[card.characterId] || []); const evolution = cardEffectiveEvolution(c.tier, card.level, transformed); const formNames: Record<string,string> = { char_28: "Người Máy Đỉnh Cao Fu Di", char_29: "Siêu Chiến Binh Wacom", char_30: "Skyrocket Dog" }; return <button draggable className={`inventory-card tier-${evolution.tier.toLowerCase()} ${evolution.evolved ? "evolved" : ""} ${profile.team.includes(card.characterId) ? "active" : ""}`} key={card.characterId} onDragStart={e => e.dataTransfer.setData("application/json", JSON.stringify({ kind: "character", id: card.characterId }))} onClick={() => setInfo({ kind: "character", id: card.characterId, loadout: inventoryLoadouts.find(l => l.characterId === card.characterId), actions: [{ label: profile.team.includes(card.characterId) ? "Bỏ khỏi team" : profile.team.length >= 3 ? "Team đã đủ 3 người" : "Thêm vào team", disabled: !profile.team.includes(card.characterId) && profile.team.length >= 3, run: () => toggleProfileTeam(card.characterId) }] })}><Portrait id={card.characterId} transformed={transformed} /><b>{transformed ? formNames[card.characterId] : c.name}</b><span className={`rarity-label tier-${evolution.tier.toLowerCase()}`}>{tierRarity(evolution.tier)} · {c.role}</span><ExperienceBar level={card.level} xp={card.xp} /><small>{transformed ? "Đang biến hình · gỡ vật phẩm để trở lại dạng gốc" : "Chỉ số nền theo rarity hiện tại"}</small><small>{profile.team.includes(card.characterId) ? "Đang trong team · xem chi tiết" : "Chạm để xem chi tiết"}</small></button>; })}</div>
-              <h3>Vật phẩm</h3><div className="card-collection">{profile.itemCards.map(card => { const it = itemInfo(card.itemId); if (!it) return null; const evolution = cardEvolution(it.rarity, card.level); const owner = profile.team.find(id => (profile.equipment[id] || []).includes(card.itemId)); const selectedOwner = owner || selectedTeamTarget; return <button draggable className={`inventory-card tier-${evolution.tier.toLowerCase()} ${evolution.evolved ? "evolved" : ""} ${owner ? "equipped" : ""}`} key={card.itemId} onDragStart={e => e.dataTransfer.setData("application/json", JSON.stringify({ kind: "item", id: card.itemId }))} onClick={() => setInfo({ kind: "item", id: card.itemId, loadout: inventoryLoadouts.find(l => l.characterId === selectedOwner), actions: [{ label: owner ? `Tháo khỏi ${character(owner)?.name || "team"}` : `Gắn cho ${character(selectedTeamTarget)?.name || "nhân vật"}`, run: () => equipProfileItem(selectedOwner as CharacterId, card.itemId) }] })}><ItemSprite id={card.itemId} /><b>{it.name}</b><span className={`rarity-label tier-${evolution.tier.toLowerCase()}`}>{tierRarity(evolution.tier)}</span><ExperienceBar level={card.level} xp={card.xp} /><small>Hiệu quả theo rarity hiện tại</small><small>{owner ? `Đang gắn · ${character(owner)?.name} · chạm để tháo` : "Chạm để xem chi tiết"}</small></button>; })}{!profile.itemCards.length && <p className="muted">Chưa có thẻ vật phẩm. Mở pack để nhận.</p>}</div>
-            </div>
-            </div>
-          </div>}
+          {screen === "inventory" && <CollectionWorkspace profile={profile} onChange={changes => saveProfile({ ...profile, ...changes })} disabled={!profileReady || (!!room && !offline && (room.phase !== "FINISHED" && (room.phase !== "LOBBY" || !!me?.ready)))} inspect={setInfo} onError={report} />}
           {screen === "training" && <div className="training-workspace">
             <section className="training-furnace">
               <div className="training-section-heading"><span>01 · LÒ LUYỆN</span><strong>Truyền EXP</strong></div>
@@ -1320,9 +1239,9 @@ function App() {
               <div className="training-xp-preview"><div className="training-xp-label"><span>EXP SAU KHI LUYỆN</span><b>{trainingPreview ? `Lv.${trainingRecipient?.level} → Lv.${trainingPreview.level}` : "Chưa chọn thẻ"}</b></div><div className="training-xp-track"><i style={{ width: `${trainingPreview ? trainingPreview.level >= 10 ? 100 : trainingPreview.xp / xpForNextLevel(trainingPreview.level) * 100 : 0}%` }} /></div><div className="training-xp-caption"><span>{trainingPreview ? trainingPreview.level >= 10 ? "LEVEL MAX" : `${trainingPreview.xp} / ${xpForNextLevel(trainingPreview.level)} EXP` : "Chọn thẻ nhận và thẻ hy sinh"}</span><span>{trainingPreview && trainingPreview.level > trainingRecipient!.level ? `+${trainingPreview.level - trainingRecipient!.level} CẤP` : trainingXp ? `+${trainingXp} EXP` : ""}</span></div></div>
               {trainingPreview && trainingRecipient && <div className="training-preview-result"><b>{tierRarity(cardEvolution(trainingBaseTier, trainingRecipient.level).tier)} <span>→</span> {tierRarity(trainingEvolution)}</b><small>Thẻ hiến sẽ bị xóa khỏi Kho đồ.</small><button className="primary" disabled={!trainingMaterials.length || trainingSacrifice.includes(trainingTarget) || trainingRecipient.level >= 10} onClick={trainCard}>Luyện thẻ · nhận {trainingXp} EXP</button></div>}
             </section>
-            <section className="training-card-pool"><div className="training-section-heading"><span>02 · THẺ CỦA BẠN</span><strong>Kéo thả để chọn</strong></div><p>Kéo thẻ vào lò để nhận EXP hoặc vào khung hy sinh. Nhân vật trong đội và vật phẩm đang gắn chỉ có thể làm thẻ nhận EXP.</p><div className="training-pool-grid">{profile.cards.map((card) => { const key = `character:${card.characterId}`; const c = character(card.characterId); const disabled = profile.team.includes(card.characterId); const selected = trainingSacrifice.includes(key); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${disabled ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => disabled ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><Portrait id={card.characterId} /><b>{c?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{disabled ? "ĐANG TRONG ĐỘI · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{profile.itemCards.map((card) => { const key = `item:${card.itemId}`; const it = itemInfo(card.itemId); const selected = trainingSacrifice.includes(key); const equipped = Object.values(profile.equipment).some((ids) => ids.includes(card.itemId)); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${equipped ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => equipped ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><ItemSprite id={card.itemId} /><b>{it?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{equipped ? "ĐANG GẮN · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{!profile.cards.length && !profile.itemCards.length && <div className="training-pool-empty">Mở pack để nhận thẻ có thể luyện.</div>}</div></section>
+            <section className="training-card-pool"><div className="training-section-heading"><span>02 · THẺ CỦA BẠN</span><strong>Kéo thả để chọn</strong></div><p>Kéo thẻ vào lò để nhận EXP hoặc vào khung hy sinh. Nhân vật trong đội và vật phẩm đang gắn chỉ có thể làm thẻ nhận EXP.</p><div className="training-pool-grid">{profile.cards.map((card) => { const key = `character:${card.characterId}`; const c = character(card.characterId); const disabled = profile.team.includes(card.characterId) || experienceOf(profile).locked.includes(key); const selected = trainingSacrifice.includes(key); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${disabled ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => disabled ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><Portrait id={card.characterId} /><b>{c?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{disabled ? "ĐANG TRONG ĐỘI · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{profile.itemCards.map((card) => { const key = `item:${card.itemId}`; const it = itemInfo(card.itemId); const selected = trainingSacrifice.includes(key); const equipped = Object.values(profile.equipment).some((ids) => ids.includes(card.itemId)) || experienceOf(profile).locked.includes(key); return <button key={key} className={`training-pool-card ${selected ? "selected" : ""} ${equipped ? "unavailable" : ""}`} draggable onDragStart={(event) => event.dataTransfer.setData("text/training-card", key)} onClick={() => equipped ? (setTrainingTarget(key), setTrainingSacrifice((items) => items.filter((item) => item !== key))) : key !== trainingTarget && setTrainingSacrifice((items) => selected ? items.filter((item) => item !== key) : [...items, key])}><ItemSprite id={card.itemId} /><b>{it?.name}</b><span>Lv.{card.level} · {card.xp} EXP</span><small>{equipped ? "ĐANG GẮN · kéo để luyện" : selected ? "ĐÃ CHỌN · chạm để bỏ" : "Kéo để luyện · chạm để hiến"}</small></button>; })}{!profile.cards.length && !profile.itemCards.length && <div className="training-pool-empty">Mở pack để nhận thẻ có thể luyện.</div>}</div></section>
           </div>}
-          {screen === "campaign" && <><div className="panel-title"><h2>Đi ải · ải {profile.campaignStage + 1}</h2><b>Đã vượt {profile.campaignStage}</b></div><p className="muted">Ải thường dùng đúng chỉ số card và trang bị ở level hiển thị, tối đa Lv.10. Thắng nhận 5 pack thường. Mỗi 5 ải có boss: thêm 15 pack thường + 1 Pack Boss; mỗi 10 ải là boss khó: 15 pack thường + 3 Pack Boss.</p>{!campaignBattle && <div className="campaign-enemy-preview"><p>{upcomingCampaign.strategy}</p><b>Đối thủ sắp tới{isHardCampaignBoss(profile.campaignStage + 1) ? " · BOSS KHÓ" : isCampaignBoss(profile.campaignStage + 1) ? " · BOSS" : ""}</b><div>{upcomingCampaign.loadouts.map(unit => <span key={unit.characterId}><Portrait id={unit.characterId!} /><span>{character(unit.characterId)?.name}<small>Lv.{unit.level}{unit.equipment.length ? ` · ${unit.equipment.map(id => itemInfo(id)?.name).join(", ")}` : ""}</small></span></span>)}</div></div>}{!campaignBattle && <button className="primary wide" disabled={!profileReady} onClick={launchCampaign}>Bắt đầu ải {profile.campaignStage + 1}</button>}{campaignBattle && <>{campaignWon === null && <Arena key={`campaign-${campaignBattle.seed}`} config={campaignBattle.config} seed={campaignBattle.seed} replay={null} loadReplayChunk={async () => []} muted={muted} low={low} showEffects={settings.effects} showDamage={settings.damageNumbers} showRecovery={settings.recoveryNumbers} label={isCampaignBoss(campaignBattle.config.campaign!.stage) ? `BOSS · ẢI ${campaignBattle.config.campaign!.stage}` : `ĐI ẢI · ${campaignBattle.config.campaign!.stage}`} highlightTeamId="team-player" onError={report} onFinished={finishCampaign} onBattleComplete={summary => recordBattle(summary, "campaign")} />}<div className="campaign-result">{campaignWon === null ? "Trận đang diễn ra…" : campaignWon ? `🏆 ${isCampaignBoss(campaignBattle.config.campaign!.stage) ? "Hạ boss" : "Vượt ải"} thành công · nhận ${campaignPackReward(campaignBattle.config.campaign!.stage)} pack thường${campaignBossPackReward(campaignBattle.config.campaign!.stage) ? ` + ${campaignBossPackReward(campaignBattle.config.campaign!.stage)} Pack Boss` : ""}` : "💥 Ải thất bại · hãy chỉnh team rồi thử lại"}</div>{campaignWon !== null && <button className="primary wide" onClick={() => setCampaignBattle(null)}>{campaignWon ? `Đi tiếp · ải ${profile.campaignStage + 1}` : "Thử lại"}</button>}</>}</>}
+
         </section> : <div className="layout">
           <aside className="panel">
             <div className="panel-title">
@@ -2303,7 +2222,7 @@ function App() {
         </div>}
         <footer>
           <span>RISEON ULTIMATE TCG</span>
-          <span>{ENGINE_VERSION} · Server authoritative</span>
+          <span>RiseOn · Chiến thuật tạo nên khác biệt</span>
           <span>Made for the chaos.</span>
         </footer>
       </main>

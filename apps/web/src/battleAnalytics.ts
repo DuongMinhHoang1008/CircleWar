@@ -11,6 +11,8 @@ export const ANALYTICS_KEY = "circlewar-battle-analytics-v1";
 export const ANALYTICS_LIMIT = 200;
 export type BattleMode = "campaign" | "simulation" | "multiplayer";
 export interface BattleUnit {
+  masteryId?: string;
+  masteryTarget?: string;
   id: number;
   team: string;
   teamName: string;
@@ -21,9 +23,12 @@ export interface BattleUnit {
   combat?: { damage: number; taken: number };
   support?: CombatMetrics;
   survived?: boolean;
+  hp?: number;
+  maxHp?: number;
   aliveTicks?: number;
 }
 export interface BattleSummary {
+  config?: BattleConfig;
   version: string;
   seed?: number;
   ticks: number;
@@ -120,6 +125,7 @@ export function createBattleRecorder() {
       hideSeed = false,
     ): BattleSummary {
       return {
+        config: hideSeed ? undefined : structuredClone(config),
         version: state.version,
         seed: hideSeed ? undefined : state.seed,
         ticks: state.tick,
@@ -133,7 +139,10 @@ export function createBattleRecorder() {
           level: f.level,
           equipment: [...f.equipment],
           equipmentLevels: { ...f.equipmentLevels },
+          masteryId:f.masteryId, masteryTarget:f.masteryTarget,
           survived: f.hp > 0,
+          hp: f.hp,
+          maxHp: f.stats.hp,
           aliveTicks: f.deadAt < 0 ? state.tick : f.deadAt,
           support: hideSeed
             ? supportSnapshots.get(f.id)?.metrics

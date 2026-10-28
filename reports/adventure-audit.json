@@ -1,0 +1,459 @@
+{
+  "week": "2026-10-26",
+  "battles": 576,
+  "unfinished": 0,
+  "report": [
+    {
+      "contracts": [],
+      "winningTeams": 11,
+      "candidates": [
+        {
+          "team": "char_21+char_05+char_16",
+          "wins": 2
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 4
+        },
+        {
+          "team": "char_05+char_21+char_20",
+          "wins": 3
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 4
+        },
+        {
+          "team": "char_29+char_33+char_22",
+          "wins": 4
+        },
+        {
+          "team": "char_19+char_17+char_23",
+          "wins": 4
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 3
+        },
+        {
+          "team": "char_04+char_21+char_16",
+          "wins": 5
+        },
+        {
+          "team": "char_08+char_13+char_33",
+          "wins": 2
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 6
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 4
+        },
+        {
+          "team": "char_14+char_05+char_21",
+          "wins": 4
+        }
+      ]
+    },
+    {
+      "contracts": [
+        "rare"
+      ],
+      "winningTeams": 11,
+      "candidates": [
+        {
+          "team": "char_01+char_05+char_04",
+          "wins": 4
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 4
+        },
+        {
+          "team": "char_05+char_10+char_20",
+          "wins": 1
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 5
+        },
+        {
+          "team": "char_29+char_05+char_07",
+          "wins": 2
+        },
+        {
+          "team": "char_19+char_17+char_10",
+          "wins": 5
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 3
+        },
+        {
+          "team": "char_04+char_06+char_08",
+          "wins": 5
+        },
+        {
+          "team": "char_08+char_13+char_11",
+          "wins": 3
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 3
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 4
+        },
+        {
+          "team": "char_07+char_05+char_12",
+          "wins": 1
+        }
+      ]
+    },
+    {
+      "contracts": [
+        "unbonded"
+      ],
+      "winningTeams": 11,
+      "candidates": [
+        {
+          "team": "char_21+char_05+char_16",
+          "wins": 3
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 3
+        },
+        {
+          "team": "char_05+char_21+char_20",
+          "wins": 3
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 4
+        },
+        {
+          "team": "char_29+char_33+char_22",
+          "wins": 3
+        },
+        {
+          "team": "char_19+char_17+char_23",
+          "wins": 3
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 3
+        },
+        {
+          "team": "char_04+char_21+char_16",
+          "wins": 2
+        },
+        {
+          "team": "char_08+char_13+char_33",
+          "wins": 1
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 5
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 3
+        },
+        {
+          "team": "char_14+char_05+char_21",
+          "wins": 6
+        }
+      ]
+    },
+    {
+      "contracts": [
+        "rare",
+        "unbonded"
+      ],
+      "winningTeams": 11,
+      "candidates": [
+        {
+          "team": "char_01+char_05+char_04",
+          "wins": 3
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 2
+        },
+        {
+          "team": "char_05+char_10+char_20",
+          "wins": 2
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 4
+        },
+        {
+          "team": "char_29+char_05+char_07",
+          "wins": 1
+        },
+        {
+          "team": "char_19+char_17+char_10",
+          "wins": 4
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 3
+        },
+        {
+          "team": "char_04+char_06+char_08",
+          "wins": 3
+        },
+        {
+          "team": "char_08+char_13+char_11",
+          "wins": 3
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 4
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 2
+        },
+        {
+          "team": "char_07+char_05+char_12",
+          "wins": 2
+        }
+      ]
+    },
+    {
+      "contracts": [
+        "recovery"
+      ],
+      "winningTeams": 11,
+      "candidates": [
+        {
+          "team": "char_21+char_05+char_16",
+          "wins": 2
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 4
+        },
+        {
+          "team": "char_05+char_21+char_20",
+          "wins": 3
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 4
+        },
+        {
+          "team": "char_29+char_33+char_22",
+          "wins": 4
+        },
+        {
+          "team": "char_19+char_17+char_23",
+          "wins": 4
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 2
+        },
+        {
+          "team": "char_04+char_21+char_16",
+          "wins": 5
+        },
+        {
+          "team": "char_08+char_13+char_33",
+          "wins": 2
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 6
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 4
+        },
+        {
+          "team": "char_14+char_05+char_21",
+          "wins": 4
+        }
+      ]
+    },
+    {
+      "contracts": [
+        "rare",
+        "recovery"
+      ],
+      "winningTeams": 10,
+      "candidates": [
+        {
+          "team": "char_01+char_05+char_04",
+          "wins": 4
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 4
+        },
+        {
+          "team": "char_05+char_10+char_20",
+          "wins": 0
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 5
+        },
+        {
+          "team": "char_29+char_05+char_07",
+          "wins": 2
+        },
+        {
+          "team": "char_19+char_17+char_10",
+          "wins": 5
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 3
+        },
+        {
+          "team": "char_04+char_06+char_08",
+          "wins": 5
+        },
+        {
+          "team": "char_08+char_13+char_11",
+          "wins": 4
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 3
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 4
+        },
+        {
+          "team": "char_07+char_05+char_12",
+          "wins": 1
+        }
+      ]
+    },
+    {
+      "contracts": [
+        "unbonded",
+        "recovery"
+      ],
+      "winningTeams": 11,
+      "candidates": [
+        {
+          "team": "char_21+char_05+char_16",
+          "wins": 3
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 2
+        },
+        {
+          "team": "char_05+char_21+char_20",
+          "wins": 3
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 3
+        },
+        {
+          "team": "char_29+char_33+char_22",
+          "wins": 3
+        },
+        {
+          "team": "char_19+char_17+char_23",
+          "wins": 3
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 3
+        },
+        {
+          "team": "char_04+char_21+char_16",
+          "wins": 2
+        },
+        {
+          "team": "char_08+char_13+char_33",
+          "wins": 1
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 5
+        },
+        {
+          "team": "char_02+char_13+char_31",
+          "wins": 2
+        },
+        {
+          "team": "char_14+char_05+char_21",
+          "wins": 6
+        }
+      ]
+    },
+    {
+      "contracts": [
+        "rare",
+        "unbonded",
+        "recovery"
+      ],
+      "winningTeams": 11,
+      "candidates": [
+        {
+          "team": "char_01+char_05+char_04",
+          "wins": 3
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 2
+        },
+        {
+          "team": "char_05+char_10+char_20",
+          "wins": 2
+        },
+        {
+          "team": "char_11+char_17+char_13",
+          "wins": 5
+        },
+        {
+          "team": "char_29+char_05+char_07",
+          "wins": 1
+        },
+        {
+          "team": "char_19+char_17+char_10",
+          "wins": 3
+        },
+        {
+          "team": "char_27+char_18+char_19",
+          "wins": 3
+        },
+        {
+          "team": "char_04+char_06+char_08",
+          "wins": 3
+        },
+        {
+          "team": "char_08+char_13+char_11",
+          "wins": 3
+        },
+        {
+          "team": "char_08+char_01+char_15",
+          "wins": 4
+        },
+        {
+          "team": "char_02+char_13+char_07",
+          "wins": 2
+        },
+        {
+          "team": "char_07+char_05+char_12",
+          "wins": 2
+        }
+      ]
+    }
+  ],
+  "limitation": "Offline sample of 12 candidate teams and two seeds per opponent; not a universal balance or production CPU guarantee."
+}

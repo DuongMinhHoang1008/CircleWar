@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "checks": [
+    "focused home",
+    "progressive disclosure",
+    "weekly reward",
+    "official locked reward",
+    "daily expedition rewards",
+    "first-clear chest",
+    "chosen epic card",
+    "reload idempotency",
+    "draft selection",
+    "mobile overflow"
+  ],
+  "errors": []
+}

@@ -1,3 +1,4 @@
+import { masteryUnlocked, validMasterySelections, validateMasteryTeam } from "./mastery";
 import {
   ITEMS,
   CLASSES,
@@ -484,12 +485,17 @@ export function applyAction(
         requireRule(new Set(assigned).size === assigned.length, "Mỗi thẻ vật phẩm chỉ được trang bị cho một nhân vật");
         requireRule(assigned.every((itemId) => action.itemCards.some((card) => card.itemId === itemId)), "Chỉ dùng vật phẩm đã sở hữu");
         requireRule(action.cards.every((card) => card.level === 10 ? card.xp === 0 : card.xp < xpForNextLevel(card.level)) && action.itemCards.every((card) => card.level === 10 ? card.xp === 0 : card.xp < xpForNextLevel(card.level)), "EXP thẻ không hợp lệ");
+        requireRule(!action.masteries || validMasterySelections(action.masteries), "Bí kỹ không hợp lệ");
+        requireRule(action.team.every(c=>!action.masteries?.[c]||masteryUnlocked({experience:{mastery:action.masteryProgress}},c,action.masteries[c].id)), "Bí kỹ chưa mở khóa");
+        validateMasteryTeam(action.team.map(c=>({characterId:c,masteryId:action.masteries?.[c]?.id,masteryTarget:action.masteries?.[c]?.target})));
         p.cards = structuredClone(action.cards);
         p.itemCards = structuredClone(action.itemCards);
         p.campaignStage = action.campaignStage;
         p.inventory = action.itemCards.filter((card) => !assigned.includes(card.itemId)).map((card) => card.itemId);
         p.loadouts = action.team.map((c) => {
           const unit = makeUnit(c);
+          unit.masteryId = action.masteries?.[c]?.id;
+          unit.masteryTarget = action.masteries?.[c]?.target;
           unit.level = action.cards.find((card) => card.characterId === c)!.level;
           unit.equipment = structuredClone(action.equipment.find((entry) => entry.characterId === c)?.items || []);
           unit.equipmentLevels = Object.fromEntries(unit.equipment.map((id) => [id, action.itemCards.find((card) => card.itemId === id)?.level || 1]));

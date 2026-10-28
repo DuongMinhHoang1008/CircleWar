@@ -32,6 +32,7 @@ import {
 } from "./metrics";
 
 import { itemMultiplier } from "../../shared/src/balance";
+import { synergyKind, canResonate } from "../../shared/src/synergy";
 import { ITEM_AFFINITY, type AffinityTrigger } from "../../shared/src/affinity";
 import { kitGrowth } from "../../shared/src/character-kits";
 import {
@@ -191,14 +192,14 @@ function heal(s: BattleState, source: Fighter, f: Fighter, n: number) {
     0,
     Math.min(
       div(
-        n *
+        n * (s.config.recoveryPercent ?? 100) *
           healingRate(
             f,
             s.tick,
             s.config.shrinkSeconds,
             source !== f && source.team === f.team,
           ),
-        100,
+        10000,
       ),
       f.stats.hp - f.hp,
     ),
@@ -308,6 +309,7 @@ export function characterDamage(
   recordAbsorption(t, t, remain);
   amount = Math.min(t.hp, amount);
   t.hp -= amount;
+  if (t.masteryId === "tigerBurst" && statusPower(t, "introvert", s.tick) > 0) t.memory.masteryBurst = Math.min(div(t.baseStats.hp * 6, 100), (t.memory.masteryBurst || 0) + div(amount * 20, 100));
   t.taken += amount;
   if (f.team !== t.team) f.dealt += amount;
   if (amount + absorbed > 0) s.lastDamageTick = s.tick;
@@ -451,6 +453,7 @@ function normalHit(
     marks.forEach((b) => (b.until = s.tick));
   }
   hit = div(hit * (100 + auxiliary) * scale, 10000);
+  if (f.masteryId === "tigerBurst" && !statusPower(f, "introvert", s.tick) && f.memory.masteryBurst) { hit += f.memory.masteryBurst; f.memory.masteryBurst = 0; }
   if (random(s) % 100 < f.stats.crit) hit = div(hit * f.stats.critPower, 100);
   if (f.memory.armorIgnore) {
     hit += div(t.stats.defense * f.memory.armorIgnore, 100);
@@ -524,6 +527,10 @@ function friendGroupEvent(
         group,
         members.map((t) => t.characterId),
       ) === 3;
+  if (kind === "super" && ["G01", "G04", "G10"].includes(id)) {
+    signatureResonance(s, source, members, id, three);
+    return;
+  }
   const trigger =
     (id === "G01" &&
       three &&
@@ -550,29 +557,6 @@ function friendGroupEvent(
     (id === "G13" && [3, 15].includes(no(source)) && kind === "super") ||
     (["G14", "G15", "G16", "G17"].includes(id) && kind === "super");
   if (!trigger) return;
-  if (
-    [
-      "G02",
-      "G03",
-      "G05",
-      "G06",
-      "G08",
-      "G09",
-      "G11",
-      "G12",
-      "G13",
-      "G14",
-      "G15",
-      "G16",
-      "G17",
-    ].includes(id) &&
-    members.some((f) =>
-      members.some(
-        (t) => !within(f, t, ["G02", "G03"].includes(id) ? 240 : 280),
-      ),
-    )
-  )
-    return;
   const state =
       s.groups[`${source.team}:${id}`] ||
       (s.groups[`${source.team}:${id}`] = { uses: 0, ready: 0 }),
@@ -587,6 +571,7 @@ function friendGroupEvent(
         ? 240
         : 360);
   event(s, "group:" + id, source, source, three ? 3 : 2);
+  if (kind !== "pulse") signatureResonance(s, source, members, id, three);
   if (id === "G01") members.forEach((t) => energy(s, t, 4));
   if (id === "G02") {
     const partner = members.find((t) => t.id !== source.id)!;
@@ -937,8 +922,28 @@ function bondEvent(
   kind: string,
   target?: Fighter,
 ) {
+  for (const b of BONDS.slice().sort((a, b) => b.size - a.size)) resolveBondEvent(s, source, kind, b, target);
   friendEvent(s, source, kind);
-  for (const b of BONDS) resolveBondEvent(s, source, kind, b, target);
+}
+export function signatureResonance(s: BattleState, source: Fighter, members: Fighter[], id: string, three: boolean) {
+  if (!canResonate(id) || source.hp <= 0 || members.length < 2 || members.some(f => f.hp <= 0 || f.team !== source.team)) return;
+  const key = `${source.team}:resonance`, state = s.bonds[key] || (s.bonds[key] = { uses: 0, ready: 0 });
+  if (state.ready > s.tick || state.uses >= 4) return;
+  state.ready = s.tick + 240; state.uses++;
+  const others = members.filter(f => f !== source), kind = synergyKind(id);
+  let target = others.slice().sort((a, b) => a.hp * b.baseStats.hp - b.hp * a.baseStats.hp || a.id - b.id)[0];
+  if (kind === "rescue") {
+    clearSlow(target); clearStatus(target, "paralyzed");
+    shield(s, source, target, div(target.baseStats.hp * (three ? 18 : 12), 100), 120);
+  } else if (kind === "chain") {
+    others.forEach(f => nextBonus(s, f, Math.max(1, div(f.stats.attack * (three ? 90 : 60), 100)), -4000));
+  } else if (kind === "tempo") {
+    others.forEach(f => energy(s, f, three ? 30 : 20));
+  } else {
+    const enemy = s.fighters.filter(f => f.hp > 0 && f.team !== source.team).sort((a, b) => distance(source, a) - distance(source, b) || a.id - b.id)[0];
+    if (enemy) { target = enemy; applyStatus(s, source, enemy, "stunned", 1, 15); applyStatus(s, source, enemy, "frozen", 25, three ? 120 : 90); }
+  }
+  event(s, "resonance:" + id, source, target, three ? 3 : 2);
 }
 function resolveBondEvent(
   s: BattleState,
@@ -961,8 +966,7 @@ function resolveBondEvent(
   if (
     fs.length !== b.size ||
     !fs.includes(source) ||
-    fs.some((f) => f.hp <= 0) ||
-    fs.some((f) => fs.some((t) => !within(f, t, b.size === 2 ? 240 : 280)))
+    fs.some((f) => f.hp <= 0)
   )
     return;
   const state =
@@ -997,6 +1001,7 @@ function resolveBondEvent(
   state.uses++;
   state.ready = s.tick + (b.size === 2 ? 240 : 360);
   event(s, "bond:" + b.id, source);
+  signatureResonance(s, source, fs, b.id, b.size === 3);
   switch (b.id) {
     case "P22":
       fs.filter((f) => f !== source).forEach((f) =>

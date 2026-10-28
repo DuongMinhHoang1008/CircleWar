@@ -7,13 +7,15 @@
     "bindings": [
       { "name": "ROOMS", "class_name": "Room" },
       { "name": "PROFILES", "class_name": "Profile" },
-      { "name": "TRADES", "class_name": "Trade" }
+      { "name": "TRADES", "class_name": "Trade" },
+      { "name": "LEAGUES", "class_name": "League" }
     ],
   },
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["Room"] },
     { "tag": "v2", "new_sqlite_classes": ["Profile"] },
-    { "tag": "v3", "new_sqlite_classes": ["Trade"] }
+    { "tag": "v3", "new_sqlite_classes": ["Trade"] },
+    { "tag": "v4", "new_sqlite_classes": ["League"] }
   ],
   "vars": { "ALLOWED_ORIGINS": "http://127.0.0.1:5173,http://localhost:5173,https://riseon-ultimate-battle.pages.dev" },
   "observability": { "enabled": true },

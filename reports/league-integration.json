@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "finished": 9,
+  "wins": 3,
+  "checks": [
+    "authentication",
+    "loan normalization",
+    "duplicate rejection",
+    "hidden seeds",
+    "resume",
+    "server results",
+    "idempotent finish",
+    "independent progress",
+    "server reward eligibility",
+    "idempotent reward claim",
+    "stale SAVE reward protection",
+    "three-attempt cap",
+    "repeatable scores",
+    "closed-week access"
+  ]
+}

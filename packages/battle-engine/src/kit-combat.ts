@@ -1,3 +1,5 @@
+import { masteryAlly, weakestAlly } from "./mastery";
+import { healingRate, clearStatus } from "./statuses";
 import { characterKit, kitGrowth } from "../../shared/src/character-kits";
 import { DIRECTIONS, div, normalize, random, UNIT } from "./math";
 import { safeBounds } from "./bounds";
@@ -211,7 +213,11 @@ function field(
     kind === "rose"
       ? options.super
         ? 6
-        : 4
+        : f.masteryId === "roseLink"
+          ? 3
+          : options.followTarget !== undefined
+            ? 2
+            : 4
       : kind === "fruit"
         ? options.super
           ? 8
@@ -229,6 +235,9 @@ function field(
     if (
       z.owner === f.id &&
       z.kit === kind &&
+      (kind !== "rose" ||
+        (z.followTarget !== undefined) ===
+          (options.followTarget !== undefined)) &&
       !!z.super === !!options.super &&
       z.until > s.tick
     ) {
@@ -248,7 +257,10 @@ function field(
     kit: kind,
     x: Math.max(bounds.left + 1000, Math.min(bounds.right - 1000, x)),
     y: Math.max(bounds.top + 1000, Math.min(bounds.bottom - 1000, y)),
-    radius,
+    radius:
+      kind === "flag" && f.masteryId === "flagParalyze"
+        ? div(radius * 85, 100)
+        : radius,
     until: start + duration,
     every: 30,
     power,
@@ -370,8 +382,8 @@ export function applyKitStats(s: BattleState, f: Fighter) {
   if (name === "char_18" && !f.boss) f.radius = 2150;
 }
 export function kitAura(s: BattleState, f: Fighter) {
-  let strongest = 0;
-  let giver: Fighter | undefined;
+  let strongest = 0,
+    giver: Fighter | undefined;
   for (const other of s.fighters)
     if (
       other !== f &&
@@ -379,19 +391,45 @@ export function kitAura(s: BattleState, f: Fighter) {
       other.team === f.team &&
       other.characterId === "char_22"
     ) {
-      const g = growth(s, other);
-      if (within(other, f, div(160 * g.auraRange, 100)))
-        if (div(12 * g.buffPower, 100) > strongest) {
-          strongest = div(12 * g.buffPower, 100);
-          giver = other;
+      const g = growth(s, other),
+        center =
+          other.masteryId === "auraAnchor"
+            ? masteryAlly(s, other) || other
+            : other;
+      const range = div(
+          160 * g.auraRange * (other.masteryId === "auraAnchor" ? 75 : 100),
+          10000,
+        ),
+        inside = within(center, f, range),
+        key = `masteryEcho:${other.id}`;
+      let live = inside;
+      if (other.masteryId === "auraEcho") {
+        if (
+          !inside &&
+          f.memory[key + ":in"] &&
+          (f.memory[key + ":ready"] || 0) <= s.tick
+        ) {
+          f.memory[key + ":until"] = s.tick + 45;
+          f.memory[key + ":ready"] = s.tick + 180;
         }
+        f.memory[key + ":in"] = Number(inside);
+        live = inside || (f.memory[key + ":until"] || 0) > s.tick;
+      }
+      const power = div(
+        12 * g.buffPower * (other.masteryId === "auraEcho" ? 80 : 100),
+        10000,
+      );
+      if (live && power > strongest) {
+        strongest = power;
+        giver = other;
+      }
     }
   if (giver) recordEffectTick(s, giver, f, "aura:attack", "buff");
   return strongest;
 }
 
 function summon(s: BattleState, f: Fighter, kind: Construct["kind"]) {
-  const limit = kind === "minion" ? 2 : 1;
+  const limit = kind === "minion" && f.masteryId !== "giftTank" ? 2 : 1;
   let count = 0,
     oldest: Construct | undefined;
   for (const c of s.constructs)
@@ -409,27 +447,39 @@ function summon(s: BattleState, f: Fighter, kind: Construct["kind"]) {
     angle = (f.angle + 8 + count * 8) % 32,
     d = DIRECTIONS[angle];
   const summonStats = CONSTRUCT_BALANCE[kind];
-  const hp = Math.max(
+  let hp = Math.max(
     summonStats.minHp,
     div(f.baseStats.hp * summonStats.hpPercent * g.summonHp, 10000),
   );
-  const damage = Math.max(
+  let damage = Math.max(
     1,
     div(f.baseStats.attack * summonStats.damagePercent * g.summonDamage, 10000),
   );
-  const bounds = safeBounds(s),
-    radius = kind === "giant" ? 1900 : 1100;
+  const escort =
+    kind === "giant" && f.masteryId === "giftEscort"
+      ? masteryAlly(s, f)
+      : undefined;
+  if (kind === "minion" && f.masteryId === "giftTank") {
+    hp = div(hp * 220, 100);
+    damage = div(damage * 150, 100);
+  }
+  if (kind === "minion" && f.masteryId === "giftShield") hp = div(hp * 80, 100);
+  if (kind === "giant" && f.masteryId === "giftEscort")
+    damage = div(damage * 70, 100);
+  const origin = escort || f,
+    bounds = safeBounds(s),
+    radius = kind === "giant" ? 1900 : f.masteryId === "giftTank" ? 1265 : 1100;
   s.constructs.push({
     id: s.nextConstruct++,
     owner: f.id,
     kind,
     x: Math.max(
       bounds.left + radius,
-      Math.min(bounds.right - radius, f.x + div(d[0] * 5000, UNIT)),
+      Math.min(bounds.right - radius, origin.x + div(d[0] * 5000, UNIT)),
     ),
     y: Math.max(
       bounds.top + radius,
-      Math.min(bounds.bottom - radius, f.y + div(d[1] * 5000, UNIT)),
+      Math.min(bounds.bottom - radius, origin.y + div(d[1] * 5000, UNIT)),
     ),
     vx: div(d[0] * summonStats.speed, UNIT),
     vy: div(d[1] * summonStats.speed, UNIT),
@@ -437,7 +487,11 @@ function summon(s: BattleState, f: Fighter, kind: Construct["kind"]) {
     hp,
     maxHp: hp,
     damage,
-    until: s.tick + (kind === "turret" ? 240 : 300),
+    until:
+      s.tick +
+      (kind === "turret" || (kind === "giant" && f.masteryId === "giftEscort")
+        ? 240
+        : 300),
     nextAttack: s.tick + 20,
   });
   event(s, f, `kit:summon:${kind}`);
@@ -635,6 +689,16 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
       f.memory.pounceSpent = 0;
       applyStatus(s, f, f, "introvert");
       duration = 60;
+      if (
+        f.masteryId === "tigerGuard" &&
+        (f.memory.masteryGuard || 0) <= s.tick
+      ) {
+        const ally = weakestAlly(s, f);
+        if (ally) {
+          ctx.shield(s, f, ally, div(f.baseStats.hp * 6, 100), 90);
+          f.memory.masteryGuard = s.tick + 180;
+        }
+      }
       break;
     case "char_02":
       break;
@@ -685,7 +749,20 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
           if (t.team === f.team) {
             applyStatus(s, f, t, "rage", 10, 90);
             applyStatus(s, f, t, "blessing", 3, 90);
-            ctx.shield(s, f, t, Math.max(6, div(f.baseStats.hp * 5, 100)), 90);
+            if (f.masteryId !== "flagFocus" || t === weakestAlly(s, f))
+              ctx.shield(
+                s,
+                f,
+                t,
+                Math.max(
+                  6,
+                  div(
+                    f.baseStats.hp * (f.masteryId === "flagFocus" ? 10 : 5),
+                    100,
+                  ),
+                ),
+                90,
+              );
             ctx.buff(s, t, "haste", 110, 90, -8100 - f.id);
           } else if (within(f, t, 180)) {
             applyStatus(s, f, t, "pressure", 20, 90);
@@ -698,8 +775,13 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
       duration = 75;
       break;
     case "char_13":
-      for (let i = 0; i < 8; i++) {
-        const d = DIRECTIONS[i * 4];
+      for (
+        let i = 0, count = f.masteryId === "fruitSupply" ? 4 : 8;
+        i < count;
+        i++
+      ) {
+        const d =
+          DIRECTIONS[div(i * 32, f.masteryId === "fruitSupply" ? 4 : 8)];
         field(
           s,
           f,
@@ -763,15 +845,23 @@ export function kitSuper(s: BattleState, f: Fighter, ctx: KitCombatServices) {
     case "char_22":
       for (const t of s.fighters)
         if (t.hp > 0 && t.team === f.team) {
-          applyStatus(
-            s,
-            f,
-            t,
-            "rage",
-            Math.min(40, div(20 * g.buffPower, 100)),
-            90,
-          );
-          applyStatus(s, f, t, "blessing", 3, 90);
+          if (f.masteryId !== "auraEnergy") {
+            applyStatus(
+              s,
+              f,
+              t,
+              "rage",
+              Math.min(40, div(20 * g.buffPower, 100)),
+              90,
+            );
+            applyStatus(s, f, t, "blessing", 3, 90);
+          } else if (
+            t !== f &&
+            (t.cooldowns[`masteryEnergy:${f.id}`] || 0) <= s.tick
+          ) {
+            t.memory.gain = Math.min(100, (t.memory.gain || 0) + 12);
+            t.cooldowns[`masteryEnergy:${f.id}`] = s.tick + 240;
+          }
           ctx.buff(s, t, "haste", 110, 90, -8200 - f.id);
         }
       break;
@@ -899,7 +989,7 @@ export function kitShoot(s: BattleState, f: Fighter) {
       break;
     case "char_13":
       kind = "buffFruit";
-      options.pierce = 2;
+      options.pierce = f.masteryId === "fruitCleanse" ? 1 : 2;
       break;
     case "char_16":
       kind = "ink";
@@ -977,7 +1067,12 @@ export function kitContact(
       s,
       f,
       other,
-      div(f.stats.attack * 180 * f.stats.superPower, 10000),
+      div(
+        f.stats.attack *
+          (f.masteryId === "tigerGuard" ? 135 : 180) *
+          f.stats.superPower,
+        10000,
+      ),
     );
     kitImpulse(f, other, 450);
   }
@@ -1278,6 +1373,21 @@ export function tickKitProjectiles(s: BattleState, ctx: KitCombatServices) {
       continue;
     }
     if ((p.armedAfter || 0) > p.age) continue;
+    const wall = s.zones.find(
+      (z) =>
+        z.kit === "rose" &&
+        z.super &&
+        z.until > s.tick &&
+        s.fighters[z.owner]?.hp > 0 &&
+        s.fighters[z.owner]?.masteryId === "roseWall" &&
+        s.fighters[z.owner]?.team !== f.team &&
+        capsuleHit(ox, oy, p.x, p.y, z.x, z.y, 1000 + (p.radius || 450)),
+    );
+    if (wall) {
+      wall.until = s.tick;
+      p.life = 0;
+      continue;
+    }
     for (const t of projectileTargets(s, p, ox, oy)) {
       if (isConstruct(t)) {
         const hitId = -t.id - 1;
@@ -1367,8 +1477,42 @@ export function tickKitProjectiles(s: BattleState, ctx: KitCombatServices) {
           );
         else if (p.kit !== "rose") {
           gift(s, f, t, ctx, !!p.superShot);
-          if (p.kit === "buffFruit")
-            ctx.heal(s, f, t, Math.max(1, div(f.stats.attack * 65, 100)));
+          if (p.kit === "buffFruit") {
+            if (
+              f.masteryId === "fruitCleanse" &&
+              (statusPower(t, "frozen", s.tick) > 0 ||
+                statusPower(t, "paralyzed", s.tick) > 0) &&
+              (t.cooldowns[`masteryCleanse:${f.id}`] || 0) <= s.tick
+            ) {
+              if (statusPower(t, "frozen", s.tick)) clearStatus(t, "frozen");
+              else clearStatus(t, "paralyzed");
+              t.cooldowns[`masteryCleanse:${f.id}`] = s.tick + 300;
+            }
+            let raw = Math.max(1, div(f.stats.attack * 65, 100));
+            if (f.masteryId === "fruitOverflow") raw = div(raw * 80, 100);
+            const expected = div(
+                raw *
+                  healingRate(t, s.tick, s.config.shrinkSeconds, true) *
+                  (s.config.recoveryPercent ?? 100),
+                10000,
+              ),
+              over = Math.max(0, expected - (t.stats.hp - t.hp));
+            ctx.heal(s, f, t, raw);
+            if (
+              f.masteryId === "fruitOverflow" &&
+              over > 0 &&
+              (t.cooldowns[`masteryOverflow:${f.id}`] || 0) <= s.tick
+            ) {
+              ctx.shield(
+                s,
+                f,
+                t,
+                Math.min(div(f.baseStats.hp * 4, 100), div(over * 15, 100)),
+                90,
+              );
+              t.cooldowns[`masteryOverflow:${f.id}`] = s.tick + 240;
+            }
+          }
         }
       } else {
         const scale = self
@@ -1414,7 +1558,9 @@ export function tickKitProjectiles(s: BattleState, ctx: KitCombatServices) {
         }
       }
       if (p.kit === "rose" || p.kit === "slipper") {
-        plantImpact(s, f, p);
+        if (p.kit === "rose" && f.masteryId === "roseFollow" && ally) {
+          field(s, f, "rose", t.x, t.y, 45, 60, 20, { followTarget: t.id });
+        } else plantImpact(s, f, p);
         p.life = 0;
       } else if (p.kit === "fruit" && (p.bounces || 0) > 0) {
         p.bounces!--;
@@ -1437,6 +1583,15 @@ export function tickKitFields(s: BattleState, ctx: KitCombatServices) {
     if (!z.kit || z.until <= s.tick || (z.start || 0) > s.tick) continue;
     const f = s.fighters[z.owner];
     if (!f) continue;
+    if (z.followTarget !== undefined) {
+      const target = s.fighters[z.followTarget];
+      if (!target || target.hp <= 0) {
+        z.until = s.tick;
+        continue;
+      }
+      z.x = target.x;
+      z.y = target.y;
+    }
     if (z.follow) {
       z.x = f.x;
       z.y = f.y;
@@ -1460,7 +1615,20 @@ export function tickKitFields(s: BattleState, ctx: KitCombatServices) {
       const key = `kitField:${z.owner}:${z.kit}`;
       const ready = (t.cooldowns[key] || 0) <= s.tick;
       if (harmful) {
-        if (z.kit !== "vortex" && z.kit !== "soup")
+        if (z.kit === "flag" && f.masteryId === "flagParalyze") {
+          if ((t.cooldowns[`masteryFlagCC:${f.id}`] || 0) <= s.tick) {
+            applyStatus(s, f, t, "paralyzed", 15, 30, same);
+            t.cooldowns[`masteryFlagCC:${f.id}`] = s.tick + 150;
+          }
+        } else if (
+          z.kit !== "vortex" &&
+          z.kit !== "soup" &&
+          !(
+            z.kit === "rose" &&
+            (z.followTarget !== undefined ||
+              (z.super && f.masteryId === "roseWall"))
+          )
+        )
           applyStatus(s, f, t, "frozen", z.kit === "paint" ? 25 : 15, 6, same);
         if (z.kit === "deadline") {
           applyStatus(s, f, t, "paralyzed", 25, 45, same);
@@ -1475,8 +1643,13 @@ export function tickKitFields(s: BattleState, ctx: KitCombatServices) {
             Math.max(
               1,
               div(
-                f.stats.attack * z.power * (z.super ? f.stats.superPower : 100),
-                10000,
+                f.stats.attack *
+                  z.power *
+                  (z.super ? f.stats.superPower : 100) *
+                  (z.kit === "fruit" && z.super && f.masteryId === "fruitSupply"
+                    ? 50
+                    : 100),
+                1000000,
               ),
             ),
             same,
@@ -1491,17 +1664,33 @@ export function tickKitFields(s: BattleState, ctx: KitCombatServices) {
       ) {
         if (z.kit !== "soup")
           applyStatus(s, f, t, "rage", z.kit === "flag" ? 10 : 8, 6);
-        if (pulse && ready) {
-          ctx.heal(
-            s,
-            f,
-            t,
+        if (
+          z.kit === "flag" &&
+          f.masteryId === "flagShield" &&
+          t !== f &&
+          (t.cooldowns[`masteryFlagShield:${f.id}`] || 0) <= s.tick
+        ) {
+          ctx.shield(s, f, t, div(f.baseStats.hp * 4, 100), 90);
+          t.cooldowns[`masteryFlagShield:${f.id}`] = s.tick + 240;
+        }
+        if (
+          pulse &&
+          ready &&
+          !(z.kit === "flag" && f.masteryId === "flagShield")
+        ) {
+          let amount =
             z.kit === "soup"
               ? Math.max(1, div(f.baseStats.hp, 100))
               : z.kit === "flag"
                 ? 5
-                : 3,
-          );
+                : 3;
+          if (z.kit === "fruit" && z.super && f.masteryId === "fruitSupply") {
+            const key = `masteryFruitHeal:${f.id}`;
+            t.memory[key] = (t.memory[key] || 0) + 375;
+            amount = div(t.memory[key], 100);
+            t.memory[key] %= 100;
+          }
+          ctx.heal(s, f, t, amount);
           t.cooldowns[key] = s.tick + 15;
         }
       }
@@ -1513,8 +1702,47 @@ export function tickKitFields(s: BattleState, ctx: KitCombatServices) {
           s.fighters[c.owner]?.team !== f.team &&
           within(z, c, z.radius || 50)
         )
-          c.hp = Math.max(0, c.hp - div(f.stats.attack * z.power, 100));
+          hitConstruct(s, f, c, div(f.stats.attack * z.power, 100), 0);
   }
+  for (const owner of s.fighters)
+    if (owner.hp > 0 && owner.masteryId === "roseLink") {
+      const roses = s.zones
+        .filter(
+          (z) =>
+            z.owner === owner.id &&
+            z.kit === "rose" &&
+            !z.super &&
+            z.until > s.tick,
+        )
+        .slice(-3);
+      for (const ally of s.fighters)
+        if (ally !== owner && ally.hp > 0 && ally.team === owner.team) {
+          const inside = roses.some(
+            (r, i) =>
+              i > 0 &&
+              distance(r, roses[i - 1]) <= 8000 ** 2 &&
+              capsuleHit(
+                r.x,
+                r.y,
+                roses[i - 1].x,
+                roses[i - 1].y,
+                ally.x,
+                ally.y,
+                ally.radius + 500,
+              ),
+          );
+          const key = `masteryRoseLink:${owner.id}`;
+          if (
+            inside &&
+            !ally.memory[key] &&
+            (ally.cooldowns[key] || 0) <= s.tick
+          ) {
+            ctx.shield(s, owner, ally, div(owner.baseStats.hp * 2, 100), 60);
+            ally.cooldowns[key] = s.tick + 240;
+          }
+          ally.memory[key] = Number(inside);
+        }
+    }
 }
 
 export function tickConstructs(s: BattleState, ctx: KitCombatServices) {

@@ -1,0 +1,337 @@
+/* Consistent hierarchy: navigation, one title, then the task. */
+.streamlined-ui main {
+  max-width: 1320px;
+  padding-top: 12px;
+}
+.streamlined-ui .primary-navigation {
+  margin-bottom: 20px;
+}
+.streamlined-ui .page-title {
+  margin-bottom: 22px;
+}
+.streamlined-ui .page-title h1 {
+  font-size: 30px;
+  margin: 0 0 8px;
+}
+.streamlined-ui .page-title p {
+  color: #aaa4b0;
+  margin: 0;
+}
+.streamlined-ui.screen-inventory .page-title h1 {
+  margin: 0;
+}
+.streamlined-ui .navigation-toggle > small {
+  display: none;
+}
+.streamlined-ui .adventure-page {
+  gap: 20px;
+  padding-top: 0;
+}
+.streamlined-ui .mode-hero {
+  gap: 20px;
+  padding: 0;
+}
+.streamlined-ui .mode-hero h1,
+.streamlined-ui .home-welcome h1 {
+  font-size: clamp(25px, 3vw, 32px);
+  margin-bottom: 8px;
+  letter-spacing: -0.7px;
+}
+.streamlined-ui .mode-hero-copy > p {
+  color: #b1a9b7;
+  font-size: 13px;
+}
+.streamlined-ui .hero-reward {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #ffffff03;
+  border-color: #ffffff14;
+}
+.streamlined-ui .hero-reward > span {
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+.streamlined-ui .hero-reward .reward-bundle.large {
+  margin: 0;
+  gap: 8px 12px;
+}
+.streamlined-ui .hero-reward .reward-quantity {
+  display: flex;
+  gap: 5px;
+}
+.streamlined-ui .hero-reward .reward-quantity > i {
+  width: 16px;
+  height: 22px;
+  font-size: 18px;
+}
+.streamlined-ui .hero-reward .reward-quantity > span {
+  margin: 0;
+  font-size: 10px;
+}
+.streamlined-ui .hero-reward .reward-bundle.large .reward-quantity > strong {
+  font-size: 18px;
+}
+.streamlined-ui .home-main {
+  grid-template-columns: 1.7fr 1fr;
+  gap: 16px;
+}
+.streamlined-ui .journey-hero {
+  padding: 24px;
+  border-radius: 12px;
+  background: #242019;
+}
+.streamlined-ui .journey-hero h2 {
+  font-size: 36px;
+  margin: 12px 0;
+  max-width: 100%;
+}
+.streamlined-ui .journey-hero > p {
+  max-width: 100%;
+  margin-bottom: 12px;
+}
+.streamlined-ui .home-progress {
+  padding: 22px;
+  border-radius: 12px;
+}
+.streamlined-ui .home-progress h3 {
+  margin: 12px 0;
+}
+.streamlined-ui .featured-modes {
+  gap: 16px;
+}
+.streamlined-ui .featured-mode {
+  padding: 20px;
+  border-radius: 12px !important;
+  background: #1d1b20;
+}
+.streamlined-ui .featured-mode h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+.streamlined-ui .featured-mode p {
+  margin-bottom: 0;
+  color: #aaa2b3;
+}
+.streamlined-ui .mode-link {
+  margin-top: 14px;
+  font-size: 12px;
+}
+.streamlined-ui .mode-emblem {
+  margin-left: auto;
+  font-size: 54px;
+}
+.streamlined-ui .battle-prep-card,
+.streamlined-ui .challenge-play-card,
+.streamlined-ui .expedition-play-card {
+  padding: 20px;
+  border-radius: 12px;
+}
+.streamlined-ui .team-summary {
+  gap: 8px;
+}
+.streamlined-ui .team-summary .compact-card {
+  padding: 12px 8px !important;
+  gap: 6px;
+}
+.streamlined-ui .team-summary .compact-card .loadout-name {
+  font-size: 12px;
+}
+.streamlined-ui .team-summary .compact-card .compact-card-meta {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.streamlined-ui .team-summary .compact-card > .portrait {
+  width: 52px;
+  height: 60px;
+}
+.streamlined-ui .team-summary .compact-equipment {
+  margin-top: 4px;
+}
+.streamlined-ui .team-summary .compact-equipment > span {
+  font-size: 10px;
+  justify-content: center;
+}
+.streamlined-ui .reward-track {
+  padding: 18px;
+  border-radius: 12px;
+  background: #19181c;
+  border: 1px solid #ffffff12;
+}
+.streamlined-ui .reward-track .section-heading h2 {
+  font-size: 17px;
+}
+.streamlined-ui .reward-track .section-heading p {
+  font-size: 11px;
+}
+.streamlined-ui .reward-milestone {
+  padding: 14px;
+  border-radius: 10px;
+  background: #ffffff03;
+}
+.streamlined-ui .reward-milestone h3 {
+  font-size: 13px;
+}
+.streamlined-ui .reward-milestone .reward-quantity > strong {
+  font-size: 20px;
+}
+.streamlined-ui .reward-milestone .reward-bundle {
+  gap: 10px;
+  margin: 12px 0;
+}
+.streamlined-ui .reward-track .reward-quantity {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.streamlined-ui .reward-track .reward-quantity > i {
+  width: 18px;
+  height: 24px;
+  font-size: 21px;
+}
+.streamlined-ui .reward-track .reward-quantity > span {
+  margin: 0;
+}
+.streamlined-ui .pack-hero {
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  border-radius: 12px;
+  box-shadow: none;
+  background: #1d1b20;
+}
+.streamlined-ui .pack-hero-copy {
+  padding: 24px;
+  align-self: start;
+}
+.streamlined-ui .pack-hero-copy h2 {
+  font:
+    750 26px/1.2 Inter,
+    sans-serif;
+  text-transform: none;
+  letter-spacing: -0.5px;
+  margin: 0 0 8px;
+}
+.streamlined-ui .pack-hero-copy > p {
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.streamlined-ui .pack-hero-art {
+  min-height: 260px;
+}
+.streamlined-ui .pack-hero-art .pack-booster {
+  width: 150px;
+}
+.streamlined-ui .pack-orbit {
+  display: none;
+}
+.streamlined-ui .pack-hero-art::before {
+  box-shadow: none;
+  width: 180px;
+}
+.streamlined-ui .pack-total-badge {
+  bottom: 18px;
+  right: 18px;
+}
+.streamlined-ui .pack-queue-card {
+  margin: 14px 0;
+}
+.streamlined-ui .pack-rules {
+  margin-top: 14px;
+  border-top: 1px solid #ffffff14;
+  padding-top: 12px;
+}
+.streamlined-ui .pack-rules > summary {
+  color: #b9adbf;
+  font-size: 12px;
+  cursor: pointer;
+}
+.streamlined-ui .pack-rules[open] > summary {
+  margin-bottom: 14px;
+}
+.streamlined-ui .pack-open-options {
+  gap: 6px;
+}
+.streamlined-ui .pack-open-options > button {
+  min-height: 44px;
+}
+
+@media (max-width: 760px) {
+  .streamlined-ui .page-title h1 {
+    font-size: 25px;
+  }
+  .streamlined-ui .page-title {
+    margin-bottom: 16px;
+  }
+  .streamlined-ui .primary-navigation {
+    margin-bottom: 0;
+  }
+  .streamlined-ui .mode-hero {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .streamlined-ui .hero-reward {
+    padding: 10px 14px;
+  }
+  .streamlined-ui .hero-reward .reward-quantity {
+    grid-template-columns: 20px auto;
+    column-gap: 6px;
+  }
+  .streamlined-ui .hero-reward .reward-quantity > i {
+    width: 16px;
+    font-size: 18px;
+  }
+  .streamlined-ui .home-main {
+    grid-template-columns: 1fr;
+  }
+  .streamlined-ui .home-progress {
+    padding: 16px;
+  }
+  .streamlined-ui .featured-modes {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .streamlined-ui .featured-mode {
+    padding: 16px;
+  }
+  .streamlined-ui .mode-emblem {
+    font-size: 40px;
+  }
+  .streamlined-ui .battle-prep-card,
+  .streamlined-ui .challenge-play-card,
+  .streamlined-ui .expedition-play-card {
+    padding: 14px;
+  }
+  .streamlined-ui .team-summary .compact-card {
+    padding: 10px 5px !important;
+  }
+  .streamlined-ui .team-summary .compact-card .loadout-name {
+    font-size: 11px;
+  }
+  .streamlined-ui .team-summary .compact-card .compact-card-role {
+    font-size: 10px;
+  }
+  .streamlined-ui .team-summary .compact-card .compact-card-meta .rarity-label {
+    display: none;
+  }
+  .streamlined-ui .reward-track {
+    padding: 14px;
+  }
+  .streamlined-ui .reward-track > .section-heading {
+    display: block;
+  }
+  .streamlined-ui .reward-track .section-heading p {
+    margin: 6px 0 0;
+  }
+  .streamlined-ui .pack-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .streamlined-ui .pack-hero-copy {
+    padding: 18px;
+  }
+  .streamlined-ui .pack-hero-art {
+    display: none;
+  }
+}

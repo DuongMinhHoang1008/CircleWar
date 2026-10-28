@@ -8,6 +8,7 @@ import {
 } from "./physics";
 import { safeBounds } from "./bounds";
 import { div, normalize, UNIT, DIRECTIONS } from "./math";
+import { masteryShield } from "./mastery";
 
 export type CombatTarget = Fighter | Construct;
 export const CONSTRUCT_BALANCE = {
@@ -157,6 +158,35 @@ export function hitConstruct(
 ) {
   const dealt = Math.min(target.hp, Math.max(1, damage));
   target.hp -= dealt;
+  const owner = s.fighters[target.owner];
+  if (
+    dealt > 0 &&
+    !target.hp &&
+    target.kind === "minion" &&
+    owner?.hp > 0 &&
+    owner.masteryId === "giftShield" &&
+    source.team !== owner.team &&
+    (owner.memory.masteryGiftShield || 0) <= s.tick
+  ) {
+    const ally = s.fighters
+      .filter(
+        (f) =>
+          f !== owner &&
+          f.hp > 0 &&
+          f.team === owner.team &&
+          (f.x - target.x) ** 2 + (f.y - target.y) ** 2 <= 12000 ** 2,
+      )
+      .sort(
+        (a, b) =>
+          (a.x - target.x) ** 2 +
+            (a.y - target.y) ** 2 -
+            ((b.x - target.x) ** 2 + (b.y - target.y) ** 2) || a.id - b.id,
+      )[0];
+    if (ally) {
+      masteryShield(s, owner, ally, div(owner.baseStats.hp * 4, 100), 90);
+      owner.memory.masteryGiftShield = s.tick + 180;
+    }
+  }
   const [dx, dy] = normalize(target.x - source.x, target.y - source.y);
   if (target.kind !== "turret") {
     target.vx += div(dx * push, UNIT);

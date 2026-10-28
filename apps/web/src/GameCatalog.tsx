@@ -32,6 +32,8 @@ export type Inspect = {
   kind: "character" | "item";
   id: string;
   loadout?: Loadout;
+  configuration?: boolean;
+  readOnly?: boolean;
   live?: Fighter;
   liveTick?: number;
   itemLevel?: number;
@@ -662,7 +664,7 @@ export function InfoPopup({
                   ))}
                 </div>
                 <p>{concise(b.description)}</p>
-                <details><summary>Điều kiện</summary><p>{b.description}</p><small>{b.size === 2 ? "3 lượt/vòng · hồi 8 giây · tầm 240" : "2 lượt/vòng · hồi 12 giây · tầm 280"}. Thành viên cần còn sống.</small></details>
+                <details><summary>Điều kiện</summary><p>{b.description}</p><small>{b.size === 2 ? "3 lượt/vòng · hồi 8 giây · toàn sân" : "2 lượt/vòng · hồi 12 giây · toàn sân"}. Thành viên cần còn sống.</small></details>
               </section>
             ))}
             <h3>Hội bạn</h3>

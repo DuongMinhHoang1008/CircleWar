@@ -1,3 +1,6 @@
+import { synergySignature } from "../../../../packages/shared/src/synergy";
+import { masteryAlly } from "../../../../packages/battle-engine/src/mastery";
+import { kitGrowth } from "../../../../packages/shared/src/character-kits";
 import { useEffect, useRef, useState } from "react";
 import {
   collectDamageNumbers,
@@ -395,6 +398,9 @@ export function Arena({
   highlightTeamId?: string;
   watchedTeamId?: string;
 }) {
+  const [playbackSpeed, setPlaybackSpeed] = useState(1), [paused, setPaused] = useState(false);
+  const playbackControls = useRef({ speed: playbackSpeed, paused });
+  playbackControls.current = { speed: playbackSpeed, paused };
   const mount = useRef<HTMLDivElement>(null),
     options = useRef({
       muted,
@@ -465,6 +471,7 @@ export function Arena({
       hudTime = 0,
       heard = 0,
       playbackTick = 0;
+    let localPlaybackSeconds = 0, previousPlaybackTime = started;
     let frames: ReplayFrame[] = [];
     const loaded = new Set<number>(),
       loading = new Set<number>(),
@@ -1065,6 +1072,9 @@ export function Arena({
         visualTickAt = performance.now();
       function draw() {
         if (disposed) return;
+        const playbackNow = performance.now();
+        if (!playbackControls.current.paused) localPlaybackSeconds += Math.max(0, playbackNow - previousPlaybackTime) / 1000 * playbackControls.current.speed;
+        previousPlaybackTime = playbackNow;
         const now = performance.now(),
           desired = replay
             ? Math.min(
@@ -1075,7 +1085,7 @@ export function Arena({
                     1000,
                 ),
               )
-            : Math.floor(((now - started) * 30) / 1000),
+            : Math.floor(localPlaybackSeconds * 30),
           target = replay
             ? (playbackTick = Math.max(playbackTick, desired))
             : desired;
@@ -1361,7 +1371,7 @@ export function Arena({
               0,
               source.characterId,
             );
-          } else if (e.type.startsWith("bond:")) {
+          } else if (e.type.startsWith("resonance:")) { burst("bond", source.x, source.y, e.tick, 1.25); burst("bond", target.x, target.y, e.tick, 1.25); } else if (e.type.startsWith("bond:")) {
             burst("bond", source.x, source.y, e.tick, 0.85);
           } else if (e.type.startsWith("group:")) {
             burst("group", source.x, source.y, e.tick, 0.85);
@@ -1842,7 +1852,7 @@ export function Arena({
               visualTick - e.tick < 35 &&
               (e.type === "super" ||
                 e.type.startsWith("skill:") ||
-                e.type.startsWith("bond:") ||
+                e.type.startsWith("bond:") || e.type.startsWith("resonance:") ||
                 e.type.startsWith("item:") ||
                 e.type.startsWith("affinity:") ||
                 e.type.startsWith("status:") ||
@@ -1867,7 +1877,7 @@ export function Arena({
                 ? "★ " + (c?.super[0] || "SUPER")
                 : e.type.startsWith("skill:")
                   ? c?.skill[0] || "Kỹ năng"
-                  : e.type.startsWith("bond:")
+                  : e.type.startsWith("resonance:") ? "✦ CỘNG HƯỞNG · " + synergySignature(e.type.slice(10)).name : e.type.startsWith("bond:")
                     ? "✦ " +
                       (BONDS.find((b) => b.id === e.type.slice(5))?.name ||
                         "Liên kết")
@@ -1942,7 +1952,8 @@ export function Arena({
               ];
           labels[i].visible = f.hp > 0;
           if (f.hp > 0 && f.characterId === "char_22") {
-            g.circle(x, y, 160 * 100 * sx).stroke({
+            const center=f.masteryId==="auraAnchor"?(masteryAlly(state,f)||f):f;
+            g.circle(center.x*sx, center.y*sy, 160 * kitGrowth(f,state.tick).auraRange * (f.masteryId==="auraAnchor"?.75:1) * sx).stroke({
               color: 0xc8b3ff,
               width: 1.2,
               alpha: 0.18,
@@ -2560,6 +2571,7 @@ export function Arena({
   const closing = closingTempo(hud.tick, config.shrinkSeconds);
   return (
     <div className="arena-shell">
+      {!replay && <div className="action-row" aria-label="Điều khiển xem trận"><button aria-pressed={paused} onClick={() => setPaused(value => !value)}>{paused ? "Tiếp tục xem" : "Tạm dừng"}</button>{[0.5, 1, 2].map(speed => <button key={speed} aria-pressed={playbackSpeed === speed} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}</div>}
       <div className="arena-top">
         <span>
           <i className="live-dot" />{" "}

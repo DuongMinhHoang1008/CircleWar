@@ -96,6 +96,14 @@ export function applyStatus(
     return false;
   if (kind === "stunned" && (target.memory.stunImmuneUntil || 0) > s.tick)
     return false;
+  if (kind === "introvert" && target.masteryId === "tigerCalm") {
+    duration = Math.min(duration, 42);
+    if ((target.memory.masteryCalm || 0) <= s.tick) {
+      if (statusPower(target, "frozen", s.tick)) clearStatus(target, "frozen");
+      else clearStatus(target, "paralyzed");
+      target.memory.masteryCalm = s.tick + 300;
+    }
+  }
   if (kind === "frozen" && (target.memory.immuneSlow || 0) > s.tick)
     return false;
   power = Math.max(1, Math.min(STATUS_RULES[kind].cap, Math.trunc(power)));
@@ -203,9 +211,18 @@ export function tickStatuses(s: BattleState) {
           effect.source !== target.id &&
             s.fighters[effect.source]?.team === target.team,
         );
+      if (effect.kind === "blessing" || effect.kind === "introvert")
+        rate = div(rate * (s.config.recoveryPercent ?? 100), 100);
       const power =
         effect.kind === "introvert"
-          ? Math.max(1, div(target.baseStats.hp * 8, 1000))
+          ? Math.max(
+              1,
+              div(
+                target.baseStats.hp *
+                  (target.masteryId === "tigerBurst" ? 4 : 8),
+                1000,
+              ),
+            )
           : effect.kind === "radiation"
             ? effect.power * 2
             : effect.power;

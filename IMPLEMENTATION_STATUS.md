@@ -1,5 +1,19 @@
 # Trạng thái triển khai
 
+## Hiện hành — 2026.10.28.1 / engine v34
+
+Đã hoàn tất bản local: Kho đồ tinh gọn; thử thách ngày với pool 9 nhân vật và đội tự lưu; viễn chinh roguelike 12 tầng, một lần thua mất run; tổng thưởng 150 pack + 15 Pack Boss + 1 Rương chọn Sử thi/ngày, pack dư vào Hòm thư; hành trình đủ 33 nhân vật và 99 Bí kỹ; Cộng hưởng liên kết. Qua 413 tests, TypeScript, build frontend/Worker dry-run và các luồng trình duyệt desktop/mobile. Thiết kế và giới hạn playtest tại [bản 28/10](docs/ADVENTURE_V2_2026-10-28.md). Trạng thái production được ghi tại [DEPLOYMENT.md](DEPLOYMENT.md).
+
+## Hiện hành — 2026.10.27.4 / engine v32
+
+Đã làm lại bố cục các chế độ chính và triển khai thưởng tuần/ngày/lần đầu, Rương chọn Sử thi và grant thưởng thi đấu được server kiểm chứng. Chi tiết tại [release 2026.10.27.4](docs/RELEASE_2026-10-27.4.md). Bản này chưa deploy production.
+
+## Hiện hành — 2026.10.27.3 / engine v32
+
+Đã triển khai MVP của các nhóm QoL, UX, content và hardcore trong [roadmap](docs/DEVELOPMENT_ROADMAP.md): preset/khóa/lọc/so sánh thẻ, thưởng chờ, campaign theo chương và huy chương, onboarding cho mượn, hậu trận/replay/tốc độ xem, so build, hành trình nhân vật, thử thách tuần/hợp đồng/bảng điểm do server tính, viễn chinh draft và event trải nghiệm trên thiết bị.
+
+Chi tiết hành vi, giới hạn, migration và bài kiểm chứng tại [release 2026.10.27.3](docs/RELEASE_2026-10-27.3.md). Source này chưa deploy production. Hồ sơ collection/PvE cục bộ vẫn đồng bộ theo cơ chế tương thích; điểm thi đấu được xác thực và lưu độc lập. Các mục v5–v10 bên dưới là lịch sử, không dùng làm checklist của phiên bản hiện hành.
+
 ## Cập nhật v9 — hoa, Courage, vũ khí và hội bạn
 
 - Pool 20 người, thêm Hoàng Tử Ngậm Hoa với nội tại, chiêu tự động, Super, mốc level 5, cặp P13 và bộ T09; không có bonus item chữ ký riêng.
@@ -62,3 +76,7 @@ Triển khai theo `writing-block.md`, giữ web monorepo độc lập vì reposi
 Edge abuse controls → production staging metrics → checkpoint replay recovery → multi-room load/soak và collision fuzz → delta protocol → hoàn thiện UI/camera/MVP/skill upgrades → balance nhiều seed → rollout public.
 
 Các báo cáo máy chạy thực tế nằm trong `reports/*.json`; screenshot desktop/mobile từ Playwright. Không có placeholder giả server result và không tin kết quả client.
+
+## Cập nhật 2026.10.27.5
+
+Kho đồ dùng đội hình hàng ngang, kéo thả quân/trang bị bằng chuột và cảm ứng, cấu hình riêng thay Catalog. Mở bài là màn mặc định. 18 Bí kỹ có runtime v33, mở theo tiến trình 3/8/15 hiện có; chưa thêm bộ bài thử thách cố định của thiết kế dài hạn. Chi tiết và kiểm tra tại `docs/RELEASE_2026-10-27.5.md`.

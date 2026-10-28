@@ -1,5 +1,15 @@
 # Thiết kế gameplay hiện hành
 
+## Cập nhật 2026.10.28.1
+
+Thử thách ngày, viễn chinh roguelike, hành trình toàn roster và Cộng hưởng thay phần mô tả thử thách tuần/viễn chinh draft ở các bản dưới. Xem [thiết kế hiện hành và bảng thưởng](docs/ADVENTURE_V2_2026-10-28.md).
+
+## Cập nhật 2026.10.27.3
+
+Mô tả hiện hành về QoL, progression và các mode mới nằm tại [release 2026.10.27.3](docs/RELEASE_2026-10-27.3.md). Pool là 33 nhân vật/33 vật phẩm; sức chứa pack thường 150, thẻ trùng cộng 150 EXP và nhu cầu lên cấp tăng theo cấp. Thưởng thường vượt hàng chờ được giữ trong Hòm thư, thưởng lần đầu đi ải là 5 pack (boss 15) và Pack Boss ở mốc tương ứng. Nhiệm vụ được làm mới mỗi ngày; có lựa chọn thắng ba ải thay cho một trận PvP.
+
+Campaign có cấu trúc chương/huy chương và replay ải, chỉ phát lại thưởng lớn cho ải lần đầu. Thử thách tuần và viễn chinh dùng quân cho mượn; Lv.10 chuẩn hóa cho điểm chính thức. Chiến đấu cục bộ hỗ trợ tốc độ xem, không thay tick của engine. Các con số sức chứa, EXP, phần thưởng và pool 20 quân ở phần mô tả cũ dưới đây đã được thay thế; các mục auto-chess chỉ giữ để tham khảo lịch sử.
+
 ## Mô hình thẻ bài và trận đấu hiện hành
 
 Mỗi phòng chơi một trận quyết định. Người chơi tạo phòng PvP, chọn đội từ bộ sưu tập, sẵn sàng và bắt đầu; trận kết thúc khi còn một đội sống. Chế độ đi ải cho phép một người đấu với đội đối thủ do máy tạo, độ khó tăng theo số ải đã chơi. Cả hai chế độ dùng chung đấu trường hình tròn, nhân vật, vật phẩm, kỹ năng, vật lý và replay của battle engine.

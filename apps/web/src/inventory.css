@@ -1,0 +1,528 @@
+/* Inventory keeps the familiar squad / collection layout. Details live in dialogs. */
+.profile-screen.inventory {
+  width: 100%;
+  padding: 0 !important;
+  background: none;
+  border: 0;
+  box-shadow: none !important;
+}
+.inventory-board {
+  grid-template-columns: 300px minmax(0, 1fr) !important;
+  gap: 24px !important;
+  align-items: start;
+}
+.inventory-board .inventory-team-column,
+.inventory-board .inventory-collection-column {
+  padding: 20px;
+  border-radius: 12px;
+  background: #19191c;
+  border: 1px solid #ffffff14;
+}
+.inventory-board .inventory-team-column {
+  position: sticky;
+  top: 20px;
+}
+.inventory-board .inventory-column-heading {
+  margin: 0 0 18px;
+}
+.inventory-board .inventory-column-heading h2 {
+  font-size: 18px;
+  letter-spacing: -0.3px;
+}
+.inventory-board .inventory-team-list {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+.inventory-board .inventory-team-list .inventory-card-shell { height: 100%; }
+.inventory-board .inventory-card-grid {
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+.inventory-board .inventory-card-shell {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+}
+.inventory-board .inventory-card-shell[draggable="true"] {
+  cursor: grab;
+}
+.inventory-board .inventory-drop-slot {
+  position: relative;
+  min-width: 0;
+  border-radius: 12px;
+  border: 2px solid transparent;
+}
+.inventory-board .inventory-drop-slot.drop-valid {
+  border: 2px dashed #66dbaa;
+}
+.inventory-board .inventory-drop-slot.drop-invalid {
+  opacity: 0.55;
+}
+.inventory-board .inventory-drop-slot.drop-hover.drop-valid {
+  border-style: solid;
+  background: #23745580;
+}
+.loadout-card.compact-card,
+.inventory-board .inventory-card-shell > .compact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  height: 100%;
+  padding: 12px !important;
+  border-radius: 10px !important;
+  background: #202024 !important;
+  border: 1px solid #ffffff19 !important;
+  box-shadow: none !important;
+  min-width: 0;
+  text-align: center;
+}
+.loadout-card.compact-card:hover,
+.inventory-board .inventory-card-shell > .compact-card:hover {
+  background: #28262a !important;
+  border-color: #b59656 !important;
+}
+.inventory-board .compact-card.in-team {
+  border-color: #b5965660 !important;
+}
+.compact-card .compact-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 20px;
+  gap: 6px;
+}
+.compact-card .compact-card-meta .rarity-label {
+  font-size: 10px;
+  color: #bcb2a1;
+}
+.compact-card.tier-t2 .rarity-label {
+  color: #8abfe9;
+}
+.compact-card.tier-t3 .rarity-label {
+  color: #c9a0e2;
+}
+.compact-card.tier-t4 .rarity-label {
+  color: #e5c27d;
+}
+.compact-card.tier-god .rarity-label {
+  color: #e6a2a8;
+}
+.inventory-card-grid .compact-card-meta {
+  padding-right: 24px;
+}
+.loadout-card.compact-card > .portrait,
+.inventory-board .compact-card > .portrait,
+.inventory-board .compact-card > .item-sprite {
+  width: 64px;
+  height: 72px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.compact-card .loadout-name {
+  font-size: 13px;
+  line-height: 1.4;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-wrap: anywhere;
+}
+.compact-card-role {
+  color: #ada7b5;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.compact-xp {
+  width: 100%;
+  height: 3px;
+  border-radius: 4px;
+  background: #ffffff12;
+  margin-top: auto;
+  overflow: hidden;
+}
+.compact-xp > i {
+  display: block;
+  height: 100%;
+  background: #ad9258;
+  border-radius: inherit;
+}
+.compact-card .in-team-label {
+  color: #d7c18c;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.inventory-board .inventory-card-grid .compact-equipment {
+  display: none;
+}
+.inventory-board .inventory-team-list .compact-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  column-gap: 10px;
+  row-gap: 4px;
+  text-align: left;
+  align-items: center;
+  padding: 12px 12px 16px !important;
+}
+.inventory-board .inventory-team-list .compact-card-meta {
+  grid-column: 2;
+  grid-row: 2;
+  justify-content: flex-start;
+}
+.inventory-board .inventory-team-list .compact-card > .portrait {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  width: 50px;
+  height: 62px;
+}
+.inventory-board .inventory-team-list .loadout-name {
+  grid-column: 2;
+  grid-row: 1;
+  justify-content: flex-start;
+  min-height: 0;
+  font-size: 12px;
+}
+.inventory-board .inventory-team-list .compact-card-role {
+  grid-column: 2;
+  grid-row: 3;
+  font-size: 10px;
+}
+.inventory-board .inventory-team-list .in-team-label {
+  display: none;
+}
+.compact-equipment {
+  display: grid;
+  gap: 5px;
+  width: 100%;
+  grid-column: 1 / -1;
+  margin-top: 6px;
+}
+.compact-equipment > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #c6bba3;
+  text-align: left;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.compact-equipment .item-sprite {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+.compact-equipment i {
+  font-style: normal;
+  color: #c8a7eb;
+}
+.inventory-board .inventory-team-list .empty-team-slot {
+  min-height: 72px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px dashed #ffffff25;
+  border-radius: 10px;
+  background: transparent;
+}
+.empty-team-slot > span {
+  font-size: 24px;
+}
+.inventory-board .inventory-presets,
+.inventory-board .active-link-summary,
+.inventory-board .inventory-help {
+  margin: 14px 0 0;
+  padding: 12px 0 0;
+  border-top: 1px solid #ffffff12;
+}
+.inventory-board summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: #bdb5c2;
+  line-height: 1.6;
+}
+.inventory-board .active-link-summary summary > span {
+  float: right;
+  background: none;
+  padding: 0;
+  font-size: 11px;
+}
+.inventory-board .active-link-summary > div {
+  display: flex;
+  margin-top: 10px;
+}
+.inventory-board .inventory-help p {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #aaa2b2;
+}
+.inventory-board .inventory-tabs {
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  gap: 6px;
+}
+.inventory-board .inventory-tabs button {
+  min-height: 44px;
+}
+.inventory-board .inventory-search {
+  margin-bottom: 16px;
+}
+.inventory-board .inventory-search input {
+  min-height: 44px;
+}
+.inventory-board .inventory-search summary {
+  padding: 11px 12px;
+}
+.inventory-board .inventory-card-shell > .inventory-drag-handle {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 32px;
+  min-height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  opacity: 0;
+  color: #aaa2ae;
+  font-size: 20px;
+  cursor: grab;
+  touch-action: none;
+}
+.inventory-board .inventory-drag-handle span {
+  display: none;
+}
+.inventory-board .inventory-card-shell:hover > .inventory-drag-handle,
+.inventory-board .inventory-card-shell:focus-within > .inventory-drag-handle {
+  opacity: 1;
+}
+.inventory-board .card-lock {
+  top: 3px;
+  right: 3px;
+  width: 32px;
+  min-height: 32px;
+  display: grid;
+  place-items: center;
+  color: #89828f;
+}
+.inventory-board .card-lock[aria-pressed="true"] {
+  color: #efd08a;
+}
+.inventory-board .inventory-action-status {
+  grid-column: 1 / -1;
+  font-size: 12px;
+  margin: 0;
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 45;
+  max-width: min(360px, calc(100vw - 32px));
+  padding: 12px 16px;
+  border: 1px solid #7ca487;
+  border-radius: 10px;
+  background: #1c2b22;
+  box-shadow: 0 8px 24px #0005;
+}
+.inventory-board .inventory-action-status:empty {
+  display: none;
+}
+.inventory-board .drop-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  border-radius: 0 0 10px 10px;
+}
+.inventory-board .touch-team-rail:not(.touch-active) {
+  display: none;
+}
+.inventory-board .touch-team-rail.touch-active {
+  display: grid;
+  position: fixed;
+  top: 82px;
+  left: max(8px, calc(50% - 300px));
+  right: max(8px, calc(50% - 300px));
+  z-index: 1000;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  padding: 10px;
+  background: #211e24f5;
+  border: 1px solid #c7a66e;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px #0009;
+}
+.inventory-board .touch-team-rail .inventory-drop-slot {
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 11px;
+  padding: 6px;
+}
+.inventory-board .touch-team-rail .drop-caption {
+  font-size: 9px;
+  padding: 4px;
+}
+.inventory-board .inventory-empty {
+  padding: 24px 10px;
+}
+.inventory-board .inventory-empty h3 {
+  font-size: 16px;
+  margin-top: 0;
+}
+
+@media (max-width: 960px) {
+  .inventory-board {
+    grid-template-columns: 250px minmax(0, 1fr) !important;
+    gap: 16px !important;
+  }
+  .inventory-board .inventory-team-column,
+  .inventory-board .inventory-collection-column {
+    padding: 16px;
+  }
+}
+@media (max-width: 760px) {
+  .inventory-board .inventory-action-status {
+    right: 16px;
+    bottom: 84px;
+  }
+  .inventory-board {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px !important;
+  }
+  .inventory-board .inventory-team-column {
+    position: static;
+  }
+  .inventory-board .inventory-team-column,
+  .inventory-board .inventory-collection-column {
+    padding: 12px;
+  }
+  .inventory-board .inventory-column-heading {
+    margin-bottom: 12px;
+  }
+  .inventory-board .inventory-column-heading h2 {
+    font-size: 17px;
+  }
+  .inventory-board .inventory-team-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .inventory-board .inventory-team-list .compact-card {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    padding: 8px 4px 38px !important;
+    gap: 5px;
+  }
+  .inventory-board .inventory-team-list .compact-card-meta {
+    order: -1;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .inventory-board .inventory-team-list .compact-card-meta .rarity-label {
+    display: none;
+  }
+  .inventory-board .inventory-team-list .compact-card > .portrait {
+    width: 44px;
+    height: 48px;
+  }
+  .inventory-board .inventory-team-list .loadout-name {
+    font-size: 11px;
+    min-height: 32px;
+    justify-content: center;
+  }
+  .inventory-board .inventory-team-list .compact-card-role {
+    display: none;
+  }
+  .inventory-board .inventory-team-list .empty-team-slot {
+    min-height: 160px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 6px;
+  }
+  .inventory-board .inventory-team-list .empty-team-slot small {
+    font-size: 10px;
+  }
+  .inventory-board .compact-equipment {
+    margin-top: 0;
+    gap: 4px;
+  }
+  .inventory-board .compact-equipment > span {
+    font-size: 9px;
+    line-height: 1.4;
+    justify-content: center;
+    gap: 3px;
+  }
+  .inventory-board .compact-equipment .item-sprite {
+    width: 13px;
+    height: 13px;
+  }
+  .inventory-board .inventory-card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+    gap: 8px;
+  }
+  .inventory-board .inventory-card-grid .compact-card {
+    padding: 10px 8px 40px !important;
+  }
+  .inventory-board .inventory-card-shell > .inventory-drag-handle {
+    opacity: 1;
+    width: 44px;
+    min-height: 36px;
+    right: 0;
+    bottom: 0;
+  }
+  .inventory-board .card-lock {
+    width: 40px;
+    min-height: 40px;
+    top: 0;
+    right: 0;
+  }
+  .inventory-board .inventory-card-grid .compact-card-meta {
+    padding-right: 26px;
+  }
+  .inventory-board .compact-card-meta .rarity-label {
+    font-size: 9px;
+  }
+  .inventory-board .inventory-search input {
+    font-size: 16px;
+  }
+  .inventory-board .inventory-presets,
+  .inventory-board .active-link-summary,
+  .inventory-board .inventory-help {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+  .inventory-board .inventory-team-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 10px;
+  }
+  .inventory-board .inventory-team-tools > details {
+    flex: 1;
+  }
+  .inventory-board .inventory-team-tools > details[open] {
+    flex-basis: 100%;
+  }
+  .inventory-board .inventory-team-tools > details > summary {
+    font-size: 10px;
+    min-height: 28px;
+  }
+  .inventory-board .inventory-team-tools > details > summary > span {
+    float: none;
+    padding-left: 3px;
+    font-size: 9px;
+  }
+}
+@media (pointer: coarse) {
+  .inventory-board .inventory-card-shell > .inventory-drag-handle {
+    opacity: 1;
+    min-height: 44px;
+  }
+}

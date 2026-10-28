@@ -1,6 +1,7 @@
 import { CATALOG_ITEMS, character, ROSTER, type CharacterId } from "./catalog";
 import { cardEffectiveEvolution, cardEvolution, cardRarityMultiplier, RARITY_POWER_STEP } from "./progression";
 import { CHARACTER_BALANCE, ITEM_EFFECT_TEXT } from "./combat-balance";
+import { masteryInfo } from "./mastery";
 export const BENCH_CAPACITY = 5;
 export const ITEM_BAG_CAPACITY = 8;
 export const SHOP_SIZE = 5;
@@ -173,6 +174,9 @@ export const ITEMS: Item[] = [
 ];
 ITEMS.find((i) => i.id === "potion")!.price = 4;
 export interface Loadout {
+  startingHpPercent?: number;
+  masteryId?: string;
+  masteryTarget?: string;
   classId: ClassId;
   characterId?: CharacterId;
   weaponRank?: number;
@@ -245,6 +249,12 @@ export function computeStats(loadout: Loadout): Stats {
       for (const key of Object.keys(modifiers) as (keyof Stats)[])
         s[key] += modifiers[key] || 0;
     }
+  }
+  const mastery = masteryInfo(loadout.masteryId);
+  if (mastery && mastery.characterId === loadout.characterId && mastery.modifiers) {
+    const modifiers = mastery.modifiers;
+    for (const [stat, percent] of [["attack", modifiers.attackPercent], ["hp", modifiers.hpPercent], ["speed", modifiers.speedPercent], ["cooldown", modifiers.cooldownPercent], ["charge", modifiers.chargePercent]] as const)
+      if (percent) s[stat] = Math.round(s[stat] * (100 + percent) / 100);
   }
   s.hp = Math.min(1600, s.hp);
   s.attack = Math.min(150, s.attack);

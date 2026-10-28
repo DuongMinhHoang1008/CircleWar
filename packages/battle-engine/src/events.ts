@@ -1,7 +1,7 @@
 import type { BattleState } from "./types";
 
 const isResultEvent = (type: string) =>
-  type === "kill" || type.startsWith("bond:") || type.startsWith("group:");
+  type === "kill" || type.startsWith("bond:") || type.startsWith("group:") || type.startsWith("resonance:");
 
 /** Preserve bounded kill/synergy totals for replay analytics, plus 120 recent visual events. */
 export function retainCombatEvents(state: BattleState) {

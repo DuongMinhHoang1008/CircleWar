@@ -1,4 +1,5 @@
 import data from "./catalog-data.json";
+import { synergySignature, SYNERGY_RULE, canResonate } from "./synergy";
 import { cardRarityMultiplier } from "./progression";
 import { affinityDescription } from "./affinity";
 import { LEGENDARY_IDENTITIES } from "./character-abilities";
@@ -64,7 +65,7 @@ export const ROSTER = data.characters.map((c) => {
     upgrade: "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
   };
 });
-export const BONDS = data.bonds;
+export const BONDS = data.bonds.map(b => ({ ...b, description: `${b.description} Cộng hưởng ${synergySignature(b.id).name}: ${synergySignature(b.id).text}` }));
 export interface FriendGroup {
   id: string;
   name: string;
@@ -76,7 +77,7 @@ export interface FriendGroup {
   three: string;
   limit: string;
 }
-export const FRIEND_GROUPS: FriendGroup[] = data.groups;
+export const FRIEND_GROUPS: FriendGroup[] = data.groups.map(g => canResonate(g.id) ? ({ ...g, two: `${g.two} Cộng hưởng ${synergySignature(g.id).name}: ${synergySignature(g.id).text}`, three: `${g.three} Cộng hưởng mốc 3: ${synergySignature(g.id).text}`, limit: SYNERGY_RULE }) : g);
 export function groupEligible(group: FriendGroup, ids: (string | undefined)[]) {
   const unique = new Set(ids);
   return (

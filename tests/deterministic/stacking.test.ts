@@ -48,7 +48,12 @@ it("automatically combines RiseOn Couple and 2k4 without a selected group", () =
   expect(s.fighters[0].stats.speed).toBe(
     Math.floor((s.fighters[0].baseStats.speed * 104) / 100),
   );
-  expect(s.events.some((e) => e.type === "shield" && e.target === s.fighters[1].id && e.amount === 10)).toBe(true);
+  expect(
+    s.events.some(
+      (e) =>
+        e.type === "shield" && e.target === s.fighters[1].id && e.amount === 10,
+    ),
+  ).toBe(true);
   expect(s.groups["a:G02"].uses).toBe(1);
   expect(s.config.teams[0].choice).toBeUndefined();
 });
@@ -104,7 +109,12 @@ it("activates a pair and its trio together with separate counters and additive s
   expect(s.events.some((e) => e.type === "bond:T01")).toBe(true);
   expect(s.bonds["a:P01"].uses).toBe(1);
   expect(s.bonds["a:T01"].uses).toBe(1);
-  expect(s.fighters[1].shield).toBe(33);
+  expect(s.fighters[1].shield).toBe(
+    33 + Math.floor((s.fighters[1].baseStats.hp * 12) / 100),
+  );
+  expect(s.events.filter((e) => e.type.startsWith("resonance:")).length).toBe(
+    1,
+  );
   const restored = restoreBattleState(serializeBattleState(s));
   for (let i = 0; i < 10; i++) {
     stepBattle(s);

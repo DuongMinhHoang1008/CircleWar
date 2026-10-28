@@ -1,6 +1,37 @@
 import React from "react";
 
 export const PATCH_NOTES = [{
+  version: "2026.10.28.1", date: "2026-10-28", title: "Thử thách ngày, viễn chinh roguelike và Cộng hưởng",
+  summary: "Kho đồ gọn hơn, đội thử thách tự lưu, tháp 12 tầng và hành trình đủ 33 nhân vật.",
+  sections: [
+    { title: "Giao diện và thử thách ngày", entries: ["Kho đồ trở lại bố cục đội hình và bộ sưu tập riêng trên desktop, ba ô đội gọn trên điện thoại. Chi tiết chỉ mở khi chọn thẻ.", "Thử thách ngày thay thử thách tuần: pool 9 nhân vật cho mượn Lv.10, ba đối thủ, làm mới lúc 00:00 giờ Việt Nam. Đội hình, trang bị và Bí kỹ tự lưu riêng cho từng đối thủ, kể cả sau trận và tải lại. Bỏ mục thi đấu xếp hạng khỏi giao diện."] },
+    { title: "Viễn chinh roguelike", entries: ["Chinh phục 12 tầng, chọn đường qua phòng thường, tinh anh, sự kiện, shop, chiêu mộ và trại nghỉ. Mua đồ, nâng cấp, đổi trang bị và bỏ nhân vật khỏi đội bằng tài nguyên riêng trong run.", "HP giữ giữa các trận. Thua một trận mất toàn bộ vàng, quân và đồ trong run; bộ sưu tập và thưởng mốc đã nhận vẫn giữ. Tải lại tiếp tục đúng trận đang dở.", "Vượt các tầng 4/8/12 nhận tổng 150 pack thường + 15 Pack Boss + 1 Rương chọn Sử thi mỗi ngày. Tự cộng khi đạt mốc; pack dư gửi Hòm thư. Mốc đã nhận theo mức cũ được bù chênh lệch một lần."] },
+    { title: "Hành trình và liên kết", entries: ["Mở hành trình cho toàn bộ 33 nhân vật, tổng 99 Bí kỹ ở mốc 3/8/15 trận đạt điều kiện. Có tìm kiếm, lọc và thông báo ngay khi mở mốc mới; replay không cộng tiến độ.", "Liên kết có Cộng hưởng Cứu viện, Liên kích, Phá nhịp hoặc Tiếp nhịp Super. Hiệu ứng có dấu hiệu trong trận, hồi chung 8 giây mỗi đội và tối đa bốn lần/trận. Giữ điều kiện thành viên còn sống; các hội quá rộng giữ vai trò bị động."] },
+    { title: "Tương thích", entries: ["Engine v34. Hồ sơ và bộ sưu tập được giữ; trận chưa kết thúc bằng engine cũ cần tạo lại. Các bản ghi lịch sử vẫn được giữ."] },
+  ],
+}, {
+  version: "2026.10.27.5", date:"2026-10-27", title:"Kho đồ dễ dùng và Bí kỹ độc quyền", summary:"Đội hình hàng ngang, kéo thả quân và trang bị, cấu hình nhân vật ngay trước trận. Mở bài trở thành tab đầu tiên.", sections:[{title:"Kho đồ và chuẩn bị",entries:["Ba ô đội xếp ngang trên kho thẻ. Kéo quân để thay hoặc đổi vị trí; kéo vật phẩm lên quân để gắn. Khi kéo hiện thanh nhận thẻ, hỗ trợ cảm ứng và thao tác chạm thay thế.","Chạm thẻ mở cấu hình riêng: chỉ số cấp hiện tại, phần cộng từ trang bị, chọn đồ và Bí kỹ. Thẻ ngoài hiện cấp, class, race, vai trò nhanh và đồ/Bí kỹ đang dùng."]},{title:"Phần thưởng dùng được",entries:["18 Bí kỹ riêng cho sáu nhân vật, mở ở mốc 3/8/15 trận đạt điều kiện. Lắp một Bí kỹ mỗi nhân vật, tối đa một Truyền thừa mỗi đội; hiệu ứng có đánh đổi riêng và áp dụng trong combat engine v33.","Đội cho mượn dùng cùng cấp 10 và có thể chọn Bí kỹ công bằng. Viễn chinh giữ giới hạn trang bị nhận từ lượt chọn."]}]
+}, {
+  version: "2026.10.27.4",
+  date: "2026-10-27",
+  title: "Giao diện tập trung và chiến lợi phẩm xứng đáng",
+  summary: "Làm nổi mục tiêu, nút chơi và phần thưởng. Thử thách tuần và viễn chinh có mốc nhận Pack Boss, Rương chọn Sử thi và danh hiệu.",
+  sections: [
+    { title: "Giao diện dễ theo dõi", entries: ["Trang Hành trình có một mục tiêu chính, hai chế độ nổi bật và thông tin thưởng ngay trên thẻ. Màn hình đi ải đặt hai đội cạnh nhau; map, chỉnh đội, hợp đồng và luật được thu gọn.", "Thử thách tuần tách Chinh phục và Thi đấu xếp hạng. Viễn chinh có tiến độ sáu chặng, số cơ hội, lựa chọn thẻ nổi bật và nút chơi chính. Mobile dùng thanh điều hướng dưới; trạng thái đồng bộ chuyển vào menu.", "Kết quả trận tập trung hành động tiếp theo; số liệu và thử nghiệm nằm trong mục mở rộng. Kho đồ giảm màu viền gây nhiễu và gom bộ lọc phụ."] },
+    { title: "Thưởng tuần và viễn chinh", entries: ["Chinh phục đủ ba đối thủ tuần nhận tổng 45 pack thường + 4 Pack Boss. Mỗi mốc nhận một lần/tuần, dùng chung giữa các hợp đồng.", "Thi đấu đạt các mốc 3/6/9 thắng nhận tổng 100 pack + 10 Pack Boss; mốc Vàng có thêm một Rương chọn Sử thi. Máy chủ xác nhận thành tích, giữ điểm tốt nhất và chống nhận trùng.", "Viễn chinh dùng số thắng tốt nhất trong một run mỗi ngày: mốc 2/4/6 thắng nhận tổng 45 pack + 4 Pack Boss. Lần đầu toàn thắng thêm 3 Pack Boss và Rương chọn Sử thi. Toàn thắng với ít nhất ba chặng hiểm trở nhận thêm 2 Pack Boss mỗi ngày.", "Hoàn thành chương 1/2/3 có thêm 20/30/40 pack và 2/3/4 Pack Boss, nhận một lần mỗi chương."] },
+    { title: "Rương chọn Sử thi", entries: ["Mở ở trang Mở thẻ để chọn chính xác một nhân vật hoặc vật phẩm Sử thi chưa max. Thẻ trùng cộng 150 EXP; nếu tất cả Sử thi đã max, đổi một rương lấy 5 Pack Boss.", "Mốc thưởng hiện rõ chưa đạt, có thể nhận hoặc đã nhận. Pack vượt sức chứa được giữ trong Hòm thư; reload và nhận lại không nhân thưởng."] },
+  ],
+}, {
+  version: "2026.10.27.3",
+  date: "2026-10-27",
+  title: "Hành trình, đội hình và thử thách tuần",
+  summary: "Lưu preset, bảo vệ thẻ, giữ thưởng khi đầy kho; campaign theo chương, replay và các chế độ thử thách mới.",
+  sections: [
+    { title: "Đội hình và phần thưởng", entries: ["Lưu tối đa năm preset gồm quân và vật phẩm; sao chép, đổi tên và khôi phục đội trước. Kho đồ có tìm kiếm, lọc, so sánh trang bị và khóa thẻ khỏi luyện/trao đổi.", "Thư nhận được từng phần. Pack thưởng vượt hàng chờ được giữ trong Thưởng chinh phục đang chờ ở Hòm thư. Luyện bài xác nhận danh sách thẻ mất và EXP vượt trần."] },
+    { title: "Hành trình và xem trận", entries: ["Trang Hành trình mới, ba chương cho 30 ải đầu, huy chương phụ và chơi lại ải. Chơi lại không nhận lại thưởng lần đầu.", "Thêm ba bài tập bằng quân cho mượn, sáu hành trình nhân vật và danh hiệu. Sau trận có tóm tắt số liệu, sửa đội và thử lại cùng seed hoặc seed khác.", "Trận cục bộ có pause và tốc độ 0,5×/1×/2×. Trận mới lưu cấu hình để xem lại trong Phân tích số liệu; replay không phát thưởng. Phòng so sánh build chạy hai đội qua cùng seed luyện và kiểm chứng."] },
+    { title: "Thử thách", entries: ["Thử thách tuần dùng pool cho mượn Lv.10, ba đối thủ qua ba seed. Ba hợp đồng tùy chọn, có thể kết hợp: rarity gốc tối đa Hiếm, không đồ hợp cạ, hồi HP còn 70% cho hai phía.", "Lượt chính thức do server mô phỏng, checkpoint và chấm điểm; tối đa ba lượt mỗi tuần, seed đánh giá không gửi cho client. Đồng số thắng đồng hạng trong cùng nhóm hợp đồng. Tiến trình xếp hạng tách khỏi hồ sơ bộ sưu tập.", "Viễn chinh draft sáu chặng: chọn một trong ba quân/đồ, xem đối thủ và chọn đường đi; ba cơ hội thất bại, HP hồi đầy mỗi trận, lưu run để tiếp tục.", "Engine v32 bổ sung luật hồi phục của thử thách. Trận đang lưu bằng engine cũ cần tạo lại; lịch sử số liệu cũ được giữ."] },
+  ],
+}, {
   version: "2026.10.27.2",
   date: "2026-10-27",
   title: "Cân bằng nhân vật và số liệu chiến đấu",

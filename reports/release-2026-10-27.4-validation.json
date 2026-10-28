@@ -1,0 +1,12 @@
+{
+  "release": "2026.10.27.4",
+  "engine": "chaos-integer-v32",
+  "typecheck": "passed",
+  "unitTests": { "files": 30, "passed": 282, "failed": 0 },
+  "frontendBuild": "passed",
+  "workerDryRun": "passed",
+  "uxRewardsBrowser": "reports/ux-rewards-browser.json",
+  "regressionBrowser": "reports/experience-browser.json",
+  "leagueIntegration": "reports/league-integration.json",
+  "productionDeployed": false
+}

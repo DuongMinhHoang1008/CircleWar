@@ -1,4 +1,5 @@
 import { computeStats } from "../../shared/src/balance";
+import { validateMasteryTeam } from "../../shared/src/mastery";
 import { campaignStats, isCampaignBoss } from "../../shared/src/campaign";
 import { DEFAULT_ARENA_SIZE, DEFAULT_SHRINK_SECONDS } from "../../shared/src/arena";
 import { combat } from "./combat";
@@ -32,6 +33,8 @@ export * from "./metrics";
 export * from "./weapons";
 export * from "./statuses";
 export function createBattle(config: BattleConfig, seed: number): BattleState {
+  for (const team of config.teams) validateMasteryTeam(team.loadouts);
+  if (config.recoveryPercent !== undefined && (!Number.isInteger(config.recoveryPercent) || config.recoveryPercent < 0 || config.recoveryPercent > 100)) throw Error("Invalid recovery modifier");
   if (
     config.teams.length < 2 ||
     config.teams.length > 20 ||
@@ -90,6 +93,8 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
       d = DIRECTIONS[random(spawn) % 32];
     s.fighters.push({
       id,
+      masteryId: l.masteryId,
+      masteryTarget: l.masteryTarget,
       boss: boss || undefined,
       team,
       classId: l.classId,
@@ -111,7 +116,7 @@ export function createBattle(config: BattleConfig, seed: number): BattleState {
       vx: div(d[0] * stats.speed, UNIT),
       vy: div(d[1] * stats.speed, UNIT),
       radius: boss ? 2800 : 1700,
-      hp: stats.hp,
+      hp: l.startingHpPercent === undefined ? stats.hp : Math.max(1, Math.round(stats.hp * Math.max(1, Math.min(100, Number.isFinite(l.startingHpPercent) ? l.startingHpPercent : 100)) / 100)),
       shield: stats.shield,
       energy: 0,
       angle: random(spawn) % 32,

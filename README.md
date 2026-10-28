@@ -1,5 +1,17 @@
 # RiseOn Ultimate TCG
 
+## Phiên bản 2026.10.28.1 — 2026-10-28
+
+Thử thách ngày dùng pool 9 nhân vật, tự lưu đội theo từng đối thủ; mục xếp hạng đã được bỏ khỏi giao diện. Viễn chinh roguelike có 12 tầng, shop, nâng cấp, chiêu mộ, HP giữ giữa trận và thua là mất run. Vượt đủ tháp nhận tổng 150 pack + 15 Pack Boss + 1 Rương chọn Sử thi mỗi ngày; pack dư vào Hòm thư. Cả 33 nhân vật có hành trình và thông báo mở Bí kỹ; liên kết có Cộng hưởng đặc trưng. Xem [thiết kế, thưởng và kiểm chứng](docs/ADVENTURE_V2_2026-10-28.md).
+
+Web auto-battler sưu tập thẻ với 33 nhân vật và 33 vật phẩm, đội tối đa ba quân. Trang **Hành trình** dẫn đến đi ải, thử thách ngày Lv.10 cho mượn, tháp viễn chinh roguelike và hành trình nhân vật. Kho đồ có năm preset, tìm/lọc, khóa thẻ và so sánh trang bị. Thưởng vượt hàng chờ được giữ để nhận sau; trận cục bộ có pause/tăng tốc và replay.
+
+API xếp hạng cũ được giữ để tương thích dữ liệu; giao diện mới dùng thử thách ngày. Backend vẫn giữ binding `LEAGUES` và migration `v4` trong Wrangler. Engine hiện hành: `chaos-integer-v34`.
+
+Xem [chi tiết tính năng, tương thích và kiểm chứng](docs/RELEASE_2026-10-27.3.md) cùng [roadmap](docs/DEVELOPMENT_ROADMAP.md). Thay đổi này đã được triển khai trong source; thông tin auto-chess v10 phía dưới được giữ làm lịch sử, không mô tả luồng hiện hành.
+
+## Lịch sử nền auto-chess
+
 Game web auto-battler multiplayer: nhân vật hình tròn nảy theo vật lý bi-a, tự dùng vũ khí và Super; người chơi xây đội hình qua shop, bench, hợp nhất quân và nâng giới hạn ra sân giữa các vòng.
 
 Engine v10 có **20 nhân vật dùng avatar thật, 20 vật phẩm có sprite SVG riêng, 20 mẫu vũ khí, 13 liên kết đôi, 9 bộ ba và 13 hội bạn tự cộng dồn**. Mỗi người khởi đầu với một nhân vật. Shop có 5 mặt hàng nhân vật/vật phẩm và reroll; quân mua được chờ trên bench 5 ô, vật phẩm có túi 8 ô. Hợp nhất hai bản sao cùng loại/cùng cấp để lên level; nâng giới hạn quân ra sân từ 1 lên 2 rồi 3 bằng Gold. Bàn cờ tướng hợp cạ Hoàng Tử Ngậm Hoa. Trận có hiệu ứng slash, khiên, hồi máu, Super dạng tranh vector, hiệu ứng vỡ quân và rung sân. Multiplayer vẫn kiểm tra giao dịch ở server. Sau cập nhật, client cần tải lại và replay cũ không dùng chung luật mới. Chi tiết tại [GAME_DESIGN.md](GAME_DESIGN.md).

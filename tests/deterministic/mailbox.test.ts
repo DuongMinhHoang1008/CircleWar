@@ -30,9 +30,13 @@ describe("gift mailbox", () => {
     expect(deliverMail(after, updateMail("release-2", now + 1))).toBe(after);
   });
 
-  it("leaves the entire gift pending when even one slot is missing", () => {
+  it("credits the portion that fits and retains the remainder", () => {
     const before = profile(101);
-    expect(() => claimMail(before, "welcome", now)).toThrow("Cần 50 chỗ trống");
+    const after = claimMail(before, "welcome", now);
+    expect(after.packs).toBe(150);
+    expect(after.mailbox[0].claimedPacks).toBe(49);
+    expect(after.mailbox[0].claimedAt).toBeUndefined();
+    expect(claimMail({ ...after, packs: 149 }, "welcome", now).mailbox[0].claimedAt).toBe(now);
     expect(before.packs).toBe(101);
     expect(before.mailbox[0].claimedAt).toBeUndefined();
   });
@@ -48,7 +52,7 @@ describe("gift mailbox", () => {
   it("checks freshly regenerated packs at claim time", () => {
     const before = profile(99);
     expect(queuedPackCount(before, now + 120_000)).toBe(101);
-    expect(() => claimMail(before, "welcome", now + 120_000)).toThrow();
+    expect(claimMail(before, "welcome", now + 120_000).mailbox[0].claimedPacks).toBe(49);
     expect(claimMail(before, "welcome", now + 60_000).packs).toBe(150);
   });
 

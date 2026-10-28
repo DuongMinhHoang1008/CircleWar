@@ -75,6 +75,8 @@ export const actionSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("SET_TEAM"), characters: z.array(z.enum(CHARACTER_IDS)).min(1).max(3) }).strict(),
   z.object({
     type: z.literal("SYNC_PROFILE"),
+    masteries: z.record(z.object({id:z.string().max(40),target:z.string().max(20).optional()}).strict()).optional(),
+    masteryProgress: z.record(z.number().int().min(0).max(1000000)).optional(),
     cards: z.array(z.object({ characterId: z.enum(CHARACTER_IDS), level: z.number().int().min(1).max(10), xp: z.number().int().min(0).max(xpForNextLevel(9) - 1) }).strict()).max(CHARACTER_IDS.length),
     itemCards: z.array(z.object({ itemId: z.string().regex(/^item_[0-9]+$/), level: z.number().int().min(1).max(10), xp: z.number().int().min(0).max(xpForNextLevel(9) - 1) }).strict()).max(CATALOG_ITEMS.length),
     team: z.array(z.enum(CHARACTER_IDS)).min(1).max(3),

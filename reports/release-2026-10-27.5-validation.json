@@ -1,0 +1,28 @@
+{
+  "version": "2026.10.27.5",
+  "engine": "chaos-integer-v33",
+  "typecheck": "passed",
+  "vitest": {
+    "files": 31,
+    "tests": 315,
+    "status": "passed"
+  },
+  "webBuild": "passed",
+  "workerDryRun": "passed",
+  "browser": [
+    "inventory",
+    "experience",
+    "ux-rewards"
+  ],
+  "touchWidths": [
+    390,
+    360
+  ],
+  "league": "9 matches passed",
+  "productionDeployed": false,
+  "knownLimits": [
+    "Large bundle chunk warning",
+    "Fixed mastery chapters remain future content",
+    "No exhaustive matchup balancing yet"
+  ]
+}

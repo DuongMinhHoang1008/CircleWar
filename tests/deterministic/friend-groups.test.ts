@@ -159,9 +159,7 @@ it("2k4 counts distinct alive members, grants only two clock pulses and drops fr
   expect(s.fighters.slice(0, 3).map((f) => f.energy)).toEqual([9, 9, 9]);
   expect(s.groups["a:G01"].uses).toBe(1);
   expect(s.fighters[0].stats.speed).toBe(
-    Math.floor(
-      (s.fighters[0].baseStats.speed * 106) / 100,
-    ),
+    Math.floor((s.fighters[0].baseStats.speed * 106) / 100),
   );
   s.tick = 600;
   beforeCharacterTick(s);
@@ -172,16 +170,14 @@ it("2k4 counts distinct alive members, grants only two clock pulses and drops fr
   s.tick = 601;
   beforeCharacterTick(s);
   expect(s.fighters[0].stats.speed).toBe(
-    Math.floor(
-      (s.fighters[0].baseStats.speed * 104) / 100,
-    ),
+    Math.floor((s.fighters[0].baseStats.speed * 104) / 100),
   );
   s.tick = 900;
   beforeCharacterTick(s);
   characterCombat(s);
   expect(s.groups["a:G01"].uses).toBe(2);
 });
-it("RiseOn shields only the partner and obeys shared cooldown, range and source death", () => {
+it("RiseOn shields only the partner and obeys shared cooldown and source death across the whole arena", () => {
   const s = team("G02", ["char_01", "char_19"]),
     f = s.fighters[0],
     partner = s.fighters[1];
@@ -205,14 +201,14 @@ it("RiseOn shields only the partner and obeys shared cooldown, range and source 
   beforeCharacterTick(s);
   f.energy = 100;
   characterCombat(s);
-  expect(s.groups["a:G02"].uses).toBe(1);
+  expect(s.groups["a:G02"].uses).toBe(2);
   partner.x = 51000;
   partner.hp = 0;
   s.tick = 500;
   beforeCharacterTick(s);
   f.energy = 100;
   characterCombat(s);
-  expect(s.groups["a:G02"].uses).toBe(1);
+  expect(s.groups["a:G02"].uses).toBe(2);
 });
 it("Hoàng tử 34 activates its link from a Super and grants both shields", () => {
   const s = team("G03", ["char_02", "char_10"]),
@@ -250,9 +246,12 @@ it("Tít và Mít recharges teammates and miền núi applies Super strength plu
   beforeCharacterTick(s);
   s.fighters[0].energy = 100;
   characterCombat(s);
-  expect(s.fighters[1].energy).toBe(8);
-  expect(s.fighters[2].energy).toBe(8);
+  expect(s.fighters[1].energy).toBe(38);
+  expect(s.fighters[2].energy).toBe(38);
   expect(s.groups["a:G05"].uses).toBe(1);
+  expect(s.events.filter((e) => e.type.startsWith("resonance:")).length).toBe(
+    1,
+  );
   const m = team("G06", ["char_06", "char_07", "char_09"]);
   m.tick = 1;
   beforeCharacterTick(m);
@@ -305,7 +304,7 @@ it("new Super groups apply their own effects and shared cooldown", () => {
     expect(calculateStateHash(restored)).toBe(calculateStateHash(s));
   }
 });
-it("anchors must cast themselves, remain alive, and stay in group range", () => {
+it("anchors must cast themselves and remain alive, with arena-wide cooperation", () => {
   for (const [group, anchor] of [
     ["G11", "char_14"],
     ["G12", "char_09"],
@@ -326,27 +325,33 @@ it("anchors must cast themselves, remain alive, and stay in group range", () => 
     beforeCharacterTick(s);
     s.fighters[0].energy = 100;
     characterCombat(s);
-    expect(s.groups[`a:${group}`]).toBeUndefined();
+    expect(s.groups[`a:${group}`].uses).toBe(1);
     s.fighters[0].hp = 0;
     s.fighters[2].x = 52000;
     s.tick = 600;
     beforeCharacterTick(s);
     s.fighters[1].energy = 100;
     characterCombat(s);
-    expect(s.groups[`a:${group}`]).toBeUndefined();
+    expect(s.groups[`a:${group}`].uses).toBe(1);
   }
 });
 it("kneel activates from either living anchor and shares its cooldown between both", () => {
   for (const anchor of ["char_09", "char_22"]) {
-    expect(validChoice([{ characterId: anchor }, { characterId: "char_04" }], { group: "G12" })).toBe(true);
+    expect(
+      validChoice([{ characterId: anchor }, { characterId: "char_04" }], {
+        group: "G12",
+      }),
+    ).toBe(true);
     const s = team("G12", [anchor, "char_04"]);
     s.tick = 1;
     beforeCharacterTick(s);
     s.fighters[0].energy = 100;
     characterCombat(s);
     expect(s.groups["a:G12"].uses).toBe(1);
-    expect(s.fighters[1].buffs.some(b => b.kind === "attack" && b.value === 8)).toBe(true);
-    expect(s.fighters[0].buffs.some(b => b.source === -1012)).toBe(false);
+    expect(
+      s.fighters[1].buffs.some((b) => b.kind === "attack" && b.value === 8),
+    ).toBe(true);
+    expect(s.fighters[0].buffs.some((b) => b.source === -1012)).toBe(false);
     s.fighters[0].hp = 0;
     s.tick = 400;
     beforeCharacterTick(s);
@@ -355,8 +360,14 @@ it("kneel activates from either living anchor and shares its cooldown between bo
     expect(s.groups["a:G12"].uses).toBe(1);
   }
   const s = team("G12", ["char_09", "char_22", "char_04"]);
-  s.tick = 1; beforeCharacterTick(s); s.fighters[0].energy = 100; characterCombat(s);
-  s.tick = 2; beforeCharacterTick(s); s.fighters[1].energy = 100; characterCombat(s);
+  s.tick = 1;
+  beforeCharacterTick(s);
+  s.fighters[0].energy = 100;
+  characterCombat(s);
+  s.tick = 2;
+  beforeCharacterTick(s);
+  s.fighters[1].energy = 100;
+  characterCombat(s);
   expect(s.groups["a:G12"].uses).toBe(1);
 });
 it("Full Combo requires one living member of each branch, with separate pair effects", () => {

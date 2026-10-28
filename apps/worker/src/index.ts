@@ -16,7 +16,12 @@ import { CHARACTER_IDS, CATALOG_ITEMS, type CharacterId } from "../../../package
 import { addCardXp, DUPLICATE_CARD_XP, xpForNextLevel, PACK_CAPACITY } from "../../../packages/shared/src/progression";
 import { welcomeMail, validMailbox, mergeMailbox, type GiftMail } from "../../../packages/shared/src/mailbox";
 import { BOSS_PITY_LIMIT, normalizeBossPity } from "../../../packages/shared/src/packs";
+import { experienceOf, validExperience, type Experience } from "../../../packages/shared/src/experience";
+import { leagueRequest, League } from "./league";
+import { applyModeReward, type ModeReward } from "../../../packages/shared/src/mode-rewards";
+export { League };
 interface Env {
+  LEAGUES: DurableObjectNamespace<League>;
   ROOMS: DurableObjectNamespace<Room>;
   PROFILES: DurableObjectNamespace<Profile>;
   TRADES: DurableObjectNamespace<Trade>;
@@ -76,13 +81,15 @@ export default {
       const url = new URL(req.url);
       if (url.pathname === "/health")
         return json({ ok: true, protocol: PROTOCOL });
-      const profileMatch = url.pathname.match(/^\/api\/profiles\/([0-9a-f-]{36})$/i);
+      const profileMatch = url.pathname.match(/^\/api\/profiles\/([0-9a-f-]{36})(\/league)?$/i);
       if (profileMatch) {
         if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(profileMatch[1]))
           return json({ error: "Profile ID không hợp lệ" }, 400);
         if (Number(req.headers.get("Content-Length") || 0) > 65536) return json({ error: "Profile request quá lớn" }, 413);
-        url.pathname = "/";
-        const response = await env.PROFILES.get(env.PROFILES.idFromName(profileMatch[1])).fetch(new Request(url, req));
+        url.pathname = profileMatch[2] || "/";
+        const forwardedHeaders = new Headers(req.headers);
+        forwardedHeaders.set("X-League-Profile", profileMatch[1]);
+        const response = await env.PROFILES.get(env.PROFILES.idFromName(profileMatch[1])).fetch(new Request(url, { method: req.method, headers: forwardedHeaders, body: req.body, duplex: "half" } as RequestInit));
         const out = new Response(response.body, response);
         for (const [key, value] of Object.entries(cors)) out.headers.set(key, value);
         return out;
@@ -163,6 +170,10 @@ export default {
 } satisfies ExportedHandler<Env>;
 
 interface GlobalProfile {
+  choiceChests?: number;
+  experience?: Experience;
+  rewardReserve?: number;
+  rewardReceipts?: string[];
   mailbox?: GiftMail[];
   bossPacksSinceHighRarity?: number;
   cards: { characterId: CharacterId; level: number; xp: number }[];
@@ -180,7 +191,7 @@ interface GlobalProfile {
   packsSinceHighRarity?: number;
   lastPull?: { kind: "character" | "item"; id: string; tier: string; rarity: string; duplicate?: boolean; xpGained?: number; oldXp?: number; experience?: number; oldLevel?: number; level?: number; leveledUp?: boolean };
 }
-interface StoredProfile { tokenHash: string; profile: GlobalProfile; appliedTrades?: string[] }
+interface StoredProfile { tokenHash: string; profile: GlobalProfile; appliedTrades?: string[]; awardedRewards?: { receipt: string; reward: ModeReward }[] }
 function normalizeProfile(raw: Partial<GlobalProfile>): GlobalProfile {
   const starter = starterProfile();
   const lastPull = typeof raw.lastPull === "string" ? undefined : raw.lastPull;
@@ -200,13 +211,14 @@ function normalizeProfile(raw: Partial<GlobalProfile>): GlobalProfile {
 function validProfile(raw: unknown): raw is GlobalProfile {
   if (!raw || typeof raw !== "object") return false;
   const p = raw as Partial<GlobalProfile>;
+  if (p.choiceChests !== undefined && (!Number.isSafeInteger(p.choiceChests) || p.choiceChests < 0)) return false;
   const ids = new Set<string>(CHARACTER_IDS);
   const items = new Set<string>(CATALOG_ITEMS.map((item) => item.id));
   const ownedItems = new Set((p.itemCards || []).map((item) => item.itemId));
   const equipped = p.equipment || {};
   const assignedItems = Object.values(equipped).flat();
   const equipmentValid = Object.entries(equipped).every(([characterId, values]) => ids.has(characterId) && p.team?.includes(characterId as CharacterId) && Array.isArray(values) && values.length <= 1 && values.every((itemId) => items.has(itemId) && ownedItems.has(itemId))) && new Set(assignedItems).size === assignedItems.length;
-  return (p.mailbox === undefined || validMailbox(p.mailbox)) && Array.isArray(p.cards) && p.cards.length > 0 && p.cards.length <= CHARACTER_IDS.length &&
+  return (p.experience === undefined || validExperience(p.experience)) && (p.rewardReserve === undefined || Number.isSafeInteger(p.rewardReserve) && p.rewardReserve >= 0) && (p.rewardReceipts === undefined || Array.isArray(p.rewardReceipts) && p.rewardReceipts.length <= 5000 && p.rewardReceipts.every(id => typeof id === "string" && id.length <= 128)) && (p.mailbox === undefined || validMailbox(p.mailbox)) && Array.isArray(p.cards) && p.cards.length > 0 && p.cards.length <= CHARACTER_IDS.length &&
     p.cards.every((c) => ids.has(c.characterId) && Number.isInteger(c.level) && c.level >= 1 && c.level <= 10 && Number.isInteger(c.xp) && c.xp >= 0 && (c.level === 10 ? c.xp === 0 : c.xp < xpForNextLevel(c.level))) &&
     Array.isArray(p.itemCards) && p.itemCards.length <= CATALOG_ITEMS.length && new Set(p.itemCards.map((item) => item.itemId)).size === p.itemCards.length && p.itemCards.every((item) => items.has(item.itemId) && Number.isInteger(item.level) && item.level >= 1 && item.level <= 10 && Number.isInteger(item.xp) && item.xp >= 0 && (item.level === 10 ? item.xp === 0 : item.xp < xpForNextLevel(item.level))) && equipmentValid &&
     Array.isArray(p.team) && p.team.length >= 1 && p.team.length <= 3 && new Set(p.team).size === p.team.length && p.team.every((id) => ids.has(id) && p.cards!.some((card) => card.characterId === id)) &&
@@ -253,6 +265,7 @@ export class Profile extends DurableObject<Env> {
             if (!validProfile(body.profile)) return json({ error: "Dữ liệu hồ sơ không hợp lệ" }, 400);
             const mailbox = mergeMailbox(stored.profile.mailbox, (body.profile as GlobalProfile).mailbox);
             stored.profile = normalizeProfile({ ...(body.profile as GlobalProfile), mailbox });
+            for (const grant of stored.awardedRewards || []) stored.profile = applyModeReward(stored.profile, grant.reward, grant.receipt);
             if (!validProfile(stored.profile)) return json({ error: "Dữ liệu hồ sơ không hợp lệ" }, 400);
             accrue(stored.profile);
             await this.ctx.storage.put("profile", stored);
@@ -260,6 +273,11 @@ export class Profile extends DurableObject<Env> {
           return json({ profile: stored.profile });
         }
         if (!stored || stored.tokenHash !== tokenHash) return json({ error: "Hồ sơ không tồn tại hoặc token sai" }, 401);
+        if (url.pathname === "/league") return await leagueRequest(this.ctx.storage, this.env, req, req.headers.get("X-League-Profile") || "", async (reward, receipt) => {
+          stored!.profile = applyModeReward(stored!.profile, reward, receipt);
+          if (!stored!.awardedRewards?.some(g => g.receipt === receipt)) stored!.awardedRewards = [...(stored!.awardedRewards || []), { receipt, reward }];
+          await this.ctx.storage.put("profile", stored!);
+        });
         if (req.method === "POST" && url.pathname === "/trade") {
           const body = await req.json() as {
             tradeId?: string;
@@ -270,6 +288,8 @@ export class Profile extends DurableObject<Env> {
           stored.appliedTrades ||= [];
           if (stored.appliedTrades.includes(body.tradeId!)) return json({ profile: stored.profile, applied: true });
           const removeCharacters = body.remove?.characters || [], removeItems = body.remove?.items || [];
+          const locks = experienceOf(stored.profile).locked;
+          if (removeCharacters.some(id => locks.includes(`character:${id}`)) || removeItems.some(id => locks.includes(`item:${id}`))) return json({ error: "Thẻ đã khóa không thể trao đổi" }, 400);
           const addCharacters = body.add?.characters || [], addItems = body.add?.items || [];
           if (new Set(removeCharacters).size !== removeCharacters.length || new Set(removeItems).size !== removeItems.length ||
             new Set(addCharacters.map((card) => card.characterId)).size !== addCharacters.length || new Set(addItems.map((card) => card.itemId)).size !== addItems.length)
@@ -414,6 +434,10 @@ export class Trade extends DurableObject<Env> {
       if (!data.players.every((player) => player.offer.length > 0)) return json({ error: "Mỗi người cần chọn ít nhất một lá bài" }, 409);
       if (!data.escrow) {
         const snapshots = await Promise.all(data.players.map((player) => profileFetch(this.env, player.profileId, player.token)));
+        for (let index = 0; index < data.players.length; index++) {
+          const locks = experienceOf(snapshots[index]).locked;
+          if (data.players[index].offer.some(key => locks.includes(key))) throw Error("Thẻ đã khóa không thể trao đổi");
+        }
         const escrow = data.players.map((player, index) => {
           const parsed = parseTradeOffer(player.offer), profile = snapshots[index];
           if (parsed.characters.some((id) => profile.team.includes(id as CharacterId))) throw Error("Không thể trao đổi nhân vật đang trong đội");

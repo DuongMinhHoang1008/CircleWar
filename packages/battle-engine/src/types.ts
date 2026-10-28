@@ -1,7 +1,7 @@
 import type { Loadout, Stats } from "../../shared/src/balance";
 import type { TeamChoice } from "../../shared/src/catalog";
 import type { CombatStatus } from "./statuses";
-export const ENGINE_VERSION = "chaos-integer-v31";
+export const ENGINE_VERSION = "chaos-integer-v34";
 export type DamageType = "direct" | "burn" | "poison" | "bleeding" | "radiation";
 export const TICK_RATE = 30;
 export interface CombatMetrics {
@@ -11,6 +11,7 @@ export interface CombatMetrics {
   effects: Record<string, number>; effectTicks: Record<string, number>; damageByType: Partial<Record<DamageType, number>>;
 }
 export interface BattleConfig {
+  recoveryPercent?: number;
   campaign?: { stage: number; enemyTeamId: string };
   teams: { id: string; name?: string; loadouts: Loadout[]; choice?: TeamChoice }[];
   shrinkSeconds: number;
@@ -18,6 +19,8 @@ export interface BattleConfig {
   height: number;
 }
 export interface Fighter {
+  masteryId?: string;
+  masteryTarget?: string;
   metrics?: CombatMetrics;
   boss?: boolean;
   id: number;
@@ -95,6 +98,7 @@ export interface Projectile {
   onHitReady?: Record<number, number>;
 }
 export interface Zone {
+  followTarget?: number;
   owner: number;
   x: number;
   y: number;

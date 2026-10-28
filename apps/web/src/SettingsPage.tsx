@@ -1,6 +1,7 @@
 import type { GameSettings } from "./gameSettings";
 import { DAMAGE_PALETTE, SUPPORT_PALETTE } from "./rendering/damage-numbers";
 import "./settings.css";
+import { exportJourneyEvents } from "./telemetry";
 
 export function SettingsPage({
   settings,
@@ -50,6 +51,7 @@ export function SettingsPage({
           duyệt này.
         </p>
       </div>
+      <button onClick={() => { const url = URL.createObjectURL(new Blob([exportJourneyEvents()], { type: "application/json" })); const link = document.createElement("a"); link.href = url; link.download = "circlewar-journey-events.json"; link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }}>Xuất lịch sử trải nghiệm trên thiết bị</button>
       <div className="settings-options">
         {rows.map((row) => {
           const disabled = row.key === "reducedEffects" && !settings.effects;

@@ -70,6 +70,9 @@ try {
         ?.disabled,
   );
   assert.equal(await page.locator(".pack-rates").count(), 2);
+  assert.equal(await page.locator(".pack-rates").first().isVisible(), false);
+  for (const summary of await page.locator(".pack-rules > summary").all())
+    await summary.click();
   const rates = await page.locator(".pack-rates").allInnerTexts();
   assert.match(rates[0], /84%[\s\S]*14%[\s\S]*1,7%[\s\S]*0,3%/);
   assert.match(rates[1], /66%[\s\S]*14%[\s\S]*17%[\s\S]*3%/);
@@ -125,34 +128,30 @@ try {
     );
   for (const c of ROSTER) {
     await page
-      .locator(".inventory-cards-panel .inventory-card")
-      .filter({ has: page.getByText(c.name, { exact: true }) })
+      .locator(".inventory-card-grid")
+      .getByRole("button", { name: `Cấu hình ${c.name}`, exact: true })
       .click();
     const dialog = page.getByRole("dialog");
     await dialog.waitFor();
-    for (const detail of await dialog
-      .locator(".skill-info details summary")
-      .all())
+    for (const detail of await dialog.locator(".config-kit > summary").all())
       await detail.click();
     const text = await dialog.innerText();
     assert.ok(text.includes(c.passive[0]), c.id);
     assert.ok(text.includes(c.passive[1]), c.id);
-    if (c.tier === "T4") assert.ok(text.includes(c.role), c.id);
+    assert.ok(text.includes(c.roleClass), c.id);
     await page.keyboard.press("Escape");
   }
+  await page.getByRole("tab", { name: /Vật phẩm/ }).click();
   await page
-    .locator(".inventory-cards-panel .inventory-card")
-    .filter({ hasText: "Dép Tổ Ong" })
+    .locator(".inventory-card-grid")
+    .getByRole("button", { name: "Trang bị Dép Tổ Ong", exact: true })
     .click();
   await page.getByRole("dialog").waitFor();
-  assert.match(await page.getByRole("dialog").innerText(), /xóa chậm/);
+  assert.match(await page.getByRole("dialog").innerText(), /Tăng tốc độ và máu/);
   await page.keyboard.press("Escape");
   await navigate("Đi ải");
-  assert.match(
-    await page.locator(".campaign-enemy-preview").innerText(),
-    /BOSS/,
-  );
-  await page.getByRole("button", { name: "Bắt đầu ải 5", exact: true }).click();
+  assert.match(await page.locator(".mode-hero h1").innerText(), /BOSS/);
+  await page.getByRole("button", { name: /^Bắt đầu ải 5/ }).click();
   await page.locator("canvas").waitFor();
   await page.waitForFunction(() => {
     const text =
@@ -164,7 +163,7 @@ try {
   await page
     .locator(".arena-shell")
     .screenshot({ path: "reports/new-card-arena-desktop.png" });
-  await navigate("Mở thẻ");
+  await navigate("Mở bài");
   await page.setViewportSize({ width: 390, height: 844 });
   await page
     .locator(".boss-pack-hero")

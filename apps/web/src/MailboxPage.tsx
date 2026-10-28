@@ -9,12 +9,16 @@ export function MailboxPage({
   ready,
   onClaim,
   onOpenPacks,
+  reserve = 0,
+  onClaimReserve,
 }: {
   mails: GiftMail[];
   queued: number;
   ready: boolean;
   onClaim: (id: string) => void;
   onOpenPacks: () => void;
+  reserve?: number;
+  onClaimReserve?: () => void;
 }) {
   const [tab, setTab] = useState<"pending" | "claimed">("pending");
   const pending = mails.filter((mail) => mail.claimedAt === undefined);
@@ -28,8 +32,7 @@ export function MailboxPage({
           <span className="mailbox-kicker">QUÀ TỪ RISEON</span>
           <h2>Những món quà đang chờ bạn.</h2>
           <p>
-            Quà được giữ trong thư cho đến khi bạn nhận. Hãy để đủ chỗ trong
-            hàng chờ cho toàn bộ pack của mỗi thư.
+            Nhận phần vừa hàng chờ; quà còn lại được giữ trong thư.
           </p>
         </div>
         <div className="mailbox-capacity" role="status">
@@ -43,6 +46,7 @@ export function MailboxPage({
           <button onClick={onOpenPacks}>Mở pack để thêm chỗ ↗</button>
         </div>
       </div>
+      {reserve > 0 && <section className="mailbox-letter"><div><h3>Thưởng chinh phục đang chờ</h3><p>{reserve} pack đã kiếm được và được giữ an toàn khi hàng chờ đầy.</p></div><button className="primary" disabled={!ready || space <= 0} onClick={onClaimReserve}>Nhận {Math.min(space, reserve)} pack</button></section>}
       <div className="mailbox-tabs" role="tablist" aria-label="Loại thư">
         <button
           role="tab"
@@ -77,7 +81,8 @@ export function MailboxPage({
         ) : (
           visible.map((mail) => {
             const received = mail.claimedAt !== undefined;
-            const missing = Math.max(0, mail.packs - space);
+            const remaining = mail.packs - (mail.claimedPacks || 0);
+            const missing = Math.max(0, remaining - space);
             return (
               <article
                 className={`mailbox-letter ${received ? "received" : ""}`}
@@ -99,20 +104,20 @@ export function MailboxPage({
                   <h3>{mail.title}</h3>
                   <p>{mail.message}</p>
                   <span className="mailbox-reward">
-                    <b>{mail.packs}</b> pack thường
+                    <b>{received ? mail.packs : remaining}</b> pack thường {mail.claimedPacks && !received ? `· đã nhận ${mail.claimedPacks}/${mail.packs}` : ""}
                   </span>
                 </div>
                 <div className="mailbox-letter-action">
                   <button
                     className={received ? "" : "primary"}
-                    disabled={!ready || received || missing > 0}
+                    disabled={!ready || received || space <= 0}
                     onClick={() => onClaim(mail.id)}
                   >
-                    {received ? "Đã nhận" : "Nhận quà"}
+                    {received ? "Đã nhận" : `Nhận ${Math.min(space, remaining)} pack`}
                   </button>
                   {!received && missing > 0 && (
                     <small>
-                      Cần thêm {missing} chỗ trống.
+                      Phần còn lại tiếp tục được giữ.
                       <br />
                       Mở bớt pack để nhận quà.
                     </small>

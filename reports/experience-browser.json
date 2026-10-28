@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "assertions": [
+    "presets",
+    "locks",
+    "inventory search",
+    "playback pause/speed",
+    "boss reward overflow",
+    "replay no duplicate reward",
+    "mail reserve",
+    "daily screen",
+    "expedition resume",
+    "six mastery tracks",
+    "mobile overflow"
+  ],
+  "errors": []
+}

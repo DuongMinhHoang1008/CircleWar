@@ -102,7 +102,7 @@ try {
     response.request().postDataJSON()?.type === "SAVE" &&
     response.request().postDataJSON()?.profile?.mailbox?.some((mail: { id: string; claimedAt?: number }) => mail.id === "welcome" && mail.claimedAt !== undefined),
   );
-  await welcome.getByRole("button", { name: "Nhận quà", exact: true }).click();
+  await welcome.getByRole("button", { name: /^Nhận \d+ pack$/ }).click();
   assert.equal((await claimed).status(), 200);
   await page.getByRole("tab", { name: /Đã nhận/ }).click();
   await welcome.getByRole("button", { name: "Đã nhận", exact: true }).waitFor();

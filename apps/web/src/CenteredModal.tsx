@@ -121,8 +121,8 @@ export function MatchRewardPopup({
       </div>
       {reward.overflow > 0 && (
         <p className="reward-cap-note">
-          Kho pack thường đã đầy (150). {reward.overflow} pack vượt giới hạn
-          không được cộng.
+          Kho pack thường đã đầy (150). {reward.overflow} pack được giữ trong
+          Hòm thư, mục Thưởng chinh phục đang chờ.
         </p>
       )}
       <button className="primary wide" onClick={onClose}>

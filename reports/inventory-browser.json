@@ -1,0 +1,26 @@
+{
+  "desktopTwoColumns": true,
+  "mobileHorizontalTeam": true,
+  "searchEmptyState": true,
+  "fullCollection": {
+    "characters": 33,
+    "items": 33,
+    "widths": [
+      320,
+      360,
+      390,
+      768,
+      1024,
+      1440
+    ]
+  },
+  "lastEmptySlotDrop": true,
+  "desktopDrag": true,
+  "touchDrag": true,
+  "configPersisted": true,
+  "mobileWidths": [
+    390,
+    360
+  ],
+  "errors": []
+}
