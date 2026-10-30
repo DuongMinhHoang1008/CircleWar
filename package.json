@@ -12,7 +12,7 @@
     "dev": "concurrently -k -n web,worker \"npm:dev:web\" \"npm:dev:worker\"",
     "dev:web": "vite --config apps/web/vite.config.ts --host 127.0.0.1",
     "dev:worker": "wrangler dev --config apps/worker/wrangler.jsonc",
-    "build:fx": "node scripts/build-combat-fx.mjs && node scripts/build-character-fx.mjs",
+    "build:fx": "node scripts/build-combat-fx.mjs && node scripts/build-character-fx.mjs && tsx scripts/build-mastery-fx.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "benchmark": "tsx tests/performance/benchmark.ts",
@@ -26,7 +26,8 @@
     "build": "npm run typecheck && vite build --config apps/web/vite.config.ts && wrangler deploy --dry-run --config apps/worker/wrangler.jsonc",
     "deploy:worker": "wrangler deploy --config apps/worker/wrangler.jsonc",
     "test:inventory": "tsx tests/integration/inventory-browser.ts",
-    "test:adventure-v2": "tsx tests/integration/adventure-v2-browser.ts"
+    "test:adventure-v2": "tsx tests/integration/adventure-v2-browser.ts",
+    "build:mastery-fx": "tsx scripts/build-mastery-fx.ts"
   },
   "dependencies": {
     "pixi.js": "^8.10.0",
@@ -49,6 +50,7 @@
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
     "vitest": "^5.0.5",
-    "wrangler": "^4.20.0"
+    "wrangler": "^4.20.0",
+    "sharp": "0.35.5"
   }
 }

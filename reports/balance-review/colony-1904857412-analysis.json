@@ -1,0 +1,1212 @@
+{
+  "source": "colony-1904857412-1793352627767.json",
+  "config": {
+    "seed": 1904857412,
+    "population": 128,
+    "generations": 60,
+    "rounds": 4,
+    "changeChance": 0.75,
+    "exploration": 0.5,
+    "evaporation": 0.15,
+    "level": 10,
+    "finalists": 16,
+    "validationOpponents": 128
+  },
+  "battles": 34816,
+  "chars": [
+    {
+      "id": "char_30",
+      "characterId": "char_30",
+      "games": 6632,
+      "wins": 4417,
+      "draws": 32,
+      "name": "Chó Bóng Bay",
+      "tier": "RAC",
+      "rate": 66.6
+    },
+    {
+      "id": "char_15",
+      "characterId": "char_15",
+      "games": 5224,
+      "wins": 3192,
+      "draws": 7,
+      "name": "Hiệp Sĩ Gâu Gâu",
+      "tier": "T2",
+      "rate": 61.1
+    },
+    {
+      "id": "char_11",
+      "characterId": "char_11",
+      "games": 6664,
+      "wins": 4041,
+      "draws": 10,
+      "name": "Cờ Con Cổ Vũ",
+      "tier": "T2",
+      "rate": 60.64
+    },
+    {
+      "id": "char_17",
+      "characterId": "char_17",
+      "games": 6576,
+      "wins": 3982,
+      "draws": 10,
+      "name": "Anh Tết Ship Nhanh",
+      "tier": "T2",
+      "rate": 60.55
+    },
+    {
+      "id": "char_14",
+      "characterId": "char_14",
+      "games": 6872,
+      "wins": 3948,
+      "draws": 20,
+      "name": "Hộp Quà Nghiêm Túc",
+      "tier": "T3",
+      "rate": 57.45
+    },
+    {
+      "id": "char_33",
+      "characterId": "char_33",
+      "games": 5992,
+      "wins": 3361,
+      "draws": 17,
+      "name": "Sóc Jake",
+      "tier": "T4",
+      "rate": 56.09
+    },
+    {
+      "id": "char_04",
+      "characterId": "char_04",
+      "games": 5752,
+      "wins": 3138,
+      "draws": 10,
+      "name": "Đùi Gió Lốc",
+      "tier": "T1",
+      "rate": 54.55
+    },
+    {
+      "id": "char_31",
+      "characterId": "char_31",
+      "games": 6248,
+      "wins": 3378,
+      "draws": 30,
+      "name": "Ủn Đại Ca",
+      "tier": "T4",
+      "rate": 54.07
+    },
+    {
+      "id": "char_01",
+      "characterId": "char_01",
+      "games": 5512,
+      "wins": 2890,
+      "draws": 9,
+      "name": "Hổ Hướng Nội",
+      "tier": "T1",
+      "rate": 52.43
+    },
+    {
+      "id": "char_22",
+      "characterId": "char_22",
+      "games": 5176,
+      "wins": 2704,
+      "draws": 12,
+      "name": "Đẳng Cấp Aura",
+      "tier": "T4",
+      "rate": 52.24
+    },
+    {
+      "id": "char_26",
+      "characterId": "char_26",
+      "games": 6352,
+      "wins": 3313,
+      "draws": 14,
+      "name": "Anh Fam De Phonk",
+      "tier": "T2",
+      "rate": 52.16
+    },
+    {
+      "id": "char_21",
+      "characterId": "char_21",
+      "games": 6320,
+      "wins": 3256,
+      "draws": 12,
+      "name": "Độ Duy Môn",
+      "tier": "T3",
+      "rate": 51.52
+    },
+    {
+      "id": "char_02",
+      "characterId": "char_02",
+      "games": 5864,
+      "wins": 2959,
+      "draws": 10,
+      "name": "Bé Ôm Bão",
+      "tier": "T1",
+      "rate": 50.46
+    },
+    {
+      "id": "char_25",
+      "characterId": "char_25",
+      "games": 5152,
+      "wins": 2514,
+      "draws": 9,
+      "name": "Công Tử Phú Thọ",
+      "tier": "T2",
+      "rate": 48.8
+    },
+    {
+      "id": "char_18",
+      "characterId": "char_18",
+      "games": 5016,
+      "wins": 2410,
+      "draws": 12,
+      "name": "Ông Hoàng Nồi Lẩu",
+      "tier": "T2",
+      "rate": 48.05
+    },
+    {
+      "id": "char_29",
+      "characterId": "char_29",
+      "games": 3832,
+      "wins": 1841,
+      "draws": 12,
+      "name": "Wacom Hỏng Hóc",
+      "tier": "RAC",
+      "rate": 48.04
+    },
+    {
+      "id": "char_09",
+      "characterId": "char_09",
+      "games": 5976,
+      "wins": 2864,
+      "draws": 13,
+      "name": "Sếp Chốt Đơn",
+      "tier": "T3",
+      "rate": 47.93
+    },
+    {
+      "id": "char_03",
+      "characterId": "char_03",
+      "games": 5240,
+      "wins": 2489,
+      "draws": 15,
+      "name": "Anh Tím Mọng",
+      "tier": "T2",
+      "rate": 47.5
+    },
+    {
+      "id": "char_10",
+      "characterId": "char_10",
+      "games": 5248,
+      "wins": 2480,
+      "draws": 11,
+      "name": "Lốp Lăn Ăn Vặt",
+      "tier": "T1",
+      "rate": 47.26
+    },
+    {
+      "id": "char_19",
+      "characterId": "char_19",
+      "games": 4680,
+      "wins": 2209,
+      "draws": 5,
+      "name": "Cô Nàng Khui Tết",
+      "tier": "T2",
+      "rate": 47.2
+    },
+    {
+      "id": "char_28",
+      "characterId": "char_28",
+      "games": 5176,
+      "wins": 2439,
+      "draws": 9,
+      "name": "Người Máy Sịp Đỏ Phế Thải",
+      "tier": "RAC",
+      "rate": 47.12
+    },
+    {
+      "id": "char_07",
+      "characterId": "char_07",
+      "games": 5584,
+      "wins": 2538,
+      "draws": 20,
+      "name": "Courage Nhút Nhát",
+      "tier": "T2",
+      "rate": 45.45
+    },
+    {
+      "id": "char_08",
+      "characterId": "char_08",
+      "games": 5416,
+      "wins": 2445,
+      "draws": 15,
+      "name": "Sói Suy Tư",
+      "tier": "T2",
+      "rate": 45.14
+    },
+    {
+      "id": "char_16",
+      "characterId": "char_16",
+      "games": 5920,
+      "wins": 2616,
+      "draws": 14,
+      "name": "Họa Sĩ Chạy Deadline",
+      "tier": "T3",
+      "rate": 44.19
+    },
+    {
+      "id": "char_27",
+      "characterId": "char_27",
+      "games": 5184,
+      "wins": 2286,
+      "draws": 13,
+      "name": "Robot Da Đỏ",
+      "tier": "T2",
+      "rate": 44.1
+    },
+    {
+      "id": "char_32",
+      "characterId": "char_32",
+      "games": 4880,
+      "wins": 2133,
+      "draws": 11,
+      "name": "Bang Chủ Cái Bang",
+      "tier": "T4",
+      "rate": 43.71
+    },
+    {
+      "id": "char_12",
+      "characterId": "char_12",
+      "games": 6160,
+      "wins": 2686,
+      "draws": 16,
+      "name": "Kiếm Khách Mượn Vai",
+      "tier": "T2",
+      "rate": 43.6
+    },
+    {
+      "id": "char_24",
+      "characterId": "char_24",
+      "games": 5712,
+      "wins": 2486,
+      "draws": 15,
+      "name": "Thi Thánh Họ Mai",
+      "tier": "T2",
+      "rate": 43.52
+    },
+    {
+      "id": "char_20",
+      "characterId": "char_20",
+      "games": 5896,
+      "wins": 2558,
+      "draws": 9,
+      "name": "Hoàng Tử Ngậm Hoa",
+      "tier": "T2",
+      "rate": 43.39
+    },
+    {
+      "id": "char_23",
+      "characterId": "char_23",
+      "games": 4808,
+      "wins": 2060,
+      "draws": 8,
+      "name": "King Of RiseOn",
+      "tier": "T4",
+      "rate": 42.85
+    },
+    {
+      "id": "char_05",
+      "characterId": "char_05",
+      "games": 5576,
+      "wins": 2363,
+      "draws": 14,
+      "name": "Kính Cận Bắt Bài",
+      "tier": "T2",
+      "rate": 42.38
+    },
+    {
+      "id": "char_06",
+      "characterId": "char_06",
+      "games": 4768,
+      "wins": 2015,
+      "draws": 9,
+      "name": "Đội Trưởng Sắc Màu",
+      "tier": "T2",
+      "rate": 42.26
+    },
+    {
+      "id": "char_13",
+      "characterId": "char_13",
+      "games": 4912,
+      "wins": 1930,
+      "draws": 15,
+      "name": "Mâm Quả Chủ Tịch",
+      "tier": "T2",
+      "rate": 39.29
+    }
+  ],
+  "affinity": [
+    {
+      "id": "char_01",
+      "name": "Hổ Hướng Nội",
+      "tier": "T1",
+      "matched": {
+        "games": 184,
+        "wins": 108,
+        "draws": 0,
+        "rate": 58.7
+      },
+      "non": {
+        "games": 5168,
+        "wins": 2722,
+        "draws": 9,
+        "rate": 52.67
+      },
+      "delta": 6.03,
+      "items": [
+        {
+          "name": "RTX 5090",
+          "games": 184,
+          "rate": 58.7
+        }
+      ]
+    },
+    {
+      "id": "char_02",
+      "name": "Bé Ôm Bão",
+      "tier": "T1",
+      "matched": {
+        "games": 152,
+        "wins": 73,
+        "draws": 0,
+        "rate": 48.03
+      },
+      "non": {
+        "games": 5552,
+        "wins": 2834,
+        "draws": 10,
+        "rate": 51.04
+      },
+      "delta": -3.01,
+      "items": [
+        {
+          "name": "Cơm thợ xây",
+          "games": 152,
+          "rate": 48.03
+        }
+      ]
+    },
+    {
+      "id": "char_03",
+      "name": "Anh Tím Mọng",
+      "tier": "T2",
+      "matched": {
+        "games": 120,
+        "wins": 53,
+        "draws": 1,
+        "rate": 44.17
+      },
+      "non": {
+        "games": 4896,
+        "wins": 2333,
+        "draws": 14,
+        "rate": 47.65
+      },
+      "delta": -3.48,
+      "items": [
+        {
+          "name": "Robot AI Claude",
+          "games": 120,
+          "rate": 44.17
+        }
+      ]
+    },
+    {
+      "id": "char_04",
+      "name": "Đùi Gió Lốc",
+      "tier": "T1",
+      "matched": {
+        "games": 232,
+        "wins": 128,
+        "draws": 0,
+        "rate": 55.17
+      },
+      "non": {
+        "games": 5352,
+        "wins": 2916,
+        "draws": 10,
+        "rate": 54.48
+      },
+      "delta": 0.69,
+      "items": [
+        {
+          "name": "Tạp chí hoa hậu áo tắm",
+          "games": 232,
+          "rate": 55.17
+        }
+      ]
+    },
+    {
+      "id": "char_05",
+      "name": "Kính Cận Bắt Bài",
+      "tier": "T2",
+      "matched": {
+        "games": 112,
+        "wins": 54,
+        "draws": 0,
+        "rate": 48.21
+      },
+      "non": {
+        "games": 5000,
+        "wins": 2117,
+        "draws": 14,
+        "rate": 42.34
+      },
+      "delta": 5.87,
+      "items": [
+        {
+          "name": "Lọ sữa Proby",
+          "games": 112,
+          "rate": 48.21
+        }
+      ]
+    },
+    {
+      "id": "char_06",
+      "name": "Đội Trưởng Sắc Màu",
+      "tier": "T2",
+      "matched": {
+        "games": 120,
+        "wins": 54,
+        "draws": 0,
+        "rate": 45
+      },
+      "non": {
+        "games": 4520,
+        "wins": 1916,
+        "draws": 9,
+        "rate": 42.39
+      },
+      "delta": 2.61,
+      "items": [
+        {
+          "name": "Bánh khảo",
+          "games": 120,
+          "rate": 45
+        }
+      ]
+    },
+    {
+      "id": "char_07",
+      "name": "Courage Nhút Nhát",
+      "tier": "T2",
+      "matched": {
+        "games": 296,
+        "wins": 151,
+        "draws": 2,
+        "rate": 51.01
+      },
+      "non": {
+        "games": 5144,
+        "wins": 2326,
+        "draws": 18,
+        "rate": 45.22
+      },
+      "delta": 5.79,
+      "items": [
+        {
+          "name": "Khau nhục",
+          "games": 296,
+          "rate": 51.01
+        }
+      ]
+    },
+    {
+      "id": "char_08",
+      "name": "Sói Suy Tư",
+      "tier": "T2",
+      "matched": {
+        "games": 184,
+        "wins": 81,
+        "draws": 0,
+        "rate": 44.02
+      },
+      "non": {
+        "games": 5000,
+        "wins": 2261,
+        "draws": 15,
+        "rate": 45.22
+      },
+      "delta": -1.2,
+      "items": [
+        {
+          "name": "Nem chua",
+          "games": 184,
+          "rate": 44.02
+        }
+      ]
+    },
+    {
+      "id": "char_09",
+      "name": "Sếp Chốt Đơn",
+      "tier": "T3",
+      "matched": {
+        "games": 216,
+        "wins": 112,
+        "draws": 0,
+        "rate": 51.85
+      },
+      "non": {
+        "games": 5584,
+        "wins": 2677,
+        "draws": 13,
+        "rate": 47.94
+      },
+      "delta": 3.91,
+      "items": [
+        {
+          "name": "Máy chấm công",
+          "games": 216,
+          "rate": 51.85
+        }
+      ]
+    },
+    {
+      "id": "char_10",
+      "name": "Lốp Lăn Ăn Vặt",
+      "tier": "T1",
+      "matched": {
+        "games": 152,
+        "wins": 77,
+        "draws": 0,
+        "rate": 50.66
+      },
+      "non": {
+        "games": 4856,
+        "wins": 2304,
+        "draws": 11,
+        "rate": 47.45
+      },
+      "delta": 3.21,
+      "items": [
+        {
+          "name": "Bánh sinh nhật",
+          "games": 152,
+          "rate": 50.66
+        }
+      ]
+    },
+    {
+      "id": "char_11",
+      "name": "Cờ Con Cổ Vũ",
+      "tier": "T2",
+      "matched": {
+        "games": 152,
+        "wins": 97,
+        "draws": 0,
+        "rate": 63.82
+      },
+      "non": {
+        "games": 6432,
+        "wins": 3900,
+        "draws": 10,
+        "rate": 60.63
+      },
+      "delta": 3.19,
+      "items": [
+        {
+          "name": "Rau má",
+          "games": 152,
+          "rate": 63.82
+        }
+      ]
+    },
+    {
+      "id": "char_12",
+      "name": "Kiếm Khách Mượn Vai",
+      "tier": "T2",
+      "matched": {
+        "games": 128,
+        "wins": 48,
+        "draws": 1,
+        "rate": 37.5
+      },
+      "non": {
+        "games": 5976,
+        "wins": 2624,
+        "draws": 15,
+        "rate": 43.91
+      },
+      "delta": -6.41,
+      "items": [
+        {
+          "name": "Xôi",
+          "games": 128,
+          "rate": 37.5
+        }
+      ]
+    },
+    {
+      "id": "char_13",
+      "name": "Mâm Quả Chủ Tịch",
+      "tier": "T2",
+      "matched": {
+        "games": 144,
+        "wins": 64,
+        "draws": 0,
+        "rate": 44.44
+      },
+      "non": {
+        "games": 4656,
+        "wins": 1827,
+        "draws": 15,
+        "rate": 39.24
+      },
+      "delta": 5.2,
+      "items": [
+        {
+          "name": "Máy pha cà phê",
+          "games": 144,
+          "rate": 44.44
+        }
+      ]
+    },
+    {
+      "id": "char_14",
+      "name": "Hộp Quà Nghiêm Túc",
+      "tier": "T3",
+      "matched": {
+        "games": 128,
+        "wins": 63,
+        "draws": 2,
+        "rate": 49.22
+      },
+      "non": {
+        "games": 6544,
+        "wins": 3789,
+        "draws": 17,
+        "rate": 57.9
+      },
+      "delta": -8.68,
+      "items": [
+        {
+          "name": "Kiếm kim cương Minecraft",
+          "games": 128,
+          "rate": 49.22
+        }
+      ]
+    },
+    {
+      "id": "char_15",
+      "name": "Hiệp Sĩ Gâu Gâu",
+      "tier": "T2",
+      "matched": {
+        "games": 128,
+        "wins": 80,
+        "draws": 0,
+        "rate": 62.5
+      },
+      "non": {
+        "games": 4984,
+        "wins": 3060,
+        "draws": 7,
+        "rate": 61.4
+      },
+      "delta": 1.1,
+      "items": [
+        {
+          "name": "Bóng đèn ý tưởng",
+          "games": 128,
+          "rate": 62.5
+        }
+      ]
+    },
+    {
+      "id": "char_16",
+      "name": "Họa Sĩ Chạy Deadline",
+      "tier": "T3",
+      "matched": {
+        "games": 216,
+        "wins": 114,
+        "draws": 1,
+        "rate": 52.78
+      },
+      "non": {
+        "games": 5536,
+        "wins": 2449,
+        "draws": 13,
+        "rate": 44.24
+      },
+      "delta": 8.54,
+      "items": [
+        {
+          "name": "PC",
+          "games": 216,
+          "rate": 52.78
+        }
+      ]
+    },
+    {
+      "id": "char_17",
+      "name": "Anh Tết Ship Nhanh",
+      "tier": "T2",
+      "matched": {
+        "games": 168,
+        "wins": 111,
+        "draws": 0,
+        "rate": 66.07
+      },
+      "non": {
+        "games": 6240,
+        "wins": 3778,
+        "draws": 10,
+        "rate": 60.54
+      },
+      "delta": 5.53,
+      "items": [
+        {
+          "name": "Bánh mì",
+          "games": 168,
+          "rate": 66.07
+        }
+      ]
+    },
+    {
+      "id": "char_18",
+      "name": "Ông Hoàng Nồi Lẩu",
+      "tier": "T2",
+      "matched": {
+        "games": 208,
+        "wins": 92,
+        "draws": 0,
+        "rate": 44.23
+      },
+      "non": {
+        "games": 4632,
+        "wins": 2248,
+        "draws": 11,
+        "rate": 48.53
+      },
+      "delta": -4.3,
+      "items": [
+        {
+          "name": "Vịt quay",
+          "games": 208,
+          "rate": 44.23
+        }
+      ]
+    },
+    {
+      "id": "char_19",
+      "name": "Cô Nàng Khui Tết",
+      "tier": "T2",
+      "matched": {
+        "games": 80,
+        "wins": 35,
+        "draws": 0,
+        "rate": 43.75
+      },
+      "non": {
+        "games": 4464,
+        "wins": 2121,
+        "draws": 5,
+        "rate": 47.51
+      },
+      "delta": -3.76,
+      "items": [
+        {
+          "name": "Kem mít",
+          "games": 80,
+          "rate": 43.75
+        }
+      ]
+    },
+    {
+      "id": "char_20",
+      "name": "Hoàng Tử Ngậm Hoa",
+      "tier": "T2",
+      "matched": {
+        "games": 88,
+        "wins": 41,
+        "draws": 1,
+        "rate": 46.59
+      },
+      "non": {
+        "games": 5688,
+        "wins": 2475,
+        "draws": 8,
+        "rate": 43.51
+      },
+      "delta": 3.08,
+      "items": [
+        {
+          "name": "Bàn cờ tướng",
+          "games": 88,
+          "rate": 46.59
+        }
+      ]
+    },
+    {
+      "id": "char_21",
+      "name": "Độ Duy Môn",
+      "tier": "T3",
+      "matched": {
+        "games": 184,
+        "wins": 95,
+        "draws": 0,
+        "rate": 51.63
+      },
+      "non": {
+        "games": 6000,
+        "wins": 3096,
+        "draws": 12,
+        "rate": 51.6
+      },
+      "delta": 0.03,
+      "items": [
+        {
+          "name": "Cửa thần kì",
+          "games": 184,
+          "rate": 51.63
+        }
+      ]
+    },
+    {
+      "id": "char_22",
+      "name": "Đẳng Cấp Aura",
+      "tier": "T4",
+      "matched": {
+        "games": 176,
+        "wins": 91,
+        "draws": 0,
+        "rate": 51.7
+      },
+      "non": {
+        "games": 4896,
+        "wins": 2567,
+        "draws": 12,
+        "rate": 52.43
+      },
+      "delta": -0.73,
+      "items": [
+        {
+          "name": "Cánh Aura",
+          "games": 176,
+          "rate": 51.7
+        }
+      ]
+    },
+    {
+      "id": "char_23",
+      "name": "King Of RiseOn",
+      "tier": "T4",
+      "matched": {
+        "games": 96,
+        "wins": 42,
+        "draws": 0,
+        "rate": 43.75
+      },
+      "non": {
+        "games": 4592,
+        "wins": 1963,
+        "draws": 8,
+        "rate": 42.75
+      },
+      "delta": 1,
+      "items": [
+        {
+          "name": "Vương miện của nhà vua",
+          "games": 96,
+          "rate": 43.75
+        }
+      ]
+    },
+    {
+      "id": "char_24",
+      "name": "Thi Thánh Họ Mai",
+      "tier": "T2",
+      "matched": {
+        "games": 312,
+        "wins": 143,
+        "draws": 0,
+        "rate": 45.83
+      },
+      "non": {
+        "games": 5096,
+        "wins": 2234,
+        "draws": 14,
+        "rate": 43.84
+      },
+      "delta": 1.99,
+      "items": [
+        {
+          "name": "Thịt dê thông thái",
+          "games": 312,
+          "rate": 45.83
+        }
+      ]
+    },
+    {
+      "id": "char_25",
+      "name": "Công Tử Phú Thọ",
+      "tier": "T2",
+      "matched": {
+        "games": 304,
+        "wins": 184,
+        "draws": 1,
+        "rate": 60.53
+      },
+      "non": {
+        "games": 4768,
+        "wins": 2297,
+        "draws": 7,
+        "rate": 48.18
+      },
+      "delta": 12.35,
+      "items": [
+        {
+          "name": "Vali tiền tỉ",
+          "games": 304,
+          "rate": 60.53
+        }
+      ]
+    },
+    {
+      "id": "char_26",
+      "name": "Anh Fam De Phonk",
+      "tier": "T2",
+      "matched": {
+        "games": 256,
+        "wins": 119,
+        "draws": 3,
+        "rate": 46.48
+      },
+      "non": {
+        "games": 5984,
+        "wins": 3152,
+        "draws": 11,
+        "rate": 52.67
+      },
+      "delta": -6.19,
+      "items": [
+        {
+          "name": "Tiết Khí Sư Cuối Cùng",
+          "games": 256,
+          "rate": 46.48
+        }
+      ]
+    },
+    {
+      "id": "char_27",
+      "name": "Robot Da Đỏ",
+      "tier": "T2",
+      "matched": {
+        "games": 256,
+        "wins": 115,
+        "draws": 0,
+        "rate": 44.92
+      },
+      "non": {
+        "games": 4648,
+        "wins": 2050,
+        "draws": 13,
+        "rate": 44.1
+      },
+      "delta": 0.82,
+      "items": [
+        {
+          "name": "Bình Xăng Lên Men",
+          "games": 256,
+          "rate": 44.92
+        }
+      ]
+    },
+    {
+      "id": "char_28",
+      "name": "Người Máy Sịp Đỏ Phế Thải",
+      "tier": "RAC",
+      "matched": {
+        "games": 64,
+        "wins": 32,
+        "draws": 0,
+        "rate": 50
+      },
+      "non": {
+        "games": 5016,
+        "wins": 2372,
+        "draws": 9,
+        "rate": 47.29
+      },
+      "delta": 2.71,
+      "items": [
+        {
+          "name": "Tai Mèo",
+          "games": 64,
+          "rate": 50
+        }
+      ]
+    },
+    {
+      "id": "char_29",
+      "name": "Wacom Hỏng Hóc",
+      "tier": "RAC",
+      "matched": {
+        "games": 136,
+        "wins": 74,
+        "draws": 0,
+        "rate": 54.41
+      },
+      "non": {
+        "games": 3608,
+        "wins": 1727,
+        "draws": 12,
+        "rate": 47.87
+      },
+      "delta": 6.54,
+      "items": [
+        {
+          "name": "Eli The Best",
+          "games": 136,
+          "rate": 54.41
+        }
+      ]
+    },
+    {
+      "id": "char_30",
+      "name": "Chó Bóng Bay",
+      "tier": "RAC",
+      "matched": {
+        "games": 80,
+        "wins": 39,
+        "draws": 0,
+        "rate": 48.75
+      },
+      "non": {
+        "games": 6448,
+        "wins": 4310,
+        "draws": 32,
+        "rate": 66.84
+      },
+      "delta": -18.09,
+      "items": [
+        {
+          "name": "Chuỗi Tên Lửa Giấy",
+          "games": 80,
+          "rate": 48.75
+        }
+      ]
+    },
+    {
+      "id": "char_31",
+      "name": "Ủn Đại Ca",
+      "tier": "T4",
+      "matched": {
+        "games": 192,
+        "wins": 112,
+        "draws": 1,
+        "rate": 58.33
+      },
+      "non": {
+        "games": 5896,
+        "wins": 3181,
+        "draws": 28,
+        "rate": 53.95
+      },
+      "delta": 4.38,
+      "items": [
+        {
+          "name": "Bút Chì Bạc",
+          "games": 192,
+          "rate": 58.33
+        }
+      ]
+    },
+    {
+      "id": "char_32",
+      "name": "Bang Chủ Cái Bang",
+      "tier": "T4",
+      "matched": {
+        "games": 112,
+        "wins": 38,
+        "draws": 1,
+        "rate": 33.93
+      },
+      "non": {
+        "games": 4592,
+        "wins": 2045,
+        "draws": 10,
+        "rate": 44.53
+      },
+      "delta": -10.6,
+      "items": [
+        {
+          "name": "Dép Tổ Ong",
+          "games": 112,
+          "rate": 33.93
+        }
+      ]
+    },
+    {
+      "id": "char_33",
+      "name": "Sóc Jake",
+      "tier": "T4",
+      "matched": {
+        "games": 160,
+        "wins": 97,
+        "draws": 0,
+        "rate": 60.63
+      },
+      "non": {
+        "games": 5376,
+        "wins": 3028,
+        "draws": 17,
+        "rate": 56.32
+      },
+      "delta": 4.31,
+      "items": [
+        {
+          "name": "Huy Hiệu HB",
+          "games": 160,
+          "rate": 60.63
+        }
+      ]
+    }
+  ],
+  "tiers": [
+    {
+      "tier": "T1",
+      "games": 22376,
+      "wins": 11467,
+      "draws": 40,
+      "rate": 51.25
+    },
+    {
+      "tier": "T2",
+      "games": 94112,
+      "wins": 45457,
+      "draws": 208,
+      "rate": 48.3
+    },
+    {
+      "tier": "T3",
+      "games": 25088,
+      "wins": 12684,
+      "draws": 59,
+      "rate": 50.56
+    },
+    {
+      "tier": "T4",
+      "games": 27104,
+      "wins": 13636,
+      "draws": 78,
+      "rate": 50.31
+    },
+    {
+      "tier": "RAC",
+      "games": 15640,
+      "wins": 8697,
+      "draws": 53,
+      "rate": 55.61
+    }
+  ]
+}

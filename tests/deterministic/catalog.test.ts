@@ -91,7 +91,8 @@ describe("approved catalog gameplay", () => {
   it("applies baseline, signature affinity, weapon rank and level without modifying catalog", () => {
     const plain = computeStats(load("char_12")),
       xoi = computeStats(load("char_12", ["item_03"]));
-    expect(xoi.hp - plain.hp).toBe(45);
+    // 47 HP from the +12% item affinity plus 5 HP from the owner's +2% base.
+    expect(xoi.hp - plain.hp).toBe(52);
     const wrong = computeStats(load("char_02", ["item_03"]));
     expect(wrong.hp - computeStats(load("char_02")).hp).toBe(42);
     const weapon = computeStats({

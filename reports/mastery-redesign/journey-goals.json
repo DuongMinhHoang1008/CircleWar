@@ -1,0 +1,502 @@
+{
+  "battles": 528,
+  "method": "Lv10, no equipment or mastery, mirrored three-character teams over eight seeds. Each character is evaluated from either side; goal counts include losses. Limited regression sample.",
+  "neverQualified": [],
+  "rows": [
+    {
+      "id": "char_01",
+      "title": "Bình tĩnh giữa hỗn loạn",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Hướng Nội ít nhất 1 lần trong trận.",
+        "Áp Hướng Nội ít nhất 1 lần trong trận.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_02",
+      "title": "Ôm trọn cơn bão",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Tiểu Đường ít nhất 1 lần trong trận.",
+        "Áp Tiểu Đường ít nhất 1 lần trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 50% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_03",
+      "title": "Mùa quả nảy",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        15
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 60% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_04",
+      "title": "Vũ điệu gió lốc",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_05",
+      "title": "Nhìn thấu điểm mù",
+      "matches": 16,
+      "qualifyingBattles": [
+        14,
+        14,
+        10
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Cận Thị ít nhất 1 lần trong trận.",
+        "Áp Cận Thị ít nhất 1 lần trong trận.",
+        "Áp Cận Thị ít nhất 2 lần trong trận."
+      ]
+    },
+    {
+      "id": "char_06",
+      "title": "Người phối màu",
+      "matches": 16,
+      "qualifyingBattles": [
+        15,
+        15,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp buff cho đồng đội khác ít nhất 1 lần trong trận.",
+        "Áp buff cho đồng đội khác ít nhất 1 lần trong trận.",
+        "Tích lũy 2 giây khống chế địch trong trận."
+      ]
+    },
+    {
+      "id": "char_07",
+      "title": "Can đảm từng nhịp",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Tích lũy 1 giây khống chế địch trong trận.",
+        "Tích lũy 1 giây khống chế địch trong trận.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_08",
+      "title": "Dưới trăng máu",
+      "matches": 16,
+      "qualifyingBattles": [
+        15,
+        13,
+        13
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Bleeding ít nhất 1 lần trong trận.",
+        "Áp Bleeding ít nhất 1 lần trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 60% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_09",
+      "title": "Nghệ thuật chốt hạn",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Paralyzed ít nhất 1 lần trong trận.",
+        "Áp Paralyzed ít nhất 1 lần trong trận.",
+        "Tích lũy 3 giây khống chế địch trong trận."
+      ]
+    },
+    {
+      "id": "char_10",
+      "title": "Lăn qua giông gió",
+      "matches": 16,
+      "qualifyingBattles": [
+        14,
+        13,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Tạo khiên cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Tạo khiên cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_11",
+      "title": "Người truyền cảm hứng",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Tạo khiên cho đồng đội khác ít nhất 1 HP trong trận.",
+        "Tạo khiên cho đồng đội khác ít nhất 1 HP trong trận.",
+        "Áp buff cho đồng đội khác ít nhất 3 lần trong trận."
+      ]
+    },
+    {
+      "id": "char_12",
+      "title": "Nhịp kiếm vô thường",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        14
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 75% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_13",
+      "title": "Tiếp tế không ngừng",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Hồi HP thực cho đồng đội khác ít nhất 1 HP trong trận.",
+        "Hồi HP thực cho đồng đội khác ít nhất 1 HP trong trận.",
+        "Áp buff cho đồng đội khác ít nhất 3 lần trong trận."
+      ]
+    },
+    {
+      "id": "char_14",
+      "title": "Đạo quân quà tặng",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_15",
+      "title": "Lời thề không lùi",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 50% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_16",
+      "title": "Nét mực chuyển dòng",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Frozen ít nhất 1 lần trong trận.",
+        "Áp Frozen ít nhất 1 lần trong trận.",
+        "Tích lũy 3 giây khống chế địch trong trận."
+      ]
+    },
+    {
+      "id": "char_17",
+      "title": "Chuyến giao cuối cùng",
+      "matches": 16,
+      "qualifyingBattles": [
+        15,
+        15,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_18",
+      "title": "Giữ lửa bàn tiệc",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Burn ít nhất 1 lần trong trận.",
+        "Áp Burn ít nhất 1 lần trong trận.",
+        "Hồi HP thực cho bản thân hoặc đồng đội ít nhất 1 HP trong trận."
+      ]
+    },
+    {
+      "id": "char_19",
+      "title": "Lộc đến đúng người",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        12
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp buff cho đồng đội khác ít nhất 1 lần trong trận.",
+        "Áp buff cho đồng đội khác ít nhất 1 lần trong trận.",
+        "Tích lũy 1 giây khống chế địch trong trận."
+      ]
+    },
+    {
+      "id": "char_20",
+      "title": "Hoa nở trong giao tranh",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Đội kích hoạt ít nhất một liên kết hoặc hội trong trận.",
+        "Đội kích hoạt ít nhất một liên kết hoặc hội trong trận.",
+        "Áp buff cho đồng đội khác ít nhất 3 lần trong trận."
+      ]
+    },
+    {
+      "id": "char_21",
+      "title": "Áp suất đột phá",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Tạo khiên cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Tạo khiên cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 60% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_22",
+      "title": "Hào quang đồng đội",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp buff cho đồng đội khác ít nhất 1 lần trong trận.",
+        "Áp buff cho đồng đội khác ít nhất 1 lần trong trận.",
+        "Tích lũy 4 giây buff cho đồng đội khác trong trận."
+      ]
+    },
+    {
+      "id": "char_23",
+      "title": "Đường kiếm xưng vương",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        12
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 75% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_24",
+      "title": "Mực viết thành trận",
+      "matches": 16,
+      "qualifyingBattles": [
+        10,
+        6,
+        14
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Tích lũy 0.5 giây khống chế địch trong trận.",
+        "Tích lũy 0.5 giây khống chế địch trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 50% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_25",
+      "title": "Tài sản giữa chiến trường",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Tạo khiên cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Tạo khiên cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_26",
+      "title": "Giữ nhịp tâm bão",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 60% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_27",
+      "title": "Nhiệt huyết lõi đỏ",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        11
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Burn ít nhất 1 lần trong trận.",
+        "Áp Burn ít nhất 1 lần trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 60% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_28",
+      "title": "Khởi động lõi mới",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_29",
+      "title": "Sửa từng điểm ảnh",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 60% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_30",
+      "title": "Bóng bay vượt sóng",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Gây sát thương lên địch ít nhất bằng 25% HP tối đa của bản thân.",
+        "Sống ít nhất 15 giây và nhận sát thương HP từ địch trong trận."
+      ]
+    },
+    {
+      "id": "char_31",
+      "title": "Kiểm soát phản ứng",
+      "matches": 16,
+      "qualifyingBattles": [
+        15,
+        15,
+        15
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Phóng xạ ít nhất 1 lần trong trận.",
+        "Áp Phóng xạ ít nhất 1 lần trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 60% HP tối đa của bản thân."
+      ]
+    },
+    {
+      "id": "char_32",
+      "title": "Dấu dép thành trận",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Áp Frozen ít nhất 1 lần trong trận.",
+        "Áp Frozen ít nhất 1 lần trong trận.",
+        "Tích lũy 3 giây khống chế địch trong trận."
+      ]
+    },
+    {
+      "id": "char_33",
+      "title": "Bữa tiệc boomerang",
+      "matches": 16,
+      "qualifyingBattles": [
+        16,
+        16,
+        16
+      ],
+      "objectives": [
+        "Thắng trận hoặc: Hồi HP thực cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Hồi HP thực cho bản thân hoặc đồng đội ít nhất 1 HP trong trận.",
+        "Gây sát thương lên địch ít nhất bằng 50% HP tối đa của bản thân."
+      ]
+    }
+  ]
+}

@@ -16,6 +16,8 @@ export type StatusKind =
   | "bleeding"
   | "stunned"
   | "pressure"
+  | "fracture"
+  | "ward"
   | "radiation";
 export interface CombatStatus {
   kind: StatusKind;
@@ -38,6 +40,8 @@ export const STATUS_RULES = {
   bleeding: { label: "Bleeding", power: 4, cap: 20, duration: 90 },
   stunned: { label: "Choáng", power: 1, cap: 1, duration: 15 },
   pressure: { label: "Áp lực", power: 20, cap: 25, duration: 90 },
+  fracture: { label: "Rạn giáp", power: 8, cap: 15, duration: 60 },
+  ward: { label: "Hộ thể", power: 12, cap: 20, duration: 75 },
   radiation: { label: "Phóng xạ", power: 1, cap: 3, duration: 90 },
 } as const;
 export const MAX_POISON_STACKS = 5;
@@ -87,7 +91,7 @@ export function applyStatus(
   )
     return false;
   const beneficial =
-    kind === "blessing" || kind === "rage" || kind === "introvert";
+    kind === "blessing" || kind === "rage" || kind === "introvert" || kind === "ward";
   if (
     beneficial
       ? source.team !== target.team
@@ -96,13 +100,22 @@ export function applyStatus(
     return false;
   if (kind === "stunned" && (target.memory.stunImmuneUntil || 0) > s.tick)
     return false;
+  if ((target.memory[`masteryImmune:${kind}`] || 0) > s.tick)
+    return false;
   if (kind === "introvert" && target.masteryId === "tigerCalm") {
-    duration = Math.min(duration, 42);
-    if ((target.memory.masteryCalm || 0) <= s.tick) {
-      if (statusPower(target, "frozen", s.tick)) clearStatus(target, "frozen");
-      else clearStatus(target, "paralyzed");
-      target.memory.masteryCalm = s.tick + 300;
+    if (!statusPower(target, "introvert", s.tick) && (target.memory.masteryCalm || 0) <= s.tick) {
+      const cleared = statusPower(target, "frozen", s.tick) ? "frozen"
+        : statusPower(target, "paralyzed", s.tick) ? "paralyzed" : undefined;
+      if (cleared) {
+        clearStatus(target, cleared);
+        target.memory[`masteryImmune:${cleared}`] = s.tick + 30;
+        target.memory.masteryCalm = s.tick + 240;
+      }
     }
+  }
+  if (kind === "introvert" && target.masteryId === "tigerBurst" && !statusPower(target, "introvert", s.tick)) {
+    target.memory.masteryBurst = 0;
+    target.memory.masteryBurstUntil = s.tick + duration + 180;
   }
   if (kind === "frozen" && (target.memory.immuneSlow || 0) > s.tick)
     return false;
@@ -154,6 +167,12 @@ export const statusDamage = (f: Fighter, tick: number, raw: number) =>
       (100 - statusPower(f, "pressure", tick)),
     10000,
   );
+
+/** Direct attacks only: DoT retains its own HP loss rules. Neither status stacks. */
+export function incomingStatusMultiplier(f: Fighter, tick: number) {
+  const armor = Math.max(0, Math.min(60, f.stats.defense) - statusPower(f, "fracture", tick));
+  return (100 - armor) * (100 - statusPower(f, "ward", tick));
+}
 
 export function healingRate(
   f: Fighter,
@@ -219,7 +238,7 @@ export function tickStatuses(s: BattleState) {
               1,
               div(
                 target.baseStats.hp *
-                  (target.masteryId === "tigerBurst" ? 4 : 8),
+                  8,
                 1000,
               ),
             )

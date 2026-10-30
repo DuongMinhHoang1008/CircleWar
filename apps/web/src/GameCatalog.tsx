@@ -28,6 +28,10 @@ import { STATUS_RULES, attackCooldown, statusPower } from "../../../packages/bat
 import weaponAtlas from "./rendering/weapon-atlas.json";
 import { cardEvolution } from "../../../packages/shared/src/progression";
 import { affinityDescription } from "../../../packages/shared/src/affinity";
+import { masteryInfo } from "../../../packages/shared/src/mastery";
+import { formAttackCooldown } from "../../../packages/battle-engine/src/mastery-forms";
+import { CatalogReference } from "./CatalogReference";
+import { STATUS_ENTRIES, REFERENCE_ENTRIES, catalogSearchText, referenceFilters, type ReferenceTab } from "./catalogReferenceData";
 export type Inspect = {
   kind: "character" | "item";
   id: string;
@@ -397,6 +401,7 @@ export function InfoPopup({
         : undefined;
   const transformed = !!c && isTransformedCharacter(c.id, live?.equipment || info?.loadout?.equipment || []);
   const kit = c ? characterKit(c.id, info?.live?.equipment || info?.loadout?.equipment || []) : undefined;
+  const equippedMastery=masteryInfo(live?.masteryId || info?.loadout?.masteryId);
   const formName: Record<string,string> = { char_28: "Người Máy Đỉnh Cao Fu Di", char_29: "Siêu Chiến Binh Wacom", char_30: "Skyrocket Dog" };
   const stats = c
     ? info?.live?.stats ||
@@ -485,7 +490,7 @@ export function InfoPopup({
                 </p>
                 <div className="badges">
                   {live?.statuses.filter(effect => effect.until > liveTick).map((effect, i) => <span key={`status-${i}`}>
-                    {STATUS_RULES[effect.kind].label} · {effect.power}{["rage", "frozen", "paralyzed", "introvert", "diabetes", "myopia", "pressure"].includes(effect.kind) ? "%" : effect.kind === "stunned" || effect.kind === "radiation" ? "" : " HP/s"} · {((effect.until - liveTick) / 30).toFixed(1)}s
+                    {STATUS_RULES[effect.kind].label} · {effect.power}{["rage", "frozen", "paralyzed", "introvert", "diabetes", "myopia", "pressure", "fracture", "ward"].includes(effect.kind) ? "%" : effect.kind === "stunned" || effect.kind === "radiation" ? "" : " HP/s"} · {((effect.until - liveTick) / 30).toFixed(1)}s
                   </span>)}
                   {info.live.buffs
                     .filter((b) => b.until > (info.liveTick || 0))
@@ -546,7 +551,7 @@ export function InfoPopup({
                   .map(([k, v]) => (
                     <div key={k}>
                       <small>{labels[k] || k}</small>
-                      <b>{statValue(k, live && k === "cooldown" ? attackCooldown(live, liveTick) : v)}</b>
+                      <b>{statValue(k, live && k === "cooldown" ? formAttackCooldown(live, liveTick) : v)}</b>
                     </div>
                   ))}
               </div>
@@ -557,10 +562,11 @@ export function InfoPopup({
               Khiên là HP hấp thụ tạm thời, bị trừ sau giáp và trước máu.
               Ví dụ: đòn 100 gặp giáp 10% còn 90; có 30 khiên thì chỉ mất 60 HP.</p>
             <div className="skill-list">
+              {equippedMastery&&<section className="skill-info"><span className="skill-icon">✦</span><div><h3>Bí kỹ đang lắp · {equippedMastery.name}</h3><p>{equippedMastery.description}</p><small>Giới hạn: {equippedMastery.tradeoff}</small></div></section>}
               {[
-                ["⚔", `Đòn thường · ${kit?.name || c.name}`, kit?.normal || c.passive[1]],
+                ["⚔", `${equippedMastery?.form?.kind==="melee"||equippedMastery?.form?.kind==="shot"?"Đòn thường gốc":"Đòn thường"} · ${kit?.name || c.name}`, kit?.normal || c.passive[1]],
                 ["↗", "Tăng trưởng theo thời gian", kit ? kitGrowthDescription(kit) : c.skill[1]],
-                ["★", `Super · ${c.super[0]}`, kit?.super || c.super[1]],
+                ["★", `${equippedMastery?.form?.kind==="super"?"Super gốc":"Super"} · ${c.super[0]}`, kit?.super || c.super[1]],
               ].map(([icon, name, text]) => (
                 <section className="skill-info" key={name}>
                   <span className="skill-icon">{icon}</span>
@@ -980,7 +986,7 @@ export function CatalogLibrary({
   selected?: Loadout;
   initialOpen?: boolean;
 }) {
-  const [tab, setTab] = useState<"characters" | "items">("characters"),
+  const [tab, setTab] = useState<"characters" | "items" | ReferenceTab>("characters"),
     [search, setSearch] = useState(""),
     [filter, setFilter] = useState("Tất cả"),
     [open, setOpen] = useState(initialOpen);
@@ -989,7 +995,7 @@ export function CatalogLibrary({
     const closeOnEscape = (event: KeyboardEvent) => {
       if (
         event.key === "Escape" &&
-        !document.querySelector(".info-dialog[open]")
+        !document.querySelector(".info-dialog[open], .mastery-preview[open]")
       )
         setOpen(false);
     };
@@ -1003,7 +1009,7 @@ export function CatalogLibrary({
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
       >
-        Cẩm nang · {ROSTER.length} nhân vật / {CATALOG_ITEMS.length} vật phẩm
+        Cẩm nang · Nhân vật, vật phẩm & cơ chế combat
       </button>}
       {open && (
         <div
@@ -1022,35 +1028,30 @@ export function CatalogLibrary({
               <div>
                 <h2 id="catalog-title">Cẩm nang đấu trường</h2>
                 <span className="muted">
-                  {ROSTER.length} NHÂN VẬT · {CATALOG_ITEMS.length} VẬT PHẨM
+                  {ROSTER.length} NHÂN VẬT · {CATALOG_ITEMS.length} VẬT PHẨM · {STATUS_ENTRIES.length} TRẠNG THÁI
                 </span>
               </div>
               <button aria-label="Đóng cẩm nang" onClick={() => setOpen(false)}>
                 Đóng ✕
               </button>
             </div>
+            <div className="catalog-tabs" role="group" aria-label="Mục cẩm nang">
+              {([
+                ["characters", "Nhân vật", ROSTER.length],
+                ["items", "Vật phẩm", CATALOG_ITEMS.length],
+                ["statuses", "Trạng thái", STATUS_ENTRIES.length],
+                ["mechanics", "Cơ chế combat", REFERENCE_ENTRIES.mechanics.length],
+                ["masteries", "Bí kỹ", REFERENCE_ENTRIES.masteries.length],
+                ["synergies", "Liên kết", REFERENCE_ENTRIES.synergies.length],
+              ] as const).map(([key, label, count]) => <button key={key}
+                className={tab === key ? "active" : ""} aria-pressed={tab === key}
+                onClick={() => { setTab(key); setFilter("Tất cả"); setSearch(""); }}
+              >{label} <small>{count}</small></button>)}
+            </div>
             <div className="catalog-toolbar">
-              <button
-                className={tab === "characters" ? "active" : ""}
-                onClick={() => {
-                  setTab("characters");
-                  setFilter("Tất cả");
-                }}
-              >
-                Nhân vật
-              </button>
-              <button
-                className={tab === "items" ? "active" : ""}
-                onClick={() => {
-                  setTab("items");
-                  setFilter("Tất cả");
-                }}
-              >
-                Vật phẩm
-              </button>
               <input
                 aria-label="Tìm trong cẩm nang"
-                placeholder="Tìm tên, kỹ năng…"
+                placeholder="Tìm tên, hiệu ứng, cơ chế…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -1063,24 +1064,28 @@ export function CatalogLibrary({
                   "Tất cả",
                   ...(tab === "characters"
                     ? [...new Set(ROSTER.map((c) => c.roleClass))]
-                    : ["Thường", "Hiếm", "Sử thi", "Huyền thoại"]),
+                    : tab === "items" ? ["Thường", "Hiếm", "Sử thi", "Huyền thoại"]
+                    : referenceFilters(tab)),
                 ].map((f) => (
                   <option key={f}>{f}</option>
                 ))}
               </select>
             </div>
             <p className="muted">
-              Bấm thẻ để xem đầy đủ kỹ năng, chỉ số, vũ khí, liên kết và đồ hợp
-              cạ.
+              {tab === "characters" || tab === "items"
+                ? "Bấm thẻ để xem đầy đủ kỹ năng, chỉ số, vũ khí, liên kết và đồ hợp cạ."
+                : tab === "statuses" ? "Tra cứu tác dụng, thời hạn, cộng dồn và tương tác của từng trạng thái."
+                : tab === "masteries" ? "Toàn bộ Bí kỹ để tham khảo. Mở khóa và lắp trong Hành trình nhân vật / Kho đồ."
+                : tab === "synergies" ? "Điều kiện thành viên, các mốc và hiệu ứng của liên kết, hội, tộc và vai trò."
+                : "Hiểu cách sát thương, phòng thủ, hồi phục và nhịp chiến đấu tương tác."}
             </p>
+            {tab === "characters" || tab === "items" ?
             <div className="catalog-grid">
               {tab === "characters"
                 ? ROSTER.filter(
                     (c) =>
                       (filter === "Tất cả" || c.roleClass === filter) &&
-                      JSON.stringify(c)
-                        .toLocaleLowerCase("vi")
-                        .includes(search.toLocaleLowerCase("vi")),
+                      catalogSearchText(JSON.stringify(c)).includes(catalogSearchText(search)),
                   ).map((c) => (
                     <button
                       className="roster-card"
@@ -1123,9 +1128,7 @@ export function CatalogLibrary({
                     (i) =>
                       (filter === "Tất cả" ||
                         ["Thường", "Hiếm", "Sử thi", "Huyền thoại"][i.rarity] === filter) &&
-                      JSON.stringify(i)
-                        .toLocaleLowerCase("vi")
-                        .includes(search.toLocaleLowerCase("vi")),
+                      catalogSearchText(JSON.stringify(i)).includes(catalogSearchText(search)),
                   ).map((i) => (
                     <button
                       className={`item-card rarity-${i.rarity} ${rarityClass(i.rarity)}`}
@@ -1155,7 +1158,7 @@ export function CatalogLibrary({
                       <small>Hợp cạ: {character(i.affinity)?.name} ↗</small>
                     </button>
                   ))}
-            </div>
+            </div> : <CatalogReference tab={tab} search={search} filter={filter} inspect={inspect} />}
           </section>
         </div>
       )}

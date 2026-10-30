@@ -1,0 +1,33 @@
+{
+  "time": "2026-10-29T07:44:00.2873730Z",
+  "status": "PASS",
+  "baseCommit": "af93e74528ed912884bd56a83fbaf641b7eb0386",
+  "uncommittedSource": true,
+  "release": "2026.10.29.3",
+  "engine": "chaos-integer-v36",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "pagesDeployment": "https://40df5a62.riseon-ultimate-battle.pages.dev",
+  "workerVersion": "9bd19d99-dd5a-4f7e-97d7-857db9b2b2c4",
+  "webIndexSha256": "327acbde4589e6d705a601085870f143126f9a133caeafd6b2862f4034b2aff2",
+  "checks": [
+    "521 tests across 36 files",
+    "typecheck, production frontend build and Worker dry-run",
+    "production release manifest matches 2026.10.29.3",
+    "production index, JS entry and all four mastery atlases exactly match local artifact SHA-256",
+    "production API/CORS, persisted mailbox claim and profile reload",
+    "production room/WebSocket; test room left after verification",
+    "production square arena, 20s shrink, team colors and original atlases",
+    "production sandbox for all 33 characters / 99 mastery branches; locked branches work before unlock",
+    "production all four mastery atlases loaded successfully",
+    "production desktop 1440px and mobile 360/390px without preview overflow",
+    "sandbox progress unchanged; no browser page errors"
+  ],
+  "masteryCount": 99,
+  "reports": [
+    "reports/production-2026-10-29-vfx/assets/assets.json",
+    "reports/production-2026-10-29-vfx/smoke/production-browser-v36.json",
+    "reports/production-2026-10-29-vfx/mastery/browser.json"
+  ],
+  "previousDeploymentReport": "reports/deployment-2026-10-29.json"
+}

@@ -260,7 +260,7 @@ export function captureReplayFrame(s: BattleState): ReplayFrame {
     buffs: s.fighters.map((f) => structuredClone(f.buffs)),
     statuses: s.fighters.map((f) => structuredClone(f.statuses)),
     constructs: structuredClone(s.constructs),
-    kitProjectiles: s.projectiles.filter(p => p.kit).map(p => ({ id: p.id, kit: p.kit, radius: p.radius || 450, returning: p.returning })),
+    kitProjectiles: s.projectiles.filter(p => p.kit).map(p => ({ id: p.id, kit: p.kit, radius: p.radius || 450, returning: p.returning, mastery:p.mastery?{...p.mastery}:undefined })),
     combatStats: s.fighters.map((f) => [f.stats.attack, f.stats.speed, f.stats.rotation, f.stats.charge, f.stats.cooldown, f.memory.spinRate || 100]),
     damageStats: s.fighters.map((f) => [f.dealt, f.taken]),
     supportStats: s.fighters.map((f) => structuredClone(combatMetrics(f))),

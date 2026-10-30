@@ -1,0 +1,804 @@
+{
+  "size": 80,
+  "frames": 8,
+  "pages": [
+    "effects/mastery/cast-1.webp",
+    "effects/mastery/cast-2.webp",
+    "effects/mastery/cast-3.webp"
+  ],
+  "projectiles": "effects/mastery/projectiles.webp",
+  "rows": {
+    "tigerBurst": {
+      "page": 0,
+      "row": 0,
+      "projectile": [
+        0,
+        0
+      ]
+    },
+    "char_02:pressure": {
+      "page": 0,
+      "row": 1,
+      "projectile": [
+        7,
+        1
+      ]
+    },
+    "char_03:pressure": {
+      "page": 0,
+      "row": 2,
+      "projectile": [
+        10,
+        1
+      ]
+    },
+    "char_04:pressure": {
+      "page": 0,
+      "row": 3,
+      "projectile": [
+        2,
+        2
+      ]
+    },
+    "char_05:pressure": {
+      "page": 0,
+      "row": 4,
+      "projectile": [
+        5,
+        2
+      ]
+    },
+    "char_06:pressure": {
+      "page": 0,
+      "row": 5,
+      "projectile": [
+        8,
+        2
+      ]
+    },
+    "char_07:pressure": {
+      "page": 0,
+      "row": 6,
+      "projectile": [
+        0,
+        3
+      ]
+    },
+    "char_08:pressure": {
+      "page": 0,
+      "row": 7,
+      "projectile": [
+        3,
+        3
+      ]
+    },
+    "char_09:pressure": {
+      "page": 0,
+      "row": 8,
+      "projectile": [
+        6,
+        3
+      ]
+    },
+    "char_10:pressure": {
+      "page": 0,
+      "row": 9,
+      "projectile": [
+        9,
+        3
+      ]
+    },
+    "flagShield": {
+      "page": 0,
+      "row": 10,
+      "projectile": [
+        3,
+        0
+      ]
+    },
+    "char_12:pressure": {
+      "page": 0,
+      "row": 11,
+      "projectile": [
+        1,
+        4
+      ]
+    },
+    "fruitOverflow": {
+      "page": 0,
+      "row": 12,
+      "projectile": [
+        6,
+        0
+      ]
+    },
+    "giftTank": {
+      "page": 0,
+      "row": 13,
+      "projectile": [
+        9,
+        0
+      ]
+    },
+    "char_15:pressure": {
+      "page": 0,
+      "row": 14,
+      "projectile": [
+        4,
+        4
+      ]
+    },
+    "char_16:pressure": {
+      "page": 0,
+      "row": 15,
+      "projectile": [
+        7,
+        4
+      ]
+    },
+    "char_17:pressure": {
+      "page": 0,
+      "row": 16,
+      "projectile": [
+        10,
+        4
+      ]
+    },
+    "char_18:pressure": {
+      "page": 0,
+      "row": 17,
+      "projectile": [
+        2,
+        5
+      ]
+    },
+    "char_19:pressure": {
+      "page": 0,
+      "row": 18,
+      "projectile": [
+        5,
+        5
+      ]
+    },
+    "roseLink": {
+      "page": 0,
+      "row": 19,
+      "projectile": [
+        1,
+        1
+      ]
+    },
+    "char_21:pressure": {
+      "page": 0,
+      "row": 20,
+      "projectile": [
+        8,
+        5
+      ]
+    },
+    "auraAnchor": {
+      "page": 0,
+      "row": 21,
+      "projectile": [
+        4,
+        1
+      ]
+    },
+    "char_23:pressure": {
+      "page": 0,
+      "row": 22,
+      "projectile": [
+        0,
+        6
+      ]
+    },
+    "char_24:pressure": {
+      "page": 0,
+      "row": 23,
+      "projectile": [
+        3,
+        6
+      ]
+    },
+    "char_25:pressure": {
+      "page": 0,
+      "row": 24,
+      "projectile": [
+        6,
+        6
+      ]
+    },
+    "char_26:pressure": {
+      "page": 0,
+      "row": 25,
+      "projectile": [
+        9,
+        6
+      ]
+    },
+    "char_27:pressure": {
+      "page": 0,
+      "row": 26,
+      "projectile": [
+        1,
+        7
+      ]
+    },
+    "char_28:pressure": {
+      "page": 0,
+      "row": 27,
+      "projectile": [
+        4,
+        7
+      ]
+    },
+    "char_29:pressure": {
+      "page": 0,
+      "row": 28,
+      "projectile": [
+        7,
+        7
+      ]
+    },
+    "char_30:pressure": {
+      "page": 0,
+      "row": 29,
+      "projectile": [
+        10,
+        7
+      ]
+    },
+    "char_31:pressure": {
+      "page": 0,
+      "row": 30,
+      "projectile": [
+        2,
+        8
+      ]
+    },
+    "char_32:pressure": {
+      "page": 0,
+      "row": 31,
+      "projectile": [
+        5,
+        8
+      ]
+    },
+    "char_33:pressure": {
+      "page": 0,
+      "row": 32,
+      "projectile": [
+        8,
+        8
+      ]
+    },
+    "tigerCalm": {
+      "page": 1,
+      "row": 0,
+      "projectile": [
+        1,
+        0
+      ]
+    },
+    "char_02:resolve": {
+      "page": 1,
+      "row": 1,
+      "projectile": [
+        8,
+        1
+      ]
+    },
+    "char_03:resolve": {
+      "page": 1,
+      "row": 2,
+      "projectile": [
+        0,
+        2
+      ]
+    },
+    "char_04:resolve": {
+      "page": 1,
+      "row": 3,
+      "projectile": [
+        3,
+        2
+      ]
+    },
+    "char_05:resolve": {
+      "page": 1,
+      "row": 4,
+      "projectile": [
+        6,
+        2
+      ]
+    },
+    "char_06:resolve": {
+      "page": 1,
+      "row": 5,
+      "projectile": [
+        9,
+        2
+      ]
+    },
+    "char_07:resolve": {
+      "page": 1,
+      "row": 6,
+      "projectile": [
+        1,
+        3
+      ]
+    },
+    "char_08:resolve": {
+      "page": 1,
+      "row": 7,
+      "projectile": [
+        4,
+        3
+      ]
+    },
+    "char_09:resolve": {
+      "page": 1,
+      "row": 8,
+      "projectile": [
+        7,
+        3
+      ]
+    },
+    "char_10:resolve": {
+      "page": 1,
+      "row": 9,
+      "projectile": [
+        10,
+        3
+      ]
+    },
+    "flagParalyze": {
+      "page": 1,
+      "row": 10,
+      "projectile": [
+        4,
+        0
+      ]
+    },
+    "char_12:resolve": {
+      "page": 1,
+      "row": 11,
+      "projectile": [
+        2,
+        4
+      ]
+    },
+    "fruitCleanse": {
+      "page": 1,
+      "row": 12,
+      "projectile": [
+        7,
+        0
+      ]
+    },
+    "giftShield": {
+      "page": 1,
+      "row": 13,
+      "projectile": [
+        10,
+        0
+      ]
+    },
+    "char_15:resolve": {
+      "page": 1,
+      "row": 14,
+      "projectile": [
+        5,
+        4
+      ]
+    },
+    "char_16:resolve": {
+      "page": 1,
+      "row": 15,
+      "projectile": [
+        8,
+        4
+      ]
+    },
+    "char_17:resolve": {
+      "page": 1,
+      "row": 16,
+      "projectile": [
+        0,
+        5
+      ]
+    },
+    "char_18:resolve": {
+      "page": 1,
+      "row": 17,
+      "projectile": [
+        3,
+        5
+      ]
+    },
+    "char_19:resolve": {
+      "page": 1,
+      "row": 18,
+      "projectile": [
+        6,
+        5
+      ]
+    },
+    "roseFollow": {
+      "page": 1,
+      "row": 19,
+      "projectile": [
+        2,
+        1
+      ]
+    },
+    "char_21:resolve": {
+      "page": 1,
+      "row": 20,
+      "projectile": [
+        9,
+        5
+      ]
+    },
+    "auraEcho": {
+      "page": 1,
+      "row": 21,
+      "projectile": [
+        5,
+        1
+      ]
+    },
+    "char_23:resolve": {
+      "page": 1,
+      "row": 22,
+      "projectile": [
+        1,
+        6
+      ]
+    },
+    "char_24:resolve": {
+      "page": 1,
+      "row": 23,
+      "projectile": [
+        4,
+        6
+      ]
+    },
+    "char_25:resolve": {
+      "page": 1,
+      "row": 24,
+      "projectile": [
+        7,
+        6
+      ]
+    },
+    "char_26:resolve": {
+      "page": 1,
+      "row": 25,
+      "projectile": [
+        10,
+        6
+      ]
+    },
+    "char_27:resolve": {
+      "page": 1,
+      "row": 26,
+      "projectile": [
+        2,
+        7
+      ]
+    },
+    "char_28:resolve": {
+      "page": 1,
+      "row": 27,
+      "projectile": [
+        5,
+        7
+      ]
+    },
+    "char_29:resolve": {
+      "page": 1,
+      "row": 28,
+      "projectile": [
+        8,
+        7
+      ]
+    },
+    "char_30:resolve": {
+      "page": 1,
+      "row": 29,
+      "projectile": [
+        0,
+        8
+      ]
+    },
+    "char_31:resolve": {
+      "page": 1,
+      "row": 30,
+      "projectile": [
+        3,
+        8
+      ]
+    },
+    "char_32:resolve": {
+      "page": 1,
+      "row": 31,
+      "projectile": [
+        6,
+        8
+      ]
+    },
+    "char_33:resolve": {
+      "page": 1,
+      "row": 32,
+      "projectile": [
+        9,
+        8
+      ]
+    },
+    "tigerGuard": {
+      "page": 2,
+      "row": 0,
+      "projectile": [
+        2,
+        0
+      ]
+    },
+    "char_02:tempo": {
+      "page": 2,
+      "row": 1,
+      "projectile": [
+        9,
+        1
+      ]
+    },
+    "char_03:tempo": {
+      "page": 2,
+      "row": 2,
+      "projectile": [
+        1,
+        2
+      ]
+    },
+    "char_04:tempo": {
+      "page": 2,
+      "row": 3,
+      "projectile": [
+        4,
+        2
+      ]
+    },
+    "char_05:tempo": {
+      "page": 2,
+      "row": 4,
+      "projectile": [
+        7,
+        2
+      ]
+    },
+    "char_06:tempo": {
+      "page": 2,
+      "row": 5,
+      "projectile": [
+        10,
+        2
+      ]
+    },
+    "char_07:tempo": {
+      "page": 2,
+      "row": 6,
+      "projectile": [
+        2,
+        3
+      ]
+    },
+    "char_08:tempo": {
+      "page": 2,
+      "row": 7,
+      "projectile": [
+        5,
+        3
+      ]
+    },
+    "char_09:tempo": {
+      "page": 2,
+      "row": 8,
+      "projectile": [
+        8,
+        3
+      ]
+    },
+    "char_10:tempo": {
+      "page": 2,
+      "row": 9,
+      "projectile": [
+        0,
+        4
+      ]
+    },
+    "flagFocus": {
+      "page": 2,
+      "row": 10,
+      "projectile": [
+        5,
+        0
+      ]
+    },
+    "char_12:tempo": {
+      "page": 2,
+      "row": 11,
+      "projectile": [
+        3,
+        4
+      ]
+    },
+    "fruitSupply": {
+      "page": 2,
+      "row": 12,
+      "projectile": [
+        8,
+        0
+      ]
+    },
+    "giftEscort": {
+      "page": 2,
+      "row": 13,
+      "projectile": [
+        0,
+        1
+      ]
+    },
+    "char_15:tempo": {
+      "page": 2,
+      "row": 14,
+      "projectile": [
+        6,
+        4
+      ]
+    },
+    "char_16:tempo": {
+      "page": 2,
+      "row": 15,
+      "projectile": [
+        9,
+        4
+      ]
+    },
+    "char_17:tempo": {
+      "page": 2,
+      "row": 16,
+      "projectile": [
+        1,
+        5
+      ]
+    },
+    "char_18:tempo": {
+      "page": 2,
+      "row": 17,
+      "projectile": [
+        4,
+        5
+      ]
+    },
+    "char_19:tempo": {
+      "page": 2,
+      "row": 18,
+      "projectile": [
+        7,
+        5
+      ]
+    },
+    "roseWall": {
+      "page": 2,
+      "row": 19,
+      "projectile": [
+        3,
+        1
+      ]
+    },
+    "char_21:tempo": {
+      "page": 2,
+      "row": 20,
+      "projectile": [
+        10,
+        5
+      ]
+    },
+    "auraEnergy": {
+      "page": 2,
+      "row": 21,
+      "projectile": [
+        6,
+        1
+      ]
+    },
+    "char_23:tempo": {
+      "page": 2,
+      "row": 22,
+      "projectile": [
+        2,
+        6
+      ]
+    },
+    "char_24:tempo": {
+      "page": 2,
+      "row": 23,
+      "projectile": [
+        5,
+        6
+      ]
+    },
+    "char_25:tempo": {
+      "page": 2,
+      "row": 24,
+      "projectile": [
+        8,
+        6
+      ]
+    },
+    "char_26:tempo": {
+      "page": 2,
+      "row": 25,
+      "projectile": [
+        0,
+        7
+      ]
+    },
+    "char_27:tempo": {
+      "page": 2,
+      "row": 26,
+      "projectile": [
+        3,
+        7
+      ]
+    },
+    "char_28:tempo": {
+      "page": 2,
+      "row": 27,
+      "projectile": [
+        6,
+        7
+      ]
+    },
+    "char_29:tempo": {
+      "page": 2,
+      "row": 28,
+      "projectile": [
+        9,
+        7
+      ]
+    },
+    "char_30:tempo": {
+      "page": 2,
+      "row": 29,
+      "projectile": [
+        1,
+        8
+      ]
+    },
+    "char_31:tempo": {
+      "page": 2,
+      "row": 30,
+      "projectile": [
+        4,
+        8
+      ]
+    },
+    "char_32:tempo": {
+      "page": 2,
+      "row": 31,
+      "projectile": [
+        7,
+        8
+      ]
+    },
+    "char_33:tempo": {
+      "page": 2,
+      "row": 32,
+      "projectile": [
+        10,
+        8
+      ]
+    }
+  }
+}

@@ -1,0 +1,841 @@
+{
+  "engine": "chaos-integer-v36",
+  "battles": 1296,
+  "method": "Lv10, no equipment, same three characters on both teams; each seed tested with the mastery on each side. This is a limited regression sample, not a global win-rate estimate.",
+  "aggregateWinRate": 0.45601851851851855,
+  "noActivations": [],
+  "extremes": [
+    {
+      "id": "char_08:pressure",
+      "name": "Song Nha",
+      "matches": 16,
+      "wins": 13,
+      "draws": 0,
+      "winRate": 0.8125,
+      "procTargets": 142,
+      "meanSeconds": 27.4
+    },
+    {
+      "id": "char_30:tempo",
+      "name": "Đoàn Bóng Hộ Tống",
+      "matches": 16,
+      "wins": 2,
+      "draws": 0,
+      "winRate": 0.125,
+      "procTargets": 27,
+      "meanSeconds": 24.5
+    }
+  ],
+  "rows": [
+    {
+      "id": "char_02:pressure",
+      "name": "Vòng Ôm Xoắn",
+      "matches": 16,
+      "wins": 12,
+      "draws": 0,
+      "winRate": 0.75,
+      "procTargets": 155,
+      "meanSeconds": 27.4
+    },
+    {
+      "id": "char_02:resolve",
+      "name": "Kéo Về Đây",
+      "matches": 16,
+      "wins": 5,
+      "draws": 0,
+      "winRate": 0.3125,
+      "procTargets": 189,
+      "meanSeconds": 27.3
+    },
+    {
+      "id": "char_02:tempo",
+      "name": "Bão Gấu Bông",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 44,
+      "meanSeconds": 28
+    },
+    {
+      "id": "char_03:pressure",
+      "name": "Chùm Nho Tách Hạt",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 215,
+      "meanSeconds": 27.2
+    },
+    {
+      "id": "char_03:resolve",
+      "name": "Quả Cầu Hồi Lưu",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 187,
+      "meanSeconds": 26.6
+    },
+    {
+      "id": "char_03:tempo",
+      "name": "Mưa Hạt Chín",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 42,
+      "meanSeconds": 26.7
+    },
+    {
+      "id": "char_04:pressure",
+      "name": "Lưỡi Gió",
+      "matches": 16,
+      "wins": 5,
+      "draws": 0,
+      "winRate": 0.3125,
+      "procTargets": 251,
+      "meanSeconds": 26.6
+    },
+    {
+      "id": "char_04:resolve",
+      "name": "Bước Đệm Gió",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 128,
+      "meanSeconds": 28.6
+    },
+    {
+      "id": "char_04:tempo",
+      "name": "Lốc Cuốn Theo Người",
+      "matches": 16,
+      "wins": 10,
+      "draws": 0,
+      "winRate": 0.625,
+      "procTargets": 32,
+      "meanSeconds": 27.7
+    },
+    {
+      "id": "char_05:pressure",
+      "name": "Đạn Khoan",
+      "matches": 16,
+      "wins": 8,
+      "draws": 1,
+      "winRate": 0.5,
+      "procTargets": 187,
+      "meanSeconds": 27
+    },
+    {
+      "id": "char_05:resolve",
+      "name": "Trạm Săn Đuổi",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 31,
+      "meanSeconds": 26.4
+    },
+    {
+      "id": "char_05:tempo",
+      "name": "Pháo Ba Nòng",
+      "matches": 16,
+      "wins": 7,
+      "draws": 1,
+      "winRate": 0.4375,
+      "procTargets": 27,
+      "meanSeconds": 26.7
+    },
+    {
+      "id": "char_06:pressure",
+      "name": "Lăng Kính Tách Tia",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 289,
+      "meanSeconds": 30.7
+    },
+    {
+      "id": "char_06:resolve",
+      "name": "Cầu Vồng Quay Lại",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 242,
+      "meanSeconds": 32
+    },
+    {
+      "id": "char_06:tempo",
+      "name": "Giao Điểm Sắc Màu",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 39,
+      "meanSeconds": 29.9
+    },
+    {
+      "id": "char_07:pressure",
+      "name": "Gào Bật Âm",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 205,
+      "meanSeconds": 28.8
+    },
+    {
+      "id": "char_07:resolve",
+      "name": "Bẫy Can Đảm",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 46,
+      "meanSeconds": 30.3
+    },
+    {
+      "id": "char_07:tempo",
+      "name": "Tiếng Hú Dội Tường",
+      "matches": 16,
+      "wins": 11,
+      "draws": 0,
+      "winRate": 0.6875,
+      "procTargets": 39,
+      "meanSeconds": 28.9
+    },
+    {
+      "id": "char_08:pressure",
+      "name": "Song Nha",
+      "matches": 16,
+      "wins": 13,
+      "draws": 0,
+      "winRate": 0.8125,
+      "procTargets": 142,
+      "meanSeconds": 27.4
+    },
+    {
+      "id": "char_08:resolve",
+      "name": "Liềm Trăng",
+      "matches": 16,
+      "wins": 9,
+      "draws": 1,
+      "winRate": 0.5625,
+      "procTargets": 173,
+      "meanSeconds": 28.1
+    },
+    {
+      "id": "char_08:tempo",
+      "name": "Bầy Sói Ảo",
+      "matches": 16,
+      "wins": 11,
+      "draws": 0,
+      "winRate": 0.6875,
+      "procTargets": 42,
+      "meanSeconds": 26.6
+    },
+    {
+      "id": "char_09:pressure",
+      "name": "Deadline Gập",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 194,
+      "meanSeconds": 29.1
+    },
+    {
+      "id": "char_09:resolve",
+      "name": "Ghim Việc",
+      "matches": 16,
+      "wins": 5,
+      "draws": 1,
+      "winRate": 0.3125,
+      "procTargets": 225,
+      "meanSeconds": 29.7
+    },
+    {
+      "id": "char_09:tempo",
+      "name": "Dây Chuyền Công Việc",
+      "matches": 16,
+      "wins": 5,
+      "draws": 0,
+      "winRate": 0.3125,
+      "procTargets": 36,
+      "meanSeconds": 26.9
+    },
+    {
+      "id": "char_10:pressure",
+      "name": "Vành Cưa",
+      "matches": 16,
+      "wins": 11,
+      "draws": 0,
+      "winRate": 0.6875,
+      "procTargets": 178,
+      "meanSeconds": 28.8
+    },
+    {
+      "id": "char_10:resolve",
+      "name": "Lốp Hồi Lưu",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 170,
+      "meanSeconds": 28.2
+    },
+    {
+      "id": "char_10:tempo",
+      "name": "Hai Làn Lăn",
+      "matches": 16,
+      "wins": 9,
+      "draws": 0,
+      "winRate": 0.5625,
+      "procTargets": 44,
+      "meanSeconds": 29.9
+    },
+    {
+      "id": "char_12:pressure",
+      "name": "Trảm Chữ Thập",
+      "matches": 16,
+      "wins": 9,
+      "draws": 0,
+      "winRate": 0.5625,
+      "procTargets": 180,
+      "meanSeconds": 27.1
+    },
+    {
+      "id": "char_12:resolve",
+      "name": "Kiếm Vọng",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 126,
+      "meanSeconds": 26.7
+    },
+    {
+      "id": "char_12:tempo",
+      "name": "Mưa Phi Kiếm",
+      "matches": 16,
+      "wins": 12,
+      "draws": 1,
+      "winRate": 0.75,
+      "procTargets": 45,
+      "meanSeconds": 25.2
+    },
+    {
+      "id": "char_15:pressure",
+      "name": "Khiên Hồi Lưu",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 232,
+      "meanSeconds": 30.7
+    },
+    {
+      "id": "char_15:resolve",
+      "name": "Phản Kích Khiên",
+      "matches": 16,
+      "wins": 9,
+      "draws": 0,
+      "winRate": 0.5625,
+      "procTargets": 51,
+      "meanSeconds": 31.3
+    },
+    {
+      "id": "char_15:tempo",
+      "name": "Chiến Hữu Xương",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 52,
+      "meanSeconds": 30.8
+    },
+    {
+      "id": "char_16:pressure",
+      "name": "Mực Loang",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 226,
+      "meanSeconds": 28.3
+    },
+    {
+      "id": "char_16:resolve",
+      "name": "Bút Lượn Sóng",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 218,
+      "meanSeconds": 27.4
+    },
+    {
+      "id": "char_16:tempo",
+      "name": "Ba Ô Tranh",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 37,
+      "meanSeconds": 27.6
+    },
+    {
+      "id": "char_17:pressure",
+      "name": "Đơn Hàng Xuyên Tuyến",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 177,
+      "meanSeconds": 28
+    },
+    {
+      "id": "char_17:resolve",
+      "name": "Giao Hàng Hai Chiều",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 221,
+      "meanSeconds": 29.3
+    },
+    {
+      "id": "char_17:tempo",
+      "name": "Trạm Giao Nhanh",
+      "matches": 16,
+      "wins": 5,
+      "draws": 0,
+      "winRate": 0.3125,
+      "procTargets": 34,
+      "meanSeconds": 27.8
+    },
+    {
+      "id": "char_18:pressure",
+      "name": "Muôi Vung Rộng",
+      "matches": 16,
+      "wins": 10,
+      "draws": 0,
+      "winRate": 0.625,
+      "procTargets": 115,
+      "meanSeconds": 26.4
+    },
+    {
+      "id": "char_18:resolve",
+      "name": "Nắp Nồi Bay",
+      "matches": 16,
+      "wins": 11,
+      "draws": 0,
+      "winRate": 0.6875,
+      "procTargets": 142,
+      "meanSeconds": 26.9
+    },
+    {
+      "id": "char_18:tempo",
+      "name": "Bếp Lẩu Dã Chiến",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 35,
+      "meanSeconds": 26.7
+    },
+    {
+      "id": "char_19:pressure",
+      "name": "Phi Phong Bao",
+      "matches": 16,
+      "wins": 10,
+      "draws": 1,
+      "winRate": 0.625,
+      "procTargets": 194,
+      "meanSeconds": 28.1
+    },
+    {
+      "id": "char_19:resolve",
+      "name": "Bao Lì Xì Hồi Đáp",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 178,
+      "meanSeconds": 27.6
+    },
+    {
+      "id": "char_19:tempo",
+      "name": "Sạp Lộc Di Động",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 34,
+      "meanSeconds": 30.4
+    },
+    {
+      "id": "char_21:pressure",
+      "name": "Pháo Tản",
+      "matches": 16,
+      "wins": 5,
+      "draws": 0,
+      "winRate": 0.3125,
+      "procTargets": 223,
+      "meanSeconds": 28.3
+    },
+    {
+      "id": "char_21:resolve",
+      "name": "Khí Xuyên",
+      "matches": 16,
+      "wins": 7,
+      "draws": 1,
+      "winRate": 0.4375,
+      "procTargets": 210,
+      "meanSeconds": 28.2
+    },
+    {
+      "id": "char_21:tempo",
+      "name": "Vệ Tinh Khí Nén",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 44,
+      "meanSeconds": 28
+    },
+    {
+      "id": "char_23:pressure",
+      "name": "Xung Kiếm",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 130,
+      "meanSeconds": 28.7
+    },
+    {
+      "id": "char_23:resolve",
+      "name": "Kiếm Quét Hai Trục",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 167,
+      "meanSeconds": 27.6
+    },
+    {
+      "id": "char_23:tempo",
+      "name": "Vương Kiếm Tách Mảnh",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 43,
+      "meanSeconds": 27.2
+    },
+    {
+      "id": "char_24:pressure",
+      "name": "Bút Tam Tài",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 202,
+      "meanSeconds": 26.9
+    },
+    {
+      "id": "char_24:resolve",
+      "name": "Mực Đuổi Hình",
+      "matches": 16,
+      "wins": 5,
+      "draws": 0,
+      "winRate": 0.3125,
+      "procTargets": 195,
+      "meanSeconds": 27.4
+    },
+    {
+      "id": "char_24:tempo",
+      "name": "Bút Trận Tứ Phương",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 37,
+      "meanSeconds": 26.5
+    },
+    {
+      "id": "char_25:pressure",
+      "name": "Đồng Xu Xoay",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 74,
+      "meanSeconds": 29.5
+    },
+    {
+      "id": "char_25:resolve",
+      "name": "Búng Tiền",
+      "matches": 16,
+      "wins": 10,
+      "draws": 0,
+      "winRate": 0.625,
+      "procTargets": 235,
+      "meanSeconds": 29.5
+    },
+    {
+      "id": "char_25:tempo",
+      "name": "Quỹ Đầu Tư Tiền Tuyến",
+      "matches": 16,
+      "wins": 11,
+      "draws": 0,
+      "winRate": 0.6875,
+      "procTargets": 52,
+      "meanSeconds": 29.4
+    },
+    {
+      "id": "char_26:pressure",
+      "name": "Lưỡi Bass",
+      "matches": 16,
+      "wins": 11,
+      "draws": 0,
+      "winRate": 0.6875,
+      "procTargets": 198,
+      "meanSeconds": 25.3
+    },
+    {
+      "id": "char_26:resolve",
+      "name": "Vòng Xoáy Đổi Beat",
+      "matches": 16,
+      "wins": 12,
+      "draws": 0,
+      "winRate": 0.75,
+      "procTargets": 147,
+      "meanSeconds": 26.8
+    },
+    {
+      "id": "char_26:tempo",
+      "name": "Hai Mắt Bão",
+      "matches": 16,
+      "wins": 7,
+      "draws": 1,
+      "winRate": 0.4375,
+      "procTargets": 31,
+      "meanSeconds": 26.2
+    },
+    {
+      "id": "char_27:pressure",
+      "name": "Hỏa Tiễn Tay",
+      "matches": 16,
+      "wins": 11,
+      "draws": 0,
+      "winRate": 0.6875,
+      "procTargets": 160,
+      "meanSeconds": 26.2
+    },
+    {
+      "id": "char_27:resolve",
+      "name": "Dao Nhiệt Hồi Lưu",
+      "matches": 16,
+      "wins": 9,
+      "draws": 0,
+      "winRate": 0.5625,
+      "procTargets": 149,
+      "meanSeconds": 27.2
+    },
+    {
+      "id": "char_27:tempo",
+      "name": "Lò Nung Vệ Tinh",
+      "matches": 16,
+      "wins": 10,
+      "draws": 0,
+      "winRate": 0.625,
+      "procTargets": 37,
+      "meanSeconds": 27.9
+    },
+    {
+      "id": "char_28:pressure",
+      "name": "Nắm Đấm Phóng",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 115,
+      "meanSeconds": 26.9
+    },
+    {
+      "id": "char_28:resolve",
+      "name": "Đĩa Cưa Tái Chế",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 172,
+      "meanSeconds": 27.1
+    },
+    {
+      "id": "char_28:tempo",
+      "name": "Laser Tách Tia",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 38,
+      "meanSeconds": 26.9
+    },
+    {
+      "id": "char_29:pressure",
+      "name": "Điểm Ảnh Tách",
+      "matches": 16,
+      "wins": 7,
+      "draws": 0,
+      "winRate": 0.4375,
+      "procTargets": 246,
+      "meanSeconds": 26.6
+    },
+    {
+      "id": "char_29:resolve",
+      "name": "Đạn Gập Gương",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 207,
+      "meanSeconds": 27.6
+    },
+    {
+      "id": "char_29:tempo",
+      "name": "Ống Kính Quét",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 32,
+      "meanSeconds": 26.7
+    },
+    {
+      "id": "char_30:pressure",
+      "name": "Bóng Chùm",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 172,
+      "meanSeconds": 25.2
+    },
+    {
+      "id": "char_30:resolve",
+      "name": "Bóng Neo",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 171,
+      "meanSeconds": 24.6
+    },
+    {
+      "id": "char_30:tempo",
+      "name": "Đoàn Bóng Hộ Tống",
+      "matches": 16,
+      "wins": 2,
+      "draws": 0,
+      "winRate": 0.125,
+      "procTargets": 27,
+      "meanSeconds": 24.5
+    },
+    {
+      "id": "char_31:pressure",
+      "name": "Rocket Chia Đầu",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 166,
+      "meanSeconds": 24.7
+    },
+    {
+      "id": "char_31:resolve",
+      "name": "Tên Lửa Truy Đuổi",
+      "matches": 16,
+      "wins": 9,
+      "draws": 0,
+      "winRate": 0.5625,
+      "procTargets": 158,
+      "meanSeconds": 24.5
+    },
+    {
+      "id": "char_31:tempo",
+      "name": "Trận Địa Pháo",
+      "matches": 16,
+      "wins": 6,
+      "draws": 1,
+      "winRate": 0.375,
+      "procTargets": 28,
+      "meanSeconds": 26.3
+    },
+    {
+      "id": "char_32:pressure",
+      "name": "Dép Hồi Lưu",
+      "matches": 16,
+      "wins": 6,
+      "draws": 0,
+      "winRate": 0.375,
+      "procTargets": 172,
+      "meanSeconds": 27.4
+    },
+    {
+      "id": "char_32:resolve",
+      "name": "Đôi Dép So Le",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 180,
+      "meanSeconds": 26.1
+    },
+    {
+      "id": "char_32:tempo",
+      "name": "Tam Giác Dép",
+      "matches": 16,
+      "wins": 9,
+      "draws": 0,
+      "winRate": 0.5625,
+      "procTargets": 37,
+      "meanSeconds": 27.4
+    },
+    {
+      "id": "char_33:pressure",
+      "name": "Dĩa Bay Xuyên Tuyến",
+      "matches": 16,
+      "wins": 4,
+      "draws": 0,
+      "winRate": 0.25,
+      "procTargets": 166,
+      "meanSeconds": 27.6
+    },
+    {
+      "id": "char_33:resolve",
+      "name": "Đùi Gà Quét Vòng",
+      "matches": 16,
+      "wins": 8,
+      "draws": 0,
+      "winRate": 0.5,
+      "procTargets": 141,
+      "meanSeconds": 27.5
+    },
+    {
+      "id": "char_33:tempo",
+      "name": "Tiệc Nướng Trên Không",
+      "matches": 16,
+      "wins": 5,
+      "draws": 0,
+      "winRate": 0.3125,
+      "procTargets": 39,
+      "meanSeconds": 27.7
+    }
+  ]
+}

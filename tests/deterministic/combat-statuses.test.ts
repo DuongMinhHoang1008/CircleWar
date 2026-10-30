@@ -133,6 +133,8 @@ describe("shared combat statuses", () => {
     const { state, a, b } = fixture();
     applyStatus(state, a, b, "poison", 3, 120);
     applyStatus(state, b, a, "paralyzed", 25, 90);
+    applyStatus(state, a, b, "fracture", 10, 90);
+    applyStatus(state, a, a, "ward", 15, 120);
     advance(state, 17);
     rotateWeaponAngle(a);
     const restored = restoreBattleState(serializeBattleState(state));

@@ -121,7 +121,7 @@ describe("exclusive mastery runtime", () => {
     expect(team[0].level).toBe(10);
     expect(team[0].masteryId).toBe("tigerBurst");
   });
-  it("Bình Tâm shortens introversion and cleanses only one condition", () => {
+  it("Bình Tâm preserves duration and grants one second of immunity only to the cleansed condition", () => {
     const s = createBattle(
         adventureConfig(
           [{ ...loanUnit("char_01"), masteryId: "tigerCalm" }],
@@ -136,7 +136,15 @@ describe("exclusive mastery runtime", () => {
     applyStatus(s, f, f, "introvert", 1, 90);
     expect(statusPower(f, "frozen", 0)).toBe(0);
     expect(statusPower(f, "paralyzed", 0)).toBeGreaterThan(0);
-    expect(f.statuses.find((v) => v.kind === "introvert")!.until).toBe(42);
+    expect(f.statuses.find((v) => v.kind === "introvert")!.until).toBe(90);
+    expect(applyStatus(s, enemy, f, "frozen", 1, 90)).toBe(false);
+    s.tick = 29;
+    applyStatus(s, f, f, "introvert", 1, 60);
+    expect(f.memory["masteryImmune:frozen"]).toBe(30);
+    expect(statusPower(f, "paralyzed", s.tick)).toBeGreaterThan(0);
+    s.tick = 30;
+    expect(applyStatus(s, enemy, f, "frozen", 1, 90)).toBe(true);
+    expect(f.memory.masteryCalm).toBe(240);
   });
   for (const skill of MASTERIES)
     it(skill.name + " executes deterministically across checkpoint", () => {
@@ -203,7 +211,7 @@ function services() {
   return { ctx, shields };
 }
 describe("mastery gameplay effects", () => {
-  it("Gói Gia Cố replaces two small summons with one stronger body", () => {
+  it("Gói Gia Cố keeps two summons with 115% HP and original damage", () => {
     const normal = skillFixture("char_14"),
       tank = skillFixture("char_14", "giftTank");
     for (const s of [normal, tank])
@@ -217,10 +225,11 @@ describe("mastery gameplay effects", () => {
     const minions = tank.constructs.filter(
       (c) => c.hp > 0 && c.kind === "minion",
     );
-    expect(minions).toHaveLength(1);
-    expect(minions[0].maxHp).toBe(Math.trunc(normal.constructs[0].maxHp * 2.2));
+    expect(minions).toHaveLength(2);
+    expect(minions.filter(c=>c.variant==='bulwark')).toHaveLength(1);
+    expect(minions[0].maxHp).toBe(Math.trunc(normal.constructs[0].maxHp * 1.15));
     expect(minions[0].damage).toBe(
-      Math.trunc(normal.constructs[0].damage * 1.5),
+      Math.trunc(normal.constructs[0].damage),
     );
   });
   it("Quà Tiếp Tế shields the nearest living ally only when an enemy destroys a minion", () => {
@@ -233,11 +242,11 @@ describe("mastery gameplay effects", () => {
     ally.y = c.y;
     const before = ally.shield;
     hitConstruct(s, s.fighters[3], c, c.hp);
-    expect(ally.shield - before).toBe(40);
+    expect(ally.shield - before).toBe(30);
     hitConstruct(s, s.fighters[3], c, 999);
-    expect(ally.shield - before).toBe(40);
+    expect(ally.shield - before).toBe(30);
   });
-  it("Hộ Tống summons beside the selected ally with shorter life and lower damage", () => {
+  it("Hộ Tống summons beside the selected ally with original life/damage and 110% HP", () => {
     const normal = skillFixture("char_14"),
       escort = skillFixture("char_14", "giftEscort"),
       { ctx } = services();
@@ -246,18 +255,18 @@ describe("mastery gameplay effects", () => {
     kitSuper(normal, normal.fighters[0], ctx);
     kitSuper(escort, escort.fighters[0], ctx);
     const c = escort.constructs[0];
-    expect(c.until - escort.tick).toBe(240);
-    expect(c.damage).toBe(Math.trunc(normal.constructs[0].damage * 0.7));
+    expect(c.until - escort.tick).toBe(300);
+    expect(c.damage).toBe(Math.trunc(normal.constructs[0].damage));
     expect(Math.abs(c.x - escort.fighters[2].x)).toBeLessThanOrEqual(5000);
   });
-  it("Hậu Cần creates four fruits instead of eight", () => {
+  it("Hậu Cần keeps eight original fruit zones", () => {
     const normal = skillFixture("char_13"),
       supply = skillFixture("char_13", "fruitSupply"),
       { ctx } = services();
     kitSuper(normal, normal.fighters[0], ctx);
     kitSuper(supply, supply.fighters[0], ctx);
     expect(normal.zones.filter((z) => z.kit === "fruit")).toHaveLength(8);
-    expect(supply.zones.filter((z) => z.kit === "fruit")).toHaveLength(4);
+    expect(supply.zones.filter((z) => z.kit === "fruit")).toHaveLength(8);
   });
   it("Dồn Sức selects the weakest ally and Chỗ Dựa excludes the caster", () => {
     for (const [id, skill, percent] of [
@@ -268,19 +277,28 @@ describe("mastery gameplay effects", () => {
         { ctx, shields } = services();
       s.fighters[2].hp = 100;
       kitSuper(s, s.fighters[0], ctx);
-      expect(shields).toEqual([
-        { target: s.fighters[2].id, amount: percent * 10 },
-      ]);
+      expect(shields).toContainEqual({ target: s.fighters[2].id, amount: percent * 10 });
+      expect(shields).toHaveLength(skill==='flagFocus'?3:1);
     }
   });
-  it("Dẫn Nhịp gives actual Super energy while removing the standard rage and blessing", () => {
+  it("Chỗ Dựa falls back to the caster and caps its additional shield", () => {
+    const s = skillFixture("char_01", "tigerGuard"), { ctx, shields } = services();
+    const caster = s.fighters[0];
+    caster.baseStats.hp = 2000;
+    for (const f of s.fighters) if (f.team === caster.team && f !== caster) f.hp = 0;
+    kitSuper(s, caster, ctx);
+    expect(shields).toEqual([{ target: caster.id, amount: 60 }]);
+    kitSuper(s, caster, ctx);
+    expect(shields).toHaveLength(1);
+  });
+  it("Dẫn Nhịp gives actual Super energy while retaining standard rage and blessing", () => {
     const s = skillFixture("char_22", "auraEnergy"),
       { ctx } = services();
     kitSuper(s, s.fighters[0], ctx);
     for (const ally of s.fighters.slice(1, 3)) {
-      expect(ally.memory.gain).toBe(12);
-      expect(statusPower(ally, "rage", s.tick)).toBe(0);
-      expect(statusPower(ally, "blessing", s.tick)).toBe(0);
+      expect(ally.memory.gain).toBe(6);
+      expect(statusPower(ally, "rage", s.tick)).toBeGreaterThan(0);
+      expect(statusPower(ally, "blessing", s.tick)).toBeGreaterThan(0);
     }
   });
   it("Tâm Hào Quang uses the selected ally's location and Dư Âm expires after leaving", () => {

@@ -9,3 +9,5 @@ dist/
 reports/recovery-*/
 test-results/
 *.log
+
+.local-config/

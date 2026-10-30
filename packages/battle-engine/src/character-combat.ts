@@ -50,6 +50,8 @@ import {
   tickKitFields,
   tickConstructs,
   kitMeleeConstructs,
+  kitMasteryMelee,
+  kitMasteryCounter,
   type KitCombatServices,
 } from "./kit-combat";
 import {
@@ -61,6 +63,8 @@ import {
   healingRate,
 } from "./statuses";
 import { retainCombatEvents } from "./events";
+import { incomingStatusMultiplier } from "./statuses";
+import { formAttackCooldown } from "./mastery-forms";
 import { isRanged, weaponCount, weaponReach } from "./weapons";
 import {
   isClashProtected,
@@ -269,6 +273,7 @@ export function characterDamage(
   friendly = false,
   ignoreClash = false,
   allowDeadSource = false,
+  auxiliary = false,
 ) {
   if (
     (!allowDeadSource && f.hp <= 0) ||
@@ -289,8 +294,8 @@ export function characterDamage(
           (f.team === t.team
             ? 100
             : closingTempo(s.tick, s.config.shrinkSeconds).damage) *
-          (100 - Math.min(60, t.stats.defense)),
-        10000,
+          incomingStatusMultiplier(t, s.tick),
+        1000000,
       ),
     ),
   );
@@ -309,12 +314,15 @@ export function characterDamage(
   recordAbsorption(t, t, remain);
   amount = Math.min(t.hp, amount);
   t.hp -= amount;
-  if (t.masteryId === "tigerBurst" && statusPower(t, "introvert", s.tick) > 0) t.memory.masteryBurst = Math.min(div(t.baseStats.hp * 6, 100), (t.memory.masteryBurst || 0) + div(amount * 20, 100));
+  if (t.masteryId === "tigerBurst" && f.team !== t.team && statusPower(t, "introvert", s.tick) > 0) {
+    t.memory.masteryBurst = Math.min(div(t.baseStats.hp * 6, 100), (t.memory.masteryBurst || 0) + div(amount * 25, 100));
+    t.memory.masteryBurstUntil = Math.max(...t.statuses.filter(e=>e.kind==='introvert').map(e=>e.until)) + 180;
+  }
   t.taken += amount;
   if (f.team !== t.team) f.dealt += amount;
   if (amount + absorbed > 0) s.lastDamageTick = s.tick;
   recordDamage(f, t, amount);
-  if ((amount || absorbed) && f.team !== t.team) {
+  if (!auxiliary && (amount || absorbed) && f.team !== t.team) {
     energy(s, f, div((amount + absorbed + 3) * f.stats.charge, 160));
     energy(s, t, div((amount + absorbed + 4) * t.stats.charge, 240));
   }
@@ -324,11 +332,13 @@ export function characterDamage(
     t.deadAt = s.tick;
     if (f.team !== t.team) f.kills++;
     event(s, "kill", f, t);
-    if (f.team !== t.team && has(f, 13)) heal(s, f, f, itemValue(f, 13, 12));
+    if (!auxiliary && f.team !== t.team && has(f, 13)) heal(s, f, f, itemValue(f, 13, 12));
   } else {
     threshold(s, t);
+    if (!auxiliary && amount > 0 && f.team !== t.team)
+      kitMasteryCounter(s, t, f);
   }
-  if (normal && (f.hp > 0 || allowDeadSource)) normalEffects(s, f, t, amount);
+  if (!auxiliary && normal && (f.hp > 0 || allowDeadSource)) normalEffects(s, f, t, amount);
   return amount;
 }
 function nextBonus(s: BattleState, f: Fighter, value: number, source = -1) {
@@ -453,7 +463,8 @@ function normalHit(
     marks.forEach((b) => (b.until = s.tick));
   }
   hit = div(hit * (100 + auxiliary) * scale, 10000);
-  if (f.masteryId === "tigerBurst" && !statusPower(f, "introvert", s.tick) && f.memory.masteryBurst) { hit += f.memory.masteryBurst; f.memory.masteryBurst = 0; }
+  if ((f.memory.masteryBurstUntil || 0) <= s.tick) f.memory.masteryBurst = 0;
+  const burst = f.masteryId === "tigerBurst" && !statusPower(f, "introvert", s.tick) ? f.memory.masteryBurst || 0 : 0;
   if (random(s) % 100 < f.stats.crit) hit = div(hit * f.stats.critPower, 100);
   if (f.memory.armorIgnore) {
     hit += div(t.stats.defense * f.memory.armorIgnore, 100);
@@ -461,6 +472,10 @@ function normalHit(
   }
   const previousHits = f.hits;
   characterDamage(s, f, t, hit, true, knock, false, false, allowDeadSource);
+  if (f.hits > previousHits && burst) {
+    f.memory.masteryBurst = 0;
+    characterDamage(s, f, t, burst, false, 0, false, true, allowDeadSource, true);
+  }
   if (f.hits > previousHits && knock > 150 && t.hp > 0) kitImpulse(f, t, knock);
 }
 
@@ -1161,9 +1176,10 @@ export function characterCombat(s: BattleState) {
     )
       continue;
     rotateWeaponAngle(f);
+    if (kitMasteryMelee(s, f, kitServices)) continue;
     if (isRanged(f)) {
       if (f.nextAttack <= s.tick && kitShoot(s, f))
-        f.nextAttack = s.tick + attackCooldown(f, s.tick);
+        f.nextAttack = s.tick + formAttackCooldown(f, s.tick);
       continue;
     }
     const count = weaponCount(f);
@@ -1174,7 +1190,7 @@ export function characterCombat(s: BattleState) {
         ay = f.y + div(d[1] * f.radius, UNIT),
         x = f.x + div(d[0] * reach, UNIT),
         y = f.y + div(d[1] * reach, UNIT);
-      kitMeleeConstructs(s, f, ax, ay, x, y, attackCooldown(f, s.tick));
+      kitMeleeConstructs(s, f, ax, ay, x, y, formAttackCooldown(f, s.tick));
       for (const t of s.fighters) {
         const key = w + ":" + t.id;
         if (t.hp <= 0 || t.team === f.team || (f.cooldowns[key] || 0) > s.tick)
@@ -1183,7 +1199,7 @@ export function characterCombat(s: BattleState) {
           capsuleHit(ax, ay, x, y, t.x, t.y, t.radius + 500) &&
           !isClashProtected(t, s.tick)
         ) {
-          f.cooldowns[key] = s.tick + attackCooldown(f, s.tick);
+          f.cooldowns[key] = s.tick + formAttackCooldown(f, s.tick);
           reverseWeaponSpin(f, s.tick);
           normalHit(
             s,
@@ -1376,8 +1392,8 @@ export function characterCombat(s: BattleState) {
 }
 
 const kitServices: KitCombatServices = {
-  damage: (s, f, t, raw, friendly = false) =>
-    characterDamage(s, f, t, raw, false, 0, friendly, true, true),
+  damage: (s, f, t, raw, friendly = false, auxiliary = false) =>
+    characterDamage(s, f, t, raw, false, 0, friendly, true, true, auxiliary),
   normal: (s, f, t, scale, knock) => {
     const before = f.hits;
     normalHit(s, f, t, scale, knock, true);

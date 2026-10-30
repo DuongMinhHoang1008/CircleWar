@@ -131,7 +131,7 @@ export function recordActiveEffects(s: BattleState) {
     if (target.hp <= 0) continue;
     for (const status of target.statuses) {
       if (status.until <= s.tick) continue;
-      const beneficial = ["blessing", "rage", "introvert"].includes(
+      const beneficial = ["blessing", "rage", "introvert", "ward"].includes(
         status.kind,
       );
       const control = ["frozen", "paralyzed", "stunned"].includes(status.kind);

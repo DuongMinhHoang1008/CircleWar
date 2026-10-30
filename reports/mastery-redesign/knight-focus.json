@@ -1,0 +1,40 @@
+{
+  "engine": "chaos-integer-v35",
+  "battles": 192,
+  "method": "Lv10, no equipment, same three characters on both teams; each seed tested with the mastery on each side. This is a limited regression sample, not a global win-rate estimate.",
+  "aggregateWinRate": 0.4895833333333333,
+  "noActivations": [],
+  "extremes": [],
+  "rows": [
+    {
+      "id": "char_15:pressure",
+      "name": "Mẻ Khiên",
+      "matches": 64,
+      "wins": 31,
+      "draws": 1,
+      "winRate": 0.484375,
+      "procTargets": 186,
+      "meanSeconds": 29.6
+    },
+    {
+      "id": "char_15:resolve",
+      "name": "Giữ Lời Thề",
+      "matches": 64,
+      "wins": 25,
+      "draws": 0,
+      "winRate": 0.390625,
+      "procTargets": 63,
+      "meanSeconds": 30.6
+    },
+    {
+      "id": "char_15:tempo",
+      "name": "Lời Thề Hiệp Sĩ",
+      "matches": 64,
+      "wins": 38,
+      "draws": 0,
+      "winRate": 0.59375,
+      "procTargets": 70,
+      "meanSeconds": 30.4
+    }
+  ]
+}

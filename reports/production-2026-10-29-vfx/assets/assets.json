@@ -1,0 +1,50 @@
+{
+  "time": "2026-10-29T07:42:23.985Z",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "release": "2026.10.29.3",
+  "checked": [
+    {
+      "path": "index.html",
+      "bytes": 698,
+      "sha256": "327acbde4589e6d705a601085870f143126f9a133caeafd6b2862f4034b2aff2",
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "path": "release.json",
+      "bytes": 27,
+      "sha256": "4fdb985270ea84d690b04e809a1a149105ff75c925f7d5b54f2ca4d27dbba19f",
+      "contentType": "application/json"
+    },
+    {
+      "path": "assets/index-C676Xuhc.js",
+      "bytes": 1187538,
+      "sha256": "68c1c7a4dbb5f5985787ef26343c62a183e3da1774cbe3dffd5a5ecca0c99f49",
+      "contentType": "application/javascript"
+    },
+    {
+      "path": "effects/mastery/cast-1.webp",
+      "bytes": 598258,
+      "sha256": "126ab6a5d7a7197430e78174c852db2a191f829184e6142646208e21f39a37a1",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "effects/mastery/cast-2.webp",
+      "bytes": 655866,
+      "sha256": "35cf399826a903ce01da8340198e8da07eec44d3a90ba11cae828c30961075cd",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "effects/mastery/cast-3.webp",
+      "bytes": 632412,
+      "sha256": "56191a84fca23e251955ef10c9c1878901e40c346e5aa0a596b9895368ff64fd",
+      "contentType": "image/webp"
+    },
+    {
+      "path": "effects/mastery/projectiles.webp",
+      "bytes": 106418,
+      "sha256": "fb061c2c25c1a85761b09786c0a2511db6a159a79cbedfb0eff8abd18575128c",
+      "contentType": "image/webp"
+    }
+  ],
+  "status": "PASS"
+}

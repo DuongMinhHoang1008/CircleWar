@@ -1,0 +1,2517 @@
+{
+  "status": "proposal-only-awaiting-user-review",
+  "date": "2026-10-30",
+  "sourceEngine": "chaos-integer-v36",
+  "entries": [
+    {
+      "number": 1,
+      "id": "tigerBurst",
+      "characterId": "char_01",
+      "characterName": "Hổ Hướng Nội",
+      "name": "Nén Bão",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Tích 20% sát thương HP thực nhận trong lúc Hướng Nội, tối đa 6% HP gốc. Khi trạng thái kết thúc, đòn thường kế tiếp dùng toàn bộ phần tích làm sát thương bổ sung.",
+      "currentTradeoff": "Hồi HP từ Hướng Nội giảm từ 0,8% xuống 0,4% mỗi giây. Không tích sát thương vào khiên.",
+      "baselineScores": [
+        0.4375,
+        0.5
+      ],
+      "meanBaselineScore": 0.46875,
+      "proposed": "Giữ hồi Hướng Nội 0,8% HP/giây. Tích 25% HP thực mất do địch trong Hướng Nội, trần 6% HP gốc; cộng vào đòn thường trúng đầu tiên sau khi hết trạng thái. Không tiêu phần tích khi đánh trượt.",
+      "benefitAndLimits": "Thêm phản công mà không mất hồi. Phần tích không cộng dồn qua nhiều chu kỳ; phần chưa dùng hết hạn sau 6 giây.",
+      "verification": "Đo sát thương trả đòn và HP hồi; khi không bị đánh, hồi phải bằng bộ gốc."
+    },
+    {
+      "number": 2,
+      "id": "tigerCalm",
+      "characterId": "char_01",
+      "characterName": "Hổ Hướng Nội",
+      "name": "Bình Tâm",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Khi vào Hướng Nội, tự xóa Frozen hoặc Paralyzed đang có. Hồi riêng 10 giây; không xóa choáng hay sát thương theo thời gian.",
+      "currentTradeoff": "Mỗi lần Hướng Nội chỉ kéo dài 1,4 giây, thay vì 2 giây.",
+      "baselineScores": [
+        0.375,
+        0.5
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ Hướng Nội đủ 2 giây. Khi vào trạng thái, giải một Frozen hoặc Paralyzed và miễn tái áp đúng loại vừa giải trong 1 giây; hồi riêng 8 giây.",
+      "benefitAndLimits": "Giữ trọn phòng thủ nền, thêm khả năng tiếp cận. Không giải Choáng, Burn hoặc DoT; không kéo dài miễn bằng làm mới Hướng Nội.",
+      "verification": "Đối chiếu thời gian bị chậm/tê, thời gian tiếp cận và sống sót; kiểm tra đối thủ không có khống chế."
+    },
+    {
+      "number": 3,
+      "id": "tigerGuard",
+      "characterId": "char_01",
+      "characterName": "Hổ Hướng Nội",
+      "name": "Chỗ Dựa",
+      "goal": 15,
+      "legacy": true,
+      "targeted": false,
+      "currentDescription": "Mỗi lần dùng Super, đồng đội khác có tỷ lệ HP thấp nhất nhận khiên bằng 6% HP gốc của Hổ trong 3 giây. Hồi 6 giây; khiên cùng nguồn chỉ làm mới.",
+      "currentTradeoff": "Sát thương Super của Hổ giảm 25%. Hướng Nội vẫn chỉ thuộc về Hổ, không truyền trạng thái cho người khác.",
+      "baselineScores": [
+        0.5,
+        0.5
+      ],
+      "meanBaselineScore": 0.5,
+      "proposed": "Giữ toàn bộ Super 180% và Hướng Nội. Sau Super, cấp khiên 6% HP gốc Hổ trong 3 giây cho một đồng đội khác yếu nhất; hồi 6 giây. Khi không có đồng đội sống, Hổ nhận khiên này.",
+      "benefitAndLimits": "Bỏ giảm 25% sát thương Super. Khiên một nguồn chỉ làm mới, không cộng tầng; giữ loại Truyền thừa.",
+      "verification": "Đo khiên thực hấp thụ, Super gây sát thương và khả năng cứu đồng đội; kiểm tra 1v1."
+    },
+    {
+      "number": 4,
+      "id": "char_02:pressure",
+      "characterId": "char_02",
+      "characterName": "Bé Ôm Bão",
+      "name": "Vòng Ôm Xoắn",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay đòn chạm vũ khí bằng một vòng quét quanh người trong bán kính 82, tối đa ba địch, mỗi địch nhận 85% ATK một lần mỗi nhịp.",
+      "currentTradeoff": "Nhịp đánh dài hơn 50%; chỉ địch sát người mới trúng.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "whirl",
+        "power": 85,
+        "cooldown": 150,
+        "reach": 82
+      },
+      "baselineScores": [
+        0.6875,
+        0.5625
+      ],
+      "meanBaselineScore": 0.625,
+      "proposed": "Giữ đòn thường. Mỗi đòn trúng thứ tư thêm vòng ôm bán kính 82: 40% ATK lên mục tiêu chính và tối đa hai địch khác.",
+      "benefitAndLimits": "Thêm sát thương sát người; vòng phụ không xét Tiểu Đường hoặc đếm chuỗi, không làm chậm nhịp nền.",
+      "verification": "So sát thương 1v1/ba địch gần; một chu kỳ chỉ tạo một vòng và giữ tần suất Tiểu Đường gốc."
+    },
+    {
+      "number": 5,
+      "id": "char_02:resolve",
+      "characterId": "char_02",
+      "characterName": "Bé Ôm Bão",
+      "name": "Kéo Về Đây",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay đòn thường bằng tay ôm phóng thẳng tầm 160, gây 75% ATK và kéo người trúng về phía Bé với lực có trần.",
+      "currentTradeoff": "Nhịp đánh dài hơn 45%; đường móc hẹp, có thể trượt và bị đệ chặn.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "harpoon",
+        "power": 75,
+        "cooldown": 145,
+        "reach": 160
+      },
+      "baselineScores": [
+        0.1875,
+        0.53125
+      ],
+      "meanBaselineScore": 0.359375,
+      "proposed": "Giữ đòn thường. Mỗi 4 giây, khi có địch hợp lệ trong tầm 160 theo hướng đánh, phóng tay ôm 50% ATK, kéo lực 300 về phía Bé; không tiêu hồi nếu chưa phóng được.",
+      "benefitAndLimits": "Móc phụ giúp bắt mục tiêu, không thay đòn chạm. Chặn bởi đệ/khiên; không xuyên tường, không proc đòn thường.",
+      "verification": "Đo thời gian áp sát và sát thương; kiểm tra kéo sát tường và mục tiêu bị vật thể chắn."
+    },
+    {
+      "number": 6,
+      "id": "char_02:tempo",
+      "characterId": "char_02",
+      "characterName": "Bé Ôm Bão",
+      "name": "Bão Gấu Bông",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay Super xoay nhanh bằng ba quả cầu xoay quanh Bé một giây, rồi rời quỹ đạo đuổi địch. Mỗi quả gây 65% ATK.",
+      "currentTradeoff": "Mất phần tăng xoay và bảo đảm Tiểu Đường của Super gốc.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "orbit",
+        "power": 65,
+        "count": 3
+      },
+      "baselineScores": [
+        0.6875,
+        0.6875
+      ],
+      "meanBaselineScore": 0.6875,
+      "proposed": "Giữ buff xoay và bảo đảm Tiểu Đường của Super gốc. Thêm ba gấu bông xoay 1 giây rồi đuổi địch, mỗi quả 15% ATK, chỉ chạm một địch một lần.",
+      "benefitAndLimits": "Thêm tối đa 45% ATK nếu cả ba trúng một người; gấu không gây Tiểu Đường hoặc nạp Super.",
+      "verification": "Đo tổng sát thương trong 3 giây Super, số gấu thực trúng và tần suất Tiểu Đường."
+    },
+    {
+      "number": 7,
+      "id": "char_03:pressure",
+      "characterId": "char_03",
+      "characterName": "Anh Tím Mọng",
+      "name": "Chùm Nho Tách Hạt",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Quả thường gây 55% ATK; lần va chạm đầu hoặc hết tầm tách ba hạt bay theo ba hướng, mỗi hạt bằng 30% sát thương quả mẹ.",
+      "currentTradeoff": "Không còn nảy; nhịp ném dài hơn 20%. Hạt con không kích hoạt đòn thường hay tách tiếp.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "split",
+        "power": 55,
+        "cooldown": 120
+      },
+      "baselineScores": [
+        0.125,
+        0.25
+      ],
+      "meanBaselineScore": 0.1875,
+      "proposed": "Giữ quả 90% ATK, nhịp và số nảy theo tăng trưởng. Mỗi quả thứ tư tách ba hạt 15% ATK khi lần đầu trúng địch; quả mẹ tiếp tục hành vi gốc.",
+      "benefitAndLimits": "Hạt là sát thương thêm, không tách tiếp; không trúng lại người vừa kích tách. Nếu quả mẹ hết tầm chưa trúng, không sinh hạt.",
+      "verification": "Đo sát thương quả/hạt riêng ở 0/30/60 giây; xác nhận quả mẹ vẫn nảy và tăng trưởng vẫn hữu ích."
+    },
+    {
+      "number": 8,
+      "id": "char_03:resolve",
+      "characterId": "char_03",
+      "characterName": "Anh Tím Mọng",
+      "name": "Quả Cầu Hồi Lưu",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Quả thường bay ra rồi quay về chủ sau 0,6 giây. Mỗi mục tiêu chỉ trúng một lần mỗi lượt đi/về, 90% ATK mỗi lần, tối đa hai người mỗi chiều.",
+      "currentTradeoff": "Không nảy; nhịp ném dài hơn 15%, tối đa một quả hồi lưu đang bay.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "return",
+        "power": 90,
+        "cooldown": 115
+      },
+      "baselineScores": [
+        0.5,
+        0.3125
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Giữ quả và nảy gốc. Mỗi lần bắn thứ năm thêm một quả hồi lưu: đi 45% ATK, về 30%, quay sau 0,6 giây, tối đa hai địch mỗi chiều.",
+      "benefitAndLimits": "Đòn phụ không khóa ném quả thường; tối đa một quả phụ đang bay, không tích lượt chờ để bắn dồn.",
+      "verification": "Đo sát thương và khoảng ngừng bắn; thử đứng sát tường, mất chủ và mục tiêu đổi hướng."
+    },
+    {
+      "number": 9,
+      "id": "char_03:tempo",
+      "characterId": "char_03",
+      "characterName": "Anh Tím Mọng",
+      "name": "Mưa Hạt Chín",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay rổ quả bằng năm hạt mìn rải quanh mục tiêu. Lên ngòi sau 0,6 giây, chạm địch hoặc hết 3 giây thì nổ trong bán kính 55, 50% ATK mỗi hạt.",
+      "currentTradeoff": "Không còn cú rổ 160%; hạt đứng yên, có thể tránh vùng rải.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "mines",
+        "power": 50,
+        "count": 5
+      },
+      "baselineScores": [
+        0.5625,
+        0.46875
+      ],
+      "meanBaselineScore": 0.515625,
+      "proposed": "Giữ rổ quả Super gốc. Tại điểm nổ đặt thêm năm hạt mìn 10% ATK, lên ngòi sau 0,6 giây, bán kính 55, tồn tại 3 giây.",
+      "benefitAndLimits": "Mỗi địch nhận tối đa 30% ATK từ cả nhóm hạt; hạt không nảy, không proc hoặc gây hại đồng đội.",
+      "verification": "Đo sát thương rổ gốc riêng và hạt riêng; kiểm tra năm mìn trùng vị trí vẫn giữ trần."
+    },
+    {
+      "number": 10,
+      "id": "char_04:pressure",
+      "characterId": "char_04",
+      "characterName": "Đùi Gió Lốc",
+      "name": "Lưỡi Gió",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay đòn cận chiến bằng lưỡi gió bay lượn sang hai bên theo đường tiến, gây 85% ATK và xuyên tối đa hai mục tiêu.",
+      "currentTradeoff": "Nhịp đánh dài hơn 35%; không còn cú đẩy mạnh của đòn thường gốc.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "wave",
+        "power": 85,
+        "cooldown": 135,
+        "reach": 200
+      },
+      "baselineScores": [
+        0.5625,
+        0.4375
+      ],
+      "meanBaselineScore": 0.5,
+      "proposed": "Giữ đòn chạm và lực đẩy gốc. Mỗi đòn trúng thứ tư phóng một lưỡi gió 45% ATK, tầm 200, xuyên tối đa hai địch.",
+      "benefitAndLimits": "Có sát thương nối tiếp sau cú đẩy; sóng không proc hoặc thêm lực đẩy, nhịp nền giữ nguyên.",
+      "verification": "Đo sát thương sau đẩy, hit sóng ở nhiều khoảng cách và lực đẩy nền."
+    },
+    {
+      "number": 11,
+      "id": "char_04:resolve",
+      "characterId": "char_04",
+      "characterName": "Đùi Gió Lốc",
+      "name": "Bước Đệm Gió",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Mỗi nhịp lao ngắn theo hướng vũ khí và phóng một mặt gió rộng phía trước, gây 110% ATK khi chạm.",
+      "currentTradeoff": "Nhịp đánh dài hơn 60%; lao theo hướng xoay, không tự né đòn hay xuyên tường.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "charge",
+        "power": 110,
+        "cooldown": 160,
+        "reach": 140
+      },
+      "baselineScores": [
+        0.375,
+        0.6875
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ đòn gốc. Mỗi 4 giây phóng mặt gió 45% ATK tầm 140 vào địch hợp lệ, kèm lao ngắn 0,25 giây; chỉ lao khi địch ở ngoài tầm chạm.",
+      "benefitAndLimits": "Thêm tiếp cận, không tự lao xuyên đối thủ hoặc bỏ chạy khỏi mục tiêu đang chạm. Không có miễn sát thương.",
+      "verification": "Đo thời gian ngoài tầm đánh; thử địch ở sát thân, tường và góc sân để tránh lao bất lợi."
+    },
+    {
+      "number": 12,
+      "id": "char_04:tempo",
+      "characterId": "char_04",
+      "characterName": "Đùi Gió Lốc",
+      "name": "Lốc Cuốn Theo Người",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super tạo một lốc bán kính 120 đi theo chủ trong 3 giây, kéo địch về tâm và gây 22% ATK mỗi giây.",
+      "currentTradeoff": "Thay toàn bộ phần tăng xoay/lực đẩy của Super gốc.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "vortex",
+        "power": 22,
+        "count": 1
+      },
+      "baselineScores": [
+        0.375,
+        0.375
+      ],
+      "meanBaselineScore": 0.375,
+      "proposed": "Giữ tăng xoay/lực đẩy của Super. Thêm lốc đi theo chủ bán kính 100 trong 3 giây, gây 10% ATK/giây và hút lực bằng 25% lốc thường của Phonk.",
+      "benefitAndLimits": "Lốc hỗ trợ giữ địch, tối đa ba lần sát thương/người; lực hút chịu trần impulse hiện hành, không cộng thành khóa vị trí.",
+      "verification": "Đo thời gian địch trong tầm và sát thương Super; kiểm tra hút/đẩy không tạo dao động vô hạn."
+    },
+    {
+      "number": 13,
+      "id": "char_05:pressure",
+      "characterId": "char_05",
+      "characterName": "Kính Cận Bắt Bài",
+      "name": "Đạn Khoan",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đạn thường thành mũi khoan lớn, xuyên tối đa ba mục tiêu theo một đường thẳng, 100% ATK mỗi người.",
+      "currentTradeoff": "Nhịp bắn dài hơn 50%; không tự bẻ hướng hoặc nảy tường.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "pierce",
+        "power": 100,
+        "cooldown": 150
+      },
+      "baselineScores": [
+        0.28125,
+        0.1875
+      ],
+      "meanBaselineScore": 0.234375,
+      "proposed": "Đạn chính giữ 100% ATK và nhịp gốc; nâng thành đạn khoan xuyên hai mục tiêu phụ, mỗi người phụ chịu 25% ATK.",
+      "benefitAndLimits": "Địch đầu tiên giữ proc Cận Thị; địch phụ không proc. Tổng ba người, cùng người chỉ trúng một lần/viên.",
+      "verification": "Đo sát thương đơn mục tiêu không giảm và sát thương tuyến sau; kiểm tra đệ chắn."
+    },
+    {
+      "number": 14,
+      "id": "char_05:resolve",
+      "characterId": "char_05",
+      "characterName": "Kính Cận Bắt Bài",
+      "name": "Trạm Săn Đuổi",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super gọi drone có HP đi theo chủ trong 6 giây. Drone tự bắn một viên vào địch gần trong tầm 220 mỗi giây.",
+      "currentTradeoff": "Thay trụ cố định 8 giây; drone chỉ có 25% HP gốc chủ và mỗi phát bằng 40% ATK gốc.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 40,
+        "count": 1,
+        "variant": "drone"
+      },
+      "baselineScores": [
+        0.53125,
+        0.59375
+      ],
+      "meanBaselineScore": 0.5625,
+      "proposed": "Thay trụ đứng bằng một drone bám chủ, tồn tại 8 giây, HP bằng trụ gốc, mỗi giây bắn 55% ATK gốc chủ trong 220.",
+      "benefitAndLimits": "Cùng một ô triệu hồi Super, không gọi kèm trụ cũ. Tăng nhẹ hỏa lực và duy trì tầm; drone vẫn bị phá.",
+      "verification": "So số phát trúng, thời gian hoạt động, sát thương và hấp thụ đạn với trụ gốc trước đội cơ động/đứng gần."
+    },
+    {
+      "number": 15,
+      "id": "char_05:tempo",
+      "characterId": "char_05",
+      "characterName": "Kính Cận Bắt Bài",
+      "name": "Pháo Ba Nòng",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super đặt pháo có HP, tồn tại 6 giây; mỗi 1,5 giây bắn ba viên tỏa quạt vào hướng địch, mỗi viên 25% ATK gốc.",
+      "currentTradeoff": "Thay trụ bắn đơn; yếu khi mục tiêu chỉ trúng một nhánh quạt.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 25,
+        "count": 1,
+        "variant": "fanTurret"
+      },
+      "baselineScores": [
+        0.5,
+        0.3125
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Một trụ ba nòng trong 8 giây, HP bằng trụ gốc, bắn mỗi giây: viên giữa 50% ATK gốc, hai viên bên 10% mỗi viên.",
+      "benefitAndLimits": "Một người nhận tối đa 60% ATK mỗi loạt; cùng ô trụ Super. Giữ tầm 220, không proc hoặc nạp Super từ trụ.",
+      "verification": "Đo hỏa lực khi chỉ viên giữa trúng và khi trúng cả loạt; không thấp hơn trụ gốc ở mục tiêu đứng giữa."
+    },
+    {
+      "number": 16,
+      "id": "char_06:pressure",
+      "characterId": "char_06",
+      "characterName": "Đội Trưởng Sắc Màu",
+      "name": "Lăng Kính Tách Tia",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Mỗi lần bắn tạo ba dải màu theo ba hướng; mỗi dải gây 40% ATK. Dải màu vẫn có thể tiếp sức đồng đội trên đường bay.",
+      "currentTradeoff": "Nhịp bắn dài hơn 45%; sát thương mỗi dải thấp hơn và không nhân chồng buff cùng loại.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "fan",
+        "power": 40,
+        "cooldown": 145,
+        "count": 3
+      },
+      "baselineScores": [
+        0.3125,
+        0.1875
+      ],
+      "meanBaselineScore": 0.25,
+      "proposed": "Giữ dải màu chính, nhịp, xuyên và tương tác đồng đội gốc. Mỗi dải thứ tư thêm hai dải bên 20% ATK mỗi dải.",
+      "benefitAndLimits": "Dải phụ có thể tiếp sức nhưng cùng một người chỉ nhận buff một lần mỗi loạt; chỉ dải chính proc Frozen.",
+      "verification": "Đo sát thương và thời gian buff cả đội; thử đồng đội chắn trước địch, không nhân buff ba lần."
+    },
+    {
+      "number": 17,
+      "id": "char_06:resolve",
+      "characterId": "char_06",
+      "characterName": "Đội Trưởng Sắc Màu",
+      "name": "Cầu Vồng Quay Lại",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Dải màu bay ra rồi trở về chủ, có thể chạm lại một người ở lượt về; mỗi lượt gây 60% ATK, giữ tương tác tiếp sức của dải màu.",
+      "currentTradeoff": "Nhịp bắn dài hơn 50%; chỉ giữ một dải hồi lưu đang bay.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "return",
+        "power": 60,
+        "cooldown": 150
+      },
+      "baselineScores": [
+        0.5,
+        0.375
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ dải thường. Mỗi dải thứ năm thêm dải hồi lưu 35% ATK mỗi chiều, xuyên tối đa hai người/chiều và vẫn tiếp sức đồng đội.",
+      "benefitAndLimits": "Không chặn dải gốc; mỗi người nhận tiếp sức từ dải phụ tối đa một lần mỗi 2 giây; tối đa một dải phụ.",
+      "verification": "Đo số đồng đội được buff và sát thương, kiểm tra quay về không tạo buff vô hạn."
+    },
+    {
+      "number": 18,
+      "id": "char_06:tempo",
+      "characterId": "char_06",
+      "characterName": "Đội Trưởng Sắc Màu",
+      "name": "Giao Điểm Sắc Màu",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay tia cầu vồng đơn bằng hai tia hẹp vuông góc tại người dùng, mỗi tia dài 260 và gây 90% ATK. Đồng đội trên tia vẫn được tiếp sức.",
+      "currentTradeoff": "Không còn tia rộng 320; cần đứng đúng giao điểm để phủ nhiều mục tiêu.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "crossBeams",
+        "power": 90,
+        "count": 2
+      },
+      "baselineScores": [
+        0.4375,
+        0.34375
+      ],
+      "meanBaselineScore": 0.390625,
+      "proposed": "Giữ tia chính 180% ATK, chiều dài 320 và bề rộng gốc. Thêm một tia vuông góc dài 260, 35% ATK và tiếp sức như gốc.",
+      "benefitAndLimits": "Người ở giao điểm nhận tối đa 215% ATK và một bộ buff/Super. Không có hai Super độc lập.",
+      "verification": "Đo sát thương ở trục chính, trục phụ, giao điểm; kiểm tra buff đồng đội không nhân đôi."
+    },
+    {
+      "number": 19,
+      "id": "char_07:pressure",
+      "characterId": "char_07",
+      "characterName": "Courage Nhút Nhát",
+      "name": "Gào Bật Âm",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đòn thường thành một vành âm thanh bay ra rồi trở về. Mỗi lượt đi/về có thể trúng mỗi địch một lần, 65% ATK.",
+      "currentTradeoff": "Chỉ một vành đang bay; không còn đánh chạm vũ khí trong lúc chờ vành về.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 65,
+        "cooldown": 150,
+        "reach": 170
+      },
+      "baselineScores": [
+        0.3125,
+        0.5
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Giữ đòn thường và cơ chế né. Mỗi đòn trúng thứ tư thêm vành âm hồi lưu, 35% ATK mỗi chiều, tầm 170.",
+      "benefitAndLimits": "Không dừng đánh chạm trong lúc chờ; vành phụ không né thêm, không proc; tối đa một vành.",
+      "verification": "Đo sát thương và tỷ lệ né nền; thử vừa chạy tránh đòn vừa bắt vành."
+    },
+    {
+      "number": 20,
+      "id": "char_07:resolve",
+      "characterId": "char_07",
+      "characterName": "Courage Nhút Nhát",
+      "name": "Bẫy Can Đảm",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Khi mất HP do địch đánh trực tiếp, để lại một bẫy âm trước người. Sau 0,6 giây bẫy lên ngòi, nổ bán kính 55 với 65% ATK. Hồi 6 giây.",
+      "currentTradeoff": "Nhịp đánh thường dài hơn 25%. Bẫy đứng yên, chỉ tồn tại 3 giây và không cho né thêm.",
+      "currentForm": {
+        "kind": "counter",
+        "pattern": "mine",
+        "power": 65,
+        "cooldown": 180
+      },
+      "baselineScores": [
+        0.4375,
+        0.5
+      ],
+      "meanBaselineScore": 0.46875,
+      "proposed": "Giữ nhịp đánh gốc. Khi mất HP từ đòn trực tiếp của địch, đặt bẫy 65% ATK; lên ngòi 0,4 giây, tồn tại 3 giây, bán kính 55; hồi 6 giây.",
+      "benefitAndLimits": "Bỏ phạt nhịp 25%. Không kích từ mất khiên, DoT, tự hại hoặc đòn đã né; tối đa một bẫy/chủ.",
+      "verification": "Đo sát thương phản công, số lần bẫy trúng; kiểm tra né không kích bẫy và không hình thành chuỗi phản."
+    },
+    {
+      "number": 21,
+      "id": "char_07:tempo",
+      "characterId": "char_07",
+      "characterName": "Courage Nhút Nhát",
+      "name": "Tiếng Hú Dội Tường",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay tiếng hét khống chế bằng tám vành âm bắn ra tám hướng, mỗi vành nảy tường hai lần và gây 30% ATK.",
+      "currentTradeoff": "Không còn Choáng/Paralyzed diện rộng từ Super gốc.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "ricochet",
+        "power": 30,
+        "count": 8
+      },
+      "baselineScores": [
+        0.5625,
+        0.6875
+      ],
+      "meanBaselineScore": 0.625,
+      "proposed": "Giữ tiếng hét Choáng/Paralyzed gốc. Thêm tám vành âm 8% ATK, nảy tối đa một lần.",
+      "benefitAndLimits": "Một địch nhận tối đa 24% ATK từ các vành của một Super; vành không gây thêm khống chế.",
+      "verification": "Đo thời gian khống chế gốc và sát thương cộng thêm; kiểm tra trần khi ép góc."
+    },
+    {
+      "number": 22,
+      "id": "char_08:pressure",
+      "characterId": "char_08",
+      "characterName": "Sói Suy Tư",
+      "name": "Song Nha",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đòn thường quét thành hai đường nanh vuông góc. Mỗi địch chỉ nhận một lần 75% ATK trong cùng nhịp, tối đa ba người.",
+      "currentTradeoff": "Nhịp đánh dài hơn 55%; không tăng sát thương khi hai đường cùng chạm một người.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "cross",
+        "power": 75,
+        "cooldown": 155,
+        "reach": 90
+      },
+      "baselineScores": [
+        0.625,
+        0.5625
+      ],
+      "meanBaselineScore": 0.59375,
+      "proposed": "Giữ đòn thường và Bleeding. Mỗi đòn trúng thứ tư thêm hai đường nanh chữ thập tầm 90, 40% ATK, tối đa ba địch.",
+      "benefitAndLimits": "Mỗi người chỉ trúng một lần nhịp chữ thập; nhát phụ không proc Bleeding; bỏ thay toàn bộ nhịp đánh.",
+      "verification": "Đo sát thương đơn/đa mục tiêu và tỷ lệ Bleeding; kiểm tra hai trục cùng chạm một địch."
+    },
+    {
+      "number": 23,
+      "id": "char_08:resolve",
+      "characterId": "char_08",
+      "characterName": "Sói Suy Tư",
+      "name": "Liềm Trăng",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Ném liềm trăng xuyên hai địch rồi quay về chủ; mỗi người có thể trúng một lần mỗi chiều, 65% ATK.",
+      "currentTradeoff": "Không đánh chạm trong lúc liềm đang bay; không tự hồi HP khi bắt liềm.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 65,
+        "cooldown": 155,
+        "reach": 190
+      },
+      "baselineScores": [
+        0.5625,
+        0.5625
+      ],
+      "meanBaselineScore": 0.5625,
+      "proposed": "Giữ đòn chạm. Mỗi đòn trúng thứ năm ném liềm tầm 190, 45% ATK lúc đi và 30% lúc về, xuyên hai địch/chiều.",
+      "benefitAndLimits": "Liềm không ngừng đánh chạm và không proc Bleeding thêm; chỉ một liềm, không tích lượt bắn dồn.",
+      "verification": "Đo sát thương truy đuổi và lượt về, so tần suất Bleeding với bộ gốc."
+    },
+    {
+      "number": 24,
+      "id": "char_08:tempo",
+      "characterId": "char_08",
+      "characterName": "Sói Suy Tư",
+      "name": "Bầy Sói Ảo",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay Trăng máu bằng hai sói nhỏ có HP đuổi địch bằng chuyển động vật lý, tồn tại 5 giây; mỗi cú cắn bằng 30% ATK gốc chủ.",
+      "currentTradeoff": "Không nhận phần tăng sát thương/tốc độ của Trăng máu. Mỗi sói chỉ có 18% HP gốc chủ.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 30,
+        "count": 2,
+        "variant": "hunter"
+      },
+      "baselineScores": [
+        0.5625,
+        0.5625
+      ],
+      "meanBaselineScore": 0.5625,
+      "proposed": "Giữ Trăng máu cả buff lẫn rủi ro nhận thêm sát thương. Thêm hai sói săn trong 5 giây, mỗi sói 12% HP gốc chủ, cắn 10% ATK gốc mỗi 0,8 giây.",
+      "benefitAndLimits": "Tổng sát thương sói lên một địch tối đa 60% ATK gốc/mỗi Super; không proc Bleeding, không giữ round.",
+      "verification": "Đo lợi ích sói riêng và HP chủ; kiểm tra rủi ro Super vẫn đúng, sói không tính người sống."
+    },
+    {
+      "number": 25,
+      "id": "char_09:pressure",
+      "characterId": "char_09",
+      "characterName": "Sếp Chốt Đơn",
+      "name": "Deadline Gập",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Deadline gập thành đường đạn đi rồi quay về, gây 65% ATK mỗi lượt; mỗi mục tiêu chỉ trúng một lần mỗi chiều.",
+      "currentTradeoff": "Nhịp bắn dài hơn 50%; chỉ một deadline hồi lưu đang bay.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "return",
+        "power": 65,
+        "cooldown": 150
+      },
+      "baselineScores": [
+        0.3125,
+        0.34375
+      ],
+      "meanBaselineScore": 0.328125,
+      "proposed": "Giữ deadline và proc gốc. Mỗi phát thứ năm thêm deadline hồi lưu 40% ATK mỗi chiều; quay sau 0,6 giây, hai địch/chiều.",
+      "benefitAndLimits": "Không làm chậm bắn thường, không thêm Paralyzed từ đạn phụ, tối đa một deadline phụ.",
+      "verification": "Đo sát thương, tần suất tê và số phát nền khi deadline chưa về."
+    },
+    {
+      "number": 26,
+      "id": "char_09:resolve",
+      "characterId": "char_09",
+      "characterName": "Sếp Chốt Đơn",
+      "name": "Ghim Việc",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Phóng một ghim bay 80 đơn vị rồi neo lại. Sau 0,6 giây lên ngòi, chạm địch hoặc hết 3 giây thì nổ bán kính 55 với 95% ATK.",
+      "currentTradeoff": "Nhịp đặt dài hơn 30%; phải dụ địch đi vào ghim, không tự gây Paralyzed của đòn thường.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "mine",
+        "power": 95,
+        "cooldown": 130
+      },
+      "baselineScores": [
+        0.3125,
+        0.21875
+      ],
+      "meanBaselineScore": 0.265625,
+      "proposed": "Giữ deadline thường. Mỗi phát thứ tư đặt thêm ghim tại điểm trúng hoặc hết tầm: 40% ATK, lên ngòi 0,4 giây, bán kính 55, tồn tại 3 giây.",
+      "benefitAndLimits": "Tối đa ba ghim/chủ, không sát thương đồng đội, không proc Paralyzed. Không thay đạn chính bằng mìn.",
+      "verification": "Đo sát thương và số lần ghim trúng; kiểm tra proc gốc không mất và đếm tối đa ba ghim."
+    },
+    {
+      "number": 27,
+      "id": "char_09:tempo",
+      "characterId": "char_09",
+      "characterName": "Sếp Chốt Đơn",
+      "name": "Dây Chuyền Công Việc",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Bắn một deadline chuyền mục tiêu: sau mỗi cú trúng, đường đạn đuổi người chưa trúng gần đó trong 140, tối đa bốn địch, 75% ATK mỗi người.",
+      "currentTradeoff": "Thay năm vùng deadline; đường chuyền có thể bị chặn và không tạo vùng áp lực.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "chain",
+        "power": 75,
+        "count": 4
+      },
+      "baselineScores": [
+        0.5,
+        0.625
+      ],
+      "meanBaselineScore": 0.5625,
+      "proposed": "Giữ năm vùng deadline và hiệu ứng gốc. Khi Super kích hoạt, thêm một deadline chuyền tối đa ba địch, 15% ATK mỗi người, khoảng chuyền 140.",
+      "benefitAndLimits": "Không chuyền về người đã trúng, không khống chế thêm. Sát thương đồng đội của vùng gốc giảm 25% so với bộ gốc, không thêm friendly fire từ đạn chuyền.",
+      "verification": "Đo sát thương địch, friendly fire và thời gian áp lực; đường chuyền phải bay thật."
+    },
+    {
+      "number": 28,
+      "id": "char_10:pressure",
+      "characterId": "char_10",
+      "characterName": "Lốp Lăn Ăn Vặt",
+      "name": "Vành Cưa",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đòn thường quét tròn quanh Lốp, tối đa ba địch trong bán kính 78, mỗi người 70% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 65%; không đánh từ xa.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "whirl",
+        "power": 70,
+        "cooldown": 165,
+        "reach": 78
+      },
+      "baselineScores": [
+        0.75,
+        0.3125
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ vũ khí và proc khiên gốc. Mỗi đòn trúng thứ tư quét vòng bán kính 78, 40% ATK lên tối đa ba địch.",
+      "benefitAndLimits": "Vòng phụ không tạo khiên thêm; không kéo dài nhịp đánh hoặc tạo thêm lượt khi chỉ đi sát địch.",
+      "verification": "Đo sát thương và khiên thực hấp thụ; kiểm tra đúng số lượt tạo khiên gốc."
+    },
+    {
+      "number": 29,
+      "id": "char_10:resolve",
+      "characterId": "char_10",
+      "characterName": "Lốp Lăn Ăn Vặt",
+      "name": "Lốp Hồi Lưu",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Phóng một vành lốp lớn đi rồi trở về, mỗi chiều gây 60% ATK và có thể xuyên hai địch.",
+      "currentTradeoff": "Tạm ngừng đòn chạm trong khi vành lốp chưa về.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 60,
+        "cooldown": 155,
+        "reach": 175
+      },
+      "baselineScores": [
+        0.4375,
+        0.1875
+      ],
+      "meanBaselineScore": 0.3125,
+      "proposed": "Giữ đòn chạm. Mỗi đòn trúng thứ năm thêm vành hồi lưu 40% ATK mỗi chiều, tầm 175, xuyên hai địch/chiều.",
+      "benefitAndLimits": "Không ngừng đòn chạm hoặc mất proc khiên; một vành phụ, không hồi HP khi bắt.",
+      "verification": "Đo sát thương, khiên và thời gian ngoài tầm; không dùng đòn phụ để kích khiên."
+    },
+    {
+      "number": 30,
+      "id": "char_10:tempo",
+      "characterId": "char_10",
+      "characterName": "Lốp Lăn Ăn Vặt",
+      "name": "Hai Làn Lăn",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay cú tự lăn bằng hai lốp nhỏ có HP lao theo hai làn, nảy khi va chạm, húc địch bằng 55% ATK gốc và đẩy người trúng. Tồn tại 4 giây.",
+      "currentTradeoff": "Chủ không còn được lao nhanh. Mỗi lốp có 18% HP gốc chủ và có thể bị phá.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 55,
+        "count": 2,
+        "variant": "ram"
+      },
+      "baselineScores": [
+        0.5,
+        0.5625
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ cú lăn 2,5 giây và lực đẩy gốc. Thêm hai lốp nhỏ chạy 4 giây, mỗi lốp 12% HP gốc, húc 15% ATK gốc mỗi 0,8 giây, lực đẩy 150.",
+      "benefitAndLimits": "Một địch chịu tối đa 60% ATK gốc từ hai lốp/Super; giữ trần impulse, không bất tử cho chủ.",
+      "verification": "Đo quãng tiếp cận và sát thương; thử nhiều va chạm ở góc, giới hạn đệ và lượt húc."
+    },
+    {
+      "number": 31,
+      "id": "flagShield",
+      "characterId": "char_11",
+      "characterName": "Cờ Con Cổ Vũ",
+      "name": "Trạm Tiếp Sức",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đồng đội khác lần đầu vào vùng cờ nhận khiên bằng 4% HP gốc của Cờ trong 3 giây. Mỗi mục tiêu có hồi chung 8 giây giữa mọi cờ.",
+      "currentTradeoff": "Cờ không còn hồi HP định kỳ cho đồng đội. Các lá chắn cùng nguồn không cộng dồn.",
+      "baselineScores": [
+        0.5,
+        0.5
+      ],
+      "meanBaselineScore": 0.5,
+      "proposed": "Giữ hồi HP, Rage và bán kính cờ gốc. Đồng đội khác lần đầu vào cờ nhận khiên 3% HP gốc Cờ trong 3 giây, hồi 8 giây/người giữa mọi cờ.",
+      "benefitAndLimits": "Thêm chống dồn sát thương; bỏ mất hồi nền. Khiên cùng nguồn không cộng tầng.",
+      "verification": "Đo hồi thực và khiên thực hấp thụ; xác nhận chuyển qua nhiều cờ không bỏ qua hồi riêng."
+    },
+    {
+      "number": 32,
+      "id": "flagParalyze",
+      "characterId": "char_11",
+      "characterName": "Cờ Con Cổ Vũ",
+      "name": "Hiệu Lệnh",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Kẻ địch vào vùng cờ nhận Paralyzed 15% trong 1 giây, giảm nhịp đánh và xoay. Mỗi mục tiêu có hồi 5 giây.",
+      "currentTradeoff": "Cờ bỏ Frozen và bán kính vùng cờ giảm 15%.",
+      "baselineScores": [
+        0.6875,
+        0.4375
+      ],
+      "meanBaselineScore": 0.5625,
+      "proposed": "Giữ Frozen, hồi và bán kính cờ gốc. Địch vào vùng nhận thêm Paralyzed 15% trong 1 giây, hồi 5 giây/người.",
+      "benefitAndLimits": "Thêm cản nhịp đánh, không mất cản di chuyển; thời gian tê không kéo dài bởi nhiều cờ.",
+      "verification": "Đo thời gian Frozen và Paralyzed riêng; kiểm tra đối thủ ra/vào vùng liên tục."
+    },
+    {
+      "number": 33,
+      "id": "flagFocus",
+      "characterId": "char_11",
+      "characterName": "Cờ Con Cổ Vũ",
+      "name": "Dồn Sức",
+      "goal": 15,
+      "legacy": true,
+      "targeted": false,
+      "currentDescription": "Khiên từ Super tập trung vào một đồng đội khác có tỷ lệ HP thấp nhất, bằng 10% HP gốc của Cờ, thay vì chia khiên 5% cho từng người.",
+      "currentTradeoff": "Các đồng đội còn lại và bản thân Cờ không nhận khiên từ Super.",
+      "baselineScores": [
+        0.5625,
+        0.375
+      ],
+      "meanBaselineScore": 0.46875,
+      "proposed": "Giữ khiên Super 5% HP gốc Cờ cho mọi đồng đội như gốc; tăng riêng đồng đội khác yếu nhất lên 10%, không cộng thành 15%. Không có đồng đội khác thì bản thân tăng lên 10%.",
+      "benefitAndLimits": "Thêm bảo vệ đúng người, không bỏ khiên các thành viên còn lại; giữ Truyền thừa và hiệu ứng địch gốc.",
+      "verification": "Đo khiên hấp thụ từng người, thử đội 1/2/3 quân và mục tiêu chết ngay trước Super."
+    },
+    {
+      "number": 34,
+      "id": "char_12:pressure",
+      "characterId": "char_12",
+      "characterName": "Kiếm Khách Mượn Vai",
+      "name": "Trảm Chữ Thập",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Hai đường kiếm vuông góc thay đòn chạm, mỗi người nhận tối đa một lần 95% ATK mỗi nhịp.",
+      "currentTradeoff": "Nhịp đánh dài hơn 25%; giới hạn ba địch mỗi nhịp.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "cross",
+        "power": 95,
+        "cooldown": 125,
+        "reach": 105
+      },
+      "baselineScores": [
+        0.5625,
+        0.75
+      ],
+      "meanBaselineScore": 0.65625,
+      "proposed": "Giữ xoay/vũ khí gốc. Mỗi đòn trúng thứ tư thêm chữ thập tầm 105, 40% ATK lên tối đa ba địch.",
+      "benefitAndLimits": "Bỏ thay toàn bộ đòn chạm. Một người chỉ nhận một nhát phụ, chỉ đòn gốc proc/đếm chuỗi.",
+      "verification": "Đo sát thương theo tốc độ xoay và trận nhiều địch; phát hiện double-hit hai trục."
+    },
+    {
+      "number": 35,
+      "id": "char_12:resolve",
+      "characterId": "char_12",
+      "characterName": "Kiếm Khách Mượn Vai",
+      "name": "Kiếm Vọng",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Chém một đường 84% ATK, để lại vệt báo trước tại đúng vị trí chém. Sau 0,4 giây, vệt chém lặp gây thêm 42% ATK cho người còn đứng trên đó.",
+      "currentTradeoff": "Nhịp đánh dài hơn 30%; nhát lặp đứng yên, có thể tránh và không kích hoạt proc đòn thường.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "echo",
+        "power": 84,
+        "cooldown": 130,
+        "reach": 95
+      },
+      "baselineScores": [
+        0.4375,
+        0.65625
+      ],
+      "meanBaselineScore": 0.546875,
+      "proposed": "Giữ nhát chém gốc. Mỗi đòn trúng thứ ba để vệt chém báo trước; sau 0,3 giây chém lại 45% ATK, dài 95, theo vị trí/hướng ban đầu.",
+      "benefitAndLimits": "Không giảm sát thương hoặc kéo dài nhịp nhát đầu. Nhát lặp né được, tối đa ba địch, không proc.",
+      "verification": "Đo tỷ lệ nhát lặp trúng và sát thương sau mỗi ba đòn; xác nhận vệt không bám mục tiêu."
+    },
+    {
+      "number": 36,
+      "id": "char_12:tempo",
+      "characterId": "char_12",
+      "characterName": "Kiếm Khách Mượn Vai",
+      "name": "Mưa Phi Kiếm",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay lao kiếm bằng mười hai phi kiếm tỏa quanh người, mỗi kiếm nảy tường hai lần, 45% ATK.",
+      "currentTradeoff": "Không còn cú lao và tăng xoay của Super gốc.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "ricochet",
+        "power": 45,
+        "count": 12
+      },
+      "baselineScores": [
+        0.8125,
+        0.6875
+      ],
+      "meanBaselineScore": 0.75,
+      "proposed": "Giữ cú lao và tăng xoay Super gốc. Cuối cú lao phóng tám phi kiếm 10% ATK, mỗi kiếm nảy một lần.",
+      "benefitAndLimits": "Một địch nhận tối đa 30% ATK từ nhóm kiếm; điều chỉnh lại nhánh hiện có điểm mẫu cao để tránh ghép nguyên 12 kiếm 45% với buff gốc.",
+      "verification": "Đo sát thương cả cửa sổ Super, trần khi sát tường và khả năng áp sát gốc."
+    },
+    {
+      "number": 37,
+      "id": "fruitOverflow",
+      "characterId": "char_13",
+      "characterName": "Mâm Quả Chủ Tịch",
+      "name": "Suất Dành Riêng",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "15% lượng hồi dư từ quả thường thành khiên cho đúng đồng đội đó; tối đa 4% HP gốc của Mâm Quả, tồn tại 3 giây. Hồi 8 giây mỗi mục tiêu.",
+      "currentTradeoff": "Lượng hồi HP trực tiếp từ quả thường giảm 20%. Không chuyển khiên thành khiên thêm.",
+      "baselineScores": [
+        0.4375,
+        0.5
+      ],
+      "meanBaselineScore": 0.46875,
+      "proposed": "Giữ 100% hồi quả thường. Chuyển 30% hồi dư sau giảm hồi thành khiên, trần 4% HP gốc Mâm Quả, 3 giây, hồi 6 giây/người.",
+      "benefitAndLimits": "Bỏ giảm hồi trực tiếp 20%; chỉ chuyển hồi dư thực, không chuyển khiên hoặc hồi bị giảm thành khiên.",
+      "verification": "Đo hồi thực và khiên hấp thụ ở đội đầy máu/bị thương/giảm hồi; không ghi hồi dư là hồi hữu dụng."
+    },
+    {
+      "number": 38,
+      "id": "fruitCleanse",
+      "characterId": "char_13",
+      "characterName": "Mâm Quả Chủ Tịch",
+      "name": "Khay Thanh Mát",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Quả thường trúng đồng đội sẽ xóa một Frozen hoặc Paralyzed trước khi hồi HP. Mỗi mục tiêu có hồi 10 giây.",
+      "currentTradeoff": "Quả chỉ xuyên tối đa hai mục tiêu, thay vì ba. Không giải choáng hoặc DoT.",
+      "baselineScores": [
+        0.4375,
+        0.5
+      ],
+      "meanBaselineScore": 0.46875,
+      "proposed": "Giữ xuyên ba người và hồi/buff gốc. Quả giải một Frozen hoặc Paralyzed trước hồi, hồi 8 giây/người; nếu vừa giải thành công, người đó miễn tái áp đúng loại trong 0,75 giây.",
+      "benefitAndLimits": "Không phạt khi đối thủ không có khống chế; không giải Choáng/DoT và không nhân giải theo nhiều quả cùng tick.",
+      "verification": "Đo thời gian giải khống chế, xuyên đủ ba người và đóng góp trong kèo không có trạng thái cần giải."
+    },
+    {
+      "number": 39,
+      "id": "fruitSupply",
+      "characterId": "char_13",
+      "characterName": "Mâm Quả Chủ Tịch",
+      "name": "Hậu Cần",
+      "goal": 15,
+      "legacy": true,
+      "targeted": false,
+      "currentDescription": "Super tạo bốn quả tiếp tế lớn. Phần hồi HP của chúng tăng 25% so với quả Super thường; chỉ số khác vẫn theo kỹ năng gốc.",
+      "currentTradeoff": "Số quả Super giảm từ tám xuống bốn và sát thương lên địch của các quả đó giảm 50%.",
+      "baselineScores": [
+        0.375,
+        0.59375
+      ],
+      "meanBaselineScore": 0.484375,
+      "proposed": "Giữ tám vùng quả, sát thương/buff gốc. Tăng hồi mỗi nhịp lên 125% gốc; khi tạo, tối đa hai vùng được dời tới hai đồng đội bị thương gần nhất trong 240, phần còn lại rải như cũ.",
+      "benefitAndLimits": "Giữ Truyền thừa. Vùng trùng không nhân nhịp hồi; nếu không có đồng đội bị thương, rải đủ tám vùng gốc.",
+      "verification": "Đo hồi thực và tỷ lệ đồng đội được tiếp tế, xác nhận đủ tám vùng và không nhân hồi khi trùng."
+    },
+    {
+      "number": 40,
+      "id": "giftTank",
+      "characterId": "char_14",
+      "characterName": "Hộp Quà Nghiêm Túc",
+      "name": "Gói Gia Cố",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đệ nhỏ thành một hộ vệ có 220% HP, 150% Damage và thân lớn hơn thường. Hộ vệ chủ động đứng giữa chủ và địch gần nhất, chặn đạn bằng thân và vẫn va chạm/nảy theo vật lý.",
+      "currentTradeoff": "Giới hạn đệ nhỏ giảm từ hai xuống một: ít hướng chặn và tổng nhịp gây sát thương thấp hơn.",
+      "baselineScores": [
+        0.6875,
+        0.5625
+      ],
+      "meanBaselineScore": 0.625,
+      "proposed": "Giữ tối đa hai đệ nhỏ. Đệ có 115% HP và 100% Damage so với đệ gốc; một đệ ưu tiên chắn trước chủ, đệ còn lại giữ hành vi tấn công gốc.",
+      "benefitAndLimits": "Bỏ việc mất một đệ. Không dùng lại hệ số 220% HP/150% Damage cho cả hai; một hộ vệ, một đệ thường.",
+      "verification": "Đo sát thương đệ, HP đệ thực hấp thụ và sát thương chủ nhận; kiểm tra hai vai trò khi một đệ chết."
+    },
+    {
+      "number": 41,
+      "id": "giftShield",
+      "characterId": "char_14",
+      "characterName": "Hộp Quà Nghiêm Túc",
+      "name": "Quà Tiếp Tế",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đệ nhỏ thành đệ tiếp tế, tìm đồng đội khác bị thương và hồi 1% HP gốc chủ mỗi 2 giây khi đến trong 45, tối đa 20 HP/lần. Khi bị đối thủ phá, vẫn cấp khiên 4% HP gốc chủ cho một đồng đội gần trong 120, hồi chung 6 giây.",
+      "currentTradeoff": "Đệ nhỏ giảm 20% HP và không đánh địch trực tiếp. Khiên khi bị phá không kích khi hết lifetime hoặc chủ đã bị hạ.",
+      "baselineScores": [
+        0.1875,
+        0.375
+      ],
+      "meanBaselineScore": 0.28125,
+      "proposed": "Giữ hai đệ và 100% HP/Damage gốc. Một đệ nhận thêm vai trò tiếp tế: trong 60 đơn vị hồi đồng đội khác yếu nhất 1,5% HP gốc chủ mỗi 2 giây, trần 20 HP/lần; tấn công khi có địch chạm.",
+      "benefitAndLimits": "Chỉ một đệ chữa trị/chủ. Khi đệ này bị địch phá, khiên 3% HP gốc chủ cho một đồng đội trong 120, hồi chung 8 giây; không kích khi hết hạn.",
+      "verification": "Đo sát thương đệ không sụt mạnh vì đi cứu người, hồi thực và khiên khi bị phá; thử không có đồng đội."
+    },
+    {
+      "number": 42,
+      "id": "giftEscort",
+      "characterId": "char_14",
+      "characterName": "Hộp Quà Nghiêm Túc",
+      "name": "Hộ Tống",
+      "goal": 15,
+      "legacy": true,
+      "targeted": true,
+      "currentDescription": "Chọn một đồng đội trước trận. Đệ khổng lồ từ Super xuất hiện gần và đi theo bảo vệ người đó, chặn đạn bằng thân và tấn công địch chạm gần. Vẫn va chạm/nảy theo vật lý; đổi người được bảo vệ nếu mục tiêu đã bị hạ.",
+      "currentTradeoff": "Đệ khổng lồ giảm 30% Damage và chỉ tồn tại 8 giây thay vì 10; không rời người được bảo vệ để đuổi địch xa.",
+      "baselineScores": [
+        0.25,
+        0.625
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ Damage và thời gian 10 giây của đệ khổng lồ. Cho chọn đồng đội để hộ tống, tăng HP đệ lên 110% gốc; nếu không có mục tiêu hợp lệ thì bảo vệ chủ.",
+      "benefitAndLimits": "Đệ chặn bằng thân và đánh khi địch ở gần, không tự đổi thành bất tử/chuyển sát thương. Không phạt Damage hoặc lifetime; giữ Truyền thừa.",
+      "verification": "Đo HP người được bảo vệ và sát thương đệ; kiểm tra mục tiêu chết, chủ chết và thời hạn còn lại."
+    },
+    {
+      "number": 43,
+      "id": "char_15:pressure",
+      "characterId": "char_15",
+      "characterName": "Hiệp Sĩ Gâu Gâu",
+      "name": "Khiên Hồi Lưu",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Ném khiên thành đĩa bay xuyên hai địch rồi quay về; mỗi lượt gây 90% ATK. Chỉ có một khiên đang bay.",
+      "currentTradeoff": "Trong lúc khiên bay, không đánh cận chiến và không dùng khiên chặn đạn.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 90,
+        "cooldown": 100,
+        "reach": 180
+      },
+      "baselineScores": [
+        0.3125,
+        0.5
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Giữ kiếm, cú chạm khiên và hitbox chặn đạn gốc. Mỗi 4 giây, khi có địch trong 180, phóng một bản sao khiên: 40% ATK mỗi chiều, hai địch/chiều.",
+      "benefitAndLimits": "Không tháo khiên thật, không dừng cận chiến; một bản sao đang bay, không proc hoặc chặn đạn bằng bản sao.",
+      "verification": "Đo tỷ lệ chặn đạn, sát thương và tính độc lập của khiên thật khi bản sao đang bay."
+    },
+    {
+      "number": 44,
+      "id": "char_15:resolve",
+      "characterId": "char_15",
+      "characterName": "Hiệp Sĩ Gâu Gâu",
+      "name": "Phản Kích Khiên",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Sau khi mất HP do địch đánh trực tiếp, phóng ba mảnh khiên theo hướng người vừa đánh, mỗi mảnh 40% ATK. Hồi 6 giây.",
+      "currentTradeoff": "Nhịp đánh thường dài hơn 25%. Không cấp khiên/giảm sát thương thêm, không phản công khi chỉ mất khiên.",
+      "currentForm": {
+        "kind": "counter",
+        "pattern": "fan",
+        "power": 40,
+        "cooldown": 180
+      },
+      "baselineScores": [
+        0.5625,
+        0.6875
+      ],
+      "meanBaselineScore": 0.625,
+      "proposed": "Giữ nhịp đánh gốc. Sau HP thực mất từ địch, bắn ba mảnh theo hướng nguồn đánh, mỗi mảnh 25% ATK, hồi 6 giây.",
+      "benefitAndLimits": "Một địch nhận tối đa 50% ATK mỗi lần phản. Không phản từ mất khiên, DoT, tự hại; không proc chuỗi.",
+      "verification": "Đo sát thương phản, kiểm tra giới hạn shotgun và nhịp kiếm/khiên nền."
+    },
+    {
+      "number": 45,
+      "id": "char_15:tempo",
+      "characterId": "char_15",
+      "characterName": "Hiệp Sĩ Gâu Gâu",
+      "name": "Chiến Hữu Xương",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super gọi một hộ vệ có HP đi theo đồng đội yếu nhất, chặn đường đạn bằng thân và đánh địch gần. Tồn tại 6 giây.",
+      "currentTradeoff": "Thay tám mảnh xương; hộ vệ có 40% HP gốc và 50% ATK gốc chủ, có thể bị phá.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 50,
+        "count": 1,
+        "variant": "bodyguard"
+      },
+      "baselineScores": [
+        0.3125,
+        0.4375
+      ],
+      "meanBaselineScore": 0.375,
+      "proposed": "Giữ tám mảnh xương Super gốc. Thêm một hộ vệ 20% HP gốc chủ trong 4 giây, theo đồng đội yếu nhất hoặc chủ, chỉ chắn bằng thân.",
+      "benefitAndLimits": "Hộ vệ không đánh, không cấp khiên hay nạp Super; tối đa một hộ vệ cộng thêm/chủ.",
+      "verification": "Đo sát thương Super không mất và HP hộ vệ thực chặn; kiểm tra đường đạn có thực sự va vào thân."
+    },
+    {
+      "number": 46,
+      "id": "char_16:pressure",
+      "characterId": "char_16",
+      "characterName": "Họa Sĩ Chạy Deadline",
+      "name": "Mực Loang",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Viên mực 60% ATK vỡ thành ba nét mực nhỏ theo ba hướng khi va chạm đầu hoặc hết tầm; mỗi nét con bằng 30% đạn mẹ.",
+      "currentTradeoff": "Nhịp bắn dài hơn 25%; nét con không gây proc đòn thường hoặc tách tiếp.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "split",
+        "power": 60,
+        "cooldown": 125
+      },
+      "baselineScores": [
+        0.1875,
+        0.1875
+      ],
+      "meanBaselineScore": 0.1875,
+      "proposed": "Giữ viên mực và nhịp gốc. Mỗi viên thứ tư tách ba nét con 15% ATK tại lần trúng đầu hoặc hết tầm, không thay sát thương viên mẹ.",
+      "benefitAndLimits": "Không trúng lại người vừa làm tách; nét con không Frozen/proc/tách tiếp; chỉ tách một lần.",
+      "verification": "Đo viên mẹ/nét con riêng và tần suất Frozen; kiểm tra hết tầm và bị đệ chặn."
+    },
+    {
+      "number": 47,
+      "id": "char_16:resolve",
+      "characterId": "char_16",
+      "characterName": "Họa Sĩ Chạy Deadline",
+      "name": "Bút Lượn Sóng",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Nét mực lượn ngang theo đường tiến, xuyên hai mục tiêu với 80% ATK mỗi người.",
+      "currentTradeoff": "Nhịp bắn dài hơn 20%; có thể lượn lệch khỏi mục tiêu đứng yên ở đường giữa.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "wave",
+        "power": 80,
+        "cooldown": 120
+      },
+      "baselineScores": [
+        0.25,
+        0.4375
+      ],
+      "meanBaselineScore": 0.34375,
+      "proposed": "Giữ đạn mực gốc. Mỗi viên thứ tư thêm nét sóng 45% ATK, xuyên hai địch, biên độ lượn tối đa 10 đơn vị.",
+      "benefitAndLimits": "Không làm lệch viên chính hoặc chậm bắn; sóng không Frozen/proc; tránh mất sát thương ở đường giữa.",
+      "verification": "Đo tỷ lệ trúng đường giữa và hai bên, sát thương đơn/đa mục tiêu."
+    },
+    {
+      "number": 48,
+      "id": "char_16:tempo",
+      "characterId": "char_16",
+      "characterName": "Họa Sĩ Chạy Deadline",
+      "name": "Ba Ô Tranh",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super tạo ba ô mực bán kính 70 nối thành một dải quanh mục tiêu, báo trước lệch nhịp rồi tồn tại 3 giây, gây 23% ATK mỗi giây.",
+      "currentTradeoff": "Thay một vũng lớn 150; giữa các ô có khoảng tránh và vùng chồng không nhân nhịp sát thương.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "paint",
+        "power": 23,
+        "count": 3
+      },
+      "baselineScores": [
+        0.25,
+        0.3125
+      ],
+      "meanBaselineScore": 0.28125,
+      "proposed": "Giữ vũng mực gốc bán kính 150, 4 giây. Thêm hai ô mực bán kính 45 ở hai bên, tồn tại 3 giây, gây 10% ATK/giây và Frozen như vùng gốc.",
+      "benefitAndLimits": "Vùng phụ có báo trước 0,5 giây, dùng chung nhịp gây sát thương với vùng gốc; chỗ trùng lấy mạnh nhất.",
+      "verification": "Đo vùng phủ và thời gian gây sát thương thực; không tăng damage một người bằng chồng ba vùng."
+    },
+    {
+      "number": 49,
+      "id": "char_17:pressure",
+      "characterId": "char_17",
+      "characterName": "Anh Tết Ship Nhanh",
+      "name": "Đơn Hàng Xuyên Tuyến",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đòn thường thành cú đâm thẳng dài 125, có thể xuyên ba địch, 110% ATK mỗi người.",
+      "currentTradeoff": "Nhịp đánh dài hơn 50%; đường đâm hẹp, dễ hụt người ở bên hông.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "thrust",
+        "power": 110,
+        "cooldown": 150,
+        "reach": 125
+      },
+      "baselineScores": [
+        0.375,
+        0.4375
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Giữ cận chiến nhanh và nhịp gốc. Mỗi đòn trúng thứ tư phóng kiện hàng đâm thẳng tầm 125, 45% ATK, xuyên tối đa hai địch.",
+      "benefitAndLimits": "Đòn phụ không tự đánh thêm vào đồng đội hoặc kích trang bị; không cắt mất đòn chạm.",
+      "verification": "Đo DPS và số đòn theo tốc độ, thử đối thủ né ngang hoặc đứng sau đệ."
+    },
+    {
+      "number": 50,
+      "id": "char_17:resolve",
+      "characterId": "char_17",
+      "characterName": "Anh Tết Ship Nhanh",
+      "name": "Giao Hàng Hai Chiều",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Ném kiện hàng cứng theo hướng vũ khí rồi kéo về, gây 60% ATK mỗi lượt đi/về, xuyên tối đa hai người.",
+      "currentTradeoff": "Chỉ một kiện đang bay; không đánh chạm trong khi kiện chưa về.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 60,
+        "cooldown": 150,
+        "reach": 195
+      },
+      "baselineScores": [
+        0.25,
+        0.3125
+      ],
+      "meanBaselineScore": 0.28125,
+      "proposed": "Giữ đòn chạm. Mỗi đòn trúng thứ năm ném kiện hồi lưu tầm 195, 45% ATK lúc đi và 30% lúc về.",
+      "benefitAndLimits": "Một kiện phụ, không khóa cận chiến; bắt kiện không hồi HP hoặc reset nhịp.",
+      "verification": "Đo sát thương cả hai chiều và thời gian đánh liên tục khi di chuyển nhanh."
+    },
+    {
+      "number": 51,
+      "id": "char_17:tempo",
+      "characterId": "char_17",
+      "characterName": "Anh Tết Ship Nhanh",
+      "name": "Trạm Giao Nhanh",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay cú giao hàng né đòn bằng hai đệ tiếp tế có HP tìm đồng đội bị thương. Khi tới gần, mỗi đệ hồi 1% HP gốc chủ mỗi 2 giây, tối đa 20 HP/lần. Tồn tại 6 giây.",
+      "currentTradeoff": "Mất phần lao và né đòn của Super. Đệ chỉ có 18% HP gốc chủ, không tấn công địch.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 0,
+        "count": 2,
+        "variant": "medic"
+      },
+      "baselineScores": [
+        0.125,
+        0.40625
+      ],
+      "meanBaselineScore": 0.265625,
+      "proposed": "Giữ tăng tốc và né đòn trực tiếp 1,4 giây của Super. Thêm một đệ tiếp tế 18% HP gốc chủ trong 5 giây, hồi đồng đội khác 1,5% HP gốc chủ mỗi 1,5 giây trong tầm 60, trần 20 HP/lần.",
+      "benefitAndLimits": "Tối đa một đệ, không đánh địch; DoT trên chủ vẫn chạy, không truyền né cho người được hồi.",
+      "verification": "Đo né, sát thương/di chuyển chủ và hồi đệ; kiểm tra đệ đến được đồng đội trước hết hạn."
+    },
+    {
+      "number": 52,
+      "id": "char_18:pressure",
+      "characterId": "char_18",
+      "characterName": "Ông Hoàng Nồi Lẩu",
+      "name": "Muôi Vung Rộng",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Vung muôi thành quạt rộng phía trước, đánh tối đa ba địch, mỗi người 85% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 40%; không đánh được người ở sau lưng.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "sweep",
+        "power": 85,
+        "cooldown": 140,
+        "reach": 90
+      },
+      "baselineScores": [
+        0.5625,
+        0.59375
+      ],
+      "meanBaselineScore": 0.578125,
+      "proposed": "Giữ đòn muôi và Burn gốc. Mỗi đòn trúng thứ tư thêm quạt 45% ATK, tầm 90, tối đa ba địch phía trước.",
+      "benefitAndLimits": "Đòn phụ không Burn thêm hoặc kích chuỗi; nhịp gốc giữ nguyên.",
+      "verification": "Đo sát thương đơn/nhóm và Burn; kiểm tra địch sau lưng không trúng quạt."
+    },
+    {
+      "number": 53,
+      "id": "char_18:resolve",
+      "characterId": "char_18",
+      "characterName": "Ông Hoàng Nồi Lẩu",
+      "name": "Nắp Nồi Bay",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Phóng nắp nồi đi rồi trở về, mỗi chiều 65% ATK; cú trúng chính vẫn xét Burn của bộ kỹ năng.",
+      "currentTradeoff": "Chỉ một nắp đang bay và không đánh chạm trong lúc chờ nắp về.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 65,
+        "cooldown": 155,
+        "reach": 175
+      },
+      "baselineScores": [
+        0.5,
+        0.5625
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ đòn muôi. Mỗi đòn trúng thứ năm ném nắp nồi 40% ATK mỗi chiều, tầm 175, xuyên hai địch/chiều.",
+      "benefitAndLimits": "Không mất Burn hoặc cận chiến trong khi nắp bay; nắp phụ không xét Burn.",
+      "verification": "Đo sát thương, tần suất Burn và số đòn chạm khi nắp đang bay."
+    },
+    {
+      "number": 54,
+      "id": "char_18:tempo",
+      "characterId": "char_18",
+      "characterName": "Ông Hoàng Nồi Lẩu",
+      "name": "Bếp Lẩu Dã Chiến",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super đặt bếp có HP đứng yên 6 giây, mỗi 1,5 giây bắn một viên lẩu nổ bán kính 55, 40% ATK gốc.",
+      "currentTradeoff": "Không còn vùng lẩu đi theo chủ và phần tự hồi của Super gốc. Bếp có 40% HP gốc chủ.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 40,
+        "count": 1,
+        "variant": "brazier"
+      },
+      "baselineScores": [
+        0.3125,
+        0.4375
+      ],
+      "meanBaselineScore": 0.375,
+      "proposed": "Giữ vùng lẩu theo chủ và tự hồi Super gốc. Thêm một bếp 20% HP gốc chủ trong 4 giây; mỗi 1,5 giây bắn đạn nổ 12% ATK gốc chủ, bán kính 55.",
+      "benefitAndLimits": "Tối đa một bếp; không Burn thêm, không hồi đồng đội, không nổ trúng chủ/đồng đội.",
+      "verification": "Đo tự hồi không mất, sát thương bếp riêng, số phát thật trước khi bếp bị phá."
+    },
+    {
+      "number": 55,
+      "id": "char_19:pressure",
+      "characterId": "char_19",
+      "characterName": "Cô Nàng Khui Tết",
+      "name": "Phi Phong Bao",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Mỗi nhịp ném ba phong bao tỏa quạt: trúng địch mỗi bao 40% ATK, trúng đồng đội giữ hiệu ứng lì xì của phong bao.",
+      "currentTradeoff": "Nhịp đánh dài hơn 50%; thay cú đánh chạm và không tăng buff khi nhiều bao cùng trúng một người.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "fan",
+        "power": 40,
+        "cooldown": 150,
+        "reach": 180
+      },
+      "baselineScores": [
+        0.6875,
+        0.5625
+      ],
+      "meanBaselineScore": 0.625,
+      "proposed": "Giữ đòn chạm và lì xì gốc. Mỗi đòn trúng thứ tư thêm ba phong bao: giữa 20% ATK, hai bên 10%, tầm 180; có thể trao buff gốc khi chạm đồng đội.",
+      "benefitAndLimits": "Mỗi người nhận tối đa một buff/loạt, dùng chung hồi lì xì cặp 1 giây; đạn phụ không thêm debuff ngẫu nhiên lên địch.",
+      "verification": "Đo sát thương và thời gian buff; kiểm tra đạn phụ không bỏ qua hồi cặp."
+    },
+    {
+      "number": 56,
+      "id": "char_19:resolve",
+      "characterId": "char_19",
+      "characterName": "Cô Nàng Khui Tết",
+      "name": "Bao Lì Xì Hồi Đáp",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Một phong bao bay ra rồi trở về; có thể tương tác với mỗi người một lần mỗi chiều.",
+      "currentTradeoff": "Chỉ một bao hồi lưu đang bay; sát thương mỗi chiều 60% ATK và không đánh chạm trong lúc chờ.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 60,
+        "cooldown": 155,
+        "reach": 190
+      },
+      "baselineScores": [
+        0.5,
+        0.75
+      ],
+      "meanBaselineScore": 0.625,
+      "proposed": "Giữ cận chiến/lì xì chạm. Mỗi đòn trúng thứ năm ném bao hồi lưu 35% ATK mỗi chiều, tầm 190; có thể tiếp sức đồng đội.",
+      "benefitAndLimits": "Không khóa đánh chạm; cùng người nhận buff từ bao phụ tối đa một lần mỗi 2 giây; không thêm debuff lên địch.",
+      "verification": "Đo buff hữu dụng và sát thương; kiểm tra lượt đi/về không nhân buff hoặc debuff."
+    },
+    {
+      "number": 57,
+      "id": "char_19:tempo",
+      "characterId": "char_19",
+      "characterName": "Cô Nàng Khui Tết",
+      "name": "Sạp Lộc Di Động",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super đặt một sạp tiếp tế có HP cạnh đồng đội yếu nhất. Trong 6 giây, sạp bắn quả tiếp tế tới đồng đội bị thương mỗi 1,5 giây.",
+      "currentTradeoff": "Thay tám lì xì tỏa hướng; sạp đứng yên, có 25% HP gốc chủ và có thể bị phá.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 30,
+        "count": 1,
+        "variant": "supply"
+      },
+      "baselineScores": [
+        0.4375,
+        0.4375
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ tám lì xì Super gốc. Thêm sạp tiếp tế 15% HP gốc chủ trong 4 giây cạnh đồng đội yếu nhất; mỗi 2 giây bắn một quả hồi 1% HP gốc chủ, trần 15 HP/lần, trong 220.",
+      "benefitAndLimits": "Quả mới tự đuổi đúng đồng đội, chỉ hồi HP, không kèm Rage/Blessing/debuff; tối đa một sạp. Sạp đứng yên theo tên cũ, mô tả phải nói rõ.",
+      "verification": "Đo tám bao gốc vẫn đủ, đạn tiếp tế có tới mục tiêu đang di chuyển, không tạo buff ngoài ngân sách."
+    },
+    {
+      "number": 58,
+      "id": "roseLink",
+      "characterId": "char_20",
+      "characterName": "Hoàng Tử Ngậm Hoa",
+      "name": "Hồng Leo",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Hai hoa thường cách nhau tối đa 80 tạo một dây nối. Đồng đội cắt qua dây nhận khiên 2% HP gốc của Hoàng Tử trong 2 giây. Hồi chung 8 giây mỗi đồng đội.",
+      "currentTradeoff": "Giới hạn hoa thường giảm từ bốn xuống ba; tối đa hai dây. Hoa Super không tạo dây.",
+      "baselineScores": [
+        0.5625,
+        0.5
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ bốn hoa thường và chức năng gốc. Nối tối đa ba cặp hoa gần nhất trong 100; đồng đội cắt dây nhận khiên 2% HP gốc Hoàng Tử trong 3 giây, hồi 6 giây/người.",
+      "benefitAndLimits": "Một nguồn khiên không cộng tầng; không tạo dây từ hoa Super, không thêm hồi khi đi qua nhiều dây.",
+      "verification": "Đo hồi và khiên thực, kiểm tra bốn hoa còn đủ và số dây không vượt ba."
+    },
+    {
+      "number": 59,
+      "id": "roseFollow",
+      "characterId": "char_20",
+      "characterName": "Hoàng Tử Ngậm Hoa",
+      "name": "Lưu Hương",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Hoa thường trúng đồng đội đầu tiên bám theo người đó trong 2 giây, tạo vùng Rage và hồi HP nhỏ di động. Giữ tối đa hai hoa bám.",
+      "currentTradeoff": "Các hoa này không cắm ở đất và bỏ Frozen. Hoa Super giữ cách hoạt động gốc.",
+      "baselineScores": [
+        0.4375,
+        0.5625
+      ],
+      "meanBaselineScore": 0.5,
+      "proposed": "Giữ tối đa bốn hoa. Hoa trúng đồng đội đầu tiên bám 2 giây rồi cắm tại vị trí cuối để sống hết thời gian gốc; giữ Rage/hồi và Frozen trên địch trong vùng.",
+      "benefitAndLimits": "Tối đa hai hoa đang bám; vùng trùng lấy mạnh nhất; không cộng thời gian sống sau khi rơi.",
+      "verification": "Đo thời gian buff và hồi khi đồng đội di chuyển, kiểm tra đủ chức năng sau khi hoa rơi."
+    },
+    {
+      "number": 60,
+      "id": "roseWall",
+      "characterId": "char_20",
+      "characterName": "Hoàng Tử Ngậm Hoa",
+      "name": "Vườn Che Chở",
+      "goal": 15,
+      "legacy": true,
+      "targeted": false,
+      "currentDescription": "Mỗi hoa từ Super chặn được một viên đạn địch rồi tan. Không chặn tia, va chạm hoặc sát thương vùng; tối đa sáu lượt chặn mỗi Super.",
+      "currentTradeoff": "Hoa Super không còn gây Frozen. Những hoa chặn đạn bị mất sớm, giảm thời gian hỗ trợ.",
+      "baselineScores": [
+        0.5625,
+        0.5
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ sáu hoa Super, Frozen và lifetime gốc. Mỗi hoa chặn một viên đạn địch nhưng sau chặn vẫn tồn tại để hỗ trợ; mỗi hoa chỉ chặn một lần.",
+      "benefitAndLimits": "Tối đa sáu lượt chặn/Super; không chặn tia/vùng/va chạm; giữ Truyền thừa.",
+      "verification": "Đo số đạn chặn và hỗ trợ sau chặn; thử đạn xuyên, tia và nhiều đạn cùng tick."
+    },
+    {
+      "number": 61,
+      "id": "char_21:pressure",
+      "characterId": "char_21",
+      "characterName": "Độ Duy Môn",
+      "name": "Pháo Tản",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Mỗi lần bắn phóng năm viên khí tỏa quạt, mỗi viên 25% ATK; rất mạnh khi đứng sát, khó gom đủ viên ở xa.",
+      "currentTradeoff": "Nhịp bắn dài hơn 35%; viên ngoài không có proc đòn thường.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "fan",
+        "power": 25,
+        "cooldown": 135,
+        "count": 5
+      },
+      "baselineScores": [
+        0.1875,
+        0.25
+      ],
+      "meanBaselineScore": 0.21875,
+      "proposed": "Giữ viên khí chính 100% ATK, lực đẩy và nhịp gốc. Mỗi phát thứ tư thêm bốn viên bên 10% ATK mỗi viên.",
+      "benefitAndLimits": "Đạn bên không đẩy/proc; một người nhận tối đa 30% ATK sát thương phụ/loạt. Viên giữa luôn theo hướng ngắm gốc.",
+      "verification": "Đo sát thương tầm xa không hụt đường giữa, sát thương sát thân và lực đẩy chính."
+    },
+    {
+      "number": 62,
+      "id": "char_21:resolve",
+      "characterId": "char_21",
+      "characterName": "Độ Duy Môn",
+      "name": "Khí Xuyên",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Pháo khí thành một đường đạn lớn xuyên ba địch, mỗi người 110% ATK.",
+      "currentTradeoff": "Nhịp bắn dài hơn 55%; không còn lực đẩy mạnh theo đòn thường gốc.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "pierce",
+        "power": 110,
+        "cooldown": 155
+      },
+      "baselineScores": [
+        0.5,
+        0.375
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ viên khí chính 100% ATK và lực đẩy. Đạn xuyên hai địch phụ, mỗi người phụ 25% ATK và 25% lực đẩy gốc; nhịp gốc.",
+      "benefitAndLimits": "Không tăng damage người đầu; tối đa ba mục tiêu, lực đẩy không vượt trần engine.",
+      "verification": "Đo DPS người đầu và tuyến sau; thử xếp hàng sát tường và vật thể chắn."
+    },
+    {
+      "number": 63,
+      "id": "char_21:tempo",
+      "characterId": "char_21",
+      "characterName": "Độ Duy Môn",
+      "name": "Vệ Tinh Khí Nén",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super tạo ba vệ tinh khí xoay quanh người một giây, sau đó phóng ra đuổi địch, 65% ATK mỗi vệ tinh.",
+      "currentTradeoff": "Không nhận khiên và không bắn tám hướng ngay như Super gốc.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "orbit",
+        "power": 65,
+        "count": 3
+      },
+      "baselineScores": [
+        0.375,
+        0.375
+      ],
+      "meanBaselineScore": 0.375,
+      "proposed": "Giữ tám phát và khiên 12% HP của Super. Thêm ba vệ tinh 10% ATK xoay 0,6 giây rồi đuổi địch.",
+      "benefitAndLimits": "Không cấp thêm khiên từ vệ tinh; mỗi vệ tinh trúng một địch một lần, tổng tối đa 30% ATK/người.",
+      "verification": "Đo khiên hấp thụ, tám phát gốc và vệ tinh riêng, thử triệu hồi sát biên."
+    },
+    {
+      "number": 64,
+      "id": "auraAnchor",
+      "characterId": "char_22",
+      "characterName": "Đẳng Cấp Aura",
+      "name": "Tâm Hào Quang",
+      "goal": 3,
+      "legacy": false,
+      "targeted": true,
+      "currentDescription": "Chọn một đồng đội trước trận làm tâm aura thay cho Aura. Buff vẫn biến mất nếu Aura hoặc người làm tâm bị hạ.",
+      "currentTradeoff": "Bán kính aura giảm 25%. Không tạo thêm aura thứ hai.",
+      "baselineScores": [
+        0.375,
+        0.5625
+      ],
+      "meanBaselineScore": 0.46875,
+      "proposed": "Cho chọn đồng đội làm tâm aura phụ bán kính 80% bán kính gốc; đồng thời giữ aura quanh chủ bán kính gốc. Tâm phụ mất thì chỉ tắt phần phụ.",
+      "benefitAndLimits": "Hai vùng cùng nguồn không cộng buff; không giảm hiệu lực hay phạm vi quanh chủ. Một tâm phụ, giữ điều kiện chủ còn sống.",
+      "verification": "Đo thời gian buff của từng đồng đội; kiểm tra hai vùng chồng không tăng gấp đôi Damage."
+    },
+    {
+      "number": 65,
+      "id": "auraEcho",
+      "characterId": "char_22",
+      "characterName": "Đẳng Cấp Aura",
+      "name": "Dư Âm",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Buff aura tồn tại thêm 1,5 giây sau khi đồng đội rời vùng. Mỗi người có hồi 6 giây cho lần kéo dài tiếp theo.",
+      "currentTradeoff": "Hiệu lực buff Damage của aura giảm 20%. Buff vẫn tắt nếu nguồn bị hạ.",
+      "baselineScores": [
+        0.4375,
+        0.4375
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ hiệu lực aura 100% gốc. Khi rời vùng, buff lưu thêm 1,5 giây; hồi riêng 6 giây/người cho lần kéo dài mới.",
+      "benefitAndLimits": "Không mất 20% buff; nguồn bị hạ thì buff tắt ngay. Ra/vào liên tục không kéo dài vô hạn.",
+      "verification": "Đo thời gian buff và sát thương đồng đội, thử nguồn chết và ra/vào trong hồi."
+    },
+    {
+      "number": 66,
+      "id": "auraEnergy",
+      "characterId": "char_22",
+      "characterName": "Đẳng Cấp Aura",
+      "name": "Dẫn Nhịp",
+      "goal": 15,
+      "legacy": true,
+      "targeted": false,
+      "currentDescription": "Super cấp 12 năng lượng cho mỗi đồng đội khác, tối đa một lần/người trong 8 giây. Không tự nạp; vẫn chịu trần năng lượng của engine.",
+      "currentTradeoff": "Super bỏ Rage và Blessing, giữ phần tăng nhịp gốc. Không tăng trần năng lượng hoặc tạo vòng nạp vô hạn.",
+      "baselineScores": [
+        0.5,
+        0.375
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ Rage, Blessing và tăng nhịp Super gốc. Thêm 6 năng lượng cho mỗi đồng đội khác, hồi 8 giây/người.",
+      "benefitAndLimits": "Không tự nạp hoặc tràn qua 100; phần năng lượng này không kích hồi năng lượng từ hiệu ứng khác; giữ Truyền thừa.",
+      "verification": "Đo thời điểm Super tiếp theo của đồng đội và năng lượng thực nhận; kiểm tra đội hai nguồn cấp năng lượng không tạo vòng."
+    },
+    {
+      "number": 67,
+      "id": "char_23:pressure",
+      "characterId": "char_23",
+      "characterName": "King Of RiseOn",
+      "name": "Xung Kiếm",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đòn thường trở thành đường đâm thẳng rất dài, xuyên ba mục tiêu, mỗi người 110% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 45%; vùng trúng hẹp và vẫn chịu giáp/khiên.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "thrust",
+        "power": 110,
+        "cooldown": 145,
+        "reach": 135
+      },
+      "baselineScores": [
+        0.3125,
+        0.5625
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ kiếm xoay, tăng trưởng tầm và cơ chế lướt va chạm gốc. Mỗi đòn trúng thứ tư phóng xung kiếm 45% ATK tầm 135, xuyên hai địch.",
+      "benefitAndLimits": "Xung phụ không tự bỏ giáp/khiên hoặc proc; không thay kiếm chạm bằng đạn.",
+      "verification": "Đo sát thương, va chạm kiếm, tăng trưởng và khả năng chạm mục tiêu sau đệ."
+    },
+    {
+      "number": 68,
+      "id": "char_23:resolve",
+      "characterId": "char_23",
+      "characterName": "King Of RiseOn",
+      "name": "Kiếm Quét Hai Trục",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Quét hai trục kiếm vuông góc thay cú chạm, mỗi người chỉ trúng một lần 95% ATK mỗi nhịp.",
+      "currentTradeoff": "Nhịp đánh dài hơn 25%; tối đa ba địch.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "cross",
+        "power": 95,
+        "cooldown": 125,
+        "reach": 110
+      },
+      "baselineScores": [
+        0.4375,
+        0.625
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ kiếm gốc. Mỗi đòn trúng thứ tư thêm chữ thập tầm 110, 40% ATK lên tối đa ba địch.",
+      "benefitAndLimits": "Một địch trúng tối đa một lần/nhịp phụ; không tự kích thêm lượt lướt va chạm.",
+      "verification": "Đo DPS và số nhát ở giao điểm hai trục, giữ hành vi kiếm Super."
+    },
+    {
+      "number": 69,
+      "id": "char_23:tempo",
+      "characterId": "char_23",
+      "characterName": "King Of RiseOn",
+      "name": "Vương Kiếm Tách Mảnh",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Phóng một kiếm lớn 120% ATK. Khi chạm đầu hoặc hết tầm, kiếm vỡ thành bốn mảnh theo hướng tiến, mỗi mảnh 30% đạn mẹ.",
+      "currentTradeoff": "Thay Super kiếm khổng lồ cận chiến; không còn giai đoạn chắc chắn bỏ qua va chạm vũ khí.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "split",
+        "power": 120,
+        "count": 4
+      },
+      "baselineScores": [
+        0.4375,
+        0.5
+      ],
+      "meanBaselineScore": 0.46875,
+      "proposed": "Giữ kiếm khổng lồ 4 giây và bỏ va chạm vũ khí gốc. Khi Super kết thúc, phóng kiếm nhỏ 25% ATK; khi chạm đầu tách bốn mảnh 8% ATK mỗi mảnh.",
+      "benefitAndLimits": "Người bị kiếm mẹ trúng không trúng mảnh; không xuyên giáp/khiên. Chỉ một lần tách, không phóng nếu chủ đã chết.",
+      "verification": "Đo sát thương cửa sổ kiếm gốc và phần kết thúc; kiểm tra chết trước lúc kết thúc và checkpoint đúng thời điểm."
+    },
+    {
+      "number": 70,
+      "id": "char_24:pressure",
+      "characterId": "char_24",
+      "characterName": "Thi Thánh Họ Mai",
+      "name": "Bút Tam Tài",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Mỗi nhịp bắn ba nét mực tỏa quạt, mỗi nét 40% ATK; chỉ nét giữa tính là đòn thường để xét hiệu ứng bộ kỹ năng.",
+      "currentTradeoff": "Nhịp bắn dài hơn 45%; hai nét ngoài không gây thêm debuff ngẫu nhiên.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "fan",
+        "power": 40,
+        "cooldown": 145,
+        "count": 3
+      },
+      "baselineScores": [
+        0.21875,
+        0.25
+      ],
+      "meanBaselineScore": 0.234375,
+      "proposed": "Giữ nét mực chính, nhịp và debuff gốc. Mỗi phát thứ tư thêm hai nét bên 20% ATK mỗi nét.",
+      "benefitAndLimits": "Chỉ nét chính xét debuff, hai nét phụ không phát thêm trạng thái hoặc chuỗi.",
+      "verification": "Đo sát thương và số debuff, kiểm tra ba nét cùng trúng không nhân proc."
+    },
+    {
+      "number": 71,
+      "id": "char_24:resolve",
+      "characterId": "char_24",
+      "characterName": "Thi Thánh Họ Mai",
+      "name": "Mực Đuổi Hình",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Nét mực tự uốn đường bay theo mục tiêu đã chọn, gây 75% ATK khi trúng.",
+      "currentTradeoff": "Nhịp bắn dài hơn 40%; đạn không xuyên, không tự tăng tầm sống và vẫn bị đệ/khiên chặn.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "seeker",
+        "power": 75,
+        "cooldown": 140
+      },
+      "baselineScores": [
+        0.4375,
+        0.53125
+      ],
+      "meanBaselineScore": 0.484375,
+      "proposed": "Giữ sát thương 100% ATK và nhịp bắn gốc; mỗi nét thứ ba được tự đuổi mục tiêu đã chọn, đời đạn tăng tối đa 20%.",
+      "benefitAndLimits": "Không xuyên; chỉ một lượt proc debuff trên một viên. Mục tiêu chết thì chọn địch gần nhất trong tầm sống còn lại.",
+      "verification": "Đo tỷ lệ trúng đối thủ cơ động và debuff; thử mất mục tiêu, đệ/khiên chắn."
+    },
+    {
+      "number": 72,
+      "id": "char_24:tempo",
+      "characterId": "char_24",
+      "characterName": "Thi Thánh Họ Mai",
+      "name": "Bút Trận Tứ Phương",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super vẽ bốn nét tỏa theo bốn hướng vuông góc tại người dùng; mỗi nét dài 260, gây 70% ATK.",
+      "currentTradeoff": "Thay mười hai viên mực tỏa; nét cắt không tự gắn debuff ngẫu nhiên.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "crossBeams",
+        "power": 70,
+        "count": 4
+      },
+      "baselineScores": [
+        0.46875,
+        0.4375
+      ],
+      "meanBaselineScore": 0.453125,
+      "proposed": "Giữ mười hai nét mực Super và proc gốc. Thêm bốn nét vuông góc dài 260, 8% ATK mỗi nét; một nét ưu tiên hướng tới địch gần nhất.",
+      "benefitAndLimits": "Một địch chịu tối đa 16% ATK từ các nét phụ; nét phụ không debuff, không nạp Super.",
+      "verification": "Đo sát thương và debuff gốc, trần sát thương ở giao điểm bốn nét."
+    },
+    {
+      "number": 73,
+      "id": "char_25:pressure",
+      "characterId": "char_25",
+      "characterName": "Công Tử Phú Thọ",
+      "name": "Đồng Xu Xoay",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay đòn thường bằng hai đồng xu bay sát quanh chủ trong 1,5 giây; mỗi xu chỉ trúng mỗi địch một lần, 55% ATK.",
+      "currentTradeoff": "Nhịp gọi dài gấp đôi, tối đa hai xu cùng lúc; không còn đòn chạm trong thời gian đó.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "orbit",
+        "power": 55,
+        "cooldown": 200,
+        "reach": 75
+      },
+      "baselineScores": [
+        0.125,
+        0.125
+      ],
+      "meanBaselineScore": 0.125,
+      "proposed": "Giữ đòn chạm và giao dịch gốc. Mỗi 3 giây tạo hai xu xoay bán kính 65 trong 1,5 giây, mỗi xu gây 20% ATK/địch một lần.",
+      "benefitAndLimits": "Xu không chặn đánh thường, không proc/giao dịch hoặc bắn dồn; tối đa hai xu phụ/chủ.",
+      "verification": "Đo DPS và tần suất giao dịch, thử địch sát thân và đứng ngoài quỹ đạo."
+    },
+    {
+      "number": 74,
+      "id": "char_25:resolve",
+      "characterId": "char_25",
+      "characterName": "Công Tử Phú Thọ",
+      "name": "Búng Tiền",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Búng một đồng xu thành cú đánh thẳng tầm 170, có thể xuyên ba địch, mỗi người 100% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 50%; vùng trúng hẹp, không thay đổi rủi ro giao dịch.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "thrust",
+        "power": 100,
+        "cooldown": 150,
+        "reach": 170
+      },
+      "baselineScores": [
+        0.8125,
+        0.375
+      ],
+      "meanBaselineScore": 0.59375,
+      "proposed": "Giữ đòn chạm. Mỗi đòn trúng thứ tư búng xu tầm 170, 45% ATK, xuyên tối đa hai địch.",
+      "benefitAndLimits": "Không thay toàn bộ cận chiến; không thay rủi ro giao dịch, không sinh tài sản từ xu phụ.",
+      "verification": "Đo sát thương ở các khoảng cách, kiểm tra tài sản/HP mất do thua lỗ không đổi luật."
+    },
+    {
+      "number": 75,
+      "id": "char_25:tempo",
+      "characterId": "char_25",
+      "characterName": "Công Tử Phú Thọ",
+      "name": "Quỹ Đầu Tư Tiền Tuyến",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super dựng quỹ có HP trong 6 giây, mỗi 1,5 giây bắn ba đồng xu về hướng địch, mỗi xu 22% ATK gốc.",
+      "currentTradeoff": "Không còn bốn giao dịch chắc chắn lãi và Rage từ Super gốc. Quỹ có 40% HP gốc chủ.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 22,
+        "count": 1,
+        "variant": "bank"
+      },
+      "baselineScores": [
+        0.5625,
+        0.5
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ bốn giao dịch chắc lãi và Rage Super. Thêm quỹ có 15% HP gốc chủ trong 4 giây; mỗi 1,5 giây bắn ba xu 5% ATK gốc/viên.",
+      "benefitAndLimits": "Một người nhận tối đa 30% ATK gốc từ quỹ/Super; quỹ không tự giao dịch hoặc tạo máu ảo cho chủ.",
+      "verification": "Đo số giao dịch gốc, khiên tài sản, sát thương quỹ riêng; thử quỹ bị phá sớm."
+    },
+    {
+      "number": 76,
+      "id": "char_26:pressure",
+      "characterId": "char_26",
+      "characterName": "Anh Fam De Phonk",
+      "name": "Lưỡi Bass",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Phóng lưỡi gió lượn ngang theo đường tiến, xuyên hai mục tiêu, mỗi người 80% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 35%; thay cú đánh chạm đẩy lùi.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "wave",
+        "power": 80,
+        "cooldown": 135,
+        "reach": 200
+      },
+      "baselineScores": [
+        0.75,
+        0.625
+      ],
+      "meanBaselineScore": 0.6875,
+      "proposed": "Giữ đòn chạm, bẻ hướng và đẩy gốc. Mỗi đòn trúng thứ tư thêm lưỡi Bass 40% ATK tầm 200, xuyên hai địch.",
+      "benefitAndLimits": "Sóng không đẩy/proc; giới hạn biên độ lượn 10 để không bỏ trống hoàn toàn đường giữa.",
+      "verification": "Đo sát thương sau đẩy và tỷ lệ sóng trúng, kiểm tra chuyển động bẻ hướng gốc."
+    },
+    {
+      "number": 77,
+      "id": "char_26:resolve",
+      "characterId": "char_26",
+      "characterName": "Anh Fam De Phonk",
+      "name": "Vòng Xoáy Đổi Beat",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đòn thường thành một vòng quét bán kính 75 quanh người, tối đa ba địch, mỗi người 70% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 75%; không tạo thêm đòn khi chỉ đi sát đối thủ.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "whirl",
+        "power": 70,
+        "cooldown": 175,
+        "reach": 75
+      },
+      "baselineScores": [
+        0.75,
+        0.625
+      ],
+      "meanBaselineScore": 0.6875,
+      "proposed": "Giữ đòn gốc. Mỗi đòn trúng thứ tư thêm vòng quét bán kính 75, 35% ATK lên tối đa ba địch; địch phụ nhận đẩy lực 100.",
+      "benefitAndLimits": "Mục tiêu chính không nhận thêm lượt đẩy từ vòng. Không nhân đẩy theo ba địch hoặc bỏ qua trần impulse.",
+      "verification": "Đo sát thương, vị trí và tổng lực đẩy, thử sát tường và nhiều địch cùng vòng."
+    },
+    {
+      "number": 78,
+      "id": "char_26:tempo",
+      "characterId": "char_26",
+      "characterName": "Anh Fam De Phonk",
+      "name": "Hai Mắt Bão",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super đặt hai tâm lốc ở hai bên mục tiêu, mỗi tâm bán kính 95, kéo địch và gây 20% ATK mỗi giây trong 3 giây.",
+      "currentTradeoff": "Thay một lốc lớn 160; khoảng giữa hai tâm có thể bị vượt qua, vùng trùng không nhân nhịp sát thương.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "vortex",
+        "power": 20,
+        "count": 2
+      },
+      "baselineScores": [
+        0.4375,
+        0.375
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Giữ lốc gốc bán kính 160 trong 4 giây. Thêm hai mắt bão bán kính 45 ở hai bên, lệch tâm 160, 3 giây, 8% ATK/giây, hút bằng 25% lực lốc chính.",
+      "benefitAndLimits": "Cùng người trong nhiều vùng lấy nhịp và sát thương mạnh nhất; tổng lực hút vẫn chịu trần, không cộng ba lực đầy đủ.",
+      "verification": "Đo vùng phủ và thời gian kiểm soát; so sát thương ở tâm không thấp hơn gốc, kiểm tra vùng chồng."
+    },
+    {
+      "number": 79,
+      "id": "char_27:pressure",
+      "characterId": "char_27",
+      "characterName": "Robot Da Đỏ",
+      "name": "Hỏa Tiễn Tay",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay đòn chạm bằng luồng nhiệt thẳng tầm 150, xuyên tối đa ba địch, mỗi người 100% ATK; giữ xét Burn ở cú trúng chính.",
+      "currentTradeoff": "Nhịp đánh dài hơn 50%; không đánh được mục tiêu ngoài đường nhiệt.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "thrust",
+        "power": 100,
+        "cooldown": 150,
+        "reach": 150
+      },
+      "baselineScores": [
+        0.6875,
+        0.375
+      ],
+      "meanBaselineScore": 0.53125,
+      "proposed": "Giữ đòn chạm và Burn gốc. Mỗi đòn trúng thứ tư thêm luồng nhiệt 40% ATK tầm 150, xuyên hai địch.",
+      "benefitAndLimits": "Luồng phụ không Burn thêm hoặc tăng số lần xét đốt mạnh; nhịp nền giữ nguyên.",
+      "verification": "Đo Damage/Burn riêng và tăng trưởng tỷ lệ đốt mạnh."
+    },
+    {
+      "number": 80,
+      "id": "char_27:resolve",
+      "characterId": "char_27",
+      "characterName": "Robot Da Đỏ",
+      "name": "Dao Nhiệt Hồi Lưu",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Ném dao nhiệt đi rồi trở về, mỗi chiều gây 60% ATK và có thể trúng lại người đã trúng lúc đi.",
+      "currentTradeoff": "Chỉ một dao đang bay, không đánh chạm trong lúc chờ dao về.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 60,
+        "cooldown": 150,
+        "reach": 180
+      },
+      "baselineScores": [
+        0.3125,
+        0.5
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Giữ đòn chạm. Mỗi đòn trúng thứ năm thêm dao nhiệt hồi lưu tầm 180, 40% ATK mỗi chiều, hai địch/chiều.",
+      "benefitAndLimits": "Không dừng cận chiến, không tạo Burn/proc từ dao phụ; một dao đang bay.",
+      "verification": "Đo sát thương và uptime Burn, kiểm tra lượt về không thêm một lần đốt mạnh."
+    },
+    {
+      "number": 81,
+      "id": "char_27:tempo",
+      "characterId": "char_27",
+      "characterName": "Robot Da Đỏ",
+      "name": "Lò Nung Vệ Tinh",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super tạo ba lõi nhiệt xoay quanh người một giây rồi phóng ra đuổi địch, mỗi lõi 65% ATK.",
+      "currentTradeoff": "Không có phần tăng sát thương/di chuyển/nhịp đánh của Super gốc; cũng không tự Burn từ Super này.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "orbit",
+        "power": 65,
+        "count": 3
+      },
+      "baselineScores": [
+        0.875,
+        0.625
+      ],
+      "meanBaselineScore": 0.75,
+      "proposed": "Giữ buff Damage/di chuyển/nhịp đánh và tự Burn của Super. Thêm ba lõi nhiệt 10% ATK, xoay 1 giây rồi đuổi địch.",
+      "benefitAndLimits": "Mỗi lõi chỉ trúng một địch, không Burn thêm; tổng 30% ATK/người. Không cộng nguyên ba lõi 65% hiện có vào buff gốc.",
+      "verification": "Đo sát thương tổng, tốc độ và HP mất do tự Burn; kiểm tra hệ số Super chỉ tính một lần."
+    },
+    {
+      "number": 82,
+      "id": "char_28:pressure",
+      "characterId": "char_28",
+      "characterName": "Người Máy Sịp Đỏ Phế Thải",
+      "name": "Nắm Đấm Phóng",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Mỗi nhịp lao ngắn theo hướng vũ khí, đồng thời phóng một nắm đấm rộng gây 120% ATK khi chạm.",
+      "currentTradeoff": "Nhịp đánh dài hơn 70%; không tự né và vẫn bị tường chặn.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "charge",
+        "power": 120,
+        "cooldown": 170,
+        "reach": 145
+      },
+      "baselineScores": [
+        0.3125,
+        0.6875
+      ],
+      "meanBaselineScore": 0.5,
+      "proposed": "Giữ đòn thường và rủi ro tự đánh gốc. Mỗi 4 giây phóng nắm đấm phụ 50% ATK tầm 145; chỉ lao ngắn khi mục tiêu ngoài tầm chạm.",
+      "benefitAndLimits": "Nắm đấm phụ không xét tự đánh lần nữa. Lao 0,25 giây, không miễn sát thương hoặc xuyên tường.",
+      "verification": "Đo DPS, thời gian tiếp cận, số lần tự đánh trên cùng số đòn nền."
+    },
+    {
+      "number": 83,
+      "id": "char_28:resolve",
+      "characterId": "char_28",
+      "characterName": "Người Máy Sịp Đỏ Phế Thải",
+      "name": "Đĩa Cưa Tái Chế",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Ném một đĩa cưa đi rồi trở về chủ; xuyên hai người, 65% ATK mỗi chiều.",
+      "currentTradeoff": "Không đánh chạm trong lúc đĩa chưa về. Rủi ro tự đánh của dạng cơ bản vẫn xét trên các cú trúng chính.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "throw",
+        "power": 65,
+        "cooldown": 155,
+        "reach": 190
+      },
+      "baselineScores": [
+        0.5625,
+        0.59375
+      ],
+      "meanBaselineScore": 0.578125,
+      "proposed": "Giữ cận chiến. Mỗi đòn trúng thứ năm thêm đĩa cưa hồi lưu tầm 190, 40% ATK mỗi chiều.",
+      "benefitAndLimits": "Đĩa phụ không khóa cận chiến, không tăng số lần xét tự đánh; tối đa một đĩa, hai địch/chiều.",
+      "verification": "Đo sát thương và HP tự mất, thử cả dạng cơ bản và khi gắn item_28."
+    },
+    {
+      "number": 84,
+      "id": "char_28:tempo",
+      "characterId": "char_28",
+      "characterName": "Người Máy Sịp Đỏ Phế Thải",
+      "name": "Laser Tách Tia",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super bắn ba tia laser hẹp tỏa quạt, mỗi tia dài 260 và gây 100% ATK cho người trên tia.",
+      "currentTradeoff": "Thay tia laser lớn; mỗi tia yếu hơn và không có phần tự Burn từ Super cơ bản.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "beams",
+        "power": 100,
+        "count": 3
+      },
+      "baselineScores": [
+        0.5,
+        0.3125
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Thay hình tia Super bằng tia giữa 210% ATK, dài 300, rộng bằng tia gốc, kèm hai tia bên 15% ATK dài 260. Giữ tự Burn như Super gốc.",
+      "benefitAndLimits": "Địch trúng nhiều tia nhận tối đa 230% ATK/Super; đây là một lần Super, không proc hoặc nhân hệ số ba lần.",
+      "verification": "Đo mục tiêu giữa, bên và giao tia; kiểm tra dạng item_28 và HP tự Burn."
+    },
+    {
+      "number": 85,
+      "id": "char_29:pressure",
+      "characterId": "char_29",
+      "characterName": "Wacom Hỏng Hóc",
+      "name": "Điểm Ảnh Tách",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Viên đạn chính 40% ATK tách ba điểm ảnh 30% sát thương đạn mẹ khi va chạm đầu hoặc hết tầm.",
+      "currentTradeoff": "Nhịp bắn dài hơn 35%; chỉ viên chính giữ luật trúng đồng đội của dạng cơ bản. Mảnh con không có proc hoặc tách tiếp.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "split",
+        "power": 40,
+        "cooldown": 135
+      },
+      "baselineScores": [
+        0.3125,
+        0.3125
+      ],
+      "meanBaselineScore": 0.3125,
+      "proposed": "Giữ đạn chính 55% ATK, nhịp và luật friendly fire gốc. Mỗi viên thứ tư tách ba điểm ảnh 10% ATK sau va chạm đầu/hết tầm.",
+      "benefitAndLimits": "Điểm ảnh không trúng lại người vừa kích tách, không gây hại đồng đội/chủ, không tách tiếp hoặc proc.",
+      "verification": "Đo sát thương địch và friendly fire, thử dạng item_29 có xuyên/nảy riêng."
+    },
+    {
+      "number": 86,
+      "id": "char_29:resolve",
+      "characterId": "char_29",
+      "characterName": "Wacom Hỏng Hóc",
+      "name": "Đạn Gập Gương",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Đạn thường nảy tường hai lần rồi tiếp tục bay, mỗi lần trúng gây 65% ATK.",
+      "currentTradeoff": "Nhịp bắn dài hơn 45%; giữ rủi ro trúng đồng đội ở dạng cơ bản và không tăng số lần nảy theo tăng trưởng.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "ricochet",
+        "power": 65,
+        "cooldown": 145
+      },
+      "baselineScores": [
+        0.4375,
+        0.375
+      ],
+      "meanBaselineScore": 0.40625,
+      "proposed": "Giữ đạn chính 55% ATK và nhịp gốc; mỗi viên thứ ba được thêm hai lần nảy tường. Người đã trúng có thể trúng lại sau nảy, hồi 0,4 giây/người.",
+      "benefitAndLimits": "Sau nảy, sát thương địch bằng 50% đạn ban đầu; sát thương đồng đội không được nhân thêm, vẫn theo hệ số rủi ro tăng trưởng.",
+      "verification": "Đo sát thương từ lần nảy và friendly fire; xác nhận cùng người không bị hit hai lần trong 0,4 giây."
+    },
+    {
+      "number": 87,
+      "id": "char_29:tempo",
+      "characterId": "char_29",
+      "characterName": "Wacom Hỏng Hóc",
+      "name": "Ống Kính Quét",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay chuỗi tám phát bằng ba tia hẹp tỏa quạt, dài 260, mỗi tia 65% ATK.",
+      "currentTradeoff": "Không có tám phát hoặc phản đạn vào chủ; tổng sát thương tập trung thấp hơn chuỗi gốc.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "beams",
+        "power": 65,
+        "count": 3
+      },
+      "baselineScores": [
+        0.3125,
+        0.1875
+      ],
+      "meanBaselineScore": 0.25,
+      "proposed": "Thay chuỗi tám phát bằng một lần quét: tia giữa 340% ATK, dài 300, hai tia bên 20% ATK, dài 260; không phản vào chủ hoặc đánh đồng đội.",
+      "benefitAndLimits": "Một địch nhận tối đa 360% ATK. Super gốc có tám phát 40% ATK ở dạng cơ bản; dạng item_29 phải có cấu hình riêng tối thiểu bằng tổng chuỗi gốc cùng dạng ×1,05 trước khi xét độ rộng.",
+      "verification": "So sát thương mục tiêu giữa/di động, HP tự mất và thời gian gây sát thương; kiểm tra cả hai dạng vũ khí, tránh nhân hệ số Super."
+    },
+    {
+      "number": 88,
+      "id": "char_30:pressure",
+      "characterId": "char_30",
+      "characterName": "Chó Bóng Bay",
+      "name": "Bóng Chùm",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Bóng thường nổ 60% ATK rồi tách ba mảnh bay theo ba hướng, mỗi mảnh bằng 30% sát thương bóng mẹ.",
+      "currentTradeoff": "Nhịp thả dài hơn 40%; vụ nổ mẹ vẫn có rủi ro trúng chủ/đồng đội ở dạng cơ bản, mảnh con không tách tiếp.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "split",
+        "power": 60,
+        "cooldown": 140
+      },
+      "baselineScores": [
+        0.1875,
+        0.375
+      ],
+      "meanBaselineScore": 0.28125,
+      "proposed": "Giữ bóng mẹ và nhịp gốc. Mỗi bóng thứ tư khi nổ sinh ba mảnh 15% ATK hướng về ba làn; giảm 10% sát thương bóng mẹ gây cho chủ/đồng đội so với gốc.",
+      "benefitAndLimits": "Mảnh không gây friendly fire hoặc nổ/tách tiếp; không trúng lại mục tiêu chính của vụ nổ mẹ. Rủi ro nền vẫn tăng trưởng theo luật gốc.",
+      "verification": "Đo sát thương địch, tự hại và friendly fire; kiểm tra nổ do hết giờ, chạm địch, chạm chủ và item_30."
+    },
+    {
+      "number": 89,
+      "id": "char_30:resolve",
+      "characterId": "char_30",
+      "characterName": "Chó Bóng Bay",
+      "name": "Bóng Neo",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Bóng thường bay 80 đơn vị rồi neo đứng yên, lên ngòi sau 0,6 giây; chạm người hoặc hết 3 giây nổ bán kính 55, 80% ATK.",
+      "currentTradeoff": "Nhịp thả dài hơn 50%; dạng cơ bản vẫn có nguy cơ nổ trúng chủ và đồng đội.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "mine",
+        "power": 80,
+        "cooldown": 150
+      },
+      "baselineScores": [
+        0.375,
+        0.5
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Giữ bóng bay gốc. Mỗi lần thả thứ tư tạo thêm một bóng neo ở hướng mục tiêu cách 80, lên ngòi 0,6 giây, tồn tại 3 giây, bán kính 55, 45% ATK.",
+      "benefitAndLimits": "Bóng neo phụ chỉ hại địch, không thay bóng chính; tối đa hai bóng neo phụ/chủ, vẫn chịu trần vật thể.",
+      "verification": "Đo sát thương và tỷ lệ mìn được kích; xác nhận đòn nền không bị giới hạn phụ chiếm hết chỗ."
+    },
+    {
+      "number": 90,
+      "id": "char_30:tempo",
+      "characterId": "char_30",
+      "characterName": "Chó Bóng Bay",
+      "name": "Đoàn Bóng Hộ Tống",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super tạo năm bóng quay quanh người một giây, rồi tự phóng theo địch. Mỗi bóng gây 65% ATK khi trúng.",
+      "currentTradeoff": "Thay loạt bóng gốc; không nổ toàn vùng và không gây sát thương đồng đội/chủ từ năm bóng này.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "orbit",
+        "power": 65,
+        "count": 5
+      },
+      "baselineScores": [
+        0.25,
+        0.625
+      ],
+      "meanBaselineScore": 0.4375,
+      "proposed": "Thay loạt bóng Super bằng tám bóng hộ tống, mỗi bóng giữ hệ số sát thương địch của bóng Super gốc; xoay 0,5 giây rồi đuổi địch, không gây sát thương chủ/đồng đội.",
+      "benefitAndLimits": "Mỗi bóng chỉ trúng một người, không nổ toàn vùng; cùng địch nhận tối đa ba bóng/Super, phân phối lại mục tiêu khi đã đủ ba.",
+      "verification": "So tổng sát thương địch và HP đội giữ được trước đội tụ/cơ động, 1v1 và item_30; không coi bỏ tự hại tự động bù đủ mất AoE."
+    },
+    {
+      "number": 91,
+      "id": "char_31:pressure",
+      "characterId": "char_31",
+      "characterName": "Ủn Đại Ca",
+      "name": "Rocket Chia Đầu",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Rocket 65% ATK vỡ thành ba mảnh 30% sát thương mẹ theo ba hướng khi va chạm đầu hoặc hết tầm.",
+      "currentTradeoff": "Nhịp bắn dài hơn 30%; chỉ đầu chính xét Phóng xạ, mảnh con không có proc.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "split",
+        "power": 65,
+        "cooldown": 130
+      },
+      "baselineScores": [
+        0.375,
+        0.3125
+      ],
+      "meanBaselineScore": 0.34375,
+      "proposed": "Giữ rocket 100% ATK, nhịp và proc Phóng xạ gốc. Mỗi rocket thứ tư tách ba đầu phụ 15% ATK tại lần trúng đầu/hết tầm.",
+      "benefitAndLimits": "Đầu phụ không trúng lại người kích tách, không Phóng xạ, không tách tiếp; rocket mẹ giữ nguyên phần trúng gốc.",
+      "verification": "Đo sát thương và số tầng Phóng xạ, thử vật thể chắn và hết tầm."
+    },
+    {
+      "number": 92,
+      "id": "char_31:resolve",
+      "characterId": "char_31",
+      "characterName": "Ủn Đại Ca",
+      "name": "Tên Lửa Truy Đuổi",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Tên lửa thường uốn đường bay theo mục tiêu đã chọn, gây 80% ATK.",
+      "currentTradeoff": "Nhịp bắn dài hơn 40%; không xuyên, không tăng tầm sống và vẫn bị vật thể chặn.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "seeker",
+        "power": 80,
+        "cooldown": 140
+      },
+      "baselineScores": [
+        0.5625,
+        0.5625
+      ],
+      "meanBaselineScore": 0.5625,
+      "proposed": "Giữ sát thương 100% ATK, nhịp và proc gốc; mỗi rocket thứ ba tự đuổi mục tiêu đã chọn, thời gian sống tăng tối đa 20%.",
+      "benefitAndLimits": "Không xuyên, không nổ AoE mới hoặc thêm lần proc; khi mục tiêu chết chỉ tìm địch trong tầm đời đạn còn lại.",
+      "verification": "Đo tỷ lệ trúng đội cơ động và DoT; thử khiên/đệ chắn, mất mục tiêu."
+    },
+    {
+      "number": 93,
+      "id": "char_31:tempo",
+      "characterId": "char_31",
+      "characterName": "Ủn Đại Ca",
+      "name": "Trận Địa Pháo",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay tên lửa toàn bản đồ bằng ba ụ pháo có HP, mỗi 1,5 giây bắn một đạn nổ bán kính 55 với 30% ATK gốc. Tồn tại 4 giây.",
+      "currentTradeoff": "Không còn vụ nổ/Phóng xạ toàn bản đồ. Mỗi ụ có 18% HP gốc chủ, đạn ụ không gây hại đồng đội.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "summon",
+        "power": 30,
+        "count": 3,
+        "variant": "mortar"
+      },
+      "baselineScores": [
+        0.375,
+        0.375
+      ],
+      "meanBaselineScore": 0.375,
+      "proposed": "Giữ tên lửa Super gốc, giảm 20% sát thương nó gây cho chủ/đồng đội so với gốc. Thêm hai ụ pháo 12% HP gốc chủ trong 3 giây, mỗi 1,5 giây bắn đạn nổ 10% ATK gốc, bán kính 55.",
+      "benefitAndLimits": "Ụ không Phóng xạ/Burn hoặc friendly fire; tối đa 40% ATK gốc/người từ hai ụ/Super; không dùng nguyên ba ụ cũ kèm tên lửa.",
+      "verification": "Đo sát thương toàn bản đồ gốc, tự hại và damage ụ riêng; giới hạn bắn ở tick cuối lifetime."
+    },
+    {
+      "number": 94,
+      "id": "char_32:pressure",
+      "characterId": "char_32",
+      "characterName": "Bang Chủ Cái Bang",
+      "name": "Dép Hồi Lưu",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Dép bay ra rồi quay về chủ, gây 65% ATK mỗi chiều và xuyên hai người.",
+      "currentTradeoff": "Nhịp ném dài hơn 55%; không để lại vùng Frozen khi chạm, chỉ một dép hồi lưu đang bay.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "return",
+        "power": 65,
+        "cooldown": 155
+      },
+      "baselineScores": [
+        0.21875,
+        0.21875
+      ],
+      "meanBaselineScore": 0.21875,
+      "proposed": "Giữ dép gốc và vùng Frozen. Mỗi phát thứ năm thêm dép hồi lưu 35% ATK mỗi chiều, xuyên hai địch/chiều.",
+      "benefitAndLimits": "Dép phụ để tối đa một vùng Frozen gốc khi lần đầu trúng địch, dùng chung trần ba vùng và không xóa vùng còn sống chỉ để đặt lại; không khóa ném thường.",
+      "verification": "Đo Damage/uptime Frozen, kiểm tra vùng thêm không làm mất vùng gốc hiệu quả hơn."
+    },
+    {
+      "number": 95,
+      "id": "char_32:resolve",
+      "characterId": "char_32",
+      "characterName": "Bang Chủ Cái Bang",
+      "name": "Đôi Dép So Le",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Ném đồng thời hai dép theo hai hướng lệch nhau; mỗi dép gây 45% ATK và để vùng theo bộ kỹ năng gốc.",
+      "currentTradeoff": "Nhịp ném dài hơn 50%; hai dép có thể cùng trượt người ở đường giữa và vẫn dùng chung giới hạn vùng.",
+      "currentForm": {
+        "kind": "shot",
+        "pattern": "fan",
+        "power": 45,
+        "cooldown": 150,
+        "count": 2
+      },
+      "baselineScores": [
+        0.0625,
+        0.375
+      ],
+      "meanBaselineScore": 0.21875,
+      "proposed": "Giữ dép chính theo đường giữa và nhịp gốc. Mỗi phát thứ tư thêm một dép phụ lệch 11,25 độ luân phiên trái/phải, 35% ATK.",
+      "benefitAndLimits": "Dép phụ có thể tạo vùng theo luật gốc, dùng chung trần ba vùng; khi đã đủ vùng, bỏ tạo vùng phụ. Chỉ dép chính proc.",
+      "verification": "Đo hit đường giữa, Damage và thời gian Frozen; kiểm tra luân phiên hướng qua checkpoint."
+    },
+    {
+      "number": 96,
+      "id": "char_32:tempo",
+      "characterId": "char_32",
+      "characterName": "Bang Chủ Cái Bang",
+      "name": "Tam Giác Dép",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super đặt ba trận dép nhỏ bán kính 70 quanh mục tiêu theo hình tam giác, báo trước lệch nhịp, tồn tại 3 giây và gây 22% ATK mỗi giây.",
+      "currentTradeoff": "Thay một đại trận bán kính 175; có khe tránh giữa các trận nhỏ, không nhân nhịp khi vùng trùng.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "slipper",
+        "power": 22,
+        "count": 3
+      },
+      "baselineScores": [
+        0.375,
+        0.375
+      ],
+      "meanBaselineScore": 0.375,
+      "proposed": "Giữ đại trận gốc bán kính 175 và 4 giây. Thêm ba góc dép bán kính 35, tâm ở rìa đại trận thành tam giác, 3 giây, 8% ATK/giây và Frozen gốc.",
+      "benefitAndLimits": "Báo trước 0,5 giây; vùng trùng lấy sát thương/khống chế mạnh nhất theo nguồn, không cộng tick.",
+      "verification": "Đo vùng phủ thật và thời gian khống chế, giữ damage tại tâm bằng gốc."
+    },
+    {
+      "number": 97,
+      "id": "char_33:pressure",
+      "characterId": "char_33",
+      "characterName": "Sóc Jake",
+      "name": "Dĩa Bay Xuyên Tuyến",
+      "goal": 3,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Thay đòn chạm bằng mũi dĩa bay thẳng tầm 170, xuyên ba người, mỗi người 95% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 45%; đường bay hẹp và không còn hai mặt vũ khí đánh riêng.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "thrust",
+        "power": 95,
+        "cooldown": 145,
+        "reach": 170
+      },
+      "baselineScores": [
+        0.40625,
+        0.5625
+      ],
+      "meanBaselineScore": 0.484375,
+      "proposed": "Giữ cả dĩa/đùi gà và proc ném gà gốc. Mỗi đòn trúng thứ tư phóng dĩa 40% ATK, tầm 170, xuyên hai địch.",
+      "benefitAndLimits": "Hai phía vũ khí dùng chung một bộ đếm; dĩa phụ không đếm chuỗi hoặc kích thêm gà.",
+      "verification": "Đo damage hai phía, tần suất gà và sát thương dĩa riêng; kiểm tra khác biệt mô tả/engine về hệ số đùi gà."
+    },
+    {
+      "number": 98,
+      "id": "char_33:resolve",
+      "characterId": "char_33",
+      "characterName": "Sóc Jake",
+      "name": "Đùi Gà Quét Vòng",
+      "goal": 8,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Quét đùi gà thành vòng tròn bán kính 85, tối đa ba địch, mỗi người 80% ATK.",
+      "currentTradeoff": "Nhịp đánh dài hơn 50%; không thể đánh riêng hai phía để tăng số lần trúng.",
+      "currentForm": {
+        "kind": "melee",
+        "pattern": "whirl",
+        "power": 80,
+        "cooldown": 150,
+        "reach": 85
+      },
+      "baselineScores": [
+        0.5,
+        0.625
+      ],
+      "meanBaselineScore": 0.5625,
+      "proposed": "Giữ hai phía vũ khí. Mỗi đòn trúng thứ tư thêm vòng quét đùi gà bán kính 85, 40% ATK, tối đa ba địch.",
+      "benefitAndLimits": "Vòng phụ không kích gà/proc; mỗi địch một hit/vòng, không mất phía dĩa.",
+      "verification": "Đo đơn/đa mục tiêu và số boomerang gốc, tránh hai mặt vũ khí làm tăng đôi bộ đếm."
+    },
+    {
+      "number": 99,
+      "id": "char_33:tempo",
+      "characterId": "char_33",
+      "characterName": "Sóc Jake",
+      "name": "Tiệc Nướng Trên Không",
+      "goal": 15,
+      "legacy": false,
+      "targeted": false,
+      "currentDescription": "Super ném ba đùi gà theo ba hướng; mỗi đùi quay về sau 0,8 giây, có thể trúng mỗi người một lần mỗi chiều. Chủ bắt lại mỗi đùi hồi 1% HP gốc, tối đa 20 HP.",
+      "currentTradeoff": "Thay một đùi khổng lồ 125%; mỗi đùi nhỏ yếu hơn và tổng hồi chủ tối đa 3% HP gốc trước giảm hồi.",
+      "currentForm": {
+        "kind": "super",
+        "pattern": "boomerangs",
+        "power": 45,
+        "count": 3
+      },
+      "baselineScores": [
+        0.0625,
+        0.3125
+      ],
+      "meanBaselineScore": 0.1875,
+      "proposed": "Thay đùi Super đơn bằng một đùi giữa giữ 125% ATK mỗi chiều, bán kính và hồi HP gốc; thêm hai đùi bên 15% ATK mỗi chiều, không hồi HP riêng.",
+      "benefitAndLimits": "Cả ba có thể tồn tại đồng thời, tách chỗ cho ba đùi Super khỏi hai đạn gà thường nhưng vẫn chịu trần chung. Mỗi địch nhận tối đa 40% ATK phụ từ hai đùi bên/Super; buff hồi đồng đội của đùi giữa giữ nguyên.",
+      "verification": "Kiểm tra phát đủ ba đùi khi đang có hai gà thường; đo damage/hồi gốc, trần sát thương phụ và bắt đủ đùi."
+    }
+  ]
+}

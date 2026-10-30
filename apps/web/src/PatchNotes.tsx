@@ -1,6 +1,38 @@
 import React from "react";
 
 export const PATCH_NOTES = [{
+ version: "2026.10.30.2", date: "2026-10-30", title: "Rarity gốc và trang bị hợp cạ",
+ summary: "Thêm ngân sách sức mạnh theo rarity gốc, cân lại kit và nâng lợi ích hợp cạ.",
+ sections: [{title:"Nhân vật và Bí kỹ",entries:["HP/ATK nền giữ thêm hệ số theo rarity gốc ở mọi cấp: RÁC ×0,94; T1 ×0,98; T2 ×1; T3 ×1,04; T4 ×1,08. Tiến hóa giữ nguyên.","Điều chỉnh nền Kính Cận, Đội Trưởng, Sếp, Cờ, Mâm Quả, Hiệp Sĩ, Họa Sĩ, Anh Tết, Hoàng Tử, King, Chó Bóng Bay và Bang Chủ. Cân lại Đoàn Bóng Hộ Tống và Ống Kính Quét, tách cấu hình dạng hợp cạ."]},{title:"Hợp cạ",entries:["Phần có lợi của đồ hợp cạ tăng 12%; chủ nhận thêm 2% HP và ATK nền một lần, không tăng mặt phạt. Thêm HP cho đệ khổng lồ Hộp Quà đúng đồ; thêm 8% damage lốc chính Phonk và vùng dép Bang Chủ đúng đồ.","Engine v39. Các mục tiêu tỷ lệ thắng cần kiểm chứng bằng mô phỏng mới; thay đổi này chưa khẳng định đã đạt cân bằng."]}],
+}, {
+  version: "2026.10.30.1", date: "2026-10-30", title: "99 Bí kỹ nâng cấp sức mạnh",
+  summary: "Triển khai toàn bộ đề xuất 99 Bí kỹ: giữ sức mạnh nền, thêm công dụng có giới hạn.",
+  sections: [{title:"Combat",entries:["81 nhánh có đòn phụ theo chu kỳ, phản công, Super bổ sung hoặc thay thế. Đòn phụ có giới hạn riêng, không tạo chuỗi proc hay tự nạp Super.","18 nhánh hỗ trợ giữ hồi, khiên, số đệ và vùng nền; thêm giải trạng thái, tiếp tế, hộ tống và bảo vệ đồng đội. Mô tả đủ 99 nhánh đã cập nhật.","Engine v38 giữ bộ đếm và giới hạn qua checkpoint/replay. Giữ ID và tiến độ Bí kỹ đã mở."]}],
+}, {
+  version: "2026.10.29.3", date: "2026-10-29", title: "VFX Bí kỹ cho đủ 33 nhân vật",
+  summary: "99 Bí kỹ có hoạt ảnh theo nhánh, hình đạn và dấu hiệu riêng theo nhân vật.",
+  sections: [
+    {title:"Hiệu ứng riêng",entries:["Bổ sung 792 khung hoạt ảnh cho 99 Bí kỹ, với 33 bộ hình riêng: móng hổ, trái tim, hạt nho, lông gió, kính ngắm, nét mực, đồng xu, hoa hồng, pixel, phóng xạ và nhiều chủ đề khác. Tỏa quạt, chém vòng, khoan xuyên, mìn, hồi lưu và triệu hồi có hình hiệu ứng theo cơ chế.","Đạn Bí kỹ có thân đạn và vệt bay theo nhân vật; hồi lưu có dấu hiệu quay về, mìn có chớp cảnh báo, đệ có hiệu ứng xuất hiện và vòng chân, chữa trị có tia nối và đốm sáng di chuyển. Các nhánh cũ cũng có dấu hiệu khi tung Super, trúng đòn, hồi máu, tạo khiên hoặc tích Nén Bão."]},
+    {title:"Trong trận và sân thử",entries:["VFX dùng chung cho trận thường và replay/sân thử. Có thể xem đủ ba nhánh của mỗi nhân vật từ Hành trình hoặc Catalog → Bí kỹ, kể cả khi chưa mở khóa.","Tái sử dụng texture và sprite, giới hạn số hiệu ứng cùng lúc. Chế độ giảm hiệu ứng bỏ vệt phụ và vòng chân; tắt hiệu ứng ẩn lớp VFX trang trí. Phần hình ảnh không thay đổi sát thương, hitbox, seed hay kết quả trận; engine giữ v36."]},
+  ],
+}, {
+  version: "2026.10.29.2", date: "2026-10-29", title: "Bí kỹ thay đổi cách chiến đấu",
+  summary: "Đạn tách, đĩa hồi lưu, đòn quét/chém trễ, drone và đệ có hành vi riêng; thêm sân thử để so sánh ngay.",
+  sections: [
+    {title:"81 nhánh biến thể",entries:["Thay 81 nhánh gắn trạng thái bằng các thay đổi đường đạn, hình đòn đánh, phản công vật lý và Super. Có đạn tỏa quạt, khoan xuyên, tự đuổi, nảy tường, tách mảnh, mìn, hồi lưu, quỹ đạo; đòn quét vòng, chữ thập, đâm, lao và chém trễ.","Super có thể đổi thành trận mìn/vũng mực nhỏ, nhiều tia laser, vệ tinh phóng ra hoặc đệ có HP. Nhánh mới cân bằng bằng nhịp đánh, góc phủ, công dụng bị thay và giới hạn vật thể; giữ ID cùng tiến độ đã mở."]},
+    {title:"Đệ có vai trò riêng",entries:["Gói Gia Cố tạo hộ vệ đứng chắn phía trước; Quà Tiếp Tế biến đệ nhỏ thành người chữa trị di chuyển; Hộ Tống tạo đệ khổng lồ bám đồng đội được chọn. Đệ vẫn có HP, va chạm vật lý và thời hạn.","Các nhân vật khác có thể đổi Super thành drone bắn theo chủ, pháo ba nòng, sói săn, lốp húc, đệ chữa trị, bếp lẩu, sạp tiếp tế hoặc ụ pháo. Đệ và đạn con có giới hạn để không sinh vô hạn."]},
+    {title:"Sân thử",entries:["Trong Hành trình chọn So sánh cách đánh, hoặc trong Catalog → Bí kỹ chọn Xem cách đánh. Đổi giữa bộ gốc và ba Bí kỹ trong cùng tình huống Lv.10, có tạm dừng, xem chậm và chạy lại. Không cần mở khóa trước; sân thử không cộng tiến độ hoặc phần thưởng.","Engine v36 giữ các thuộc tính đường đạn, đệ và vệt chém qua checkpoint/replay. Trận từ engine cũ cần tạo lại."]},
+  ],
+}, {
+  version: "2026.10.29.1", date: "2026-10-29", title: "Hành trình riêng, lựa chọn combat mới",
+  summary: "Thay 81 Bí kỹ chỉ cộng chỉ số bằng các nhánh chiến đấu theo nhân vật; mỗi chặng hành trình có mục tiêu riêng.",
+  sections: [
+    { title: "Cẩm nang mở rộng", entries: ["Catalog có sáu mục: Nhân vật, Vật phẩm, Trạng thái, Cơ chế combat, Bí kỹ và Liên kết. Tra đủ 15 trạng thái với tác dụng, thông số mặc định, trần hiệu lực, cách cộng dồn và tương tác.", "Bổ sung 12 mục cơ chế combat, toàn bộ 99 Bí kỹ và liên kết/hội/tộc/vai trò. Tìm bằng tên Việt, tên tiếng Anh hoặc chữ không dấu; lọc theo nhóm và mở chi tiết nhân vật liên quan."] },
+    { title: "Bí kỹ và combat", entries: ["27 nhân vật có ba nhánh mới: chuỗi đòn, khai thác trạng thái, phản công, cứu nguy và hiệu ứng sau Super. Giữ 18 Bí kỹ riêng hiện có; mỗi lựa chọn đều có đánh đổi. Nhánh mốc sau mở thêm cách chơi, không tự thay nhánh đã lắp.", "Thêm Rạn giáp: giảm tối đa 15 điểm phần trăm giáp và không làm giáp âm. Hộ thể: giảm tối đa 20% sát thương trực tiếp, không giảm DoT. Cùng trạng thái lấy hiệu lực mạnh nhất, không cộng dồn.", "Chuỗi đòn hết sau 4 giây không trúng; hiệu ứng có hồi riêng, không tự tạo chuỗi proc. Hồi và khiên theo HP gốc có trần 40/60 HP mỗi lần; hỗ trợ chọn một đồng đội khác trong tầm 180. Hiệu ứng Super diện rộng giới hạn ba địch quanh người dùng."] },
+    { title: "Luyện theo vai trò", entries: ["Chặng 0–3 tính trận thắng hoặc đóng góp đặc trưng. Chặng 3–8 luyện bản sắc nhân vật; chặng 8–15 yêu cầu đóng góp khác hoặc duy trì vai trò. Thua vẫn cộng một bước khi đạt mục tiêu; replay không cộng.", "Trang Hành trình hiển thị mục tiêu đang luyện, ba nhánh, đánh đổi và điều kiện từng chặng; tìm được theo tên Bí kỹ hoặc vai trò, lọc đang luyện/hoàn tất."] },
+    { title: "Tương thích", entries: ["Giữ tiến độ, mốc đã mở và ID Bí kỹ đang lắp của hồ sơ cũ. Các Bí kỹ thay thế không thêm giới hạn Truyền thừa lên đội cũ. Engine v35: trận và replay dùng engine cũ cần tạo lại."] },
+  ],
+}, {
   version: "2026.10.28.2", date: "2026-10-28", title: "Trận mới đổi seed và đội thử thách dùng chung",
   summary: "Đấu lại có diễn biến mới; giữ nguyên đội khi chuyển giữa ba thử thách ngày.",
   sections: [

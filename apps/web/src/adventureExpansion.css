@@ -258,6 +258,51 @@
   align-items: center;
   gap: 12px;
 }
+.mastery-rules {
+  padding: 12px 16px;
+  border: 1px solid #ffffff18;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.mastery-rules summary { cursor: pointer; color: #d9bd85; }
+.mastery-current-objective b, .mastery-current-objective span { display: block; }
+.mastery-current-objective b { color: #d9bd85; margin-bottom: 6px; }
+.mastery-branches .mastery-unlock-detail summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+.mastery-branches summary span { flex-shrink: 0; font-size: 10px; color: #b9b0c2; }
+.mastery-branches .mastery-role {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: #a3c6ca;
+}
+.mastery-branches .is-equipped { border-left: 2px solid #d9bd85; padding-left: 10px; }
+.mastery-stage-objective { color: #b9b0c2; }
+.mastery-preview { position: fixed; inset: 0; margin: auto; width: min(960px,calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; border: 1px solid #bfa26b88; border-radius: 16px; background: #15171c; color: #efebe3; padding: 22px; }
+.mastery-preview::backdrop { background: #050609dc; backdrop-filter: blur(5px); }
+.mastery-preview-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.mastery-preview-heading h2 { font-size:20px; margin:6px 0; }
+.mastery-preview-heading small { color:#d9bd85; font-size:10px; letter-spacing:.12em; }
+.mastery-preview-heading > button { flex-shrink:0; }
+.mastery-preview > p { font-size:12px; line-height:1.7; color:#bbbfc7; }
+.mastery-preview-choices { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.mastery-preview-choices button[aria-pressed=true] { border-color:#d9bd85; background:#4c3a20; color:#ffe0a1; }
+.mastery-preview-description { padding:14px 16px; border:1px solid #ffffff18; border-radius:10px; margin-bottom:16px; font-size:12px; line-height:1.7; }
+.mastery-preview-description p { margin:8px 0; }
+.mastery-preview-description small { color:#dbb7a9; }
+.mastery-preview .arena-shell { max-width:650px; margin-inline:auto; }
+@media(max-width:540px) { .mastery-preview { width:calc(100vw - 16px);padding:12px;max-height:calc(100dvh - 16px); } .mastery-preview-heading h2 {font-size:16px;} .mastery-preview-choices {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));} .mastery-preview-choices button {font-size:11px;min-width:0;padding:9px 6px;} }
+@media (max-width: 540px) {
+  .mastery-filter { flex-wrap: wrap; }
+  .mastery-filter input { flex-basis: 100%; }
+  .mastery-filter select { width: 100%; }
+}
 .mastery-filter input {
   flex: 1;
   min-width: 0;

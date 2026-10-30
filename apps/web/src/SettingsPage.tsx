@@ -2,14 +2,18 @@ import type { GameSettings } from "./gameSettings";
 import { DAMAGE_PALETTE, SUPPORT_PALETTE } from "./rendering/damage-numbers";
 import "./settings.css";
 import { exportJourneyEvents } from "./telemetry";
+import {useState} from 'react';
 
 export function SettingsPage({
   settings,
   onChange,
+  onAccessCode,
 }: {
   settings: GameSettings;
   onChange: (settings: GameSettings) => void;
+  onAccessCode?: (code:string)=>boolean;
 }) {
+  const [accessCode,setAccessCode]=useState(''),[accessError,setAccessError]=useState('');
   const rows = [
     {
       key: "effects",
@@ -115,6 +119,11 @@ export function SettingsPage({
           );
         })}
       </div>
+      {onAccessCode&&<form className="settings-access-code" onSubmit={e=>{e.preventDefault();if(!onAccessCode(accessCode.trim()))setAccessError('Mã không hợp lệ.');else{setAccessCode('');setAccessError('');}}}>
+        <label>Mã truy cập<input aria-label="Mã truy cập" type="password" inputMode="numeric" autoComplete="off" value={accessCode} onChange={e=>{setAccessCode(e.target.value);setAccessError('');}}/></label>
+        <button type="submit">Mở công cụ</button>
+        {accessError&&<small role="alert">{accessError}</small>}
+      </form>}
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import { CATALOG_ITEMS, character, ROSTER, type CharacterId } from "./catalog";
 import { cardEffectiveEvolution, cardEvolution, cardRarityMultiplier, RARITY_POWER_STEP } from "./progression";
-import { CHARACTER_BALANCE, ITEM_EFFECT_TEXT } from "./combat-balance";
+import { CHARACTER_BALANCE, PRINTED_RARITY_POWER, ITEM_EFFECT_TEXT } from "./combat-balance";
 import { masteryInfo } from "./mastery";
 export const BENCH_CAPACITY = 5;
 export const ITEM_BAG_CAPACITY = 8;
@@ -187,7 +187,7 @@ export interface Loadout {
 export function itemMultiplier(id: string, level = 1, matched = false) {
   const it = CATALOG_ITEMS.find((it) => it.id === id);
   return (
-    (it ? cardRarityMultiplier(it.rarity, level) : 1) * (matched ? 1.08 : 1)
+    (it ? cardRarityMultiplier(it.rarity, level) : 1) * (matched ? 1.12 : 1)
   );
 }
 export function itemModifiers(
@@ -200,11 +200,13 @@ export function itemModifiers(
   const multiplier = itemMultiplier(id, level, matched);
   for (const key of Object.keys(it?.modifiers || {}) as (keyof Stats)[]) {
     const value = it!.modifiers[key] || 0;
+    const beneficial = key==='cooldown'?value<0:value>0;
+    const scale=matched&&!beneficial?itemMultiplier(id,level,false):multiplier;
     // Small negative cooldown bonuses cannot silently round back to zero.
     result[key] =
       value < 0
-        ? -Math.max(1, Math.round(-value * multiplier))
-        : Math.round(value * multiplier);
+        ? -Math.max(1, Math.round(-value * scale))
+        : Math.round(value * scale);
   }
   return result;
 }
@@ -230,8 +232,10 @@ export function computeStats(loadout: Loadout): Stats {
     const rarityMultiplier = transformed
       ? cardRarityMultiplier(c.tier, loadout.level) + (effective.tierIndex - cardEvolution(c.tier, loadout.level).tierIndex) * RARITY_POWER_STEP
       : cardRarityMultiplier(c.tier, loadout.level);
+    const matched=loadout.equipment.some(id=>CATALOG_ITEMS.find(it=>it.id===id)?.affinity===c.id);
+    const printed=PRINTED_RARITY_POWER[c.tier]??1;
     for (const key of ["hp", "attack"] as const)
-      s[key] = Math.round(s[key] * rarityMultiplier);
+      s[key] = Math.round(s[key] * rarityMultiplier * printed * (matched?1.02:1));
   }
   if ((loadout.weaponRank || 1) >= 2) s.attack += 2;
   if ((loadout.weaponRank || 1) >= 3) {

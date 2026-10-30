@@ -62,7 +62,7 @@ export const ROSTER = data.characters.map((c) => {
     ],
     skill: ["Tăng trưởng combat", kitGrowthDescription(kit)],
     super: [c.super[0], kit.super],
-    upgrade: "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. Hiệu lực theo rarity hiện tại; level giữa các mốc tăng nhẹ trong cùng bậc.",
+    upgrade: "Tiến hóa ở cấp 3, 7 và 10, tối đa GOD. HP/ATK nền giữ thêm ngân sách theo rarity gốc; level giữa các mốc tăng nhẹ trong cùng bậc.",
   };
 });
 export const BONDS = data.bonds.map(b => ({ ...b, description: `${b.description} Cộng hưởng ${synergySignature(b.id).name}: ${synergySignature(b.id).text}` }));
@@ -106,7 +106,7 @@ export const CATALOG_ITEMS = data.items.map((it) => ({
   modifiers: ITEM_BALANCE[it.id],
   description: ITEM_EFFECT_TEXT[it.id].replace(/\{(\d+)\}/g,
     (_, value: string) => String(Math.round(Number(value) * cardRarityMultiplier(it.rarity, 1)))),
-  affinityDescription: affinityDescription(it.id, cardRarityMultiplier(it.rarity, 1) * 1.08),
+  affinityDescription: affinityDescription(it.id, cardRarityMultiplier(it.rarity, 1) * 1.12),
 }));
 export const TRANSFORMED_FORMS: Record<string, { itemId: string; name: string }> = {
   char_28: { itemId: "item_28", name: "Người Máy Đỉnh Cao Fu Di" },

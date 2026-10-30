@@ -1205,7 +1205,7 @@
       },
       "affinity": "char_09",
       "affinityName": "Sếp Cũng Phải Quẹt",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng nhận 6 năng lượng; hồi 7 giây, tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng nhận 6 năng lượng; hồi 7 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_02",
@@ -1222,7 +1222,7 @@
       },
       "affinity": "char_01",
       "affinityName": "RTX Hạ Nhiệt Tới 45",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Còn sống dưới 40% HP: thêm 18 khiên trong 3 giây, một lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Còn sống dưới 40% HP: thêm 18 khiên trong 3 giây, một lần/trận."
     },
     {
       "id": "item_03",
@@ -1239,7 +1239,7 @@
       },
       "affinity": "char_12",
       "affinityName": "Mượn Vai Vẫn Chắc Bụng",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 15% ATK trong 3 giây; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng, đòn thường kế tiếp thêm 15% ATK trong 3 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_04",
@@ -1257,7 +1257,7 @@
       },
       "affinity": "char_17",
       "affinityName": "Vừa Ship Vừa Gặm",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng tăng 9% tốc độ trong 2 giây; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng tăng 9% tốc độ trong 2 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_05",
@@ -1276,7 +1276,7 @@
       },
       "affinity": "char_02",
       "affinityName": "Bê Tông Hết Chậm",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng nhận 11 khiên trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Mỗi 4 đòn trúng nhận 11 khiên trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_06",
@@ -1295,7 +1295,7 @@
       },
       "affinity": "char_14",
       "affinityName": "Kiếm Kim Cương Gia Hộ",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super, đòn thường kế tiếp thêm 18% ATK trong 3 giây; hồi 12 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau Super, đòn thường kế tiếp thêm 18% ATK trong 3 giây; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_07",
@@ -1312,7 +1312,7 @@
       },
       "affinity": "char_19",
       "affinityName": "Mát Lạnh Đúng Dịp Tết",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Kỹ năng làm chậm địch gần nhất 11% trong 1 giây, tầm 180; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Kỹ năng làm chậm địch gần nhất 11% trong 1 giây, tầm 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_08",
@@ -1329,7 +1329,7 @@
       },
       "affinity": "char_03",
       "affinityName": "AI Dự Báo Điện",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super hoàn 6 năng lượng; hồi 12 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau Super hoàn 6 năng lượng; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_09",
@@ -1347,7 +1347,7 @@
       },
       "affinity": "char_16",
       "affinityName": "Render Xong Trước Deadline",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 17% ATK trong 3 giây; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng, đòn thường kế tiếp thêm 17% ATK trong 3 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_10",
@@ -1365,7 +1365,7 @@
       },
       "affinity": "char_13",
       "affinityName": "Mâm Quả Thức Tỉnh",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng hồi thêm 8 HP cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng hồi thêm 8 HP cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_11",
@@ -1383,7 +1383,7 @@
       },
       "affinity": "char_04",
       "affinityName": "Trang Bìa Đón Lộc",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng làm chậm 14% trong 1 giây; hồi 5 giây, tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Mỗi 4 đòn trúng làm chậm 14% trong 1 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_12",
@@ -1400,7 +1400,7 @@
       },
       "affinity": "char_06",
       "affinityName": "Bánh Khảo Nâng Khiên",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng thêm 11 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng thêm 11 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_13",
@@ -1417,7 +1417,7 @@
       },
       "affinity": "char_10",
       "affinityName": "Bánh Kem Húc Mạnh",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng tăng 9% tốc độ trong 2 giây; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng tăng 9% tốc độ trong 2 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_14",
@@ -1434,7 +1434,7 @@
       },
       "affinity": "char_08",
       "affinityName": "Nem Chua Tăng Độc",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng đốt thêm 2 HP/giây trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Mỗi 4 đòn trúng đốt thêm 2 HP/giây trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_15",
@@ -1451,7 +1451,7 @@
       },
       "affinity": "char_11",
       "affinityName": "Cờ Cổ Vũ Giải Chậm",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng xóa chậm và miễn chậm 32 tick; 30 tick = 1 giây, tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng xóa chậm và miễn chậm 32 tick; 30 tick = 1 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_16",
@@ -1469,7 +1469,7 @@
       },
       "affinity": "char_18",
       "affinityName": "Thực Đơn Có Món Quay",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 19% ATK trong 3 giây; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng, đòn thường kế tiếp thêm 19% ATK trong 3 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_17",
@@ -1487,7 +1487,7 @@
       },
       "affinity": "char_07",
       "affinityName": "Courage Khó Gục",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Còn sống dưới 40% HP: xóa chậm và miễn chậm 52 tick, một lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Còn sống dưới 40% HP: xóa chậm và miễn chậm 52 tick, một lần/trận."
     },
     {
       "id": "item_18",
@@ -1504,7 +1504,7 @@
       },
       "affinity": "char_15",
       "affinityName": "Ý Tưởng Cứu Nguy",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Còn sống dưới 40% HP: đồng minh yếu nhất trong 180 nhận 19 khiên trong 3 giây, một lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Còn sống dưới 40% HP: đồng minh yếu nhất trong 180 nhận 19 khiên trong 3 giây, một lần/trận."
     },
     {
       "id": "item_19",
@@ -1521,7 +1521,7 @@
       },
       "affinity": "char_05",
       "affinityName": "Proby Bắt Bài Bổ Sung",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng hồi 8 HP cho bản thân; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng hồi 8 HP cho bản thân; tối đa 3 lần/trận."
     },
     {
       "id": "item_20",
@@ -1538,7 +1538,7 @@
       },
       "affinity": "char_20",
       "affinityName": "Khai Cuộc Vườn Hồng",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super hồi thêm 12 HP cho đồng minh yếu nhất trong 180; hồi 12 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau Super hồi thêm 12 HP cho đồng minh yếu nhất trong 180; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_21",
@@ -1556,7 +1556,7 @@
       },
       "affinity": "char_21",
       "affinityName": "Môn Mở Đúng Lối",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng cấp 12 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng cấp 12 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_22",
@@ -1576,7 +1576,7 @@
       },
       "affinity": "char_22",
       "affinityName": "Aura Đồng Điệu",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super xóa chậm và miễn chậm 54 tick; hồi 12 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau Super xóa chậm và miễn chậm 54 tick; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_23",
@@ -1594,7 +1594,7 @@
       },
       "affinity": "char_23",
       "affinityName": "Ngai Vàng RiseOn",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super, đòn thường kế tiếp thêm 19% ATK trong 3 giây; hồi 12 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau Super, đòn thường kế tiếp thêm 19% ATK trong 3 giây; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_24",
@@ -1612,7 +1612,7 @@
       },
       "affinity": "char_24",
       "affinityName": "Thi Vị Bổ Dưỡng",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Mỗi 4 đòn trúng nhận 9 khiên trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Mỗi 4 đòn trúng nhận 9 khiên trong 2 giây; hồi 5 giây, tối đa 3 lần/trận."
     },
     {
       "id": "item_25",
@@ -1631,7 +1631,7 @@
       },
       "affinity": "char_25",
       "affinityName": "Gia Tài Phú Quý",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng thêm 12 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng thêm 12 khiên trong 2 giây cho đồng minh yếu nhất trong 180; tối đa 3 lần/trận."
     },
     {
       "id": "item_26",
@@ -1648,7 +1648,7 @@
       },
       "affinity": "char_26",
       "affinityName": "Gió Của Nhạc Sư",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng tăng 12% tốc độ trong 2 giây; tối đa 3 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng tăng 12% tốc độ trong 2 giây; tối đa 3 lần/trận."
     },
     {
       "id": "item_27",
@@ -1666,7 +1666,7 @@
       },
       "affinity": "char_27",
       "affinityName": "Nhiên Liệu Lõi Đỏ",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 16% ATK trong 3 giây; tối đa 3 lần/trận. Kỹ năng và Super còn gây đốt."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng, đòn thường kế tiếp thêm 16% ATK trong 3 giây; tối đa 3 lần/trận. Kỹ năng và Super còn gây đốt."
     },
     {
       "id": "item_28",
@@ -1683,7 +1683,7 @@
       },
       "affinity": "char_28",
       "affinityName": "Fu Di Thức Tỉnh",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Biến hình Fu Di, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau kỹ năng nhận 9 khiên trong 2 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Biến hình Fu Di, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau kỹ năng nhận 9 khiên trong 2 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_29",
@@ -1700,7 +1700,7 @@
       },
       "affinity": "char_29",
       "affinityName": "Siêu Chiến Binh Wacom",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Biến hình Wacom, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau Super, đòn kế tiếp thêm 13% ATK; hồi 12 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Biến hình Wacom, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau Super, đòn kế tiếp thêm 13% ATK; hồi 12 giây, tối đa 2 lần/trận."
     },
     {
       "id": "item_30",
@@ -1717,7 +1717,7 @@
       },
       "affinity": "char_30",
       "affinityName": "Skyrocket Dog",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Biến hình Skyrocket Dog, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau kỹ năng xóa chậm và miễn chậm 34 tick, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Biến hình Skyrocket Dog, tăng một bậc hiếm; kỹ năng/Super thêm 12%/15% ATK. Sau kỹ năng xóa chậm và miễn chậm 34 tick, tối đa 2 lần/trận."
     },
     {
       "id": "item_31",
@@ -1735,7 +1735,7 @@
       },
       "affinity": "char_31",
       "affinityName": "Chữ Ký Đại Ca",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng, đòn thường kế tiếp thêm 19% ATK trong 3 giây; tối đa 3 lần/trận. Chặn đạn để phá nhịp Đại Ca."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng, đòn thường kế tiếp thêm 19% ATK trong 3 giây; tối đa 3 lần/trận. Chặn đạn để phá nhịp Đại Ca."
     },
     {
       "id": "item_32",
@@ -1753,7 +1753,7 @@
       },
       "affinity": "char_32",
       "affinityName": "Bước Chân Bang Chủ",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau kỹ năng xóa chậm và miễn chậm 52 tick; tối đa 3 lần/trận. Khiên và giữ khoảng cách khắc chế áp sát."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau kỹ năng xóa chậm và miễn chậm 52 tick; tối đa 3 lần/trận. Khiên và giữ khoảng cách khắc chế áp sát."
     },
     {
       "id": "item_33",
@@ -1771,7 +1771,7 @@
       },
       "affinity": "char_33",
       "affinityName": "Bếp Trưởng Danh Dự",
-      "affinityDescription": "+8% hiệu lực chỉ số và hiệu ứng. Sau Super cấp thêm 16 khiên trong 3 giây cho đồng minh yếu nhất trong 180; hồi 12 giây, tối đa 2 lần/trận."
+      "affinityDescription": "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền. Sau Super cấp thêm 16 khiên trong 3 giây cho đồng minh yếu nhất trong 180; hồi 12 giây, tối đa 2 lần/trận."
     }
   ],
   "bonds": [

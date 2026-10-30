@@ -1,4 +1,5 @@
 import { validateMasteryTeam } from "./mastery";
+import { CHARACTER_JOURNEYS } from "./mastery-journey";
 import { ROSTER, CATALOG_ITEMS, character, type CharacterId } from "./catalog";
 import { campaignEncounter } from "./campaign";
 import type { Loadout } from "./balance";
@@ -200,39 +201,7 @@ export const TUTORIALS = [
     target: "change",
   },
 ] as const;
-const SPECIAL_MASTERY = [
-  {
-    id: "char_01",
-    title: "Bình tĩnh giữa hỗn loạn",
-    text: "Thắng 3 / 8 / 15 trận có Hổ trong đội.",
-  },
-  {
-    id: "char_11",
-    title: "Người truyền cảm hứng",
-    text: "Tạo khiên cho đồng đội trong 3 / 8 / 15 trận.",
-  },
-  {
-    id: "char_13",
-    title: "Tiếp tế không ngừng",
-    text: "Hồi HP thực cho đồng đội trong 3 / 8 / 15 trận.",
-  },
-  {
-    id: "char_14",
-    title: "Đạo quân quà tặng",
-    text: "Thắng 3 / 8 / 15 trận có Hộp Quà trong đội.",
-  },
-  {
-    id: "char_20",
-    title: "Hoa nở trong giao tranh",
-    text: "Kích hoạt liên kết trong 3 / 8 / 15 trận có Hoàng Tử.",
-  },
-  {
-    id: "char_22",
-    title: "Hào quang đồng đội",
-    text: "Buff đồng đội trong 3 / 8 / 15 trận.",
-  },
-] as const;
-export const MASTERY = ROSTER.map(c => SPECIAL_MASTERY.find(m => m.id === c.id) || { id: c.id, title: `Dấu ấn ${c.name}`, text: `Thắng 3 / 8 / 15 trận có ${c.name} trong đội.` });
+export const MASTERY = CHARACTER_JOURNEYS;
 export function draftChoices(seed: number, round: number) {
   const offset = stableSeed(`${seed}:${round}`);
   return [

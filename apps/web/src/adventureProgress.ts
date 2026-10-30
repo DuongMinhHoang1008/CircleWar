@@ -1,7 +1,26 @@
 import { type Experience } from "../../../packages/shared/src/experience";
 import { MASTERY } from "../../../packages/shared/src/adventure";
-import type { BattleSummary } from "./battleAnalytics";
+import type { BattleSummary, BattleUnit } from "./battleAnalytics";
 import { masteriesFor } from "../../../packages/shared/src/mastery";
+import { journeyObjective, type JourneyObjective } from "../../../packages/shared/src/mastery-journey";
+
+function meetsObjective(objective: JourneyObjective, unit: BattleUnit, summary: BattleSummary): boolean {
+  const metrics = unit.support, amount = objective.amount;
+  switch (objective.kind) {
+    case "effect": return (metrics?.effects[objective.effect!] || 0) >= amount;
+    case "damage": return !!unit.maxHp && (unit.combat?.damage || 0) * 100 >= unit.maxHp * amount;
+    case "control": return (metrics?.controlTicks || 0) >= amount;
+    case "healing": return (metrics?.healing || 0) >= amount;
+    case "allyHealing": return (metrics?.allyHealing || 0) >= amount;
+    case "shielding": return (metrics?.shielding || 0) >= amount;
+    case "allyShielding": return Math.max(metrics?.allyShielding || 0, metrics?.allyShieldAbsorbed || 0) >= amount;
+    case "buff": return Math.max(metrics?.buffsApplied || 0, metrics?.allyBuffTicks ? 1 : 0) >= amount;
+    case "buffTime": return (metrics?.allyBuffTicks || 0) >= amount;
+    case "endure": return (unit.aliveTicks || 0) >= amount * 30 && (unit.combat?.taken || 0) > 0;
+    case "bond": return summary.tactics.bonds + summary.tactics.groups >= amount;
+    default: return false;
+  }
+}
 
 export function advanceMastery(
   experience: Experience,
@@ -15,18 +34,10 @@ export function advanceMastery(
       (u) => u.team === "team-player" && u.characterId === mission.id,
     );
     if (!unit) continue;
-    const qualifying =
-      mission.id === "char_11"
-        ? (unit.support?.allyShielding ||
-            unit.support?.allyShieldAbsorbed ||
-            0) > 0
-        : mission.id === "char_13"
-          ? (unit.support?.allyHealing || 0) > 0
-          : mission.id === "char_22"
-            ? (unit.support?.allyBuffTicks || 0) > 0
-            : mission.id === "char_20"
-              ? summary.tactics.bonds + summary.tactics.groups > 0
-              : summary.winner === "team-player";
+    const objective = journeyObjective(mission.id, mastery[mission.id] || 0);
+    const qualifying = objective.kind === "winOrSignature"
+      ? summary.winner === "team-player" || meetsObjective(mission.objectives[1], unit, summary)
+      : meetsObjective(objective, unit, summary);
     if (!qualifying) continue;
     mastery[mission.id] = Math.min(1_000_000, (mastery[mission.id] || 0) + 1);
     for (const skill of masteriesFor(mission.id))

@@ -8,7 +8,7 @@ import type { BattleState, Fighter } from "./types";
 import { DIRECTIONS, div, normalize, random, UNIT } from "./math";
 import { capsuleHit } from "./physics";
 import { safeBounds, type ArenaBounds } from "./bounds";
-import { applyStatus, statusDamage, attackCooldown } from "./statuses";
+import { applyStatus, statusDamage, attackCooldown, incomingStatusMultiplier } from "./statuses";
 import { alignedRangedTarget, isRanged } from "./weapons";
 import { retainCombatEvents } from "./events";
 import { kitMeleeConstructs } from "./kit-combat";
@@ -41,8 +41,8 @@ export function damage(
       div(
         statusDamage(source, s.tick, raw) *
           closingTempo(s.tick, s.config.shrinkSeconds).damage *
-          (100 - Math.min(60, target.stats.defense)),
-        10000,
+          incomingStatusMultiplier(target, s.tick),
+        1000000,
       ),
     ),
   );

@@ -2,6 +2,7 @@ import { synergySignature } from "../../../../packages/shared/src/synergy";
 import { masteryAlly } from "../../../../packages/battle-engine/src/mastery";
 import { kitGrowth } from "../../../../packages/shared/src/character-kits";
 import { useEffect, useRef, useState } from "react";
+import { masteryInfo } from "../../../../packages/shared/src/mastery";
 import {
   collectDamageNumbers,
   collectConstructDamageNumbers,
@@ -61,6 +62,7 @@ import {
 } from "../GameCatalog";
 import type { Fighter } from "../../../../packages/battle-engine/src/types";
 import { loadKitArt, characterFxFamily } from "./kit-art";
+import { loadMasteryVfx, MasteryVfxLayer, hasMasteryProjectileSkin, masteryTint } from "./mastery-vfx";
 import { TEAM_COLORS } from "./team-colors";
 import {
   energyRing,
@@ -352,6 +354,7 @@ function replayStateAt(
       projectile.kit = extra.kit;
       projectile.radius = extra.radius;
       projectile.returning = extra.returning;
+      projectile.mastery = extra.mastery;
     }
   }
   state.zones = structuredClone(a.zones);
@@ -378,6 +381,7 @@ export function Arena({
   label,
   highlightTeamId,
   watchedTeamId,
+  sandboxReplay = false,
 }: {
   config: BattleConfig;
   seed: number;
@@ -397,6 +401,7 @@ export function Arena({
   label?: string;
   highlightTeamId?: string;
   watchedTeamId?: string;
+  sandboxReplay?: boolean;
 }) {
   const [playbackSpeed, setPlaybackSpeed] = useState(1), [paused, setPaused] = useState(false);
   const playbackControls = useRef({ speed: playbackSpeed, paused });
@@ -514,7 +519,7 @@ export function Arena({
     async function init() {
       if (replay?.format === 1) {
         if (!replay.chunks.length) throw Error("Replay không có frame đã ghi");
-        const initialTarget = Math.max(
+          const initialTarget = sandboxReplay ? 0 : Math.max(
             0,
             ((Date.now() + options.current.offset - replay.start) * 30) / 1000,
           ),
@@ -543,6 +548,8 @@ export function Arena({
       }
       mount.current!.appendChild(instance.canvas);
       const kitArt = await loadKitArt().catch(() => undefined);
+      const masteryAtlas = await loadMasteryVfx(state.fighters.flatMap(f => f.masteryId ? [f.masteryId] : []))
+        .catch(() => ({ casts: new Map(), projectiles: new Map() }));
       if (disposed) return;
       const fxTextures = {} as Record<FxKind, Texture>;
       const characterFxTextures = {} as Record<
@@ -660,6 +667,7 @@ export function Arena({
       layers.combat.addChild(trails);
       layers.bodies.addChild(constructGraphics, bodyGraphics);
       layers.hud.addChild(hudGraphics);
+      const masteryVfx = new MasteryVfxLayer(layers.groundFx, layers.combat, masteryAtlas, false);
       const damageNodes = Array.from({ length: DAMAGE_NUMBER_LIMIT }, () => {
         const text = new Text({
           label: "damage-number",
@@ -1076,7 +1084,7 @@ export function Arena({
         if (!playbackControls.current.paused) localPlaybackSeconds += Math.max(0, playbackNow - previousPlaybackTime) / 1000 * playbackControls.current.speed;
         previousPlaybackTime = playbackNow;
         const now = performance.now(),
-          desired = replay
+          desired = replay && !sandboxReplay
             ? Math.min(
                 replay.totalTicks,
                 Math.max(
@@ -1401,6 +1409,7 @@ export function Arena({
         trails.clear();
         particles.clear();
         ambientFx.clear();
+        masteryVfx.draw(state, visualTick, sx, sy, options.current.showEffects, options.current.low);
         for (let x = 0; x < viewWidth; x += 60)
           g.moveTo(x, 0)
             .lineTo(x, viewHeight)
@@ -1445,6 +1454,13 @@ export function Arena({
           }
           sprite.visible = true;
           const owner = state.fighters[z.owner];
+          if(z.mastery==="echo" && z.line) {
+            const ex=(z.x+z.line.dx*z.line.length*100/1024)*sx;
+            const ey=(z.y+z.line.dy*z.line.length*100/1024)*sy;
+            g.moveTo(z.x*sx,z.y*sy).lineTo(ex,ey).stroke({color:masteryTint(owner?.masteryId),width:Math.max(3,z.line.width*100*sx),alpha:0.2});
+            g.moveTo(z.x*sx,z.y*sy).lineTo(ex,ey).stroke({color:0xffedac,width:1.5,alpha:0.9});
+            sprite.visible=false;return;
+          }
           if (z.kit) {
             const tint =
               z.kit === "deadline"
@@ -1595,12 +1611,13 @@ export function Arena({
           sprite.visible = !!kitArt && !!c && c.hp > 0;
           if (!sprite.visible || !kitArt || !c) return;
           const position = pose(c, previousConstructs);
+          const masteryBody=c.variant ? masteryAtlas.projectiles.get(state.fighters[c.owner]?.masteryId||'') : undefined;
           sprite.label =
             c.kind === "turret" ? "turret-portrait" : "summon-portrait";
           const layer = layers.bodies;
           if (sprite.parent !== layer) layer.addChild(sprite);
-          sprite.mask = mask;
-          sprite.texture = summonPortraits![c.kind];
+          sprite.mask = masteryBody ? null : mask;
+          sprite.texture = masteryBody || summonPortraits![c.kind];
           sprite.position.set(
             position.x * sx,
             position.y * sy +
@@ -1612,9 +1629,10 @@ export function Arena({
           sprite.width = radius * 2.12;
           sprite.height =
             (sprite.width * sprite.texture.height) / sprite.texture.width;
-          mask.visible = true;
+          mask.visible = !masteryBody;
           mask.circle(sprite.x, sprite.y, radius * 0.96).fill(0xffffff);
           sprite.rotation = 0;
+          sprite.tint=masteryBody?0xffffff:c.variant==="medic"||c.variant==="supply"?0xb2ffcf:c.variant==="drone"?0xa9eaff:0xffffff;
           if (c.kind === "turret") {
             let nearest = Infinity;
             for (const t of state.fighters)
@@ -1667,6 +1685,28 @@ export function Arena({
               .circle(x + r * 0.3, y - r * 0.1, 2)
               .fill(0x172132);
           }
+          if(c.variant) {
+            const support=c.variant==="medic"||c.variant==="supply";
+            const tint=support?0x71efb3:c.variant==="bulwark"||c.variant==="bodyguard"?0x8bd7ff:0xffd17a;
+            constructGraphics.circle(x,y,r+5).stroke({color:tint,width:2,alpha:0.85});
+            if(support) {
+              constructGraphics.roundRect(x-6,y-r-16,12,12,3).fill(0x194c38);
+              constructGraphics.moveTo(x,y-r-14).lineTo(x,y-r-6).moveTo(x-4,y-r-10).lineTo(x+4,y-r-10).stroke({color:tint,width:2});
+            } else if(c.variant==="bulwark"||c.variant==="bodyguard") {
+              constructGraphics.poly([x-r-5,y-r*0.7,x+r+5,y-r*0.7,x+r,y+r*0.8,x,y+r+8,x-r,y+r*0.8]).stroke({color:tint,width:2.3,alpha:0.9});
+            } else if(c.variant==="drone") {
+              for(const side of [-1,1]) constructGraphics.moveTo(x+side*r*0.5,y).lineTo(x+side*(r+10),y-5).circle(x+side*(r+10),y-5,5).stroke({color:0xa9eaff,width:2});
+            } else if(c.variant==="hunter") {
+              constructGraphics.poly([x-r,y-r,x-r*0.5,y-r-8,x,y-r,x+r*0.5,y-r-8,x+r,y-r]).stroke({color:tint,width:2});
+            } else if(c.variant==="ram") {
+              constructGraphics.circle(x-r,y+r*0.6,5).circle(x+r,y+r*0.6,5).stroke({color:tint,width:3});
+            } else {
+              for(const offset of c.variant==="fanTurret"||c.variant==="bank"?[-0.35,0,0.35]:[0]) {
+                const angle=(Math.atan2((state.fighters.find(t=>t.team!==owner?.team&&t.hp>0)?.y||c.y)-c.y,(state.fighters.find(t=>t.team!==owner?.team&&t.hp>0)?.x||c.x)-c.x))+offset;
+                constructGraphics.moveTo(x,y).lineTo(x+Math.cos(angle)*(r+11),y+Math.sin(angle)*(r+11)).stroke({color:tint,width:3});
+              }
+            }
+          }
           hudGraphics
             .rect(x - r, y - r - 7, r * 2, 3)
             .fill(0x232323)
@@ -1677,6 +1717,14 @@ export function Arena({
           const age = visualTick - e.tick,
             source = state.fighters[e.source];
           if (!effects || age < 0 || age > 12 || !source) continue;
+          if(e.type.startsWith("shape:") && e.x!==undefined && e.y!==undefined) {
+            const x=e.x*sx,y=e.y*sy,r=e.amount*100*sx,angle=(e.angle||0)*Math.PI/16,alpha=(1-age/13)*0.7;
+            const color=masteryTint(state.fighters[e.source]?.masteryId);
+            if(e.type==="shape:whirl") g.circle(x,y,r).stroke({color,width:4,alpha});
+            else if(e.type==="shape:sweep") g.moveTo(x,y).arc(x,y,r,angle-0.95,angle+0.95).lineTo(x,y).fill({color,alpha:alpha*0.15}).stroke({color,width:2,alpha});
+            else if(e.type==="shape:split") g.circle(x,y,12+age*2).stroke({color,width:2,alpha});
+            else for(const offset of e.type==="shape:cross"?[0,Math.PI/2]:[0]) g.moveTo(x,y).lineTo(x+Math.cos(angle+offset)*r,y+Math.sin(angle+offset)*r).stroke({color,width:4,alpha});
+          }
           if (e.type === "kit:beam" && e.x !== undefined && e.y !== undefined)
             g.moveTo(source.x * sx, source.y * sy)
               .lineTo(e.x * sx, e.y * sy)
@@ -1856,6 +1904,7 @@ export function Arena({
                 e.type.startsWith("item:") ||
                 e.type.startsWith("affinity:") ||
                 e.type.startsWith("status:") ||
+                e.type.startsWith("mastery:") ||
                 e.type.startsWith("group:")),
           )
           .slice(-10);
@@ -1899,6 +1948,8 @@ export function Arena({
                                 ? "THẾ CỜ VƯỜN HỒNG"
                                 : "HIỆU ỨNG ĐỒ";
           text.text = label;
+          if (e.type.startsWith("mastery:"))
+            text.text = "✦ " + (masteryInfo(e.type.slice(8))?.name || "Bí kỹ");
           const status = e.type.startsWith("status:")
             ? (e.type.slice(7) as keyof typeof STATUS_RULES)
             : undefined;
@@ -1907,6 +1958,8 @@ export function Arena({
           text.style.fill =
             status && status in DAMAGE_PALETTE
               ? DAMAGE_PALETTE[status as keyof typeof DAMAGE_PALETTE].color
+              : status === "ward" ? SUPPORT_PALETTE.shield.color
+              : status === "fracture" ? 0xff718a
               : status === "blessing"
                 ? SUPPORT_PALETTE.heal.color
                 : 0xffe28b;
@@ -2396,6 +2449,31 @@ export function Arena({
             p.kit === "balloon"
               ? Math.sin(visualTick * 0.09 + p.id) * 0.08
               : Math.atan2(p.vy, p.vx);
+          if(p.mastery) {
+            const style=p.mastery.style, x=position.x*sx,y=position.y*sy;
+            const tint=masteryTint(owner.masteryId);
+            sprite.label=`mastery-projectile-${style}`;
+            if(style==="disc") {
+              if(kitArt?.weapons[owner.characterId||""]) sprite.texture=kitArt.weapons[owner.characterId!];
+              sprite.width=Math.max(25,(p.radius||700)*sx*3.6);sprite.height=sprite.width;
+              sprite.rotation=visualTick*0.24;
+              g.circle(x,y,sprite.width*0.55).stroke({color:tint,width:2,alpha:0.75});
+            } else if(style==="mine") {
+              sprite.rotation=0;sprite.width=sprite.height=Math.max(16,(p.radius||450)*sx*3);
+              g.circle(x,y,55*100*sx).stroke({color:0xffb85c,width:1,alpha:0.2});
+              g.circle(x,y,sprite.width*0.75).stroke({color:0xffd16e,width:2,alpha:0.6+Math.sin(visualTick*0.25)*0.25});
+            } else if(style==="drill") {
+              sprite.width=Math.max(32,(p.radius||850)*sx*4);sprite.height=Math.max(10,sprite.width*0.28);
+            } else if(style==="orbit") {
+              sprite.tint=tint;sprite.width=sprite.height=Math.max(19,(p.radius||700)*sx*3);
+              g.circle(x,y,sprite.width*0.65).stroke({color:0xd3f8ff,width:1.8,alpha:0.8});
+              if(p.mastery.orbit && owner.hp>0) g.circle(owner.x*sx,owner.y*sy,p.mastery.orbit*100*sx).stroke({color:tint,width:1,alpha:0.13});
+            } else if(style==="hook" && owner.hp>0) {
+              trails.moveTo(owner.x*sx,owner.y*sy).lineTo(x,y).stroke({color:tint,width:1.5,alpha:0.65});
+            } else if(style==="shard" && !p.normal) {
+              sprite.tint=tint;sprite.width=Math.min(sprite.width,25);sprite.height=Math.min(sprite.height,18);
+            }
+          }
           if (
             kitArt &&
             p.kit === "balloon" &&
@@ -2413,10 +2491,20 @@ export function Arena({
               (rocket.width * rocket.texture.height) / rocket.texture.width;
             rocket.rotation = Math.atan2(p.vy, p.vx);
           }
+          const masterySkin = hasMasteryProjectileSkin(owner, p) && masteryAtlas.projectiles.get(owner.masteryId!);
+          if (masterySkin) {
+            sprite.texture = masterySkin;
+            sprite.tint = 0xffffff;
+            sprite.label = `mastery-projectile-${p.mastery?.style || p.kit}`;
+            const body = Math.max(20, (p.radius || 600) * sx * 3.8);
+            sprite.width = p.mastery?.style === "drill" ? Math.max(36, body * 1.3) : body;
+            sprite.height = p.mastery?.style === "drill" ? body * .65 : body;
+            if (p.mastery?.style === "mine") sprite.rotation = 0;
+          }
           const speed = Math.max(1, Math.hypot(p.vx, p.vy));
           const trail = p.kind === "super" ? 2600 : 1800;
           // Tapered segments dissolve into the arena instead of a rigid bright rod.
-          const segments = options.current.low ? 2 : 5;
+          const segments = masterySkin ? 0 : options.current.low ? 2 : 5;
           for (let segment = 0; segment < segments; segment++) {
             const a = segment / segments,
               b = (segment + 1) / segments;
@@ -2555,6 +2643,7 @@ export function Arena({
         last = now;
         frame = requestAnimationFrame(draw);
       }
+      if(sandboxReplay) {localPlaybackSeconds=0;previousPlaybackTime=performance.now();}
       frame = requestAnimationFrame(draw);
     }
     init().catch((e) => {
@@ -2567,11 +2656,11 @@ export function Arena({
       audio?.close();
       if (app?.renderer) app.destroy(true);
     };
-  }, [config, seed, replay]);
+  }, [config, seed, replay, sandboxReplay]);
   const closing = closingTempo(hud.tick, config.shrinkSeconds);
   return (
     <div className="arena-shell">
-      {!replay && <div className="action-row" aria-label="Điều khiển xem trận"><button aria-pressed={paused} onClick={() => setPaused(value => !value)}>{paused ? "Tiếp tục xem" : "Tạm dừng"}</button>{[0.5, 1, 2].map(speed => <button key={speed} aria-pressed={playbackSpeed === speed} onClick={() => setPlaybackSpeed(speed)}>{speed}×</button>)}</div>}
+      {(!replay || sandboxReplay) && <div className="action-row" aria-label="Điều khiển xem trận"><button aria-pressed={paused} onClick={() => {const next=!playbackControls.current.paused;playbackControls.current.paused=next;setPaused(next);}}>{paused ? "Tiếp tục xem" : "Tạm dừng"}</button>{[0.5, 1, 2].map(speed => <button key={speed} aria-pressed={playbackSpeed === speed} onClick={() => {playbackControls.current.speed=speed;setPlaybackSpeed(speed);}}>{speed}×</button>)}</div>}
       <div className="arena-top">
         <span>
           <i className="live-dot" />{" "}
@@ -2621,7 +2710,7 @@ export function Arena({
       />
       <div className="arena-bottom">
         <span>
-          {hud.hash
+          {sandboxReplay ? (hud.hash ? "Hết lượt thử · chọn nhánh khác hoặc xem lại" : "Sân thử 12 giây · cùng tình huống cho mọi nhánh") : hud.hash
             ? `Kết thúc · ${hud.hash} · ${hud.result.slice(0, 12)}`
             : "Bi-a tự động · vũ khí xoay · không điều khiển trực tiếp"}
         </span>
@@ -2637,6 +2726,8 @@ export function Arena({
           <small key={i}>{k}</small>
         ))}
       </div>
+      <details className="arena-statistics">
+      <summary>Thống kê trận <small>· {fighters.length} nhân vật</small></summary>
       <div className="fighter-list" aria-label="Nhân vật trong trận">
         {fighters.map((f) => (
           <button
@@ -2668,6 +2759,7 @@ export function Arena({
           </button>
         ))}
       </div>
+      </details>
     </div>
   );
 }

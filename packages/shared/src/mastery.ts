@@ -1,6 +1,8 @@
 import data from "./mastery-data.json";
+import upgradeText from "./mastery-upgrade-text.json";
 import type { Loadout } from "./balance";
-import { ROSTER } from "./catalog";
+import { MASTERY_PATHS } from "./mastery-paths";
+import type { MasteryForm } from "./mastery-forms";
 export interface MasteryDefinition {
   id: string;
   characterId: string;
@@ -12,6 +14,7 @@ export interface MasteryDefinition {
   goal: number;
   legacy: boolean;
   targeted: boolean;
+  form?: MasteryForm;
   modifiers?: {
     attackPercent?: number;
     hpPercent?: number;
@@ -20,57 +23,17 @@ export interface MasteryDefinition {
     chargePercent?: number;
   };
 }
-const existingCharacters = new Set(data.map((m) => m.characterId));
 export const MASTERIES: MasteryDefinition[] = [
   ...data,
-  ...ROSTER.filter((c) => !existingCharacters.has(c.id)).flatMap((c) => [
-    {
-      id: `${c.id}:pressure`,
-      characterId: c.id,
-      name: "Đòn quyết định",
-      role: "Chủ lực",
-      description: "Tăng 10% sát thương đòn đánh nền trước trận.",
-      tradeoff: "Giảm 8% HP tối đa.",
-      summary: "Đổi sức bền lấy sát thương",
-      goal: 3,
-      legacy: false,
-      targeted: false,
-      modifiers: { attackPercent: 10, hpPercent: -8 },
-    },
-    {
-      id: `${c.id}:resolve`,
-      characterId: c.id,
-      name: "Thế đứng vững",
-      role: "Bền bỉ",
-      description: "Tăng 16% HP tối đa trước trận.",
-      tradeoff: "Giảm 8% tốc độ di chuyển.",
-      summary: "Sống lâu hơn để duy trì vai trò",
-      goal: 8,
-      legacy: false,
-      targeted: false,
-      modifiers: { hpPercent: 16, speedPercent: -8 },
-    },
-    {
-      id: `${c.id}:tempo`,
-      characterId: c.id,
-      name: "Nhịp chiến đấu",
-      role: "Nhịp đánh & Super",
-      description:
-        "Giảm 12% thời gian giữa các đòn thường và tăng 12% chỉ số nạp Super.",
-      tradeoff: "Giảm 8% sát thương mỗi đòn.",
-      summary: "Đánh đều hơn, nạp Super nhanh hơn",
-      goal: 15,
-      legacy: false,
-      targeted: false,
-      modifiers: { cooldownPercent: -12, chargePercent: 12, attackPercent: -8 },
-    },
-  ]),
-];
+  ...MASTERY_PATHS,
+].map((m: MasteryDefinition) => ({...m, ...upgradeText[m.id as keyof typeof upgradeText],
+  form: m.form && (m.form.kind === 'shot' || m.form.kind === 'melee') ? {...m.form,cooldown:100} : m.form}));
 export interface MasterySelection {
   id: string;
   target?: string;
 }
-export const masteryInfo = (id?: string) => MASTERIES.find((m) => m.id === id);
+const masteryById = new Map(MASTERIES.map((m) => [m.id, m]));
+export const masteryInfo = (id?: string) => id ? masteryById.get(id) : undefined;
 export const masteriesFor = (id?: string) =>
   MASTERIES.filter((m) => m.characterId === id);
 export const hasMastery = (unit: { masteryId?: string }, id: string) =>

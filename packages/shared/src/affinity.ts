@@ -1,4 +1,4 @@
-/** Bounded identity effects in addition to the existing +8% item multiplier. */
+/** Bounded identity effects in addition to the existing +12% item multiplier. */
 export type AffinityTrigger = "start" | "hit4" | "skill" | "super" | "low";
 export interface AffinityEffect {
   trigger: AffinityTrigger;
@@ -329,8 +329,8 @@ export const ITEM_AFFINITY: Record<string, AffinityEffect> = {
 };
 export function affinityDescription(id: string, multiplier = 1) {
   return (
-    "+8% hiệu lực chỉ số và hiệu ứng. " +
-    (ITEM_AFFINITY[id]?.text || "").replace(/\{(\d+)\}/g, (_, n: string) =>
+    "+12% hiệu lực phần có lợi của đồ; đúng chủ thêm 2% HP và ATK nền, không nhân mặt phạt. " +
+    ((ITEM_AFFINITY[id]?.text || "") + (id==='item_08'?' Đệ khổng lồ thêm 6% HP nền chủ, tối đa 25 HP lúc gọi.':id==='item_26'?' Lốc chính thêm 8% sát thương.':id==='item_32'?' Vùng dép thêm 8% sát thương.':'')).replace(/\{(\d+)\}/g, (_, n: string) =>
       String(Math.max(1, Math.round(Number(n) * multiplier))),
     )
   );

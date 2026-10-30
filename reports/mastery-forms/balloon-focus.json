@@ -1,0 +1,40 @@
+{
+  "engine": "chaos-integer-v36",
+  "battles": 192,
+  "method": "Lv10, no equipment, same three characters on both teams; each seed tested with the mastery on each side. This is a limited regression sample, not a global win-rate estimate.",
+  "aggregateWinRate": 0.4114583333333333,
+  "noActivations": [],
+  "extremes": [],
+  "rows": [
+    {
+      "id": "char_30:pressure",
+      "name": "Bóng Chùm",
+      "matches": 64,
+      "wins": 25,
+      "draws": 0,
+      "winRate": 0.390625,
+      "procTargets": 711,
+      "meanSeconds": 24.6
+    },
+    {
+      "id": "char_30:resolve",
+      "name": "Bóng Neo",
+      "matches": 64,
+      "wins": 26,
+      "draws": 1,
+      "winRate": 0.40625,
+      "procTargets": 701,
+      "meanSeconds": 24.3
+    },
+    {
+      "id": "char_30:tempo",
+      "name": "Đoàn Bóng Hộ Tống",
+      "matches": 64,
+      "wins": 28,
+      "draws": 1,
+      "winRate": 0.4375,
+      "procTargets": 108,
+      "meanSeconds": 24.2
+    }
+  ]
+}

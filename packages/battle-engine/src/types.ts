@@ -1,7 +1,8 @@
 import type { Loadout, Stats } from "../../shared/src/balance";
 import type { TeamChoice } from "../../shared/src/catalog";
 import type { CombatStatus } from "./statuses";
-export const ENGINE_VERSION = "chaos-integer-v34";
+import type { SummonVariant } from "../../shared/src/mastery-forms";
+export const ENGINE_VERSION = "chaos-integer-v39";
 export type DamageType = "direct" | "burn" | "poison" | "bleeding" | "radiation";
 export const TICK_RATE = 30;
 export interface CombatMetrics {
@@ -62,6 +63,38 @@ export interface Fighter {
   cooldowns: Record<string, number>;
 }
 export interface Projectile {
+  bonus?: boolean;
+  budget?: { id: number; cap: number };
+  rawDamage?: number;
+  mastery?: {
+    style: "shard" | "disc" | "seeker" | "mine" | "orbit" | "wave" | "drill" | "chain" | "hook";
+    split?: number;
+    chain?: number;
+    orbit?: number;
+    orbitAngle?: number;
+    releaseAt?: number;
+    anchorAt?: number;
+    baseVx?: number;
+    baseVy?: number;
+    pull?: number;
+    disarm?: boolean;
+    backPower?: number;
+    splitPower?: number;
+    keepParent?: boolean;
+    onlyOnHit?: boolean;
+    impactMine?: number;
+    impactMines?: number;
+    piercePower?: number;
+    piercePush?: number;
+    firstHit?: boolean;
+    bouncePower?: number;
+    hasBounced?: boolean;
+    assistTicks?: number;
+    plantOnce?: boolean;
+    healOnly?: number;
+    releaseSingleHit?: boolean;
+    waveWidth?: number;
+  };
   id: number;
   owner: number;
   x: number;
@@ -98,6 +131,11 @@ export interface Projectile {
   onHitReady?: Record<number, number>;
 }
 export interface Zone {
+  bonus?: boolean;
+  followUntil?: number;
+  blockSpent?: boolean;
+  pullScale?: number;
+  mastery?: "echo";
   followTarget?: number;
   owner: number;
   x: number;
@@ -123,6 +161,9 @@ export interface Zone {
   allOthers?: boolean;
 }
 export interface Construct {
+  upgrade?: { group: number; cap?: number; interval: number; heal?: number; healTicks?: number; healRange?: number; nextHeal?: number; passive?: boolean; auxiliary: boolean; superScale: number };
+  variant?: SummonVariant;
+  anchor?: number;
   id: number; owner: number; kind: "minion" | "giant" | "turret";
   x: number; y: number; vx: number; vy: number; radius: number;
   hp: number; maxHp: number; damage: number; until: number; nextAttack: number;
@@ -152,6 +193,7 @@ export interface BattleState {
     shieldKind?: "shield" | "temporaryHp";
     x?: number;
     y?: number;
+    angle?: number;
   }[];
   pending: {
     owner: number;
@@ -196,7 +238,7 @@ export interface ReplayFrame {
   damageStats?: [number, number][];
   supportStats?: CombatMetrics[];
   constructs?: Construct[];
-  kitProjectiles?: { id: number; kit: Projectile["kit"]; radius: number; returning?: boolean }[];
+  kitProjectiles?: { id: number; kit: Projectile["kit"]; radius: number; returning?: boolean; mastery?: Projectile["mastery"] }[];
   /** id, owner, x, y; optional visual metadata keeps older frames readable. */
   projectiles: [
     number, number, number, number, number?, number?, boolean?, ("skill" | "super")?,

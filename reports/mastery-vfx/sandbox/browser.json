@@ -1,0 +1,14 @@
+{
+  "engine": "chaos-integer-v36",
+  "previewBranches": 4,
+  "lockedSkillsPreview": true,
+  "noProgressAwarded": true,
+  "pauseAndSpeed": true,
+  "journeyAndCatalog": true,
+  "widths": [
+    1440,
+    360,
+    390
+  ],
+  "errors": []
+}

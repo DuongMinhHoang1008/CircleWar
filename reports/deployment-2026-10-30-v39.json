@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-30",
+  "engine": "chaos-integer-v39",
+  "release": "2026.10.30.2",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "pagesDeployment": "https://8478f7a9.riseon-ultimate-battle.pages.dev",
+  "workerVersion": "4456f145-d1af-42c3-89cc-636d0b0074d6",
+  "baseCommit": "af93e74528ed912884bd56a83fbaf641b7eb0386",
+  "uncommittedSource": true,
+  "checks": [
+    "typecheck and Vite build",
+    "worker dry-run",
+    "534 combat/unit tests before menu gate",
+    "production API/CORS/profile/mailbox/room/WebSocket smoke",
+    "production artifact SHA-256 match",
+    "production hidden menu / wrong code rejection / 1824 unlock / reload lock, no simulation started"
+  ],
+  "colonySearchRun": false,
+  "access": "Hidden menu; Settings access code; session-only UI gate",
+  "status": "PASS"
+}

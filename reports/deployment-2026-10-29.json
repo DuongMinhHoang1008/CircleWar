@@ -1,0 +1,31 @@
+{
+  "time": "2026-10-29T05:05:24.3080572Z",
+  "status": "PASS",
+  "baseCommit": "af93e74528ed912884bd56a83fbaf641b7eb0386",
+  "uncommittedSource": true,
+  "release": "2026.10.29.1",
+  "engine": "chaos-integer-v35",
+  "web": "https://riseon-ultimate-battle.pages.dev",
+  "api": "https://circle-chaos.circle-chaos.workers.dev",
+  "pagesDeployment": "https://9c3738f2.riseon-ultimate-battle.pages.dev",
+  "workerVersion": "1eb5b084-8978-457b-81db-05aa6e7b15c8",
+  "webIndexSha256": "A725D5B654D3D02F271AD149BAB9052D1AEE68BA4C4994E83AD0C0B32C409539",
+  "checks": [
+    "506 tests across 34 files",
+    "typecheck, production frontend build and Worker dry-run",
+    "production release manifest matches 2026.10.29.1",
+    "production API/CORS, persisted mailbox claim and profile reload",
+    "production room/WebSocket; test room left after verification",
+    "production square arena, 20s shrink, team colors and generated atlases",
+    "production all 33 journeys and 99 branches, stage objectives, equipped state, search and progress filters",
+    "production six Catalog sections: 15 statuses, 12 combat mechanics, 99 masteries, 61 synergy entries",
+    "production accent-insensitive search, category filters, character detail links and empty state",
+    "production desktop 1440px and mobile 360/390px without horizontal overflow",
+    "no browser page errors"
+  ],
+  "reports": [
+    "reports/production-2026-10-29/smoke/production-browser-v35.json",
+    "reports/production-2026-10-29/mastery/browser.json",
+    "reports/production-2026-10-29/catalog/browser.json"
+  ]
+}

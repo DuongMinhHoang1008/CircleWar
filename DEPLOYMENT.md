@@ -2,18 +2,33 @@
 
 Production dùng Cloudflare Pages và Cloudflare SQLite Durable Objects; không cần VPS hoặc máy cá nhân chạy liên tục.
 
-## Production hiện tại
+## Production hiện tại — 30/10/2026
 
 - Website: https://riseon-ultimate-battle.pages.dev
 - API: https://circle-chaos.circle-chaos.workers.dev
-- Engine: `chaos-integer-v34`, giao diện v`2026.10.28.2`, triển khai ngày 28/10/2026 từ commit `52c6e1d40f2833c25faf3848928391ed959fdf87` trên `main`.
-- Worker version: `9e525ba8-c0de-417c-857b-f005cdd0cd71`.
-- Pages deployment: https://36764f09.riseon-ultimate-battle.pages.dev.
+- Engine chaos-integer-v39; release 2026.10.30.2. Build từ workspace chưa commit trên nền af93e74528ed912884bd56a83fbaf641b7eb0386.
+- Worker version: 4456f145-d1af-42c3-89cc-636d0b0074d6.
+- Pages deployment: https://8478f7a9.riseon-ultimate-battle.pages.dev.
+- Đã triển khai gói rarity gốc/hợp cạ v39, 99 Bí kỹ và sprite/VFX mới, bảng thống kê trận thu gọn.
+- Mô phỏng đàn kiến ẩn mặc định, module tải lazy. Cài đặt → Mã truy cập → 1824 → Mở công cụ; reload khóa lại. Đây là chốt hiển thị client, không phải xác thực server.
+- Kiểm tra trước deploy: 534 tests đạt trước thay đổi ẩn menu, TypeScript/build và Worker dry-run đạt; access-code smoke local đạt. Không chạy mô phỏng đàn kiến sau cân bằng.
+- Production API/CORS, hồ sơ/hòm thư thử, phòng/WebSocket, sân/atlas và giao diện smoke đạt. Index, bundle và bốn atlas khớp SHA-256 bản build. Báo cáo reports/production-2026-10-30-v39/.
+
+## Lịch sử production — 29/10/2026
+
+- Website: https://riseon-ultimate-battle.pages.dev
+- API: https://circle-chaos.circle-chaos.workers.dev
+- Engine: `chaos-integer-v36`, giao diện v`2026.10.29.3`, triển khai ngày 29/10/2026 từ bản làm việc trên nền commit `af93e74528ed912884bd56a83fbaf641b7eb0386` của `main` (gồm các thay đổi chưa commit).
+- Worker version: `9bd19d99-dd5a-4f7e-97d7-857db9b2b2c4`.
+- Pages deployment: https://40df5a62.riseon-ultimate-battle.pages.dev.
+- Bí kỹ: 81 nhánh thay đường đạn, hình đánh, phản công hoặc Super; Hộp Quà có ba AI đệ riêng. Có sân thử đủ 33 nhân vật/99 nhánh từ Hành trình và Catalog, cùng seed/đội hình, tạm dừng/xem chậm/chạy lại, không cộng thưởng. Chi tiết và giới hạn cân bằng tại `docs/MASTERY_FORMS_V36.md`; thiết kế v35 được giữ trong `docs/MASTERY_REDESIGN.md` để tra lịch sử.
+- VFX đủ 33 nhân vật/99 Bí kỹ: 792 khung hoạt ảnh, hình đạn/vệt bay, chém, mìn, hồi lưu, triệu hồi và hỗ trợ theo chủ đề nhân vật. Có cache atlas, pool 40/12 hiệu ứng, chế độ giảm/tắt VFX. Chi tiết tại `docs/MASTERY_VFX.md`.
+- Catalog có sáu mục, gồm 15 trạng thái, 12 cơ chế combat, 99 Bí kỹ và 61 mục liên kết/hội/tộc/vai trò; tìm kiếm không dấu, bộ lọc và chi tiết nhân vật liên quan.
 - Đi ải, thử thách ngày và bài tập đổi seed mỗi lần bắt đầu/đấu lại; mô phỏng sinh seed ngẫu nhiên khi vào chế độ và chạy ván mới. Multiplayer tiến RNG mỗi vòng/trận; replay và trận viễn chinh đang dở giữ seed đã lưu. Đội thử thách ngày dùng chung cả ba đối thủ, gồm trang bị và Bí kỹ, giữ qua reload.
 - Giữ Kho đồ tinh gọn, viễn chinh roguelike 12 tầng, hành trình đủ 33 nhân vật và hiệu ứng Cộng hưởng. Tổng thưởng vượt 12 tầng là 150 Pack thường, 15 Pack Boss và một Rương chọn Sử thi; phần dư chuyển Hòm thư. Chi tiết và giới hạn cân bằng tại `docs/ADVENTURE_V2_2026-10-28.md`.
-- Trước deploy: 417/417 tests trong 33 file, typecheck, production frontend build và Worker dry-run pass. Kiểm tra trình duyệt local cho seed combat, đội dùng chung, replay, viễn chinh và hành trình nhân vật pass; báo cáo tại `reports/combat-retry-2026-10-28/`.
-- Browser smoke production pass: release, API/CORS, hồ sơ và nhận thư lưu qua reload, phòng/WebSocket, sân vuông/20 giây và bốn atlas tải thành công; không page error. Báo cáo `reports/production-2026-10-28-2/production-browser-v34.json`. Phòng thử được rời sau kiểm tra.
-- Báo cáo kiểm tra tính năng và ảnh production tại `reports/production-2026-10-28-2/`; metadata tại `reports/deployment-2026-10-28-2.json`. Các fixture dùng hồ sơ thử riêng. Báo cáo bản trước vẫn lưu tại `reports/production-2026-10-28-v34/`.
+- Trước deploy: 521/521 tests trong 36 file, typecheck, production frontend build và Worker dry-run pass. Manifest `release.json` đồng bộ v`2026.10.29.3`.
+- Browser smoke production pass: release, API/CORS, hồ sơ và nhận thư lưu qua reload, phòng/WebSocket, sân vuông/20 giây và bốn atlas gốc tải thành công; không page error. Báo cáo `reports/production-2026-10-29-vfx/smoke/production-browser-v36.json`. Phòng thử được rời sau kiểm tra.
+- Index, bundle JavaScript production và bốn atlas Bí kỹ có SHA-256 khớp hoàn toàn bản build. Báo cáo `reports/production-2026-10-29-vfx/assets/assets.json`. Kiểm tra 99 sân thử desktop/mobile ở `reports/production-2026-10-29-vfx/mastery/`; fixture dùng hồ sơ riêng. Metadata tại `reports/deployment-2026-10-29-vfx.json`. Báo cáo Catalog/Hành trình của bản v35 vẫn giữ tại `reports/production-2026-10-29/`.
 - Vòng đang mô phỏng bằng engine cũ được kết thúc không trao thưởng; giữ hồ sơ/bộ sưu tập, chủ phòng mở trận mới qua REMATCH. Replay format 1 đã hoàn thành vẫn được đọc từ frame lưu sẵn. Báo cáo các phiên bản trước trong `reports/` được giữ làm lịch sử.
 
 Lệnh triển khai PowerShell từ thư mục gốc, sau `npx wrangler login`:
@@ -93,3 +108,5 @@ Sau khi thay engine version, không ghi đè engine của phòng đang mô phỏ
 Replay frames are stored as gzip-compressed, base64 values under per-room keys scoped to game, round and chunk index. Room state and chunk writes commit in one Durable Object storage transaction. The replay metadata endpoint omits seed, official result and terminal simulation state; authenticated clients request chunks individually. The current application has no live battle action that can use information from later replay chunks, but the frames reveal the winner before playback ends.
 
 Completed old-format replays use a deterministic compatibility path, which is not guaranteed across engine versions. Persisted simulations with a different engine version are cancelled without settlement; same-engine simulations that predate recording begin capture at their first available state. Compatibility with every historical Durable Object record has not been measured by the deployment smoke test. Deploy Worker and frontend together. Confirm staging CPU, storage, alarms and quota behavior before increasing load.
+
+Xác nhận thêm ngày 30/10/2026: kiểm thử mã truy cập trên production đạt (ẩn mặc định, mã sai bị từ chối, 1824 mở công cụ, reload khóa lại). Không chạy mô phỏng trong kiểm thử này.
